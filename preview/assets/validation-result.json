@@ -1,0 +1,33 @@
+{
+  "executedAt": "2026-10-31T01:42:19.306Z",
+  "environment": "v24.16.0",
+  "scope": "인공 예제 JSON 검증. Unity 실행 및 AI 도구 간 생산성 비교는 수행하지 않음.",
+  "cleanErrors": [],
+  "brokenErrors": [
+    {
+      "row": 2,
+      "code": "DUPLICATE_ID"
+    },
+    {
+      "row": 2,
+      "code": "INVALID_COST"
+    },
+    {
+      "row": 2,
+      "code": "INVALID_COOLDOWN"
+    },
+    {
+      "row": 2,
+      "code": "UNKNOWN_STATE"
+    },
+    {
+      "row": 3,
+      "code": "MISSING_ID"
+    },
+    {
+      "row": 3,
+      "code": "INVALID_COST"
+    }
+  ],
+  "expectedBrokenErrors": 6
+}
