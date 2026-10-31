@@ -204,6 +204,97 @@
       "path": "assets/report/vendor/hls.min.js",
       "bytes": 623915,
       "sha256": "cfc70cc9e9fc63d071919e087670abc760c8fd1bc889b88588026e4d22193bbe"
+    },
+    {
+      "path": "assets/report/tool-choice.css",
+      "bytes": 2283,
+      "sha256": "abfa51d7de61b469bfe8ab3af9c33a9e981e910d93d1548cd2577d427524a1d5"
+    },
+    {
+      "path": "assets/report/tool-choice.js",
+      "bytes": 1425,
+      "sha256": "9839df651176a2d52b683791d4f410e99656dde135bab7c3a537a684ac303758"
+    },
+    {
+      "path": "assets/report/tool-previews/audio2face.png",
+      "bytes": 168240,
+      "sha256": "c047d2c4538d36db296dac2deca9b7c4eedd40b6fbb4454d28b4087dd66c924a"
+    },
+    {
+      "path": "assets/report/tool-previews/comfy.png",
+      "bytes": 193577,
+      "sha256": "713a0b2da761e49f01d296524c552a1f43c9b2691ce75ecddaeea4b81db8f17c"
+    },
+    {
+      "path": "assets/report/tool-previews/firefly.png",
+      "bytes": 5735,
+      "sha256": "be7019cc5a2517f3164092e7b96f588c753f8748a9ae9fcd10686c1f3bff8c9e"
+    },
+    {
+      "path": "assets/report/tool-previews/hi3d.png",
+      "bytes": 28162,
+      "sha256": "5e484e3631605c92df81c700e216b598ca6417d82981d04521febefd25e61385"
+    },
+    {
+      "path": "assets/report/tool-previews/hunyuan.png",
+      "bytes": 374145,
+      "sha256": "663a1b1e3968205f9d08032fb16754fde775dcfb4c2b1817aaddfde27f7b414c"
+    },
+    {
+      "path": "assets/report/tool-previews/leonardo.png",
+      "bytes": 258916,
+      "sha256": "7e39b84ca4c49b323463db59584dad7fb0c4034aa34258802772db69231cca90"
+    },
+    {
+      "path": "assets/report/tool-previews/luma.png",
+      "bytes": 596536,
+      "sha256": "615667975dd08e3e19aabd5cfe6afac5467351ce402fbe23fa1b02093f4151f4"
+    },
+    {
+      "path": "assets/report/tool-previews/meshy.png",
+      "bytes": 313457,
+      "sha256": "a52040ef6e4d9ed59f60eb656092d2eb3ad96da37637b08ce954bed9e3926ce1"
+    },
+    {
+      "path": "assets/report/tool-previews/recraft.png",
+      "bytes": 1171094,
+      "sha256": "1c8230c966c34af33174f2d080d3d405b8cd7b25813006d4fca13b71156c0c6e"
+    },
+    {
+      "path": "assets/report/tool-previews/runway.png",
+      "bytes": 648323,
+      "sha256": "4efca5c70643c08edc7b4d481cecc0d89740eb4d59d62067bee2e51c1664ab7e"
+    },
+    {
+      "path": "assets/report/tool-previews/scenario.png",
+      "bytes": 1041857,
+      "sha256": "aae6ce78444c3b000777cc35d030b6f7bf0e9c22f8c52b722405a3443ae1661b"
+    },
+    {
+      "path": "assets/report/tool-previews/SOURCES.md",
+      "bytes": 1381,
+      "sha256": "bac47ea6086594c5807dcd37ffc06f4c141b6b3a124a421b410124821098e2a1"
+    },
+    {
+      "path": "assets/report/tool-previews/spritegen.png",
+      "bytes": 227845,
+      "sha256": "78a3693e2de3748d644da86d864528e4e79ee1496ec1d009e6e143a515dfbdb9"
+    },
+    {
+      "path": "assets/report/tool-previews/trellis.png",
+      "bytes": 474483,
+      "sha256": "cecd70ebac643a288acb0e41aa891421dd78f313181b14d9ea84476d516d74cc"
+    },
+    {
+      "path": "assets/report/tool-previews/varco-sound.png",
+      "bytes": 113501,
+      "sha256": "606c9337583d68fdc44d487f6b947a433ac712cbc807afe6bcbf4daad13a015f"
+    },
+    {
+      "path": "assets/report/tool-previews/varco.png",
+      "bytes": 108031,
+      "sha256": "3e45479b98b764c2ef4149b49c64ca76ecbf7e3bbdfce5940cc50f34e2227ec3"
     }
-  ]
+  ],
+  "updatedAt": "2026-10-31T10:26:24.566Z"
 }

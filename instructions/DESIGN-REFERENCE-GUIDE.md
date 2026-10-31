@@ -15,7 +15,7 @@ Google 문서는 형식 규격, toss.md는 시각 참고, DESIGN.md는 이 리�
 - 실제 @font-face 선언은 [report.css](../assets/report/report.css)에 있습니다. CSS에서 ../assets/report/fonts/를 참조하며 문서 위치에 따라 상대 경로를 맞춥니다.
 
 ## 차트·영상·공유·반응형
-실제 CSS·JS·고정 라이브러리·각 라이선스는 [assets/report/](../assets/report/)에 모두 있습니다. report.css/js, reading.css, rich-media.css/js, share.css/js, ai100.css/js와 vendor/의 Chart.js·HLS.js를 함께 사용합니다. 임의 지표를 장식용 차트로 만들지 않고, 표·설명·출처를 제공합니다. 영상의 재생 가능 여부와 실제 시청·분석 범위를 구분합니다.
+실제 CSS·JS·고정 라이브러리·각 라이선스는 [assets/report/](../assets/report/)에 모두 있습니다. report.css/js, reading.css, rich-media.css/js, share.css/js, ai100.css/js, tool-choice.css/js, tool-previews/의 화면 자료·출처와 vendor/의 Chart.js·HLS.js를 함께 사용합니다. 임의 지표를 장식용 차트로 만들지 않고, 표·설명·출처를 제공합니다. 영상의 재생 가능 여부와 실제 시청·분석 범위를 구분합니다.
 
 리포트 구조 예시는 reports/weekly-2026-10-31.html과 preview/index.html에 보존합니다. 새 호는 예시의 날짜·수치를 복사하지 않고 해당 주 조사로 작성합니다. 320·390·768·1440px에서 목차·카드·표·차트·영상·공유·복사·다운로드·가로 넘침을 확인합니다.
 
