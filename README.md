@@ -6,7 +6,205 @@
 
 이 저장소의 main 브랜치 루트를 GitHub Pages로 배포합니다. 새 HTML 리포트와 index.html을 main에 푸시하면 사이트가 갱신됩니다. 조사·리포트 작성은 별도로 설정된 Codex 정기 작업이 수행합니다.
 
-공개용 HTML과 정적 페이지로만 구성됩니다. 인증 토큰, 개인 정보, Discord 발송 설정은 포함하지 않습니다.
+공개 리포트, 디자인 자산, 제작 지침과 운영 스크립트를 보관합니다. 인증 토큰·Windows 사용자별 봇 인증 파일·비공개 검수/전송 기록은 포함하지 않습니다.
+
+## 다른 컴퓨터에서 처음 설정하기
+
+현재 운영 스크립트는 **Windows용이며, 아래의 동일 경로와 기존 GitHub·Vercel·Discord 대상**을 사용합니다. 저장소를 클론하는 것만으로 AI 조사·배포·봇 인증·예약 작업이 설치되지는 않습니다. 같은 계정 또는 해당 저장소·프로젝트·서버에 권한이 있는 계정으로 설정하세요.
+
+### 1. 필요한 프로그램과 접근 권한
+
+- Git, GitHub CLI(`gh`), Node.js 18 이상(지원 중인 LTS 권장), PowerShell. 명령 예시는 PowerShell에서 실행합니다.
+- Codex 데스크톱 앱과 AI 조사·작성에 사용할 로그인/이용 권한. 이 저장소에는 별도 자동 리포트 생성 모델 서버가 없습니다.
+- ego lite와 `ego-browser` CLI. 브라우저 로그인과 CLI 등록은 새 컴퓨터에서 다시 준비합니다.
+- GitHub 저장소 main에 푸시할 권한, Vercel의 기존 프로젝트를 배포할 권한, 지정 Discord 서버·채널에 봇을 설치하고 메시지를 보낼 권한.
+
+```powershell
+git --version
+gh --version
+node --version
+$PSVersionTable.PSVersion
+ego-browser skill
+```
+
+ego-browser 안내가 `[ego-browser:skill] end of guide`로 끝나는지 확인하세요. 명령이 없으면 ego lite 설치·온보딩 후 새 터미널을 열고 PATH를 확인합니다. 컴퓨터마다 설치된 ego-browser/SKILL.md의 실제 경로가 다를 수 있습니다.
+
+### 2. 클론과 로컬 작업 폴더 만들기
+
+다음은 **새 컴퓨터의 빈 폴더에서 최초 한 번만** 실행합니다. 기존 운영 파일을 덮어쓰는 복구 명령으로 사용하지 마세요.
+
+```powershell
+$reportRoot = 'C:\내문서\GameTrendReport'
+if (Test-Path -LiteralPath $reportRoot) { throw '이미 존재하는 작업 폴더입니다. 기존 내용을 먼저 확인하세요.' }
+New-Item -ItemType Directory -Path $reportRoot | Out-Null
+git clone https://github.com/rnjsxogus0705/game-trend-report.git "$reportRoot\site"
+if ($LASTEXITCODE -ne 0) { throw '클론 실패' }
+foreach ($folder in @('reports','private','redesign','research')) {
+  New-Item -ItemType Directory -Path (Join-Path $reportRoot $folder) -Force | Out-Null
+}
+# 공개 지침을 manifest에 지정된 로컬 위치로 처음 배치합니다.
+$reportManifest = Get-Content "$reportRoot\site\instructions\sync-manifest.json" -Raw | ConvertFrom-Json
+foreach ($item in $reportManifest.files) {
+  $target = Join-Path $reportRoot $item.local
+  New-Item -ItemType Directory -Path (Split-Path $target) -Force | Out-Null
+  Copy-Item -LiteralPath (Join-Path "$reportRoot\site" $item.repo) -Destination $target
+}
+Copy-Item "$reportRoot\site\workflows\sync-instructions.ps1" "$reportRoot\sync-instructions.ps1"
+```
+
+폴더 역할:
+
+| 경로 | 용도 | Git 포함 |
+|---|---|---|
+| `site/` | 이 저장소의 체크아웃·공개 HTML·정적 자산·지침 원본 | 예 |
+| `reports/` | 작성 중인 HTML·호별 자료·검수·배포·전송 기록 | 공개할 산출물만 build-site가 site/reports로 복사 |
+| `private/` | 봇 DPAPI 인증·배포 대상 설정·동기화 상태 | 아니요 |
+| `research/` | 호별 조사 원장 | 기본 비공개 |
+| `redesign/` | 적용 디자인 지침·참고 문서 | 원본은 site/instructions에서 관리 |
+
+**상위 GameTrendReport 폴더에서 git init/add를 하지 마세요.** Git 루트는 site/입니다. 발행된 과거 HTML은 site/reports/에 이미 있으며, 검수·전송 영수증은 비공개이므로 다른 컴퓨터로 자동 복원되지 않습니다.
+
+### 3. 환경변수 등록
+
+이름과 역할은 아래와 같습니다. 운영 스크립트는 GitHub·Git 작성자 변수를 Windows **사용자 환경변수**, 없으면 시스템 환경변수에서 읽습니다. Vercel 토큰도 사용자/시스템 환경변수를 읽습니다.
+
+| 변수 | 필요 여부 | 설명 |
+|---|---|---|
+| `GH_TOKEN` | 이 구성의 인증에 필요 | 기존 저장소를 읽고 main에 푸시할 수 있는 GitHub 토큰. 계정/조직의 승인·정책도 충족해야 함 |
+| `GH_HOST` | 선택 | 기본 github.com. 이 저장소는 github.com 고정 주소 사용 |
+| `GIT_AUTHOR_NAME` | 필요 | 커밋 작성자 표시 이름 |
+| `GIT_AUTHOR_EMAIL` | 필요 | GitHub에 등록한 주소 또는 GitHub 제공 noreply 주소 |
+| `GIT_COMMITTER_NAME` | 필요 | 커밋 실행자 표시 이름. 보통 AUTHOR와 동일 |
+| `GIT_COMMITTER_EMAIL` | 필요 | 커밋 실행자 주소. 보통 AUTHOR와 동일 |
+| `VERCEL_TOKEN` | Vercel 배포에 필요 | 아래 기존 팀·프로젝트를 조회하고 배포할 수 있는 토큰 |
+| `KAKAO_JAVASCRIPT_KEY` | 현재 불필요 | 현재 카카오톡 버튼은 기기 공유·복사 방식. 이 변수만 등록해도 공식 SDK 공유로 바뀌지는 않음 |
+
+봇 토큰은 환경변수가 아니라 다음 단계의 **Windows DPAPI 파일**에서 읽습니다. DISCORD_TOKEN, DISCORD_WEBHOOK_URL, VERCEL_PROJECT_ID, VERCEL_ORG_ID 환경변수를 추가해도 현재 스크립트의 대상은 자동 변경되지 않습니다. Codex 로그인은 앱에서 관리하므로 이 구성을 위해 OPENAI_API_KEY를 추가할 필요는 없습니다. 별도 도구가 요구하는 API 키는 해당 도구에서 따로 관리합니다.
+
+일반 설정 예시(본인 이름·이메일로 바꾸세요):
+
+```powershell
+[Environment]::SetEnvironmentVariable('GIT_AUTHOR_NAME', '본인 GitHub 표시 이름', 'User')
+[Environment]::SetEnvironmentVariable('GIT_AUTHOR_EMAIL', '본인 GitHub 이메일', 'User')
+[Environment]::SetEnvironmentVariable('GIT_COMMITTER_NAME', '본인 GitHub 표시 이름', 'User')
+[Environment]::SetEnvironmentVariable('GIT_COMMITTER_EMAIL', '본인 GitHub 이메일', 'User')
+[Environment]::SetEnvironmentVariable('GH_HOST', 'github.com', 'User')
+```
+
+토큰은 채팅·문서·커밋·명령 기록에 평문으로 붙이지 말고 Windows의 **사용자 환경변수 편집 창**에 등록하세요. 사용자 환경변수는 비밀 금고가 아니므로 기기 계정 접근도 관리해야 합니다. 등록 후 Codex와 터미널을 다시 열거나 아래 도우미를 실행합니다. 값 전체를 출력하는 환경변수 목록 명령은 공유하지 마세요.
+
+```powershell
+. 'C:\내문서\GameTrendReport\github-env.ps1'
+gh auth status
+git -C 'C:\내문서\GameTrendReport\site' remote -v
+# 토큰 값은 출력하지 않고 읽기 연결만 확인합니다. 푸시 권한은 별도로 필요합니다.
+gh api repos/rnjsxogus0705/game-trend-report --jq '.full_name'
+```
+
+### 4. Vercel 배포 대상 설정
+
+`C:\내문서\GameTrendReport\private\vercel-project.json`을 UTF-8로 만듭니다. 아래 값은 비밀 토큰이 아니라 현재 운영 대상 식별자입니다.
+
+```json
+{
+  "projectId": "prj_blA2P6zvGDGFRsO1Z5UutTDoV0D0",
+  "teamId": "team_qdKIBdJZ9y3jIUzzMVrPk5gp",
+  "name": "game-trend-report"
+}
+```
+
+Vercel 프로젝트는 rnjsxogus0705/game-trend-report GitHub 저장소의 main과 연결되어 있어야 합니다. 루트는 정적 사이트, framework 없음, install/build 명령 없음으로 구성한 기존 프로젝트입니다. Vercel의 GitHub 연결에도 저장소 접근 권한이 필요합니다. 토큰만으로 다른 사람의 프로젝트 권한을 얻지는 못합니다.
+
+GitHub Pages는 기존 저장소 Settings → Pages에서 main / 루트 배포가 활성화되어 있어야 합니다. 현재 공개 주소는 [Pages](https://rnjsxogus0705.github.io/game-trend-report/)와 [Vercel](https://game-trend-report.vercel.app/)입니다. 다른 계정으로 fork한 저장소에 그대로 실행하면 아래 고정 대상 검사가 실패하거나 원래 대상을 가리키므로 먼저 설정과 스크립트를 함께 변경해야 합니다.
+
+### 5. Discord 봇 인증을 새 컴퓨터에서 만들기
+
+현재 대상은 Game Trend Report 봇 `1565897943184310342`, 서버 `1488793489800957966`, 채널 `1565894418156879942`입니다. 기존 봇을 관리할 권한이 있는 사람이 개발자 포털에서 토큰을 준비하세요. 이 설정을 위해 기존 토큰을 무조건 재발급할 필요는 없습니다. 재발급하면 다른 컴퓨터의 기존 토큰도 무효가 됩니다.
+
+봇이 해당 서버에 설치되어 있고 채널 보기·메시지 전송 권한이 있어야 합니다. 일반 전송은 링크 방식이며, HTML 파일 첨부 모드를 쓸 경우 첨부 권한도 필요합니다. 사용자 계정 토큰이나 웹훅으로 대체하지 않습니다.
+
+**실제 예약 작업을 실행할 Windows 사용자로** 다음을 실행해 토큰을 암호화합니다. 입력은 가려지고 평문 토큰을 출력하지 않습니다.
+
+```powershell
+$botSecret = Read-Host 'Discord bot token' -AsSecureString
+$botSecret | ConvertFrom-SecureString | Set-Content -LiteralPath 'C:\내문서\GameTrendReport\private\bot-token.dpapi' -Encoding utf8
+$botSecret = $null
+& 'C:\내문서\GameTrendReport\send-report.ps1' `
+  -HtmlPath 'C:\내문서\GameTrendReport\reports\weekly-YYYY-MM-DD.html' `
+  -Summary '연결 검사' -CheckOnly
+```
+
+CheckOnly는 봇·채널 연결만 확인하고 메시지를 보내지 않습니다. 이 검사에서는 예시 HTML이 실제로 없어도 됩니다. 실제 전송에는 검수·배포된 HTML이 필요합니다. DPAPI 파일은 원래 컴퓨터·사용자에 묶이므로 다른 PC의 파일을 복사해서 사용하지 말고 위 절차로 다시 만드세요.
+
+### 6. 한국어 스킬과 디자인 자료 준비
+
+[DaleSeo/korean-skills](https://github.com/DaleSeo/korean-skills)에서 humanizer, grammar-checker, style-guide와 각 references를 새 컴퓨터의 Codex 스킬 폴더에 설치합니다. 설치 후 아래 세 SKILL.md가 읽히는지 확인하세요. 기존 PC의 사용자 이름이 아니라 새 PC의 사용자 홈을 사용합니다.
+
+```powershell
+Test-Path "$env:USERPROFILE\.codex\skills\humanizer\SKILL.md"
+Test-Path "$env:USERPROFILE\.codex\skills\grammar-checker\SKILL.md"
+Test-Path "$env:USERPROFILE\.codex\skills\style-guide\SKILL.md"
+```
+
+기존 지침에 남은 `C:/Users/TAEHYEON/.codex/skills/` 표기는 새 PC의 실제 설치 위치로 해석합니다. 스킬 이름만 적거나 검사 기록 JSON을 자동 생성하는 것으로 교정을 대신하지 않습니다.
+
+폰트·CSS·Chart.js·HLS.js는 저장소에 들어 있어 리포트를 보거나 발행하는 데 npm install이 필요하지 않습니다. [디자인 자료 전체 안내](instructions/DESIGN-REFERENCE-GUIDE.md)에서 Pretendard 9종 웹폰트·9종 OTF, toss.md, Google DESIGN.md 0.4.0 규격과 라이선스를 확인합니다. 선택적인 디자인 형식 검사는 이 안내에 따라 실행합니다.
+
+### 7. 첫 리포트 작성과 배포
+
+Codex에 이 폴더를 열고 다음을 요청합니다. 이 요청은 사람이 리포트를 작성하도록 지시하는 예시이며 저장소 안에 독립적인 AI 생성 실행기가 있는 것은 아닙니다.
+
+> 최신 instructions/README.md, WORKFLOW.md, REPORT-GUIDE.md, REPORT-OUTPUT-CONTRACT.md, KOREAN-EDITORIAL-POLICY.md, DESIGN.md와 DESIGN-REFERENCE-GUIDE.md를 읽고 해당 주 실제 조사로 리포트를 작성해 줘. ego-browser로 원문을 확인하고 한국어 3단계 교정, 콘텐츠 검수, 반응형·링크·공유·복사·다운로드 검사를 해 줘. 아직 Discord에는 보내지 마.
+
+작성 결과는 `reports/weekly-YYYY-MM-DD.html`과 호별 필요한 JS·JSON·마크다운, 조사 원장, 검수 기록, `.summary.txt`입니다. 필수 `.content-review.json`·`.language-review.json` 구조와 해시는 Output 지침·validate-issue.mjs를 따릅니다. 과거 영수증을 복사하거나 수행하지 않은 검사를 true로 만들지 않습니다. 공개 리포트가 있다는 이유만으로 원본 검수 영수증까지 복원된 것은 아닙니다.
+
+```powershell
+& 'C:\내문서\GameTrendReport\sync-instructions.ps1'
+node 'C:\내문서\GameTrendReport\validate-issue.mjs' 'C:\내문서\GameTrendReport\reports\weekly-YYYY-MM-DD.html'
+& 'C:\내문서\GameTrendReport\publish-report.ps1' -HtmlPath 'C:\내문서\GameTrendReport\reports\weekly-YYYY-MM-DD.html'
+```
+
+YYYY-MM-DD는 실제 발행일로 바꿉니다. publish-report는 검수 → 원격 최신화 → 사이트 생성 → 커밋·푸시 → Pages 본문 확인 → Vercel 배포·본문 확인까지 수행합니다. 두 사이트의 배포 영수증이 생긴 뒤에만 전송 단계로 갑니다. 오류를 무시하고 다음 단계로 진행하지 마세요.
+
+### 8. 전송 검사와 실제 전송
+
+```powershell
+# 공개 본문·검수·배포 상태·봇 연결만 검사하며 전송하지 않습니다.
+& 'C:\내문서\GameTrendReport\dispatch-report.ps1' -IssueDate 'YYYY-MM-DD' -CheckOnly
+# 실제 정기 전송: 한국 시간 토요일 당일, 오전 8시 이후에만 허용됩니다.
+& 'C:\내문서\GameTrendReport\dispatch-report.ps1'
+```
+
+같은 호에 `.sent.json`이 있으면 중복 전송하지 않습니다. 전송 기록은 컴퓨터끼리 자동 공유되지 않으므로 **정기 전송 담당 PC는 한 대만** 정하세요. 다른 PC에서 수정판을 수동 재전송할 때는 기존 Discord 메시지부터 확인하고 명시적 요청이 있을 때만 고유 Edition을 지정합니다. 기록을 지워 중복 방지를 우회하지 않습니다.
+
+### 9. 새 PC의 Codex 예약 설정
+
+앱의 기존 예약은 Git 클론으로 옮겨지지 않습니다. 새 컴퓨터에서 Codex에 다음 세 예약을 등록하도록 요청합니다. 모두 Asia/Seoul 기준이며 실제 실행 사용자·작업 폴더는 위 설정과 같아야 합니다.
+
+| 예약 | 실행 내용 |
+|---|---|
+| 매시간 15분 | sync-instructions.ps1 실행. 변경 없으면 조용히 종료, 충돌·실패는 알림 |
+| 매주 토요일 07:00 | 지침 동기화·재독 → 최근 7일 조사 → 작성·교정·검수 → 두 사이트 배포 → 요약 저장. 전송하지 않음 |
+| 매주 토요일 08:00 | 지침 동기화 → dispatch-report.ps1 → 당일 검수·배포 확인 → 두 링크 전송 |
+
+담당 PC를 옮기면 이전 PC의 조사·전송 예약을 중지하고 새 PC만 활성화하세요. 이 예약은 클라우드 실행이 아니므로 PC와 Codex가 실행 중이어야 합니다. 로그인·수면 상태·네트워크로 실제 실행 시각이 달라질 수 있습니다. 예약 문구에는 이 README와 instructions/WORKFLOW.md를 먼저 읽고 실패 시 과거 호로 대체하지 않는 조건도 넣습니다.
+
+### 10. 문제 해결과 다른 배포 대상으로 옮기기
+
+| 증상 | 확인할 내용 |
+|---|---|
+| gh 인증/푸시 실패 | GH_TOKEN의 계정·기존 저장소 권한·조직 승인, Windows 사용자 환경변수와 gh auth status |
+| Git 작성자 오류 | AUTHOR·COMMITTER 4개 변수, Git 이메일 설정 |
+| DPAPI 복호화 실패 | 새 PC·실행 Windows 사용자로 봇 토큰을 다시 암호화했는지 |
+| Unexpected bot/target | 현재 스크립트는 원래 봇·서버·Vercel 프로젝트만 허용하는지 |
+| Vercel 401/403 | VERCEL_TOKEN의 기존 팀·프로젝트 권한·만료, GitHub 연결 권한 |
+| 공개 본문 불일치 | 배포 완료·캐시 반영 여부, 올바른 파일·커밋·도메인인지 |
+| 검수/영수증 없음 | 실제 조사·교정·검수 수행 후 해당 호의 기록을 새로 작성했는지 |
+| 동기화 충돌 | 로컬 변경을 먼저 보존·검토해 instructions/ 또는 workflows/에 반영하고 커밋·푸시. 강제 초기화하지 않음 |
+
+현재 GitHub 계정/저장소, Pages 주소, Discord ID, Vercel ID는 스크립트에 고정되어 있습니다. 다른 대상으로 fork하려면 publish-report.ps1·send-report.ps1·dispatch-report.ps1·deploy-vercel.mjs의 허용 대상/주소, private/vercel-project.json, Git 원격, 실제 서비스 설정을 함께 바꿔 검증해야 합니다. 다른 경로를 쓰려면 deploy-vercel.mjs·validate-issue.mjs·vercel-api.mjs의 고정 경로와 예약 문구도 함께 수정합니다. **현재는 환경변수만으로 임의 계정·운영체제·경로에 이식하는 구조가 아닙니다.** 변경은 workflows/ 원본에 커밋하고 sync-instructions의 허용 목록·상태와 일치시킵니다.
+
+설정이 완료되면 최신 지침 적용 커밋, 실제 양쪽 공개 본문, 봇·채널 확인 결과, 첫 전송 기록을 확인하세요. 토큰·private/·검수 및 전송 영수증은 Git에 올리지 않습니다.
 
 ## 리포트 지침을 수정하려면
 [작성·출력·교정 지침](instructions/README.md)과 [작업 흐름](instructions/WORKFLOW.md)을 참고하세요. 실행 스크립트는 [workflows/](workflows/)에 있습니다. main에 커밋·푸시하면 실행 중인 로컬 Codex가 매시간 및 토요일 작업 직전에 최신 커밋을 확인해 적용합니다. 로컬 수정 충돌은 덮어쓰지 않습니다. 비밀키와 환경별 인증은 이 저장소에 포함하지 않습니다.
