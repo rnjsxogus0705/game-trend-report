@@ -1,0 +1,62 @@
+{
+  "sunlight": {
+    "title": "햇빛 배달부",
+    "labels": [
+      "경로 선택",
+      "패널 복구",
+      "에너지 배분"
+    ],
+    "prompt": "Create a high quality Korean game concept explainer image, landscape 3:2. White/light background, clean consistent professional illustration, navy and cobalt with restrained amber. Exact big Korean title \"햇빛 배달부\". Three clearly connected story panels with exact labels \"경로 선택\", \"패널 복구\", \"에너지 배분\". A friendly small robot on a solar farm grid choosing a route with limited battery; repairing an inactive solar panel; returning energy to a base and choosing carrying capacity or movement efficiency upgrades. Make battery versus safe return tradeoff visually clear. Large readable Hangul only those title and stage labels; no additional tiny text, no numerical metrics, no brand logos. Show what the player sees, chooses and what changes. It is an UNBUILT educational game proposal, not a screenshot of an existing game or evidence of tested fun. Friendly student game development report style, strong clear composition and accurate Korean.",
+    "filename": "idea-sunlight.webp",
+    "generator": "image_gen",
+    "limitation": "미제작 편집 제안. 실제 게임 화면·플레이테스트 결과 아님."
+  },
+  "shadow": {
+    "title": "그림자 우편길",
+    "labels": [
+      "길 관찰",
+      "빛으로 발판",
+      "경로 선택"
+    ],
+    "prompt": "Create a high quality Korean game concept explainer image, landscape 3:2. White/light background, clean consistent professional illustration, navy and cobalt with restrained amber. Exact big Korean title \"그림자 우편길\". Three clearly connected story panels with exact labels \"길 관찰\", \"빛으로 발판\", \"경로 선택\". A night-time mail courier with a limited glowing lantern; shining light reveals a hidden route marking and activates a temporary platform over a gap; choosing which route to take to deliver a letter. Show a finite lantern resource, not combat. Large readable Hangul only those title and stage labels; no additional tiny text, no numerical metrics, no brand logos. Show what the player sees, chooses and what changes. It is an UNBUILT educational game proposal, not a screenshot of an existing game or evidence of tested fun. Friendly student game development report style, strong clear composition and accurate Korean.",
+    "filename": "idea-shadow.webp",
+    "generator": "image_gen",
+    "limitation": "미제작 편집 제안. 실제 게임 화면·플레이테스트 결과 아님."
+  },
+  "memory": {
+    "title": "기억의 진열장",
+    "labels": [
+      "장면 비교",
+      "변화 찾기",
+      "순서 추리"
+    ],
+    "prompt": "Create a high quality Korean game concept explainer image, landscape 3:2. White/light background, clean consistent professional illustration, navy and cobalt with restrained amber. Exact big Korean title \"기억의 진열장\". Three clearly connected story panels with exact labels \"장면 비교\", \"변화 찾기\", \"순서 추리\". Two versions of the same cozy room shown side by side: a small red vase changes shelf position while other furniture remains identical; a player points out the changed object; connecting clues on a small board to reconstruct event order. Observation mystery, not just decoration. Large readable Hangul only those title and stage labels; no additional tiny text, no numerical metrics, no brand logos. Show what the player sees, chooses and what changes. It is an UNBUILT educational game proposal, not a screenshot of an existing game or evidence of tested fun. Friendly student game development report style, strong clear composition and accurate Korean.",
+    "filename": "idea-memory.webp",
+    "generator": "image_gen",
+    "limitation": "미제작 편집 제안. 실제 게임 화면·플레이테스트 결과 아님."
+  },
+  "cloud": {
+    "title": "구름 정거장",
+    "labels": [
+      "수요 확인",
+      "노선 연결",
+      "노선 재설계"
+    ],
+    "prompt": "Create a high quality Korean game concept explainer image, landscape 3:2. White/light background, clean consistent professional illustration, navy and cobalt with restrained amber. Exact big Korean title \"구름 정거장\". Three clearly connected story panels with exact labels \"수요 확인\", \"노선 연결\", \"노선 재설계\". Small floating stations above clouds with waiting passengers and resources; a tiny shuttle travels along a route connecting stations; a station changes position and the player redraws the transport route. Spatial route planning tradeoffs, no quantitative claims. Large readable Hangul only those title and stage labels; no additional tiny text, no numerical metrics, no brand logos. Show what the player sees, chooses and what changes. It is an UNBUILT educational game proposal, not a screenshot of an existing game or evidence of tested fun. Friendly student game development report style, strong clear composition and accurate Korean.",
+    "filename": "idea-cloud.webp",
+    "generator": "image_gen",
+    "limitation": "미제작 편집 제안. 실제 게임 화면·플레이테스트 결과 아님."
+  },
+  "sound": {
+    "title": "소리로 고치는 수리점",
+    "labels": [
+      "소리와 단서",
+      "부품 선택",
+      "수리 결과 확인"
+    ],
+    "prompt": "Create a high quality Korean game concept explainer image, landscape 3:2. White/light background, clean consistent professional illustration, navy and cobalt with restrained amber. Exact big Korean title \"소리로 고치는 수리점\". Three clearly connected story panels with exact labels \"소리와 단서\", \"부품 선택\", \"수리 결과 확인\". A small repair shop with a faulty toy fan, a mechanic compares faulty and normal sounds using simple illustrative sound waves and visible symptom clues; chooses between two repair parts; tests the repaired fan and compares results. Include visual clues beside sound, not sound-only gameplay. Large readable Hangul only those title and stage labels; no additional tiny text, no numerical metrics, no brand logos. Show what the player sees, chooses and what changes. It is an UNBUILT educational game proposal, not a screenshot of an existing game or evidence of tested fun. Friendly student game development report style, strong clear composition and accurate Korean.",
+    "filename": "idea-sound.webp",
+    "generator": "image_gen",
+    "limitation": "미제작 편집 제안. 실제 게임 화면·플레이테스트 결과 아님."
+  }
+}

@@ -12,3 +12,5 @@ test('강조·모바일 대안·단일 표지 제목 누락 차단',()=>{assert.
 test('TOP 10 공개 영역 수와 잘못된 HTML 구조 차단',()=>{assert.throws(()=>check(future.replace('class="top-ten-item"','class="missing-item"')),/three items/);assert.throws(()=>check(future.replace('</dl>','</div>')),/nesting/);});
 test('범주 구분선 제목과 요약 역할도 재현',()=>{assert.throws(()=>check(future.replace('id="part-tools" data-editorial-ui>AI 도구와 기술','id="part-tools" data-editorial-ui>다른 이름')),/divider label/);assert.throws(()=>check(future.replace('<dt>핵심 판단</dt>','<dt>다른 이름</dt>')),/takeaway labels/);});
 test('TOP 10 출처·선정 이유·실행 누락 차단',()=>{assert.throws(()=>check(future.replace('class="top-why"','class="missing-why"')),/visible evidence/);assert.throws(()=>check(future.replace('class="top-source"','class="missing-source"')),/visible evidence/);});
+test('여섯 아이디어의 설명 그림 누락 차단',()=>assert.throws(()=>check(future.replace('class="idea-concept"','class="missing-concept"')),/six ideas/));
+test('스킬 선정 이유·강점·한계 누락 차단',()=>assert.throws(()=>check(future.replace('class="note skill-selection"','class="note missing-selection"')),/Agent Skill needs/));

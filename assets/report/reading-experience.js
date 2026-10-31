@@ -2,7 +2,7 @@
   'use strict';
   const main=document.querySelector('main.content');
   if(!main)return;
-  const groups=[...main.querySelectorAll('.top-ten-more')];
+  const groups=[...main.querySelectorAll('.top-ten-more,.reader-example')];
   function fold(nodes,label){
     if(!nodes.length)return;
     const details=document.createElement('details');

@@ -1,0 +1,6 @@
+{
+  "generator": "image_gen",
+  "prompt": "Create a clear Korean educational infographic for novice game developers, landscape 3:2, white background, navy and cobalt blue with gentle amber. Exact title \"분실물 보관소: 작은 게임으로 배우기\". Four illustrated panels linked by arrows in a 2x2 reading order, generous spacing, very legible Hangul. Exact labels: \"질문 정하기\", \"단서 준비\", \"판단 화면\", \"사람에게 보여주기\". Show: a student wondering which visitor owns a lost bag; a small set of written clues and a bag; a simple fictional choice screen with two large buttons labeled exactly \"돌려주기\" and \"보류\"; two students observing a playtest and taking notes. No other text, no numbers, no brand logos, no charts or statistics. Explain an illustrative learning proposal, not a real shipped product or measured result. Polished consistent editorial illustration with simple readable objects, accurate Korean lettering.",
+  "filename": "learning-case.webp",
+  "scope": "분실물 보관소 학습용 제작 제안; 출시 게임/실측/실제 구현 결과 아님"
+}

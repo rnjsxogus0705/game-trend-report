@@ -10,13 +10,26 @@ const current=await fs.readFile(path.join(root,file),'utf8');
 const audit=JSON.parse(await fs.readFile(path.join(root,'instructions/KOREAN-REVIEW-2026-10-31.json'),'utf8'));
 let approved=previous;
 for(const change of audit.changes.filter(change=>change.file===file)){
- assert.ok(approved.includes(change.before),'교정 원문을 찾을 수 없음: '+change.before);
- approved=approved.replace(change.before,change.after);
+ const unmark=value=>value.replace(/<\/?mark\b[^>]*>/g,'');
+ if(approved.includes(change.before))approved=approved.replace(change.before,change.after);
+ else if(approved.includes(unmark(change.before)))approved=approved.replace(unmark(change.before),unmark(change.after));
+ else assert.ok(current.includes(change.after),'추가된 설명의 교정 결과를 찾을 수 없음: '+change.after);
 }
 
-const bodyText=html=>html.match(/<body\b[^>]*>([\s\S]*?)<\/body>/i)[1]
+function withoutSkillAdditions(html){
+ for(const className of ['skill-selection-map','skill-selection','skill-evidence-figure']){
+  let found;
+  while((found=[...html.matchAll(/<([a-z]+)\b[^>]*class="([^"]*)"[^>]*>/g)].find(match=>match[2].split(/\s+/).includes(className)))){
+   const tail=html.slice(found.index+found[0].length),tags=new RegExp('<(/?)'+found[1]+'\\b[^>]*>','g');let depth=1,end;
+   for(const match of tail.matchAll(tags)){depth+=match[1]?-1:1;if(!depth){end=found.index+found[0].length+match.index+match[0].length;break;}}
+   assert.ok(end,'Unclosed new skill block');html=html.slice(0,found.index)+html.slice(end);
+  }
+ }
+ return html.replace(/<p class="caption"><svg[\s\S]*?<\/svg> 이 호의 선택 기준<\/p>/g,'');
+}
+const bodyText=html=>withoutSkillAdditions(html).match(/<body\b[^>]*>([\s\S]*?)<\/body>/i)[1]
  .replace(/<header\b[^>]*data-editorial-cover[\s\S]*?<\/header>/i,'').replace(/<section\b[^>]*data-editorial-summary[\s\S]*?<\/section>/i,'').replace('<a href="#issue-summary">이번 호 한눈에 보기</a>','')
- .replace(/<details class="mobile-nav">[\s\S]*?<\/details>/i,'').replace(/<figure class="route-visual"[\s\S]*?<\/figure>/g,'').replace(/<ol class="production-route-flow"[\s\S]*?<\/ol>/g,'').replace(/<dl class="route-checks"[\s\S]*?<\/dl>/g,'').replace(/<figure class="chapter-visual"[\s\S]*?<\/figure>/g,'').replace(/<div class="top-evidence">[\s\S]*?<\/div>/g,'').replace(/<p class="top-visual-note"[^>]*>[\s\S]*?<\/p>/g,'').replace(/<aside\b[^>]*>[\s\S]*?<\/aside>/gi,'').replace(/<p\b[^>]*data-editorial-ui[\s\S]*?<\/p>/gi,'').replace(/<summary\b[^>]*data-editorial-ui[\s\S]*?<\/summary>/gi,'')
+ .replace(/<details class="mobile-nav">[\s\S]*?<\/details>/i,'').replace(/<figure class="idea-concept"[\s\S]*?<\/figure>/g,'').replace(/<figure class="route-visual"[\s\S]*?<\/figure>/g,'').replace(/<ol class="production-route-flow"[\s\S]*?<\/ol>/g,'').replace(/<dl class="route-checks"[\s\S]*?<\/dl>/g,'').replace(/<figure class="chapter-visual"[\s\S]*?<\/figure>/g,'').replace(/<div class="top-evidence">[\s\S]*?<\/div>/g,'').replace(/<p class="top-visual-note"[^>]*>[\s\S]*?<\/p>/g,'').replace(/<aside\b[^>]*>[\s\S]*?<\/aside>/gi,'').replace(/<p\b[^>]*data-editorial-ui[\s\S]*?<\/p>/gi,'').replace(/<summary\b[^>]*data-editorial-ui[\s\S]*?<\/summary>/gi,'')
  .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi,'')
  .replace(/<\/?mark\b[^>]*>/g,'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
 assert.deepEqual(bodyText(current).split(/\s+/).sort(),bodyText(approved).split(/\s+/).sort(),'승인된 문장 교정 외 본문 누락·중복이 없어야 합니다.');

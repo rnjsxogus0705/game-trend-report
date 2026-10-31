@@ -20,10 +20,14 @@ const task=await taskSpace(${JSON.stringify('reading-regression-'+Date.now())});
 try {
  const page=task.page('p1');
  await page.goto(${JSON.stringify(url+'#tool-meshy')});
+ await page.waitForFunction(()=>document.querySelectorAll('.international-resource').length===4);
  const result=await page.evaluate(async()=>{
   const groups=[...document.querySelectorAll('.reading-detail')];
   const hasClosedParent=el=>{for(let node=el?.parentElement;node;node=node.parentElement)if(node.tagName==='DETAILS'&&!node.open)return true;return false;};
   const detailLabel=document.querySelector('#github-trending .reading-detail>summary')?.textContent;
+  const skillEvidence={cards:document.querySelectorAll('[data-agent-skill]').length,blocks:document.querySelectorAll('.skill-selection').length,marked:document.querySelectorAll('.skill-selection mark').length,originalDetails:document.querySelectorAll('.skill-background').length,rows:document.querySelectorAll('.skill-selection-map tbody tr').length,toolChartOutsideSkills:!document.getElementById('agent-skills').contains(document.querySelector('.tool-visual'))};
+  const ideaImages=document.querySelectorAll('.idea-concept img').length;
+  const international=document.querySelectorAll('.international-resource').length,readerGuide=!!document.querySelector('.reader-guide .learning-case img');
   const summaryPresent=!!document.querySelector('#issue-summary');
   const highlights=document.querySelectorAll('mark').length;
   const visuals=document.querySelectorAll('.chapter-visual').length,media=document.querySelectorAll('.reading-media-previews figure').length;
@@ -38,7 +42,7 @@ try {
   buttons[1].click();const allClosed=groups.every(group=>!group.open);
   dispatchEvent(new Event('beforeprint'));const printOpen=[...document.querySelectorAll('main details:not(.mobile-nav)')].every(detail=>detail.open);
   dispatchEvent(new Event('afterprint'));const restored=groups.every(group=>!group.open);
-  return {visuals,media,visualsLabeled,detailLabel,summaryPresent,highlights,count:groups.length,directHashOpen,linkedToolOpen,allOpen,allClosed,printOpen,restored,
+  return {skillEvidence,ideaImages,international,readerGuide,visuals,media,visualsLabeled,detailLabel,summaryPresent,highlights,count:groups.length,directHashOpen,linkedToolOpen,allOpen,allClosed,printOpen,restored,
    previews:document.querySelectorAll('.reading-tool-previews img').length,
    benchmarkVisible:!hasClosedParent(document.getElementById('benchmark-chart')),
    simulationVisible:!hasClosedParent(document.getElementById('simulation-chart'))};
@@ -79,6 +83,8 @@ try{
   assert.match(result.detailLabel,/저장소를 내 프로젝트/);
   assert.equal(result.visuals,13);assert.equal(result.media,8);assert.equal(result.visualsLabeled,true);
   assert.equal(result.toolFilters.images,15);assert.equal(result.toolFilters.steps,5);assert.equal(result.toolFilters.routeImage,true);for(const f of result.toolFilters.results){assert.equal(f.cards,f.expected);assert.equal(f.rows,f.expected);assert.equal(f.matrix,f.expected);assert.equal(f.pressed,f.value);}
+  for(const key of ['cards','blocks','marked','originalDetails','rows'])assert.equal(result.skillEvidence[key],9,key);assert.equal(result.skillEvidence.toolChartOutsideSkills,true);
+  assert.equal(result.ideaImages,6);assert.equal(result.international,4);assert.equal(result.readerGuide,true);
   assert.equal(result.summaryPresent,true);
   assert.ok(result.highlights>=3);
   for(const layout of result.layouts){assert.equal(layout.overflow,false,'overflow at '+layout.width);assert.ok(layout.paragraph>=17);assert.equal(layout.chapterBorder,2);for(const image of layout.imageSizes){assert.ok(Math.abs(image.height/image.width-image.naturalRatio)<.02,'TOP image letterboxing at '+layout.width);}for(const ratio of layout.previewRatios)assert.ok(Math.abs(ratio-9/16)<.02,'Preview stretched at '+layout.width);}

@@ -320,3 +320,31 @@ html:has(body.weekly-editorial){scroll-padding-top:0}
 .weekly-editorial :is(.tool-choice-flow li,.tool-workflow li){position:relative}
 .weekly-editorial :is(.tool-choice-flow li,.tool-workflow li):not(:last-child)::after{content:'→';position:absolute;right:-19px;top:22px;color:#2455cb;font-weight:700}
 @media(max-width:700px){.weekly-editorial :is(.tool-choice-flow,.tool-workflow ol){grid-template-columns:1fr}.weekly-editorial :is(.tool-choice-flow li,.tool-workflow li):not(:last-child)::after{content:'↓';right:auto;left:24px;top:auto;bottom:-24px}}
+.weekly-editorial .reader-guide{padding:28px 0;border-bottom:2px solid #aebccd;margin-bottom:24px;scroll-margin-top:124px}
+.weekly-editorial .reader-guide h2{font-size:25px;margin-bottom:16px}.weekly-editorial .reader-guide h3{font-size:22px;margin:28px 0 16px}
+.weekly-editorial .reader-guide>p{font-size:17px;line-height:1.85}.weekly-editorial .learning-stages{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;list-style:none;padding:0;margin:24px 0}
+.weekly-editorial .learning-stages li{position:relative;padding:16px;background:#edf2fc;border-radius:8px}.weekly-editorial .learning-stages li:not(:last-child):after{content:'→';position:absolute;right:-22px;top:20px;color:#2455cb}
+.weekly-editorial .learning-stages strong,.weekly-editorial .learning-stages span{display:block}.weekly-editorial .learning-stages span{font-size:15px;line-height:1.8;margin-top:6px}
+.weekly-editorial .reader-example{border:1px solid #c6d0df;padding:0 20px;border-radius:8px}.weekly-editorial .reader-example>summary{padding:18px 0;font-size:16px;font-weight:700;color:#25436b}
+.weekly-editorial .learning-case{margin:20px 0;background:#f8faff;border:1px solid #dce2e9;border-radius:10px;overflow:hidden}.weekly-editorial .learning-case img{display:block;width:100%;height:auto;aspect-ratio:3/2}.weekly-editorial .learning-case figcaption{padding:14px 18px;font-size:14px}
+@media(max-width:600px){.weekly-editorial .reader-guide h2{font-size:23px}.weekly-editorial .learning-stages{grid-template-columns:1fr;gap:18px}.weekly-editorial .learning-stages li:not(:last-child):after{content:'↓';top:auto;bottom:-24px;left:24px;right:auto}}
+@media print{.weekly-editorial .reader-example{border:0;padding:0}.weekly-editorial .reader-example>summary{display:none}}
+.weekly-editorial .idea-concept{margin:20px 0 28px;background:#f8faff;border:1px solid #dce2e9;border-radius:10px;overflow:hidden}
+.weekly-editorial .idea-concept img{display:block;width:100%;height:auto;aspect-ratio:3/2}
+.weekly-editorial .idea-concept figcaption{padding:18px 20px;line-height:1.85}
+.weekly-editorial .idea-concept figcaption strong{display:block;font-size:16px;color:#223046;font-weight:600}
+.weekly-editorial .idea-concept figcaption span{display:block;font-size:14px;color:#2455cb;margin-top:12px;font-weight:600}
+.weekly-editorial .idea-concept figcaption small{display:block;font-size:12px;margin-top:10px;color:#536174}
+@media(max-width:600px){.weekly-editorial .idea-concept figcaption{padding:16px}.weekly-editorial .idea-concept figcaption strong{font-size:15px}}
+@media print{.weekly-editorial .idea-concept{break-inside:avoid}.weekly-editorial .idea-concept img{max-height:280px;object-fit:contain}}
+.weekly-editorial #agent-skills .skill-selection{background:#f2f6fe;border:1px solid #dce2e9;margin:18px 0 24px;padding:20px}
+.weekly-editorial #agent-skills .skill-selection p{font-size:16px;line-height:1.85;margin:12px 0}.weekly-editorial #agent-skills .skill-selection p:first-child{margin-top:0}
+.weekly-editorial #agent-skills .skill-selection p>strong{display:block;color:#193e96;font-size:14px;margin-bottom:4px}
+.weekly-editorial #agent-skills .skill-selection p:nth-child(3){background:#fff3d5;color:#704708;padding:12px;border-radius:6px}
+.weekly-editorial #agent-skills .skill-selection p:nth-child(3)>strong{color:#704708}
+.weekly-editorial #agent-skills .skill-selection .caption{font-size:13px;border-top:1px solid #dce2e9;padding-top:12px}
+.weekly-editorial .skill-evidence-figure{margin:20px 0;background:#fff;border:1px solid #dce2e9;border-radius:8px;overflow:hidden}
+.weekly-editorial .skill-evidence-figure img{display:block;width:100%;height:auto;object-fit:contain}
+.weekly-editorial .skill-evidence-figure figcaption{padding:14px 18px;font-size:14px;line-height:1.8}
+.weekly-editorial .skill-background{border-top:1px solid #dce2e9;margin-top:20px}.weekly-editorial .skill-background>summary{font-size:14px;color:#2455cb;font-weight:600;padding:14px 0}
+.weekly-editorial .skill-selection-map table{min-width:780px}.weekly-editorial #agent-skills [data-agent-skill]>h4{font-size:22px;overflow-wrap:anywhere}
