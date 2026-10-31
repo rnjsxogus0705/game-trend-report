@@ -1446,6 +1446,18 @@
       "before": "내 게임의 규칙 하나를<br>프로토타입으로 확인해요",
       "after": "핵심 규칙을<br>프로토타입으로 테스트해요",
       "reason": "프로토타입 장의 목적을 짧게 밝히고 모바일 상세 제목의 줄바꿈을 줄임"
+    },
+    {
+      "file": "reports/weekly-2026-10-31.html",
+      "before": "인기 게임의 반복 행동과<br>재미 요소를 분석해요",
+      "after": "인기 게임의 플레이 방식과<br>재미 요소",
+      "reason": "사용자가 지적한 모호한 표현을 비교 대상과 분석 내용이 드러나는 제목으로 보정"
+    },
+    {
+      "file": "assets/report/tool-choice.js",
+      "before": "도구를 고르는 비교 지도",
+      "after": "도구별 기능과 가격 비교",
+      "reason": "사용자가 지적한 모호한 표현을 비교 대상과 분석 내용이 드러나는 제목으로 보정"
     }
   ],
   "limitations": [
@@ -2909,10 +2921,22 @@
         "before": "내 게임의 규칙 하나를<br>프로토타입으로 확인해요",
         "after": "핵심 규칙을<br>프로토타입으로 테스트해요",
         "reason": "프로토타입 장의 목적을 짧게 밝히고 모바일 상세 제목의 줄바꿈을 줄임"
+      },
+      {
+        "path": "reports/weekly-2026-10-31.html",
+        "before": "인기 게임의 반복 행동과<br>재미 요소를 분석해요",
+        "after": "인기 게임의 플레이 방식과<br>재미 요소",
+        "reason": "사용자가 지적한 모호한 표현을 비교 대상과 분석 내용이 드러나는 제목으로 보정"
+      },
+      {
+        "path": "assets/report/tool-choice.js",
+        "before": "도구를 고르는 비교 지도",
+        "after": "도구별 기능과 가격 비교",
+        "reason": "사용자가 지적한 모호한 표현을 비교 대상과 분석 내용이 드러나는 제목으로 보정"
       }
     ],
     "fileHashes": {
-      "weekly-2026-10-31.html": "b21cb42408a2279579231181c1d06e5420a5bcc99d2e1174e6bb50895f6a9900",
+      "weekly-2026-10-31.html": "576339efc7bcdd5928250321f44faf8a862983704283c3f56f01c50262755205",
       "weekly-2026-10-31-ai-plan-01.md": "55aae6d568301fdf18438e57430969df932b05f4e191824a44d535469fdcbd1b",
       "weekly-2026-10-31-ai-plan-02.md": "a32bba89f4da73b596bec9a8055d798aaacb5b23c60740d047f73f6885cbd3b7",
       "weekly-2026-10-31-ai-plan-03.md": "52952992fc41f3652692c3a01c5cdfee45a104d3269f44387bfe8cba00651d18",
@@ -2976,7 +3000,8 @@
   "additionalFileHashes": {
     "assets/report/research/international-resources-2026-10-31.json": "3233f8b9d69dd4b100b084ec6fb032497b9f4ec75ce0dde0ff37a76e7fab9e57",
     "assets/report/research/agent-skill-selection-2026-10-31.json": "0c724874284a49150c80ec2080d6bde2c401b9c3bae2a2476e3c929bc76f4391",
-    "assets/report/international-resources-2026-10-31.js": "4ce5713400aa8c504bbd32dcb04da410ca7a3c2368981fdcf57d3e06934ecf60"
+    "assets/report/international-resources-2026-10-31.js": "4ce5713400aa8c504bbd32dcb04da410ca7a3c2368981fdcf57d3e06934ecf60",
+    "assets/report/tool-choice.js": "7f07eded8a09ff7301705f865e066f9fd7601b1f274d6a38bb277b2ad25564cd"
   },
   "skillSelectionReview": {
     "reviewer": "/root/final_review",
@@ -3026,5 +3051,11 @@
     "image": "prototype-guide.webp 제목을 image_gen으로 수정하고 한글 대조",
     "verification": "복사9개 정확한 문자열과 실패 안내,320/390/768/1440페이지 넘침 없음 및 최소12px,기존 문장/링크/Markdown 동기화,차후 호 프롬프트 누락 발행 차단",
     "limits": "AI 전체 제작은 제작자 주장 범위이며 무인100%를 독립 검증하지 않음.98%는 커밋 공동작성 비율.영상전체시청·실제 경기·제작재현·새PC예약실행 미실시"
+  },
+  "tableColumnReview": {
+    "scope": "설명이 있는 2열 표의 항목32%·설명68%, 오류 개수 표의 항목72% 유지",
+    "method": "320/390/768/1440px 브라우저에서 기록할 내용 열이60% 이상인지 회귀 검사. 수정 전320px실패 재현.",
+    "reviewer": "/root/practice_final_review",
+    "disposition": "approved"
   }
 }
