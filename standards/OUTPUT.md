@@ -47,7 +47,7 @@ Toss 스타일·Pretendard·반응형 목차·읽기 요약·차트 수치표·�
 3. 구조: validate-issue.mjs로 필수 목차·중복 ID·링크·로컬 자산·검수 기록을 검사한다. 이 검사는 사실의 진위나 글의 품질 자체를 보장하지 않는다.
 4. 화면: ego-browser로 320/390/768/1440px을 확인한다. 표 안의 가로 스크롤은 허용하고 페이지 전체 넘침은 실패다. 글꼴·차트·표·목차·공유 열기/닫기·복사·지원하지 않는 기기의 대안을 확인한다. 새 데이터나 레이아웃을 바꾼 부분을 중심으로 검사한다.
 5. 배포: Pages와 Vercel에 같은 보고서 본문과 자산이 반영됐는지 확인한다. 두 주소를 배포 기록에 남기고 Discord에는 Pages 본문 링크와 검증된 Vercel 보조 링크를 보낸다.
-6. 토요일 07시 전송은 완성된 당일 호만 수행한다. 실패하면 이전 호나 빈 페이지를 보내지 않고 원인을 알린다. .sent.json으로 중복 발송을 막는다.
+6. 토요일 08시 전송은 완성된 당일 호만 수행한다. 실패하면 이전 호나 빈 페이지를 보내지 않고 원인을 알린다. .sent.json으로 중복 발송을 막는다.
 
 ## 검수 기록 형식
 최종 HTML 옆 .content-review.json: schemaVersion=2, reportDate=YYYY-MM-DD, sha256=최종 HTML 해시, reviewedBy=Codex, sections=[위 11개 ID], checks={sourcesVerified,releaseStatesChecked,aiScopeSeparated,hotnessEvidenceChecked,jobsSampleDisclosed,previousIssueCompared,techniqueReproducibilityReviewed,mobileChecked,shareChecked}의 실제 검사 결과. 각 coverage에는 category, status(updated/no_material_change/unverified), sourceUrls, limitation을 기록한다. 조사하지 않은 항목을 updated로 표시하지 않는다. 부족한 근거는 본문에서도 드러나야 한다.
