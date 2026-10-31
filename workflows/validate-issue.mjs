@@ -12,6 +12,16 @@ const ordered=grouped?['issue-summary','top10','game-ai-tools','github-trending'
 const priority=ordered.map(id=>html.indexOf('id="'+id+'"'));if(priority.some(p=>p<0)||priority.some((p,i)=>i>0&&p<priority[i-1]))throw Error('Report sections do not follow the declared category order');
 if(review.reportDate>='2026-11-07'){
  validateWeeklyPresentation(html,{reportDate:review.reportDate});
+ const quality=review.qualityReview;
+ if(!quality||!/^([a-f0-9]{40})$/i.test(quality.instructionRevision||'')||typeof quality.editor!=='string'||!quality.editor.trim()||typeof quality.reviewer!=='string'||!quality.reviewer.trim()||quality.editor.trim()===quality.reviewer.trim())throw Error('Missing quality review instruction revision or independent reviewer');
+ if(!Array.isArray(quality.blockingFindings)||quality.blockingFindings.length)throw Error('Quality review has unresolved blocking findings');
+ const criteria=quality.criteria;
+ if(!Array.isArray(criteria)||new Set(criteria.map(item=>item?.id)).size!==criteria.length)throw Error('Quality review criteria must be unique');
+ for(const id of ['research','overseas','selection','practice','visuals','media','layout','korean','files']){
+  const item=criteria.find(item=>item?.id===id);
+  if(!item||!['passed','limited'].includes(item.status)||typeof item.evidence!=='string'||!item.evidence.trim()||(item.status==='limited'&&(typeof item.limitation!=='string'||!item.limitation.trim())))throw Error('Missing quality review evidence or limitation: '+id);
+ }
+
 }
 for(const kind of ['article','video','post'])if(!html.includes('data-kind="'+kind+'"'))throw Error('Missing resource category: '+kind);
 if(review.schemaVersion!==2||review.sha256!==crypto.createHash('sha256').update(html).digest('hex'))throw Error('Content review does not match this report');

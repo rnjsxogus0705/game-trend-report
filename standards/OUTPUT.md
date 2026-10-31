@@ -50,12 +50,12 @@ Toss 스타일·Pretendard·반응형 목차·읽기 요약·차트 수치표·�
 6. 토요일 08시 전송은 완성된 당일 호만 수행한다. 실패하면 이전 호나 빈 페이지를 보내지 않고 원인을 알린다. .sent.json으로 중복 발송을 막는다.
 
 ## 검수 기록 형식
-최종 HTML 옆 .content-review.json: schemaVersion=2, reportDate=YYYY-MM-DD, sha256=최종 HTML 해시, reviewedBy=Codex, sections=[위 11개 ID], checks={sourcesVerified,releaseStatesChecked,aiScopeSeparated,hotnessEvidenceChecked,jobsSampleDisclosed,previousIssueCompared,techniqueReproducibilityReviewed,mobileChecked,shareChecked}의 실제 검사 결과. 각 coverage에는 category, status(updated/no_material_change/unverified), sourceUrls, limitation을 기록한다. 조사하지 않은 항목을 updated로 표시하지 않는다. 부족한 근거는 본문에서도 드러나야 한다.
+최종 HTML 옆 .content-review.json: schemaVersion=2, reportDate=YYYY-MM-DD, sha256=최종 HTML 해시, reviewedBy=Codex, sections=[해당 호의 모든 필수 섹션 ID와 agent-skills], checks={sourcesVerified,releaseStatesChecked,aiScopeSeparated,hotnessEvidenceChecked,jobsSampleDisclosed,previousIssueCompared,techniqueReproducibilityReviewed,mobileChecked,shareChecked}의 실제 검사 결과. 각 coverage에는 category, status(updated/no_material_change/unverified), sourceUrls, limitation을 기록한다. 조사하지 않은 항목을 updated로 표시하지 않는다. 부족한 근거는 본문에서도 드러나야 한다.
 
 공유 UI에는 디스코드와 카카오톡 전용 버튼을 유지한다. 디스코드는 제목·URL 복사 후 사용자가 대화를 선택해 붙여 넣는다. 카카오톡은 현재 기기 공유 또는 복사 방식이다. Kakao JavaScript 키와 등록 도메인이 없으므로 공식 공유 카드가 구현됐다고 설명하지 않는다.
 
 ## TOP 10과 한국어 참고 자료 (현재 호부터 필수)
-- 본문 최상단에 id=top10을 둔다. 학생에게 미치는 영향·시급성·실행 가능성으로 고른 서로 다른 정보 10개를 순서대로 배치한다. 각 항목은 순번, 분야, 한 문장 핵심, 알아야 할 이유 또는 할 일, 본문이나 원문 직접 링크를 갖는다. 이는 인기 순위가 아닌 편집 우선순위다. 새 소식이 적으면 배경 학습·실행 과제로 명확히 구분하며 10개를 채우기 위해 사실이나 사건을 만들지 않는다.
+- 커버와 상단 요약 뒤에 id=top10을 둔다. 학생에게 미치는 영향·시급성·실행 가능성으로 고른 서로 다른 정보 10개를 순서대로 배치한다. 각 항목은 순번, 분야, 한 문장 핵심, 알아야 할 이유 또는 할 일, 본문이나 원문 직접 링크를 갖는다. 이는 인기 순위가 아닌 편집 우선순위다. 새 소식이 적으면 배경 학습·실행 과제로 명확히 구분하며 10개를 채우기 위해 사실이나 사건을 만들지 않는다.
 - id=reading에 한국어 기사, 유튜브, 포스팅·리포트를 나눠 제공한다. 목표는 기사 2~3개, 영상 2개, 포스팅·리포트 2개다. 원문 품질을 우선하고 부족하면 실제 수와 조사 한계를 공개한다. 카드의 data-kind는 article/video/post를 사용한다.
 - 각 자료는 제목, 매체·채널·작성자, 게시일(미확인이면 표시), 확인일, 한국어 여부·자막 확인 범위, 선정 이유, 볼 포인트, 관련 직무, 개별 콘텐츠 직접 링크를 포함한다. 검색 결과 페이지나 채널 홈을 개별 콘텐츠 링크 대신 쓰지 않는다.
 - 최근 7일 자료를 최신 소식으로 우선하고, 더 오래된 자료는 배경 학습으로 표시한다. 기사 보도·공식 발표·개인 경험을 구분하고 같은 보도자료 재전송이나 보고서 요약·원문을 별개 조사로 중복 집계하지 않는다. 두 종류의 날짜가 다르면 사건일과 게시일을 분리한다.
@@ -64,7 +64,7 @@ Toss 스타일·Pretendard·반응형 목차·읽기 요약·차트 수치표·�
 - 매주 새 조사로 TOP 10과 추천 이유를 갱신한다. 계속 추천하는 기존 자료는 그 이유와 배경 자료 표시를 유지한다. 디스코드 요약에는 TOP 10 중 중요한 내용 일부와 GitHub Pages·Vercel 링크를 함께 안내한다. 토요일 오전 7시 조사 시작·오전 8시 전송 일정은 유지한다.
 
 ## AI 기획·GitHub·게임 AI 스킬/도구 (매주 필수 고정 섹션)
-기존 목차를 유지하되 ai-planning을 일반 AI 뒤에, github-trending과 game-ai-tools를 제작 기법 뒤에 배치한다. 목차·TOP 10·한국어 참고 자료에서도 중요한 새 변화를 해당 본문으로 연결한다. 새 소식이 없으면 섹션을 없애거나 과거 자료를 새 출시로 포장하지 않고 조사 범위와 변화 없음/미확인을 적는다.
+본문과 목차는 READING-AND-SCHEDULER.md의 네 범주와 세부 순서를 따른다. 목차·TOP 10·한국어 참고 자료에서도 중요한 새 변화를 해당 본문으로 연결한다. 새 소식이 없으면 섹션을 없애거나 과거 자료를 새 출시로 포장하지 않고 조사 범위와 변화 없음/미확인을 적는다.
 
 ### ai-planning: AI 게임 기획과 기획 방법·TIP
 - 최신 공식 글·개발자 발표·개발 과정·원문 인터뷰를 조사해 AI를 기획의 어느 단계에서 쓰는지 기록한다. 타깃/목표 경험/핵심 루프/시스템/경제·밸런스/레벨·콘텐츠/튜토리얼·UX/테스트·지표/시장 포지셔닝·범위를 차례로 깊게 다룬다. 시장 변화→기획 판단→작게 시험할 과제로 이어져야 한다.
@@ -106,7 +106,7 @@ reverse의 표시 이름은 '기존 게임의 재미 분석', prototype은 '플�
 48시간 완성이나 고정 작업시간을 의무처럼 쓰지 않는다. 종이 프로토타입과 더 작은 범위를 허용하고 실제로 한 단계만 체크하도록 안내한다. 예시 점수·사건 수·조회 횟수는 학습용 제안이며 검증된 균형·업계 표준이 아니다.
 
 ## 현재 최우선 배치 지침
-본문과 목차는 TOP 10(top10) → GitHub 상위 트렌딩(github-trending) → 게임 AI 스킬·도구 소식(game-ai-tools) → AI 중심 게임 제작 특집(ai-only-lab) → 게임 영상·분석(games) → 아이디어 3개(game-ideas) → 참고 자료(reading) → 나머지 분석 순서로 배치한다. 이 순서는 이전의 배치 지침보다 우선한다. 조사·검수·토요일 07시 시작/08시 전송 규칙은 유지한다.
+본문과 목차는 READING-AND-SCHEDULER.md의 최신 네 범주 순서를 따른다. 조사·검수·토요일 07시 시작/08시 전송 규칙은 유지한다.
 
 ## AI 중심 제작·100% AI 주장 추적 (매주 필수)
 고정 섹션 id=ai-only-lab을 game-ai-tools 바로 뒤, games 앞에 둔다. TOP 10 → GitHub 상위 트렌딩 → 게임 AI 스킬·도구 소식 → AI 중심 게임 제작·출시 특집 → 게임 분석 → 아이디어 3개 → 참고 자료 순서로 목차와 본문을 맞춘다.
@@ -161,3 +161,6 @@ game-ai-tools는 Agent Skill 소개만으로 채우지 않고 실제 AI 게임 �
 기존 게임 분석·AI 기획·프로토타입·데이터 검사·확률 실습·도구/스킬 선택·AI 제작 계획에는 해당 내용으로 연습할 프롬프트를 제공한다. 바꿀 입력, 받을 결과, 직접 확인할 기준, 후속 질문과 복사 버튼·선택 가능한 원문을 함께 둔다. AI의 답변을 실제 테스트 결과로 기록하지 않는다.
 
 해외 자료는 최근 30일의 AI 게임 제작 사례를 우선 조사하고 부족하면 90일까지 확대한 범위를 밝힌다. 오래된 일반 강연으로 채우지 않는다. 전체 AI 제작 주장과 코드·에셋·커밋 등 공개된 범위를 구분하고 사람이 한 일, 선정 이유, 핵심 내용, 출처·공개일, 관심 지표의 확인일과 한계를 함께 적는다. 100%를 검증하지 못했으면 그 사실을 표시한다. 상세 기준은 instructions/REPORT-OUTPUT-CONTRACT.md와 READING-AND-SCHEDULER.md를 따른다.
+
+## 다음 호 최종 품질 기록
+2026-11-07부터 content-review의 qualityReview에 적용 지침 커밋, 서로 다른 편집자·검수자, research/overseas/selection/practice/visuals/media/layout/korean/files의 실제 확인 근거와 한계, 미해결 문제를 기록한다. 미해결 문제가 없고 전체 검증을 통과한 호만 발행·전송한다. 정확한 필드와 최신 기준은 [출력 계약](../instructions/REPORT-OUTPUT-CONTRACT.md), [품질 검수 6단계와 예약 전문](../instructions/READING-AND-SCHEDULER.md)을 따른다. 자동 검사는 원문의 진위나 한국어 자연스러움에 대한 실제 독립 검수를 대신하지 않는다.

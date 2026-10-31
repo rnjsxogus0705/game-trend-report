@@ -6,7 +6,7 @@
 - REPORT-OUTPUT-CONTRACT.md: 고정 섹션·근거·출력·검수 조건
 - READING-AND-SCHEDULER.md: 누적 아카이브·읽기·비교 시각 자료와 새 PC 예약 문구
 - PORTABILITY-AUDIT.md: 새 PC 재현 항목과 수동 검증 범위
-- KOREAN-EDITORIAL-POLICY.md: 한국어 3단계 교정
+- KOREAN-EDITORIAL-POLICY.md: 한국어 교정·전체 제목/도입문 이해도·독립 최종 검수
 - DESIGN.md: Toss 스타일·Pretendard·시각 규칙
 - CONTENT-AUDIT-2026-10-31.md: 초기 검토 기록(현재 규칙보다 우선하지 않음)
 - WORKFLOW.md: 조사부터 배포·전송·지침 동기화까지
@@ -18,3 +18,5 @@
 
 ## 디자인 원본·참고·폰트 전체 묶음
 [디자인 재현 가이드](DESIGN-REFERENCE-GUIDE.md)와 [전체 자산 목록](DESIGN-ASSETS.json)을 함께 확인하세요. 첨부 toss.md 원본, Google DESIGN.md 규격·도구 문서·라이선스, Pretendard 1.3.9 웹폰트 9종과 첨부 OTF 원본 9종을 보존했습니다.
+
+매주 제작은 READING-AND-SCHEDULER.md의 실습 DOM 계약·품질 검수 6단계를 따릅니다. 최신 해외 사례·프롬프트·한국어·시각 자료·화면·첨부를 9개 기준으로 확인하고 REPORT-OUTPUT-CONTRACT.md의 qualityReview와 실제 검수 기록을 남깁니다. 기준을 설명한 문서와 실제 발행 검증기의 조건이 다르면 둘을 맞춘 뒤 진행합니다.

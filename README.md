@@ -8,6 +8,14 @@
 
 공개 리포트, 디자인 자산, 제작 지침과 운영 스크립트를 보관합니다. 인증 토큰·Windows 사용자별 봇 인증 파일·비공개 검수/전송 기록은 포함하지 않습니다.
 
+## 최신 주간 품질 기준 재현
+
+현재 구성 참고본은 [2026-10-31 주간호](reports/weekly-2026-10-31.html)이며, 다음 호의 기사·가격·순위·게임 데이터를 복사할 템플릿은 아닙니다. 다른 PC에서도 최신 지침을 동기화하고 [품질 검수 6단계와 예약 전문](instructions/READING-AND-SCHEDULER.md), [출력 계약의 qualityReview](instructions/REPORT-OUTPUT-CONTRACT.md)를 따릅니다.
+
+7영역의 실습 프롬프트(현재 참고본9개), 최근 해외 AI 제작 사례의30일/90일 기준과 AI 범위 구분, 전체 제목·도입문 및 본문 독립 한국어 검수, 생성 그림·공식 미디어·도표, 4범주·상단 요약·하이라이트·최소 글자·반응형/복사 검사를 함께 적용합니다. 2026-11-07 이후에는 적용 지침 커밋, 서로 다른 편집자·검수자, 9개 기준별 실제 근거·한계와 미해결 문제를 content-review에 남겨야 발행·전송 검증을 통과합니다. 자동 검사는 형식과 파일 일치를 확인하므로 실제 원문 조사·문맥 검수·화면 검사를 대신하지 않습니다.
+
+새 PC는 스킬 설치뿐 아니라 image_gen 사용 가능 여부도 확인합니다. 한국어 생성 그림은 실제로 열어 읽고 오류를 보정합니다. 사용할 수 없으면 정확한 HTML 설명과 누락 범위를 기록하며, 별도 유료 API를 자동 결제하는 방식으로 대체하지 않습니다. Codex 예약은 저장소에 포함되지 않으므로 아래 초기 설정 후 최신 전문으로 다시 등록합니다. 이번 점검은 기존 예약을 새로 만들거나 메시지를 전송하지 않습니다.
+
 ## 다른 컴퓨터에서 처음 설정하기
 
 현재 운영 스크립트는 **Windows용이며, 아래의 동일 경로와 기존 GitHub·Vercel·Discord 대상**을 사용합니다. 저장소를 클론하는 것만으로 AI 조사·배포·봇 인증·예약 작업이 설치되지는 않습니다. 같은 계정 또는 해당 저장소·프로젝트·서버에 권한이 있는 계정으로 설정하세요.
@@ -278,7 +286,7 @@ YYYY-MM-DD는 실제 발행일로 바꿉니다. publish-report는 검수 → 원
 저장소 루트에서 실행합니다. 브라우저 상호작용 검사를 제외한 검사는 Node.js만 사용하고, 읽기 상호작용 검사는 설치·연결된 ego-browser가 필요합니다.
 
 ```sh
-node --test workflows/test-build-site.mjs workflows/test-language-review.mjs workflows/test-weekly-presentation.mjs workflows/test-portable-issue.mjs
+node --test workflows/test-build-site.mjs workflows/test-language-review.mjs workflows/test-weekly-presentation.mjs workflows/test-portable-issue.mjs workflows/test-learning-sections.mjs
 node workflows/test-weekly-editorial.mjs
 node workflows/test-public-assets.mjs
 node workflows/test-tool-visuals.mjs
