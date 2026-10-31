@@ -4,8 +4,10 @@ import {fileURLToPath, pathToFileURL} from 'node:url';
 
 const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const reportPattern = /^(weekly-\d{4}-\d{2}-\d{2}|monthly-\d{4}-\d{2})\.html$/;
+// Explicitly withdrawn issues must not return from an older scheduler's source folder.
+const withdrawnReports = new Set(['monthly-2026-10.html']);
 export function renderIndex(issues) {
- const reports = [...issues].sort((a,b) => b.date.localeCompare(a.date) || a.name.localeCompare(b.name));
+ const reports = issues.filter(issue=>!withdrawnReports.has(issue.name)).sort((a,b) => b.date.localeCompare(a.date) || a.name.localeCompare(b.name));
  const latest = reports.find(r => r.type === 'weekly');
  const months = [...new Set(reports.map(r => r.date.slice(0,7)))];
  const years = [...new Set(reports.map(r => r.date.slice(0,4)))];
@@ -26,9 +28,10 @@ export function renderIndex(issues) {
 export async function buildSite({site, source}) {
  const out=path.join(site,'reports');
  await fs.mkdir(out,{recursive:true});
+ for(const name of withdrawnReports)await fs.rm(path.join(out,name),{force:true});
  const markdownPattern=/^weekly-\d{4}-\d{2}-\d{2}(?:-[A-Za-z0-9_-]+)?\.md$/;
  const publishedMarkdown=new Set();
- const reportNames=new Set([...(await fs.readdir(source)),...(await fs.readdir(out))].filter(name=>reportPattern.test(name)));
+ const reportNames=new Set([...(await fs.readdir(source)),...(await fs.readdir(out))].filter(name=>reportPattern.test(name)&&!withdrawnReports.has(name)));
  for(const name of reportNames){
   let html;try{html=await fs.readFile(path.join(source,name),'utf8');}catch(error){if(error.code!=='ENOENT')throw error;html=await fs.readFile(path.join(out,name),'utf8');}
   for(const [,asset] of html.matchAll(/href=["'](weekly-[^"'/?#]+\.md)["']/g))if(markdownPattern.test(asset))publishedMarkdown.add(asset);
@@ -42,7 +45,7 @@ export async function buildSite({site, source}) {
    if(path.resolve(source)!==path.resolve(out))await fs.writeFile(path.join(out,name),text,'utf8');
    continue;
   }
-  if(!reportPattern.test(name))continue;
+  if(!reportPattern.test(name)||withdrawnReports.has(name))continue;
   const html=await fs.readFile(path.join(source,name),'utf8');
   const bodyText=html.replace(/<style[\s\S]*?<\/style>/gi,'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
   if(bodyText.length<3000||(html.match(/<h2\b/gi)||[]).length<5||(html.match(/href="https:\/\//g)||[]).length<5||!html.includes('확인일'))throw Error('Report lacks substantive research, source links, sections or retrieval date: '+name);

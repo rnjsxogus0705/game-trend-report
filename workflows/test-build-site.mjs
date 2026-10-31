@@ -27,7 +27,7 @@ test('동기화 환경의 과거 호 보존과 콘텐츠 검증',async()=>{
   await fs.mkdir(source);await fs.mkdir(path.join(site,'reports'),{recursive:true});
   const content='<html lang="ko"><title>검증된 보고서</title><meta name="description" content="확인한 근거"><body>'+ '<h2>분석</h2>'.repeat(5)+'<a href="https://example.com">원문</a>'.repeat(5)+'확인일 '+'조사 결과 '.repeat(1000)+'</body></html>';
   await fs.writeFile(path.join(source,'weekly-2026-10-31.html'),content);
-  await fs.writeFile(path.join(site,'reports','monthly-2026-10.html'),content);
+  await fs.writeFile(path.join(site,'reports','monthly-2026-09.html'),content);
   await buildSite({source,site});
   assert.equal(await fs.readFile(path.join(site,'reports','weekly-2026-10-31.html'),'utf8'),content);
   assert.match(await fs.readFile(path.join(site,'index.html'),'utf8'),/전체 2개 리포트/);
@@ -46,4 +46,12 @@ test('추가 Markdown은 명시한 첨부만 게시하고 미연결 문서는 �
   await fs.writeFile(path.join(source,'weekly-2026-11-07-private-notes.md'),body);
   await assert.rejects(buildSite({site,source}),/explicitly linked/);
  }finally{await fs.rm(base,{recursive:true,force:true});}
+});
+
+test('삭제한 월간호는 이전 PC의 원본·출력에 남아 있어도 복원하지 않음',async t=>{
+ const base=await fs.mkdtemp(path.join(os.tmpdir(),'gtr-withdrawn-'));t.after(()=>fs.rm(base,{recursive:true,force:true}));
+ const source=path.join(base,'source'),site=path.join(base,'site');await fs.mkdir(source);await fs.mkdir(path.join(site,'reports'),{recursive:true});
+ const name='monthly-2026-10.html';await fs.writeFile(path.join(source,name),'withdrawn');await fs.writeFile(path.join(site,'reports',name),'withdrawn');
+ await buildSite({source,site});await assert.rejects(fs.access(path.join(site,'reports',name)),{code:'ENOENT'});
+ assert.ok(!(await fs.readFile(path.join(site,'index.html'),'utf8')).includes(name));assert.ok(!renderIndex([issue(name)]).includes(name));
 });

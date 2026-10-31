@@ -37,3 +37,6 @@ READING-AND-SCHEDULER.md의 품질 검수 6단계와 실습 DOM 계약을 따른
 
 ## 주간 제작 하네스
 전체 새 호 작성은 site/.agents/skills/weekly-game-report/SKILL.md의 $weekly-game-report를 진입점으로 사용한다. 명세가 preflight→research→compose→editorial-review→verify→handoff→final-review를 정한다. 기존 지침은 품질 기준이며 하네스는 역할·단계·필수 산출물·수정상한·hash 결속을 관리한다. 독립 검수와 최종 게이트가 통과한 ready 묶음을 운영 reports로 안전하게 인계한 뒤에만 기존publish/dispatch를 이어간다. 단계 실패·stale·입력부족이면 하위 단계는 실행하지 않는다. 기록은 _workspace에 비공개로 보존한다. 생성과 실제배포/전송의 완료상태를 섞지 않는다.
+
+## 철회한 발행물
+사용자 요청으로 monthly-2026-10.html은 공개 목록과 파일에서 제거했다. build-site.mjs의 withdrawnReports가 이 파일을 이전 PC 원본에서 다시 복원하지 않게 한다. 다른 과거 호는 기존 보존 규칙을 따른다.
