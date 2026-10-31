@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "files": [
+    {
+      "repo": "instructions/REPORT-GUIDE.md",
+      "local": "REPORT-GUIDE.md"
+    },
+    {
+      "repo": "instructions/REPORT-OUTPUT-CONTRACT.md",
+      "local": "REPORT-OUTPUT-CONTRACT.md"
+    },
+    {
+      "repo": "instructions/KOREAN-EDITORIAL-POLICY.md",
+      "local": "KOREAN-EDITORIAL-POLICY.md"
+    },
+    {
+      "repo": "instructions/CONTENT-AUDIT-2026-10-31.md",
+      "local": "CONTENT-AUDIT-2026-10-31.md"
+    },
+    {
+      "repo": "instructions/DESIGN.md",
+      "local": "redesign/DESIGN.md"
+    },
+    {
+      "repo": "workflows/build-site.mjs",
+      "local": "build-site.mjs"
+    },
+    {
+      "repo": "workflows/validate-issue.mjs",
+      "local": "validate-issue.mjs"
+    },
+    {
+      "repo": "workflows/publish-report.ps1",
+      "local": "publish-report.ps1"
+    },
+    {
+      "repo": "workflows/dispatch-report.ps1",
+      "local": "dispatch-report.ps1"
+    },
+    {
+      "repo": "workflows/send-report.ps1",
+      "local": "send-report.ps1"
+    },
+    {
+      "repo": "workflows/deploy-vercel.mjs",
+      "local": "deploy-vercel.mjs"
+    },
+    {
+      "repo": "workflows/vercel-api.mjs",
+      "local": "vercel-api.mjs"
+    },
+    {
+      "repo": "workflows/github-env.ps1",
+      "local": "github-env.ps1"
+    }
+  ]
+}
