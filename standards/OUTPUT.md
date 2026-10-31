@@ -53,3 +53,12 @@ Toss 스타일·Pretendard·반응형 목차·읽기 요약·차트 수치표·�
 최종 HTML 옆 .content-review.json: schemaVersion=2, reportDate=YYYY-MM-DD, sha256=최종 HTML 해시, reviewedBy=Codex, sections=[위 11개 ID], checks={sourcesVerified,releaseStatesChecked,aiScopeSeparated,hotnessEvidenceChecked,jobsSampleDisclosed,previousIssueCompared,techniqueReproducibilityReviewed,mobileChecked,shareChecked}의 실제 검사 결과. 각 coverage에는 category, status(updated/no_material_change/unverified), sourceUrls, limitation을 기록한다. 조사하지 않은 항목을 updated로 표시하지 않는다. 부족한 근거는 본문에서도 드러나야 한다.
 
 공유 UI에는 디스코드와 카카오톡 전용 버튼을 유지한다. 디스코드는 제목·URL 복사 후 사용자가 대화를 선택해 붙여 넣는다. 카카오톡은 현재 기기 공유 또는 복사 방식이다. Kakao JavaScript 키와 등록 도메인이 없으므로 공식 공유 카드가 구현됐다고 설명하지 않는다.
+
+## TOP 10과 한국어 참고 자료 (현재 호부터 필수)
+- 본문의 가장 앞, 큰 소개 문구보다 위에 id=top10을 둔다. 학생에게 미치는 영향·시급성·실행 가능성으로 고른 서로 다른 정보 10개를 순서대로 배치한다. 각 항목은 순번, 분야, 한 문장 핵심, 알아야 할 이유 또는 할 일, 본문이나 원문 직접 링크를 갖는다. 이는 인기 순위가 아닌 편집 우선순위다. 새 소식이 적으면 배경 학습·실행 과제로 명확히 구분하며 10개를 채우기 위해 사실이나 사건을 만들지 않는다.
+- id=reading에 한국어 기사, 유튜브, 포스팅·리포트를 나눠 제공한다. 목표는 기사 2~3개, 영상 2개, 포스팅·리포트 2개다. 원문 품질을 우선하고 부족하면 실제 수와 조사 한계를 공개한다. 카드의 data-kind는 article/video/post를 사용한다.
+- 각 자료는 제목, 매체·채널·작성자, 게시일(미확인이면 표시), 확인일, 한국어 여부·자막 확인 범위, 선정 이유, 볼 포인트, 관련 직무, 개별 콘텐츠 직접 링크를 포함한다. 검색 결과 페이지나 채널 홈을 개별 콘텐츠 링크 대신 쓰지 않는다.
+- 최근 7일 자료를 최신 소식으로 우선하고, 더 오래된 자료는 배경 학습으로 표시한다. 기사 보도·공식 발표·개인 경험을 구분하고 같은 보도자료 재전송이나 보고서 요약·원문을 별개 조사로 중복 집계하지 않는다. 두 종류의 날짜가 다르면 사건일과 게시일을 분리한다.
+- 원문 페이지를 열어 제목·게시일·본문을 확인한다. 검색 AI 개요는 최종 근거로 쓰지 않는다. 영상은 제목·설명만 확인한 경우 전체 시청이나 효과 검증을 주장하지 않는다. 타임스탬프·발언 요약은 해당 구간을 실제 확인한 경우에만 적는다. 회원가입·유료·자막·접근 제한도 확인 범위에 맞게 표시한다.
+- TOP 10과 참고 자료도 humanizer→grammar-checker→style-guide로 교정하고 출처·날짜·조건을 보존한다. reading.css를 포함하고 모바일 카드 넘침·본문 연결·새 탭 링크를 확인한다. 새 호의 .content-review.json에 top10Count, resourceCount, videoReviewScope와 실제 검사 기록을 남긴다. validate-issue.mjs가 TOP 10 개수와 참고 자료 종류를 검사하지만 이 검사는 내용의 진위 검토를 대신하지 않는다.
+- 매주 새 조사로 TOP 10과 추천 이유를 갱신한다. 계속 추천하는 기존 자료는 그 이유와 배경 자료 표시를 유지한다. 디스코드 요약에는 TOP 10 중 중요한 내용 일부와 GitHub Pages·Vercel 링크를 함께 안내한다. 토요일 오전 7시 조사 시작·오전 8시 전송 일정은 유지한다.
