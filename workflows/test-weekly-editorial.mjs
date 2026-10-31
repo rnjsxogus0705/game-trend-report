@@ -16,7 +16,7 @@ for(const change of audit.changes.filter(change=>change.file===file)){
 
 const bodyText=html=>html.match(/<body\b[^>]*>([\s\S]*?)<\/body>/i)[1]
  .replace(/<header\b[^>]*data-editorial-cover[\s\S]*?<\/header>/i,'').replace(/<section\b[^>]*data-editorial-summary[\s\S]*?<\/section>/i,'').replace('<a href="#issue-summary">이번 호 한눈에 보기</a>','')
- .replace(/<details class="mobile-nav">[\s\S]*?<\/details>/i,'').replace(/<aside\b[^>]*>[\s\S]*?<\/aside>/gi,'').replace(/<p\b[^>]*data-editorial-ui[\s\S]*?<\/p>/gi,'').replace(/<summary\b[^>]*data-editorial-ui[\s\S]*?<\/summary>/gi,'')
+ .replace(/<details class="mobile-nav">[\s\S]*?<\/details>/i,'').replace(/<figure class="chapter-visual"[\s\S]*?<\/figure>/g,'').replace(/<div class="top-evidence">[\s\S]*?<\/div>/g,'').replace(/<p class="top-visual-note"[^>]*>[\s\S]*?<\/p>/g,'').replace(/<aside\b[^>]*>[\s\S]*?<\/aside>/gi,'').replace(/<p\b[^>]*data-editorial-ui[\s\S]*?<\/p>/gi,'').replace(/<summary\b[^>]*data-editorial-ui[\s\S]*?<\/summary>/gi,'')
  .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi,'')
  .replace(/<\/?mark\b[^>]*>/g,'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
 assert.deepEqual(bodyText(current).split(/\s+/).sort(),bodyText(approved).split(/\s+/).sort(),'승인된 문장 교정 외 본문 누락·중복이 없어야 합니다.');

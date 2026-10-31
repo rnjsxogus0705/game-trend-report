@@ -1,0 +1,106 @@
+{
+  "planning": {
+    "title": "AI 기획: 기준부터 정하기",
+    "labels": [
+      "목표 경험",
+      "규칙 비교",
+      "플레이 확인"
+    ],
+    "prompt": "Create a polished landscape 3:2 Korean editorial educational infographic for student game developers. White background, navy #14243b, cobalt #2455cb, pale blue with restrained amber. Three spacious illustrated stages left-to-right connected with arrows. Clear large Korean typography integrated into the image, exceptionally legible at 600px width, not tiny text. Exact title at top: \"AI 기획: 기준부터 정하기\". Exactly these three stage labels, one per stage, left-to-right: \"목표 경험\", \"규칙 비교\", \"플레이 확인\". Illustrations: notebook and compass, two game rule cards, person with gamepad. No other text, no numbers, no logos, no quantitative charts, no fake product screenshots. This is a conceptual explanatory illustration, never proof of a real product or tested outcome. Careful accurate Hangul lettering and balanced spacing.",
+    "filename": "planning.webp",
+    "generator": "image_gen",
+    "purpose": "개념 설명 삽화; 실제 제품 화면·실측 증거가 아님",
+    "textReview": "한글 제목과 세 단계 라벨을 시각 대조"
+  },
+  "verification": {
+    "title": "코드 다음은 실행 검증",
+    "labels": [
+      "코드 생성",
+      "장면 연결",
+      "실제 플레이"
+    ],
+    "prompt": "Create a polished landscape 3:2 Korean editorial educational infographic for student game developers. White background, navy #14243b, cobalt #2455cb, pale blue with restrained amber. Three spacious illustrated stages left-to-right connected with arrows. Clear large Korean typography integrated into the image, exceptionally legible at 600px width, not tiny text. Exact title at top: \"코드 다음은 실행 검증\". Exactly these three stage labels, one per stage, left-to-right: \"코드 생성\", \"장면 연결\", \"실제 플레이\". Illustrations: code document, connected miniature game scene, gamepad and checklist. No other text, no numbers, no logos, no quantitative charts, no fake product screenshots. This is a conceptual explanatory illustration, never proof of a real product or tested outcome. Careful accurate Hangul lettering and balanced spacing.",
+    "filename": "verification.webp",
+    "generator": "image_gen",
+    "purpose": "개념 설명 삽화; 실제 제품 화면·실측 증거가 아님",
+    "textReview": "한글 제목과 세 단계 라벨을 시각 대조"
+  },
+  "pipeline": {
+    "title": "게임 자산의 제작 흐름",
+    "labels": [
+      "참조 준비",
+      "생성·수정",
+      "엔진 확인"
+    ],
+    "prompt": "Create a polished landscape 3:2 Korean editorial educational infographic for student game developers. White background, navy #14243b, cobalt #2455cb, pale blue with restrained amber. Three spacious illustrated stages left-to-right connected with arrows. Clear large Korean typography integrated into the image, exceptionally legible at 600px width, not tiny text. Exact title at top: \"게임 자산의 제작 흐름\". Exactly these three stage labels, one per stage, left-to-right: \"참조 준비\", \"생성·수정\", \"엔진 확인\". Illustrations: friendly small character sketch, low-poly character mesh and swatches, same character in a game scene. No other text, no numbers, no logos, no quantitative charts, no fake product screenshots. This is a conceptual explanatory illustration, never proof of a real product or tested outcome. Careful accurate Hangul lettering and balanced spacing.",
+    "filename": "pipeline.webp",
+    "generator": "image_gen",
+    "purpose": "개념 설명 삽화; 실제 제품 화면·실측 증거가 아님",
+    "textReview": "한글 제목과 세 단계 라벨을 시각 대조"
+  },
+  "experiment": {
+    "title": "작은 규칙 하나로 시험하기",
+    "labels": [
+      "선택 관찰",
+      "작게 제작",
+      "비교·수정"
+    ],
+    "prompt": "Create a polished landscape 3:2 Korean editorial educational infographic for student game developers. White background, navy #14243b, cobalt #2455cb, pale blue with restrained amber. Three spacious illustrated stages left-to-right connected with arrows. Clear large Korean typography integrated into the image, exceptionally legible at 600px width, not tiny text. Exact title at top: \"작은 규칙 하나로 시험하기\". Exactly these three stage labels, one per stage, left-to-right: \"선택 관찰\", \"작게 제작\", \"비교·수정\". Illustrations: game board forked path, one rule card prototype, two students comparing notes. No other text, no numbers, no logos, no quantitative charts, no fake product screenshots. This is a conceptual explanatory illustration, never proof of a real product or tested outcome. Careful accurate Hangul lettering and balanced spacing.",
+    "filename": "experiment.webp",
+    "generator": "image_gen",
+    "purpose": "개념 설명 삽화; 실제 제품 화면·실측 증거가 아님",
+    "textReview": "한글 제목과 세 단계 라벨을 시각 대조"
+  },
+  "repositories": {
+    "title": "저장소를 고르는 세 단계",
+    "labels": [
+      "기능 확인",
+      "조건 확인",
+      "작게 실행"
+    ],
+    "prompt": "Create a polished landscape 3:2 Korean editorial educational infographic for student game developers. White background, navy #14243b, cobalt #2455cb, pale blue with restrained amber. Three spacious illustrated stages left-to-right connected with arrows. Clear large Korean typography integrated into the image, exceptionally legible at 600px width, not tiny text. Exact title at top: \"저장소를 고르는 세 단계\". Exactly these three stage labels, one per stage, left-to-right: \"기능 확인\", \"조건 확인\", \"작게 실행\". Illustrations: code folders and branching contribution lines, license document magnifier, game prototype sandbox. No other text, no numbers, no logos, no quantitative charts, no fake product screenshots. This is a conceptual explanatory illustration, never proof of a real product or tested outcome. Careful accurate Hangul lettering and balanced spacing.",
+    "filename": "repositories.webp",
+    "generator": "image_gen",
+    "purpose": "개념 설명 삽화; 실제 제품 화면·실측 증거가 아님",
+    "textReview": "한글 제목과 세 단계 라벨을 시각 대조"
+  },
+  "models": {
+    "title": "같은 과제로 AI 비교하기",
+    "labels": [
+      "입력 통일",
+      "결과 비교",
+      "비용 기록"
+    ],
+    "prompt": "Create a polished landscape 3:2 Korean editorial educational infographic for student game developers. White background, navy #14243b, cobalt #2455cb, pale blue with restrained amber. Three spacious illustrated stages left-to-right connected with arrows. Clear large Korean typography integrated into the image, exceptionally legible at 600px width, not tiny text. Exact title at top: \"같은 과제로 AI 비교하기\". Exactly these three stage labels, one per stage, left-to-right: \"입력 통일\", \"결과 비교\", \"비용 기록\". Illustrations: two abstract AI assistant cubes receive same card, two equal test boards, clock and result notes without scores. No other text, no numbers, no logos, no quantitative charts, no fake product screenshots. This is a conceptual explanatory illustration, never proof of a real product or tested outcome. Careful accurate Hangul lettering and balanced spacing.",
+    "filename": "models.webp",
+    "generator": "image_gen",
+    "purpose": "개념 설명 삽화; 실제 제품 화면·실측 증거가 아님",
+    "textReview": "한글 제목과 세 단계 라벨을 시각 대조"
+  },
+  "portfolio": {
+    "title": "내가 한 일을 보여 주기",
+    "labels": [
+      "작은 완성작",
+      "기여 기록",
+      "조건 확인"
+    ],
+    "prompt": "Create a polished landscape 3:2 Korean editorial educational infographic for student game developers. White background, navy #14243b, cobalt #2455cb, pale blue with restrained amber. Three spacious illustrated stages left-to-right connected with arrows. Clear large Korean typography integrated into the image, exceptionally legible at 600px width, not tiny text. Exact title at top: \"내가 한 일을 보여 주기\". Exactly these three stage labels, one per stage, left-to-right: \"작은 완성작\", \"기여 기록\", \"조건 확인\". Illustrations: student game development desk, before-and-after portfolio sketches, folder and application checklist without success claims. No other text, no numbers, no logos, no quantitative charts, no fake product screenshots. This is a conceptual explanatory illustration, never proof of a real product or tested outcome. Careful accurate Hangul lettering and balanced spacing.",
+    "filename": "portfolio.webp",
+    "generator": "image_gen",
+    "purpose": "개념 설명 삽화; 실제 제품 화면·실측 증거가 아님",
+    "textReview": "한글 제목과 세 단계 라벨을 시각 대조"
+  },
+  "releases": {
+    "title": "발표와 출시를 구분하기",
+    "labels": [
+      "발표·계획",
+      "데모·시험",
+      "출시 확인"
+    ],
+    "prompt": "Create a polished landscape 3:2 Korean editorial educational infographic for student game developers. White background, navy #14243b, cobalt #2455cb, pale blue with restrained amber. Three spacious illustrated stages left-to-right connected with arrows. Clear large Korean typography integrated into the image, exceptionally legible at 600px width, not tiny text. Exact title at top: \"발표와 출시를 구분하기\". Exactly these three stage labels, one per stage, left-to-right: \"발표·계획\", \"데모·시험\", \"출시 확인\". Illustrations: blueprint and pencil, playable demo test game scene, finished game package with calendar and magnifier. No other text, no numbers, no logos, no quantitative charts, no fake product screenshots. This is a conceptual explanatory illustration, never proof of a real product or tested outcome. Careful accurate Hangul lettering and balanced spacing.",
+    "filename": "releases.webp",
+    "generator": "image_gen",
+    "purpose": "개념 설명 삽화; 실제 제품 화면·실측 증거가 아님",
+    "textReview": "한글 제목과 세 단계 라벨을 시각 대조"
+  }
+}

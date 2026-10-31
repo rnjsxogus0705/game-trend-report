@@ -26,6 +26,8 @@ try {
   const detailLabel=document.querySelector('#github-trending .reading-detail>summary')?.textContent;
   const summaryPresent=!!document.querySelector('#issue-summary');
   const highlights=document.querySelectorAll('mark').length;
+  const visuals=document.querySelectorAll('.chapter-visual').length,media=document.querySelectorAll('.reading-media-previews figure').length;
+  const visualsLabeled=[...document.querySelectorAll('.chapter-visual')].every(f=>f.querySelector('img').alt.includes('AI 생성 개념도')&&f.querySelector('figcaption').textContent.includes('실제 제품'));
   const directHashOpen=!hasClosedParent(document.getElementById('tool-meshy'));
   document.getElementById('tool-meshy').closest('.reading-detail').open=false;
   const link=document.querySelector('.reading-tool-previews a[href="#tool-spritegen"]');
@@ -36,7 +38,7 @@ try {
   buttons[1].click();const allClosed=groups.every(group=>!group.open);
   dispatchEvent(new Event('beforeprint'));const printOpen=[...document.querySelectorAll('main details:not(.mobile-nav)')].every(detail=>detail.open);
   dispatchEvent(new Event('afterprint'));const restored=groups.every(group=>!group.open);
-  return {detailLabel,summaryPresent,highlights,count:groups.length,directHashOpen,linkedToolOpen,allOpen,allClosed,printOpen,restored,
+  return {visuals,media,visualsLabeled,detailLabel,summaryPresent,highlights,count:groups.length,directHashOpen,linkedToolOpen,allOpen,allClosed,printOpen,restored,
    previews:document.querySelectorAll('.reading-tool-previews img').length,
    benchmarkVisible:!hasClosedParent(document.getElementById('benchmark-chart')),
    simulationVisible:!hasClosedParent(document.getElementById('simulation-chart'))};
@@ -64,6 +66,7 @@ try{
   assert.ok(line,JSON.stringify(output));
   const result=JSON.parse(line.slice(7));
   assert.match(result.detailLabel,/저장소를 내 프로젝트/);
+  assert.equal(result.visuals,13);assert.equal(result.media,6);assert.equal(result.visualsLabeled,true);
   assert.equal(result.summaryPresent,true);
   assert.ok(result.highlights>=3);
   for(const layout of result.layouts){assert.equal(layout.overflow,false,'overflow at '+layout.width);assert.ok(layout.paragraph>=17);assert.equal(layout.chapterBorder,2);}

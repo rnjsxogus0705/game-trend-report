@@ -16,6 +16,51 @@
     details.addEventListener('toggle',()=>{if(details.open)window.dispatchEvent(new Event('resize'));});
     groups.push(details);
   }
+  function showMedia(section,head){
+    const detail=section.querySelector(':scope > .reading-detail');
+    if(!detail)return;
+    const visibleSources=new Set([...section.querySelectorAll('figure img,.youtube-preview button')]
+      .filter(node=>!node.closest('details:not([open])'))
+      .map(node=>node.dataset.youtubePlay||node.currentSrc||node.src));
+    const images=[...detail.querySelectorAll('figure')].filter(figure=>figure.querySelector('a[href^="http"] img'));
+    const videos=[...detail.querySelectorAll('.youtube-preview')].filter(video=>{
+      const id=video.querySelector('[data-youtube-play]')?.dataset.youtubePlay;
+      return id && [...(video.closest('article')?.querySelectorAll('a[href^="http"]')||[])].some(a=>a.href.includes(id));
+    });
+    const candidates=videos.length&&images.length?[images[0],videos[0],...images.slice(1),...videos.slice(1)]:[...images,...videos];
+    const gallery=document.createElement('div');gallery.className='reading-media-previews';
+    for(const original of candidates){
+      if(gallery.children.length===2)break;
+      const isVideo=original.classList.contains('youtube-preview');
+      const sourceNode=isVideo?original.querySelector('[data-youtube-play]'):original.querySelector('img');
+      const key=isVideo?sourceNode.dataset.youtubePlay:sourceNode.currentSrc||sourceNode.src;
+      if(visibleSources.has(key))continue;
+      visibleSources.add(key);
+      const article=original.closest('article');
+      const source=isVideo?[...article.querySelectorAll('a[href^="http"]')].find(a=>a.href.includes(key)):original.querySelector('a[href^="http"]');
+      if(!source)continue;
+      const figure=document.createElement('figure');
+      const title=article?.querySelector('h3,h4')?.textContent.trim();
+      if(isVideo){
+        const copy=original.cloneNode(true);
+        copy.querySelectorAll('[id]').forEach(node=>node.removeAttribute('id'));
+        copy.removeAttribute('id');figure.append(copy);
+      }else{
+        const link=source.cloneNode(false), image=sourceNode.cloneNode(false);
+        image.removeAttribute('id');link.append(image);figure.append(link);
+      }
+      const caption=document.createElement('figcaption');
+      if(title){const strong=document.createElement('strong');strong.textContent=title;caption.append(strong);}
+      const note=document.createElement('span');
+      note.textContent=isVideo?'공개 영상 · 소개 자료이며 직접 실측한 결과는 아니에요.':original.querySelector('figcaption')?.textContent.trim()||'원문에서 제공한 이미지예요.';
+      const fallback=source.cloneNode(false);fallback.textContent=isVideo?'영상 원문 보기':'이미지 원문 보기';
+      caption.append(note,fallback);figure.append(caption);
+      const image=figure.querySelector('img');
+      image?.addEventListener('error',()=>{image.hidden=true;note.textContent='이미지를 불러오지 못했어요. 아래 원문에서 확인해 주세요.';});
+      gallery.append(figure);
+    }
+    if(gallery.children.length)head.querySelector('h2')?.after(gallery);
+  }
   main.querySelectorAll('section.chapter').forEach(section=>{
     if(section.id==='game-ai-tools'){
       const skills=section.querySelector(':scope > #agent-skills');
@@ -28,7 +73,7 @@
         previews.forEach(card=>{
           const link=document.createElement('a');link.href='#'+card.id;
           const picture=card.querySelector('img')?.cloneNode();
-          if(picture){picture.alt='';link.append(picture);}
+          if(picture){picture.alt='';picture.addEventListener('error',()=>{picture.hidden=true;});link.append(picture);}
           const name=document.createElement('strong');name.textContent=card.querySelector('h3')?.textContent||'';
           const label=document.createElement('span');label.textContent=card.querySelector('.tag')?.textContent||'';
           link.append(name,label);gallery.append(link);
@@ -48,7 +93,8 @@
     if(nodes.length>1 && nodes[0].textContent.trim().length<1500)nodes.shift();
     if(section.id==='techniques' || section.id==='lab')nodes.shift();
     const title=head.querySelector('h2')?.innerText.trim().replace(/\s+/g,' ')||'이 장';
-    fold(nodes,title+' · 자세히 보기');
+    fold(nodes.filter(node=>!node.querySelector('canvas,.flow')&&!node.matches('.flow')),title+' · 자세히 보기');
+    showMedia(section,head);
   });
   if(!groups.length)return;
   const controls=document.createElement('div');

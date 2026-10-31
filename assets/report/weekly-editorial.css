@@ -279,3 +279,21 @@ html:has(body.weekly-editorial){scroll-padding-top:0}
 @media print{.weekly-editorial .part-heading{break-after:avoid;background:#fff;padding:12px 0}.weekly-editorial .issue-about{border:0;padding:0}.weekly-editorial .issue-about>summary{display:none}}
 .weekly-editorial .sidebar{overflow:visible}
 .weekly-editorial #side-nav{max-height:calc(100dvh - 300px)}
+/* Evidence sits with the recommendation, rather than behind an anonymous source link. */
+.weekly-editorial .top-evidence{margin:16px 0;padding:16px 20px;background:#f3f6fc;border-radius:8px}
+.weekly-editorial .top-evidence p{font-size:15px;line-height:1.85;margin:8px 0;color:#394d69}
+.weekly-editorial .top-evidence p:first-child{margin-top:0}
+.weekly-editorial .top-evidence strong{color:#193e96;font-size:13px;display:block;margin-bottom:3px}
+.weekly-editorial .top-evidence .top-why{font-weight:600;color:#223046}
+.weekly-editorial .top-evidence .top-source{padding-top:12px;border-top:1px solid #dce2e9;font-size:13px;color:#536174}
+.weekly-editorial .top-source a{font-weight:700;text-decoration:underline}
+.weekly-editorial .chapter-visual{margin:24px 0 32px;background:#f8faff;border:1px solid #dce2e9;border-radius:12px;overflow:hidden}
+.weekly-editorial .chapter-visual img{width:100%;max-height:440px;object-fit:contain;display:block;background:#fff}
+.weekly-editorial .chapter-visual figcaption{padding:16px 20px;font-size:14px;line-height:1.8;color:#43556c}
+.weekly-editorial .chapter-visual figcaption strong{display:block;color:#223046;font-size:16px;margin-bottom:6px}
+.weekly-editorial .chapter-visual figcaption small{display:block;margin-top:8px;font-size:12px;color:#536174}
+.weekly-editorial .top-visual{display:block;width:100%;max-height:220px;object-fit:contain;background:#fff;margin:12px 0;border:1px solid #dce2e9;border-radius:8px}
+.weekly-editorial .top-visual-note{font-size:12px!important;color:#536174;margin:4px 0 12px!important}
+@media(max-width:600px){.weekly-editorial .top-evidence{padding:14px}.weekly-editorial .top-evidence p{font-size:14px}.weekly-editorial .chapter-visual figcaption{padding:14px 16px}.weekly-editorial .chapter-visual img{max-height:none}.weekly-editorial .top-visual{max-height:180px}}
+@media print{.weekly-editorial .chapter-visual{break-inside:avoid}.weekly-editorial .chapter-visual img{max-height:240px}}
+.weekly-editorial .chapter-visual img{height:auto;aspect-ratio:3/2}

@@ -61,6 +61,7 @@ export function validateWeeklyPresentation(html,{reportDate}={}){
  const lists=descendants(top,node=>node.tag==='ol'&&hasClass(node,'top-ten-grid'));
  const items=list=>descendants(list,node=>node.tag==='li'&&hasClass(node,'top-ten-item'));
  const more=elements.find(node=>hasClass(node,'top-ten-more')&&within(node,top));
+ for(const item of lists.flatMap(items)){for(const role of ['top-why','top-action','top-source']){const info=descendants(item,node=>hasClass(node,role))[0];assert(info&&text(info).length>0,'TOP 10 lacks visible evidence: '+role);if(role==='top-source')assert(descendants(info,node=>node.tag==='a'&&/^https:\/\//.test(node.attrs.href||'')).length>0,'TOP 10 source must link to its original');}}
  assert(lists.length===2&&items(lists[0]).length===3&&items(lists[1]).length===7&&more&&within(lists[1],more)&&!within(lists[0],more),'TOP 10 must show three items before seven expandable items');
  assert(elements.some(node=>node.tag==='mark'&&within(node,oneId('report'))&&text(node).length>0),'Missing meaningful highlighted report text');
  const mobile=oneId('mobile-links');
