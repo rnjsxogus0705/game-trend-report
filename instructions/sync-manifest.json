@@ -52,6 +52,38 @@
     {
       "repo": "workflows/github-env.ps1",
       "local": "github-env.ps1"
+    },
+    {
+      "repo": "instructions/references/toss.md",
+      "local": "redesign/references/toss.md"
+    },
+    {
+      "repo": "instructions/references/google-design-md/README.md",
+      "local": "redesign/references/google-design-md/README.md"
+    },
+    {
+      "repo": "instructions/references/google-design-md/LICENSE",
+      "local": "redesign/references/google-design-md/LICENSE"
+    },
+    {
+      "repo": "instructions/references/google-design-md/spec.md",
+      "local": "redesign/references/google-design-md/spec.md"
+    },
+    {
+      "repo": "instructions/references/google-design-md/spec-config.yaml",
+      "local": "redesign/references/google-design-md/spec-config.yaml"
+    },
+    {
+      "repo": "instructions/references/google-design-md/upstream-package.json",
+      "local": "redesign/references/google-design-md/upstream-package.json"
+    },
+    {
+      "repo": "instructions/DESIGN-REFERENCE-GUIDE.md",
+      "local": "redesign/references/DESIGN-REFERENCE-GUIDE.md"
+    },
+    {
+      "repo": "instructions/DESIGN-ASSETS.json",
+      "local": "redesign/references/DESIGN-ASSETS.json"
     }
   ]
 }

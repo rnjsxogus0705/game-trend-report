@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-31T09:36:28.745Z",
+  "googleDesignMd": {
+    "source": "https://github.com/google-labs-code/design.md",
+    "package": "@google/design.md",
+    "version": "0.4.0",
+    "note": "현재 제작에 사용한 설치 패키지의 규격 스냅샷. 최신 upstream 버전이라고 주장하지 않음."
+  },
+  "pretendard": {
+    "version": "1.3.9",
+    "source": "https://github.com/orioncactus/pretendard",
+    "webWeights": 9,
+    "originalOtfWeights": 9,
+    "license": "SIL Open Font License 1.1"
+  },
+  "files": [
+    {
+      "path": "instructions/references/toss.md",
+      "bytes": 61956,
+      "sha256": "8309334ea7bfe50ba70be300669c6b69fd53fa09e60ca8bf1f930eaf9d069e87"
+    },
+    {
+      "path": "instructions/references/google-design-md/README.md",
+      "bytes": 10001,
+      "sha256": "d4d502768a7d5b5104f1ee076da756ca846e73f8635f950e1df6d0bec01fc5a9"
+    },
+    {
+      "path": "instructions/references/google-design-md/LICENSE",
+      "bytes": 11360,
+      "sha256": "1bdd03995456d191707e379eb06ceac20cf30d520bec90c97c2b6d220906c66e"
+    },
+    {
+      "path": "instructions/references/google-design-md/spec.md",
+      "bytes": 15313,
+      "sha256": "8f297a7bd38cf08bde06c96f5eea2ebfcd9930a8bc1dfe964f8e8dec894e691a"
+    },
+    {
+      "path": "instructions/references/google-design-md/spec-config.yaml",
+      "bytes": 4569,
+      "sha256": "6244e829849e63b55316258f32e1110833d193b79943ec79f245b33ebeec2ef8"
+    },
+    {
+      "path": "instructions/references/google-design-md/upstream-package.json",
+      "bytes": 2006,
+      "sha256": "9cd26dae8342295b88dad6df3432f732f38c215f401f49af61068211cf2015b9"
+    },
+    {
+      "path": "assets/report/fonts/original-otf/Pretendard-Thin.otf",
+      "bytes": 1487484,
+      "sha256": "635354dcdcc133318be74f9a83cb59d29652c56d463bcd34e20a8cd6e01f3af9"
+    },
+    {
+      "path": "assets/report/fonts/Pretendard-Thin.woff2",
+      "bytes": 694804,
+      "sha256": "1539755224a64719d5b18406762c476db74fcc299b9e4641ca1e9812fbc7a09b"
+    },
+    {
+      "path": "assets/report/fonts/original-otf/Pretendard-ExtraLight.otf",
+      "bytes": 1544180,
+      "sha256": "e2837078f57079de2742e83c394a70b8a80b9662bc8ff4e96e7b791d6bd7cdbb"
+    },
+    {
+      "path": "assets/report/fonts/Pretendard-ExtraLight.woff2",
+      "bytes": 734392,
+      "sha256": "df43dc9165dff4542114674bcd8b79b7daae6dec004004586d5d076fec6fe2aa"
+    },
+    {
+      "path": "assets/report/fonts/original-otf/Pretendard-Light.otf",
+      "bytes": 1599968,
+      "sha256": "51418ee96ef96e9059db88d7da82f24fada1f4aca70d5157c878ea6b460dd343"
+    },
+    {
+      "path": "assets/report/fonts/Pretendard-Light.woff2",
+      "bytes": 757000,
+      "sha256": "b7426635cce2ea2b95c9c802e43fba1c620e0dafaf25f737c069b8b4e09fa841"
+    },
+    {
+      "path": "assets/report/fonts/original-otf/Pretendard-Regular.otf",
+      "bytes": 1574352,
+      "sha256": "3ffbacde6ab8411f1d2db54bb9b1f0b3ee2a738932033722cf0388c06aed1c93"
+    },
+    {
+      "path": "assets/report/fonts/Pretendard-Regular.woff2",
+      "bytes": 765892,
+      "sha256": "fad853f7f47c6c8b103171e7193fa095708cdcd70850a71d93aa5379e8a61d63"
+    },
+    {
+      "path": "assets/report/fonts/original-otf/Pretendard-Medium.otf",
+      "bytes": 1584068,
+      "sha256": "d39e50e4bb52b4993b6a4eeb821a171254745bd824446af01e1f616b89fface0"
+    },
+    {
+      "path": "assets/report/fonts/Pretendard-Medium.woff2",
+      "bytes": 778432,
+      "sha256": "d03481330eeba0659ab5b87f25ceb504a35de377dd90a0d0aba2982eb2d05e2c"
+    },
+    {
+      "path": "assets/report/fonts/original-otf/Pretendard-SemiBold.otf",
+      "bytes": 1583704,
+      "sha256": "c89bc43027dc7cde5726e96223376f8eec09302b2fc1f8147fd5b57cfc376118"
+    },
+    {
+      "path": "assets/report/fonts/Pretendard-SemiBold.woff2",
+      "bytes": 785856,
+      "sha256": "c863f76a7de5c1ddc1ed8b2fa794964530774592c4f31407a84e2a2ae93f17f0"
+    },
+    {
+      "path": "assets/report/fonts/original-otf/Pretendard-Bold.otf",
+      "bytes": 1576660,
+      "sha256": "2e91915fab54df71cc9598ebf608b2bdb54c6fe3c066ac61dff0bc44fca71cc7"
+    },
+    {
+      "path": "assets/report/fonts/Pretendard-Bold.woff2",
+      "bytes": 791156,
+      "sha256": "4609c3356e536fafe38f4add0daeceb3d8595d3057bce13c428c33ddbd43d362"
+    },
+    {
+      "path": "assets/report/fonts/original-otf/Pretendard-ExtraBold.otf",
+      "bytes": 1568512,
+      "sha256": "c35fe941b7568d52a96010561540e47f9d3948dfde66ba25bc1908233e0a40cd"
+    },
+    {
+      "path": "assets/report/fonts/Pretendard-ExtraBold.woff2",
+      "bytes": 793540,
+      "sha256": "dd7c1e156f508eb962acc7a33a7a1896d1e0b71e11156fad96e731689ceb6dc3"
+    },
+    {
+      "path": "assets/report/fonts/original-otf/Pretendard-Black.otf",
+      "bytes": 1559552,
+      "sha256": "94628b0bcea8936b6e5c30d98d685eb9bbaffb0fe2ed255542ecc656c248e021"
+    },
+    {
+      "path": "assets/report/fonts/Pretendard-Black.woff2",
+      "bytes": 800404,
+      "sha256": "c5fd0c3568fc1368a3edc0d0fbb36df029935954276e3573451b3bae09e27296"
+    },
+    {
+      "path": "assets/report/fonts/original-otf/LICENSE.txt",
+      "bytes": 4419,
+      "sha256": "b04538c9abec39a3db75108cf0af0fd9c77032fe8aa2cf38345b4d250e98e38e"
+    },
+    {
+      "path": "instructions/DESIGN.md",
+      "bytes": 4668,
+      "sha256": "bf8ca75ddbf64e4a3e6f1913a4bae48ba08c18bb56b6f2e68b7a7437aa5542af"
+    },
+    {
+      "path": "assets/report/fonts/LICENSE.txt",
+      "bytes": 4419,
+      "sha256": "b04538c9abec39a3db75108cf0af0fd9c77032fe8aa2cf38345b4d250e98e38e"
+    },
+    {
+      "path": "assets/report/report.css",
+      "bytes": 18095,
+      "sha256": "faf32e70649c0e1bb86e2e98b14d57c14d7a9effff6eccee7109466765783ec8"
+    },
+    {
+      "path": "assets/report/report.js",
+      "bytes": 7052,
+      "sha256": "58c24448a9c8d442eabc9f3c4ffd5c321a9227e86309ea30cf1e5306f2a7d204"
+    },
+    {
+      "path": "assets/report/reading.css",
+      "bytes": 1384,
+      "sha256": "834fb450316d99df14a6136aaffc6448c989d9da75693019376e904ef0e3cd5f"
+    },
+    {
+      "path": "assets/report/rich-media.css",
+      "bytes": 2723,
+      "sha256": "6913b1ee8fdfc6ed0a4269eb83d5e9fca62ea957a7be2b55c5ccea579ef6ac26"
+    },
+    {
+      "path": "assets/report/rich-media.js",
+      "bytes": 2006,
+      "sha256": "d040797c0677625672b785233c0a61168a9af7c768484c7f66867080cf66a8e5"
+    },
+    {
+      "path": "assets/report/share.css",
+      "bytes": 2232,
+      "sha256": "86549b8bd0d25b15a3f3610096d2176fc685bb87c75c4c30f40dcc21f070fd51"
+    },
+    {
+      "path": "assets/report/share.js",
+      "bytes": 4977,
+      "sha256": "a18fc9f5a04698b0bbfcdbf3ad7baf095b9cf643c3d54d36847f51d9ae89077d"
+    },
+    {
+      "path": "assets/report/ai100.css",
+      "bytes": 2464,
+      "sha256": "1d1b861a4ad145b987980b3b9e67ebfe521f7ea9e95c6817a143175fc83993b7"
+    },
+    {
+      "path": "assets/report/ai100.js",
+      "bytes": 491,
+      "sha256": "610f54d2b73d7d4dc6fd0bd19b693e8804c9617fd05f467383c80fc4e2e501a7"
+    },
+    {
+      "path": "assets/report/vendor/chart.umd.js",
+      "bytes": 210078,
+      "sha256": "338399fb5bafe598d21cfc471b0590b61ceb321a985fade4f68499b151f67fbf"
+    },
+    {
+      "path": "assets/report/vendor/hls.min.js",
+      "bytes": 623915,
+      "sha256": "cfc70cc9e9fc63d071919e087670abc760c8fd1bc889b88588026e4d22193bbe"
+    }
+  ]
+}
