@@ -23,6 +23,7 @@ try {
  const result=await page.evaluate(async()=>{
   const groups=[...document.querySelectorAll('.reading-detail')];
   const hasClosedParent=el=>{for(let node=el?.parentElement;node;node=node.parentElement)if(node.tagName==='DETAILS'&&!node.open)return true;return false;};
+  const detailLabel=document.querySelector('#github-trending .reading-detail>summary')?.textContent;
   const summaryPresent=!!document.querySelector('#issue-summary');
   const highlights=document.querySelectorAll('mark').length;
   const directHashOpen=!hasClosedParent(document.getElementById('tool-meshy'));
@@ -35,7 +36,7 @@ try {
   buttons[1].click();const allClosed=groups.every(group=>!group.open);
   dispatchEvent(new Event('beforeprint'));const printOpen=[...document.querySelectorAll('main details:not(.mobile-nav)')].every(detail=>detail.open);
   dispatchEvent(new Event('afterprint'));const restored=groups.every(group=>!group.open);
-  return {summaryPresent,highlights,count:groups.length,directHashOpen,linkedToolOpen,allOpen,allClosed,printOpen,restored,
+  return {detailLabel,summaryPresent,highlights,count:groups.length,directHashOpen,linkedToolOpen,allOpen,allClosed,printOpen,restored,
    previews:document.querySelectorAll('.reading-tool-previews img').length,
    benchmarkVisible:!hasClosedParent(document.getElementById('benchmark-chart')),
    simulationVisible:!hasClosedParent(document.getElementById('simulation-chart'))};
@@ -62,6 +63,7 @@ try{
   const line=output.split('\n').find(line=>line.startsWith('RESULT '));
   assert.ok(line,JSON.stringify(output));
   const result=JSON.parse(line.slice(7));
+  assert.match(result.detailLabel,/저장소를 내 프로젝트/);
   assert.equal(result.summaryPresent,true);
   assert.ok(result.highlights>=3);
   for(const layout of result.layouts){assert.equal(layout.overflow,false,'overflow at '+layout.width);assert.ok(layout.paragraph>=17);assert.equal(layout.chapterBorder,2);}

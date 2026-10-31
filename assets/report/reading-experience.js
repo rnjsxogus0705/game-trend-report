@@ -47,7 +47,7 @@
     for(let node=head.nextElementSibling;node;node=node.nextElementSibling)nodes.push(node);
     if(nodes.length>1 && nodes[0].textContent.trim().length<1500)nodes.shift();
     if(section.id==='techniques' || section.id==='lab')nodes.shift();
-    const title=head.querySelector('h2')?.textContent.trim().replace(/\s+/g,' ')||'이 장';
+    const title=head.querySelector('h2')?.innerText.trim().replace(/\s+/g,' ')||'이 장';
     fold(nodes,title+' · 자세히 보기');
   });
   if(!groups.length)return;
