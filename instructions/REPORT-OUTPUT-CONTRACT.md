@@ -148,3 +148,6 @@ game-ai-tools 앞부분에 id="agent-skills"를 두고 목차에서 직접 이�
 - 원장: assets/report/research/agent-skills-YYYY-MM-DD.json에 관측 조건과 저장소별 근거를 보존한다. 최소 repo/url/observedAt/stars/status/license/skillUrls/compatibilityEvidence/limitation을 포함하고 과거 별 수 기준점이 없으면 weeklyStarGrowth=null로 둔다. 빈 결과도 조사 시각·방법·확인한 출처를 기록한다.
 - 검수: content-review의 sections/coverage에 agent-skills, sourceUrls/status/limitation을 남기고 링크·표 모바일 스크롤·미디어·기존 도구 필터 비간섭을 검사한다. 이전 호 관측과 비교할 수 있을 때만 증가를 쓴다.
 
+
+## 읽기·누적 아카이브와 예약 재현 (최신 적용)
+`READING-AND-SCHEDULER.md`의 메인 아카이브, 핵심 우선·선택적 상세 펼침, 출처가 있는 비교 시각 자료·미디어, 접근성 및 인쇄 검사를 적용한다. 이 기준은 위의 필수 조사·섹션·교정·출력·검수와 함께 적용하며 실제 검증을 대체하지 않는다.

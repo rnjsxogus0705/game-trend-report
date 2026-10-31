@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const {monthlyPrice, hasGoal} = require('../assets/report/tool-choice.js');
+assert.deepEqual(monthlyPrice('Indie $12/월 표시'), {currency:'USD', amount:12, annual:false});
+assert.deepEqual(monthlyPrice('Plus $30/월·10,000크레딧 표시'), {currency:'USD', amount:30, annual:false});
+assert.deepEqual(monthlyPrice('Basic 연간 청구 환산 $10/월 화면 표시'), {currency:'USD', amount:10, annual:true});
+assert.deepEqual(monthlyPrice('Plus 첫 결제 할인 후 월 ₩28,600 표시'), {currency:'KRW', amount:28600, annual:false});
+assert.equal(monthlyPrice('모델별 크레딧 확인'), null);
+assert.equal(hasGoal('image video automation', 'video'), true);
+assert.equal(hasGoal('image video automation', '3d'), false);
+console.log('도구 가격 분류와 작업 범주 검사 통과');

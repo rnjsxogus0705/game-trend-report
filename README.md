@@ -148,13 +148,31 @@ Test-Path "$env:USERPROFILE\.codex\skills\style-guide\SKILL.md"
 
 기존 지침에 남은 `C:/Users/TAEHYEON/.codex/skills/` 표기는 새 PC의 실제 설치 위치로 해석합니다. 스킬 이름만 적거나 검사 기록 JSON을 자동 생성하는 것으로 교정을 대신하지 않습니다.
 
+화면 디자인에는 [Impeccable](https://github.com/pbakaus/impeccable) 4.8.0을 사용합니다. 아래 예시는 이번에 확인한 소스 커밋을 고정해 새 PC에 설치하며, 기존 설치가 있으면 덮어쓰지 않습니다. Codex를 다시 열어 스킬을 인식시킵니다. 실행기가 처음 사용할 엔진을 받으려면 네트워크가 필요할 수 있습니다.
+
+```powershell
+$impeccableRevision = 'b7a89176e4e87422b40f98adabceb051dbb5448b'
+$impeccableTarget = Join-Path $env:USERPROFILE '.codex\skills\impeccable'
+if (Test-Path -LiteralPath $impeccableTarget) { throw 'Impeccable이 이미 설치되어 있습니다. 기존 버전을 확인하세요.' }
+$impeccableClone = Join-Path $env:TEMP ('impeccable-' + [guid]::NewGuid().ToString('N'))
+git clone --no-checkout https://github.com/pbakaus/impeccable.git $impeccableClone
+if ($LASTEXITCODE -ne 0) { throw 'Impeccable 소스를 받지 못했습니다.' }
+git -C $impeccableClone checkout --detach $impeccableRevision
+if ($LASTEXITCODE -ne 0) { throw '고정 커밋을 확인하지 못했습니다.' }
+New-Item -ItemType Directory -Force -Path (Split-Path $impeccableTarget) | Out-Null
+Copy-Item -LiteralPath (Join-Path $impeccableClone '.agents\skills\impeccable') -Destination $impeccableTarget -Recurse
+if (!(Test-Path -LiteralPath (Join-Path $impeccableTarget 'SKILL.md'))) { throw '스킬 설치를 확인하지 못했습니다.' }
+```
+
+화면 작업 시 설치된 `SKILL.md`와 해당 참조 문서를 읽습니다. 실행기 오류 시 프로젝트의 `instructions/DESIGN.md`와 `instructions/READING-AND-SCHEDULER.md`를 직접 읽고 계속 검토합니다. 기존 설치를 갱신할 때는 버전과 로컬 변경을 먼저 확인하세요.
+
 폰트·CSS·Chart.js·HLS.js는 저장소에 들어 있어 리포트를 보거나 발행하는 데 npm install이 필요하지 않습니다. [디자인 자료 전체 안내](instructions/DESIGN-REFERENCE-GUIDE.md)에서 Pretendard 9종 웹폰트·9종 OTF, toss.md, Google DESIGN.md 0.4.0 규격과 라이선스를 확인합니다. 선택적인 디자인 형식 검사는 이 안내에 따라 실행합니다.
 
 ### 7. 첫 리포트 작성과 배포
 
 Codex에 이 폴더를 열고 다음을 요청합니다. 이 요청은 사람이 리포트를 작성하도록 지시하는 예시이며 저장소 안에 독립적인 AI 생성 실행기가 있는 것은 아닙니다.
 
-> 최신 instructions/README.md, WORKFLOW.md, REPORT-GUIDE.md, REPORT-OUTPUT-CONTRACT.md, KOREAN-EDITORIAL-POLICY.md, DESIGN.md와 DESIGN-REFERENCE-GUIDE.md를 읽고 해당 주 실제 조사로 리포트를 작성해 줘. ego-browser로 원문을 확인하고 한국어 3단계 교정, 콘텐츠 검수, 반응형·링크·공유·복사·다운로드 검사를 해 줘. 아직 Discord에는 보내지 마.
+> 최신 instructions/README.md, WORKFLOW.md, REPORT-GUIDE.md, REPORT-OUTPUT-CONTRACT.md, READING-AND-SCHEDULER.md, KOREAN-EDITORIAL-POLICY.md, DESIGN.md와 DESIGN-REFERENCE-GUIDE.md를 읽고 해당 주 실제 조사로 리포트를 작성해 줘. ego-browser로 원문을 확인하고 한국어 3단계 교정, 콘텐츠 검수, 반응형·링크·공유·복사·다운로드 검사를 해 줘. 아직 Discord에는 보내지 마.
 
 작성 결과는 `reports/weekly-YYYY-MM-DD.html`과 호별 필요한 JS·JSON·마크다운, 조사 원장, 검수 기록, `.summary.txt`입니다. 필수 `.content-review.json`·`.language-review.json` 구조와 해시는 Output 지침·validate-issue.mjs를 따릅니다. 과거 영수증을 복사하거나 수행하지 않은 검사를 true로 만들지 않습니다. 공개 리포트가 있다는 이유만으로 원본 검수 영수증까지 복원된 것은 아닙니다.
 
@@ -187,6 +205,8 @@ YYYY-MM-DD는 실제 발행일로 바꿉니다. publish-report는 검수 → 원
 | 매주 토요일 07:00 | 지침 동기화·재독 → 최근 7일 조사 → 작성·교정·검수 → 두 사이트 배포 → 요약 저장. 전송하지 않음 |
 | 매주 토요일 08:00 | 지침 동기화 → dispatch-report.ps1 → 당일 검수·배포 확인 → 두 링크 전송 |
 
+각 예약에 복사할 전체 실행 문구와 UI·출력 검수 기준은 [읽기 경험과 예약 작업 재현 지침](instructions/READING-AND-SCHEDULER.md)에 있습니다.
+
 담당 PC를 옮기면 이전 PC의 조사·전송 예약을 중지하고 새 PC만 활성화하세요. 이 예약은 클라우드 실행이 아니므로 PC와 Codex가 실행 중이어야 합니다. 로그인·수면 상태·네트워크로 실제 실행 시각이 달라질 수 있습니다. 예약 문구에는 이 README와 instructions/WORKFLOW.md를 먼저 읽고 실패 시 과거 호로 대체하지 않는 조건도 넣습니다.
 
 ### 10. 문제 해결과 다른 배포 대상으로 옮기기
@@ -207,4 +227,18 @@ YYYY-MM-DD는 실제 발행일로 바꿉니다. publish-report는 검수 → 원
 설정이 완료되면 최신 지침 적용 커밋, 실제 양쪽 공개 본문, 봇·채널 확인 결과, 첫 전송 기록을 확인하세요. 토큰·private/·검수 및 전송 영수증은 Git에 올리지 않습니다.
 
 ## 리포트 지침을 수정하려면
-[작성·출력·교정 지침](instructions/README.md)과 [작업 흐름](instructions/WORKFLOW.md)을 참고하세요. 실행 스크립트는 [workflows/](workflows/)에 있습니다. main에 커밋·푸시하면 실행 중인 로컬 Codex가 매시간 및 토요일 작업 직전에 최신 커밋을 확인해 적용합니다. 로컬 수정 충돌은 덮어쓰지 않습니다. 비밀키와 환경별 인증은 이 저장소에 포함하지 않습니다.
+[작성·출력·교정 지침](instructions/README.md)과 [작업 흐름](instructions/WORKFLOW.md)을 참고하세요. 실행 스크립트는 [workflows/](workflows/)에 있습니다. main에 커밋·푸시하면 실행 중인 로컬 Codex가 매시간 및 토요일 작업 직전에 최신 커밋을 확인해 적용합니다. 로컬 수정 충돌은 덮어쓰지 않습니다. 이미 설치한 PC에서 동기화 허용 목록 자체가 바뀐 경우에는 최신 체크아웃의 `workflows/sync-instructions.ps1`을 검토한 다음 로컬 `sync-instructions.ps1`에 한 번 복사해야 합니다. 이전 스크립트는 새 목록을 허용하지 않으므로 교체 전 동기화가 중단됩니다. 이 절차로 로컬 변경 파일을 덮어쓰지 않도록 먼저 비교하세요. 비밀키와 환경별 인증은 이 저장소에 포함하지 않습니다.
+
+## 화면 변경 검증
+
+저장소 루트에서 실행합니다. 처음 세 검사는 Node.js만 사용하고, 읽기 상호작용 검사는 설치·연결된 ego-browser가 필요합니다.
+
+```sh
+node --test workflows/test-build-site.mjs
+node workflows/test-public-assets.mjs
+node workflows/test-tool-visuals.mjs
+node workflows/test-reading-experience.mjs
+node workflows/build-site.mjs
+```
+
+사이트 생성기는 저장소 안에서는 현재 `reports/`로 메인을 다시 만들고, Windows 운영 폴더에 동기화한 사본은 기존 `reports/`에서 `site/reports/`로 복사합니다. 두 환경 모두 과거 발행물을 보존합니다. 전체 발행 검수는 별도의 실제 조사·교정 영수증과 `validate-issue.mjs`를 계속 사용합니다.

@@ -4,6 +4,7 @@
 
 - REPORT-GUIDE.md: 조사·편집·콘텐츠 구성
 - REPORT-OUTPUT-CONTRACT.md: 고정 섹션·근거·출력·검수 조건
+- READING-AND-SCHEDULER.md: 누적 아카이브·읽기·비교 시각 자료와 새 PC 예약 문구
 - KOREAN-EDITORIAL-POLICY.md: 한국어 3단계 교정
 - DESIGN.md: Toss 스타일·Pretendard·시각 규칙
 - CONTENT-AUDIT-2026-10-31.md: 초기 검토 기록(현재 규칙보다 우선하지 않음)

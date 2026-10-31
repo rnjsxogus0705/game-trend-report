@@ -21,7 +21,7 @@ if (typeof document !== 'undefined') {
     const percent = distance > 0 ? Math.min(100,Math.round(scrollY/distance*100)) : 100;
     $('read-percent').textContent = percent+'%'; $('read-bar').style.width=percent+'%';
     let active = navLinks[0];
-    for(const a of navLinks){const section=document.querySelector(a.getAttribute('href'));if(section && section.getBoundingClientRect().top<180)active=a;}
+    for(const a of navLinks){const section=document.querySelector(a.getAttribute('href'));if(section && section.getClientRects().length && section.getBoundingClientRect().top<180)active=a;}
     navLinks.forEach(a=>{a.classList.toggle('active',a===active);if(a===active)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});
     scrollQueued=false;
   };

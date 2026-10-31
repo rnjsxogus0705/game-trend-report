@@ -1,21 +1,58 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-const root=path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/,'$1'));
-const base=decodeURIComponent(root),site=path.join(base,'site'),out=path.join(site,'reports');
-await fs.mkdir(out,{recursive:true});
-const esc=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-for(const name of await fs.readdir(path.join(base,'reports'))){
- if(/^weekly-\d{4}-\d{2}-\d{2}-(?:idea-0[123]|ideas|ai-workflow|ai-plan-0[123]|ai-plans)\.md$/.test(name)||/^weekly-\d{4}-\d{2}-\d{2}\.(?:js|json)$/.test(name)){const text=await fs.readFile(path.join(base,'reports',name),'utf8');if(name.endsWith('.md')&&text.trim().length<300)throw Error('Empty idea draft: '+name);if(/(?:github_pat_[A-Za-z0-9_]+|gh[pousr]_[A-Za-z0-9]+)/.test(text))throw Error('Possible credential in public asset: '+name);await fs.writeFile(path.join(out,name),text,'utf8');continue;}
- if(!/^(weekly-\d{4}-\d{2}-\d{2}|monthly-\d{4}-\d{2})\.html$/.test(name))continue;
- const html=await fs.readFile(path.join(base,'reports',name),'utf8');
- const bodyText=html.replace(/<style[\s\S]*?<\/style>/gi,'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
- if(bodyText.length<3000||(html.match(/<h2\b/gi)||[]).length<5||(html.match(/href="https:\/\//g)||[]).length<5||!html.includes('확인일'))throw new Error('Report lacks substantive research, source links, sections or retrieval date: '+name);
- if(/(?:github_pat_[A-Za-z0-9_]+|gh[pousr]_[A-Za-z0-9]+|[\w-]{24,}\.[\w-]{6,}\.[\w-]{20,})/.test(html))throw new Error('Possible credential detected; publication stopped.');
- await fs.writeFile(path.join(out,name),html,'utf8');
+import {fileURLToPath, pathToFileURL} from 'node:url';
+
+const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const reportPattern = /^(weekly-\d{4}-\d{2}-\d{2}|monthly-\d{4}-\d{2})\.html$/;
+export function renderIndex(issues) {
+ const reports = [...issues].sort((a,b) => b.date.localeCompare(a.date) || a.name.localeCompare(b.name));
+ const latest = reports.find(r => r.type === 'weekly');
+ const months = [...new Set(reports.map(r => r.date.slice(0,7)))];
+ const years = [...new Set(reports.map(r => r.date.slice(0,4)))];
+ const monthLabel = month => `${month.slice(0,4)}년 ${Number(month.slice(5))}월`;
+ const arrow = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+ const rows = month => reports.filter(r => r.date.startsWith(month)).map(r => `<article class="issue-row" data-type="${r.type}" data-year="${r.date.slice(0,4)}"><time datetime="${r.date}">${r.date.replaceAll('-','.')}</time><span class="issue-type ${r.type}">${r.type==='weekly'?'주간':'월간 심층'}</span><h3><a href="reports/${r.name}">${esc(r.title)}</a></h3><span class="row-arrow" aria-hidden="true">${arrow}</span></article>`).join('');
+ return `<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="게임마이스터고 학생을 위한 게임·AI·취업 리서치 아카이브. 최신 주간 리포트와 월별 기록을 찾아보세요."><title>Game Trend Report | 게임·AI 리서치</title><link rel="stylesheet" href="assets/report/archive.css"><link rel="stylesheet" href="assets/report/share.css"><script defer src="assets/report/archive.js"></script><script defer src="assets/report/share.js"></script></head>
+<body><a class="skip-link" href="#archive">리포트 목록으로 건너뛰기</a><div class="site-wrap"><header class="site-header"><a class="wordmark" href="./" aria-label="Game Trend Report 홈"><svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 23V13h5v10M12 23V7h5v16M21 23V2h5v21" fill="currentColor"/></svg>GAME TREND REPORT</a><nav aria-label="주 메뉴"><a href="#weekly">주간 리포트</a><a href="#monthly">월간 심층</a><a href="standards/">제작·검수 기준</a></nav></header>
+<main><section class="home-intro" aria-labelledby="home-title"><div class="intro-copy"><h1 id="home-title">게임을 읽고,<br>다음 작품으로.</h1><p>게임의 재미를 분석하고, AI를 제작에 적용하고,<br class="desktop-break"> 이번 주의 발견을 내 프로젝트로 연결합니다.</p><a class="primary-link" href="${latest?'reports/'+latest.name:'reports/welcome.html'}">${latest?'최신 리포트 읽기':'리포트 발행 안내 보기'}${arrow}</a><p class="publish-note">매주 토요일 오전 8시 · 한국 시간</p></div>
+<aside class="latest-issue" aria-label="최신 주간 리포트"><div class="latest-meta"><span>이번 주 리포트</span>${latest?`<time datetime="${latest.date}">${latest.date.replaceAll('-','.')}</time>`:''}</div>${latest?`<h2><a href="reports/${latest.name}">${esc(latest.title.replace(/ · 게임 트렌드 리포트$/,''))}</a></h2><p>${esc(latest.description)}</p><a class="text-link" href="reports/${latest.name}">이번 호 살펴보기 ${arrow}</a>`:'<h2>첫 주간 리포트를 준비하고 있어요.</h2><p>발행 후 최신 주간 리포트가 여기에 표시됩니다.</p>'}<div class="reading-path" aria-label="리포트 활용 순서"><span>동향 읽기</span>${arrow}<span>제작 실험</span>${arrow}<span>포트폴리오</span></div></aside></section>
+<section id="archive" class="archive" aria-labelledby="archive-title"><div class="archive-heading"><div><h2 id="archive-title">쌓이는 발견, 이어지는 기록</h2><p>주간 동향과 월간 심층 분석을 날짜별로 찾아보세요.</p></div><span class="archive-total">전체 ${reports.length}개 리포트</span></div><div class="archive-shortcuts"><a id="weekly" href="#archive" data-archive-type="weekly">주간 ${reports.filter(r=>r.type==='weekly').length}개</a><a id="monthly" href="#archive" data-archive-type="monthly">월간 심층 ${reports.filter(r=>r.type==='monthly').length}개</a><span>심층 분석은 현재 주간 리포트에 함께 담습니다.</span></div>
+<form id="archive-filters" class="archive-filters" hidden role="search" aria-label="리포트 검색"><label class="search-field" for="report-search">제목·날짜 검색<input id="report-search" type="search" placeholder="예: AI, Balatro, 2026-10" autocomplete="off"></label><label for="report-type">리포트 유형<select id="report-type"><option value="all">전체 유형</option><option value="weekly">주간 리포트</option><option value="monthly">월간 심층</option></select></label><label for="report-year">발행 연도<select id="report-year"><option value="all">전체 연도</option>${years.map(y=>`<option value="${y}">${y}년</option>`).join('')}</select></label><button type="reset" class="reset-button">초기화</button></form>
+<p id="archive-status" class="archive-status" role="status" aria-live="polite">최신순 · ${reports.length}개 리포트</p><div id="archive-groups">${months.map((month,i)=>`<details class="month-group" open data-default-open="${i===0}"><summary><span>${monthLabel(month)}</span><span class="month-count">${reports.filter(r=>r.date.startsWith(month)).length}개 리포트</span></summary><div class="issue-list">${rows(month)}</div></details>`).join('')}</div><div id="archive-empty" class="archive-empty" ${reports.length?'hidden':''}><h3>${reports.length?'조건에 맞는 리포트가 없어요.':'첫 리포트를 준비하고 있어요.'}</h3><p>${reports.length?'검색어를 줄이거나 유형·연도를 바꿔 보세요.':'발행 후 이곳에 날짜별로 차곡차곡 쌓입니다.'}</p></div><noscript><p>검색은 JavaScript를 켜면 사용할 수 있습니다. 아래 월별 목록으로 모든 리포트를 읽을 수 있어요.</p></noscript></section>
+</main><footer class="site-footer"><div><strong>GAME TREND REPORT</strong><p>발견에서 실험으로, 실험에서 나의 작품으로.</p></div><div><p>토요일 07:00 조사·교정·배포 준비 · 08:00 링크 전송<br>사실·추정·추천을 구분하고 출처와 확인일을 기록합니다.<br>월간 별도 발행은 없으며 과거 월간 리포트는 보존합니다.</p><a href="https://github.com/rnjsxogus0705/game-trend-report">공개 저장소</a></div></footer></div></body></html>`;
 }
-const reports=(await fs.readdir(out)).filter(n=>/^(weekly-\d{4}-\d{2}-\d{2}|monthly-\d{4}-\d{2})\.html$/.test(n)).sort((a,b)=>b.slice(b.indexOf('-')).localeCompare(a.slice(a.indexOf('-'))));
-const card=async name=>{const html=await fs.readFile(path.join(out,name),'utf8');const title=html.match(/<title[^>]*>([^<]+)<\/title>/i)?.[1]||name;return `<a class="card" href="reports/${name}"><span class="tag">${name.startsWith('weekly')?'WEEKLY · 주간':'MONTHLY · 월간 심층'}</span><h3>${esc(title)}</h3><span class="date">${name.replace(/^(weekly|monthly)-|\.html$/g,'')} · 리포트 읽기 ↗</span></a>`};
-const weekly=await Promise.all(reports.filter(n=>n.startsWith('weekly')).map(card)),monthly=await Promise.all(reports.filter(n=>n.startsWith('monthly')).map(card));
-const empty='<p class="empty">첫 리포트를 준비 중입니다. 발행 후 이곳에 누적됩니다.</p>';
-await fs.writeFile(path.join(site,'index.html'),`<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="게임마이스터고 학생을 위한 게임·AI·취업 주간 리포트와 월간 심층 분석"><title>Game Trend Report | 게임·AI 리서치</title><style>@font-face{font-family:Pretendard;src:url('assets/report/fonts/Pretendard-Regular.woff2') format('woff2');font-weight:400;font-display:swap}@font-face{font-family:Pretendard;src:url('assets/report/fonts/Pretendard-Bold.woff2') format('woff2');font-weight:700;font-display:swap}:root{font-family:Pretendard,system-ui,-apple-system,"Malgun Gothic",sans-serif;color:#191f28;background:#f2f4f6;line-height:1.7}*{box-sizing:border-box}body{margin:0}main{max-width:1100px;margin:auto;padding:30px 24px 60px}nav{display:flex;gap:24px;flex-wrap:wrap;align-items:center;border-bottom:1px solid #e5e8eb;padding:10px 0 22px}nav strong{margin-right:auto;letter-spacing:.5px}a{color:inherit;text-decoration:none}nav a:hover,a:focus-visible{color:#3182f6;outline-offset:5px}.hero{padding:70px 0 50px}.eyebrow,.tag{font-size:12px;letter-spacing:2px;color:#3182f6}h1{font-size:clamp(38px,7vw,72px);line-height:1.16;letter-spacing:-2px;margin:22px 0}h2{font-size:28px;margin-bottom:8px}.hero p,.desc,.date,footer{color:#6b7684}.hero p{max-width:640px;font-size:18px}.cta{display:inline-block;background:#3182f6;color:#ffffff;border-radius:9px;padding:12px 18px;font-weight:700;margin-top:14px}.schedule{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:45px}.schedule article,.card{border:1px solid #e5e8eb;border-radius:14px;padding:24px;background:#ffffff}.schedule strong{display:block;font-size:23px}.schedule p{color:#6b7684;margin-bottom:0}.section{scroll-margin-top:25px;margin:45px 0}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px}.card{display:block;transition:border-color .15s}.card:hover{border-color:#3182f6}.card h3{font-size:20px}.date{font-size:13px}.empty{padding:28px;border:1px dashed #b0b8c1;border-radius:14px;color:#6b7684}footer{font-size:13px;border-top:1px solid #e5e8eb;padding-top:25px;margin-top:50px}footer a{text-decoration:underline}@media(max-width:540px){main{padding:20px 18px}.hero{padding:40px 0 30px}nav{gap:16px}nav strong{width:100%}}</style><link rel="stylesheet" href="assets/report/share.css"><script defer src="assets/report/share.js"></script></head><body><main><nav aria-label="주 메뉴"><strong>GAME TREND REPORT</strong><a href="#weekly">주간 리포트</a><a href="#monthly">월간 심층</a><a href="standards/">제작·검수 기준</a></nav><header class="hero"><span class="eyebrow">RESEARCH → EXPERIMENT → PORTFOLIO</span><h1>다음 게임을 만들기 위한<br>이번 주의 발견.</h1><p>게임의 재미를 분석하고, AI를 제작에 적용하고, 취업 시장의 요구를 내 프로젝트로 연결합니다.</p><a class="cta" href="${reports.length?'reports/'+reports[0]:'reports/welcome.html'}">${reports.length?'최신 리포트 읽기':'리포트 발행 안내 보기'} ↗</a></header><div class="schedule"><article><span class="tag">WEEKLY</span><strong>매주 토요일 · 오전 8시</strong><p>게임·AI 변화, 채용·참여 기회, 작은 실험 한 가지</p></article><article><span class="tag">DEEP DIVE</span><strong>주간에 통합한 심층 분석</strong><p>시스템 역설계, 직무별 역량, 다음 프로젝트 개선안</p></article></div><section id="weekly" class="section"><h2>주간 리포트</h2><p class="desc">5~10분으로 읽는 중요한 변화와 이번 주 할 일.</p><div class="cards">${weekly.join('')||empty}</div></section><section id="monthly" class="section"><h2>이전 월간 리포트 아카이브</h2><p class="desc">한 게임과 한 주제를 깊게 분석해 제작 판단으로 연결합니다.</p><div class="cards">${monthly.join('')||empty}</div></section><footer>한국 시간 기준 · 토요일 오전 7시 조사·교정·배포 준비, 오전 8시 링크 전송. 매월 1일 별도 발행은 없습니다.<br>사실 / 추정 / 추천을 구분하고 출처와 확인일을 기록합니다.<br><a href="https://github.com/rnjsxogus0705/game-trend-report">공개 저장소</a></footer></main></body></html>`,'utf8');
-console.log('Site built: '+reports.length+' published reports.');
+
+export async function buildSite({site, source}) {
+ const out=path.join(site,'reports');
+ await fs.mkdir(out,{recursive:true});
+ for(const name of await fs.readdir(source)) {
+  if(/^weekly-\d{4}-\d{2}-\d{2}-(?:idea-0[123]|ideas|ai-workflow|ai-plan-0[123]|ai-plans)\.md$/.test(name)||/^weekly-\d{4}-\d{2}-\d{2}\.(?:js|json)$/.test(name)) {
+   const text=await fs.readFile(path.join(source,name),'utf8');
+   if(name.endsWith('.md')&&text.trim().length<300)throw Error('Empty idea draft: '+name);
+   if(/(?:github_pat_[A-Za-z0-9_]+|gh[pousr]_[A-Za-z0-9]+)/.test(text))throw Error('Possible credential in public asset: '+name);
+   if(path.resolve(source)!==path.resolve(out))await fs.writeFile(path.join(out,name),text,'utf8');
+   continue;
+  }
+  if(!reportPattern.test(name))continue;
+  const html=await fs.readFile(path.join(source,name),'utf8');
+  const bodyText=html.replace(/<style[\s\S]*?<\/style>/gi,'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+  if(bodyText.length<3000||(html.match(/<h2\b/gi)||[]).length<5||(html.match(/href="https:\/\//g)||[]).length<5||!html.includes('확인일'))throw Error('Report lacks substantive research, source links, sections or retrieval date: '+name);
+  if(/(?:github_pat_[A-Za-z0-9_]+|gh[pousr]_[A-Za-z0-9]+|[\w-]{24,}\.[\w-]{6,}\.[\w-]{20,})/.test(html))throw Error('Possible credential detected; publication stopped.');
+  if(path.resolve(source)!==path.resolve(out))await fs.writeFile(path.join(out,name),html,'utf8');
+ }
+ const issues=[];
+ for(const name of (await fs.readdir(out)).filter(n=>reportPattern.test(n))) {
+  const html=await fs.readFile(path.join(out,name),'utf8');
+  issues.push({name,type:name.startsWith('weekly')?'weekly':'monthly',date:name.replace(/^(weekly|monthly)-|\.html$/g,''),title:html.match(/<title[^>]*>([^<]+)<\/title>/i)?.[1]||name,description:html.match(/<meta name="description" content="([^"]+)"/i)?.[1]||'게임·AI·제작의 발견을 읽어보세요.'});
+ }
+ await fs.writeFile(path.join(site,'index.html'),renderIndex(issues),'utf8');
+ console.log('Site built: '+issues.length+' published reports.');
+}
+if(process.argv[1] && import.meta.url===pathToFileURL(path.resolve(process.argv[1])).href) {
+ const base=path.dirname(fileURLToPath(import.meta.url));
+ // The synced Windows script lives beside site/; the repository copy lives in workflows/.
+ const site=path.basename(base)==='workflows'?path.dirname(base):path.join(base,'site');
+ const source=path.basename(base)==='workflows'?path.join(site,'reports'):path.join(base,'reports');
+ await buildSite({site,source});
+}
