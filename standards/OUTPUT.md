@@ -51,3 +51,5 @@ Toss 스타일·Pretendard·반응형 목차·읽기 요약·차트 수치표·�
 
 ## 검수 기록 형식
 최종 HTML 옆 .content-review.json: schemaVersion=2, reportDate=YYYY-MM-DD, sha256=최종 HTML 해시, reviewedBy=Codex, sections=[위 11개 ID], checks={sourcesVerified,releaseStatesChecked,aiScopeSeparated,hotnessEvidenceChecked,jobsSampleDisclosed,previousIssueCompared,techniqueReproducibilityReviewed,mobileChecked,shareChecked}의 실제 검사 결과. 각 coverage에는 category, status(updated/no_material_change/unverified), sourceUrls, limitation을 기록한다. 조사하지 않은 항목을 updated로 표시하지 않는다. 부족한 근거는 본문에서도 드러나야 한다.
+
+공유 UI에는 디스코드와 카카오톡 전용 버튼을 유지한다. 디스코드는 제목·URL 복사 후 사용자가 대화를 선택해 붙여 넣는다. 카카오톡은 현재 기기 공유 또는 복사 방식이다. Kakao JavaScript 키와 등록 도메인이 없으므로 공식 공유 카드가 구현됐다고 설명하지 않는다.
