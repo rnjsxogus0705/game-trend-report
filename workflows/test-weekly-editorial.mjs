@@ -17,7 +17,7 @@ for(const change of audit.changes.filter(change=>change.file===file)){
 }
 
 function withoutSkillAdditions(html){
- for(const className of ['skill-selection-map','skill-selection','skill-evidence-figure']){
+ for(const className of ['skill-selection-map','skill-selection','skill-evidence-figure','learning-section-guide','lab-explanation','github-selection-map','github-selection']){
   let found;
   while((found=[...html.matchAll(/<([a-z]+)\b[^>]*class="([^"]*)"[^>]*>/g)].find(match=>match[2].split(/\s+/).includes(className)))){
    const tail=html.slice(found.index+found[0].length),tags=new RegExp('<(/?)'+found[1]+'\\b[^>]*>','g');let depth=1,end;

@@ -864,6 +864,12 @@
       "before": "자원표 검증, 경로 비용 계산, 배터리 상태 머신과 경계값 테스트 초안.",
       "after": "자원표 검증, 경로 비용 계산, 배터리의 충전·소모·방전 상태와 전환 규칙을 검사하는 테스트 초안.",
       "reason": "독립 문서에서도 상태 머신을 이해할 수 있도록 풀어 씀"
+    },
+    {
+      "file": "reports/weekly-2026-10-31.html",
+      "before": "Node.js v24.16.0 내 PC에서 실행.",
+      "after": "원본 실행 기록의 환경은 Node.js v24.16.0이에요.",
+      "reason": "검사 실행 환경을 현재 편집자의 PC와 혼동하지 않게 원본 기록임을 명시"
     }
   ],
   "limitations": [
@@ -1520,7 +1526,7 @@
       }
     ],
     "fileHashes": {
-      "weekly-2026-10-31.html": "6b9df5b2345571ea276d636464a9d76cbfc11594e5f0cc3301dae3462d317c08",
+      "weekly-2026-10-31.html": "fcb5a08c3bf201f53fed143f6e7cec3477beee3bcbaf96b5a9211236e3713747",
       "weekly-2026-10-31-ai-plan-01.md": "55aae6d568301fdf18438e57430969df932b05f4e191824a44d535469fdcbd1b",
       "weekly-2026-10-31-ai-plan-02.md": "a32bba89f4da73b596bec9a8055d798aaacb5b23c60740d047f73f6885cbd3b7",
       "weekly-2026-10-31-ai-plan-03.md": "52952992fc41f3652692c3a01c5cdfee45a104d3269f44387bfe8cba00651d18",
@@ -1592,5 +1598,27 @@
     "scope": "9개 카드의 선정 이유·문서상 강점·도입 부담·대상·작은 시험·README/SKILL 원문, 작업별 선택 지도와 행렬, 제작자 시연/실제 제작 게임 미확인 구분",
     "source": "assets/report/research/agent-skill-selection-2026-10-31.json",
     "verification": "저장소와 SKILL.md 문서를 확인. 직접 설치·실행과 실제 제작된 게임은 검증하지 않음"
+  },
+  "learningSectionReview": {
+    "reviewer": "/root/final_review",
+    "disposition": "approved_after_three_repairs",
+    "sections": [
+      "prototype",
+      "lab",
+      "github-trending"
+    ],
+    "scope": "학습 질문·근거·단서와 선택·사람과 AI 역할, 실제 규칙 검사와 독립 확률 가상 실험, GitHub 3개 선정 이유와 문서상 강점/도입 부담",
+    "corrections": [
+      "사람이 관찰 결과를 미리 정한다는 오해를 없애고 실제 행동을 관찰한다고 명시",
+      "합니다체 한 문장을 해요체로 통일",
+      "실사용 제작 게임 표현을 실제 적용 결과와 이 자료를 활용해 만든 게임으로 풀어 씀"
+    ],
+    "numericalEvidence": "validation-result.json 원본 미변경, 2·2·1·1 합계6과 고정시드/확률0·1 경계 재현 테스트 통과",
+    "imageSources": [
+      "assets/report/visuals-2026-10-31/prototype-guide-source.json",
+      "assets/report/visuals-2026-10-31/lab-guide-source.json"
+    ],
+    "githubSource": "assets/report/research/github-selection-2026-10-31.json",
+    "limitations": "시각 자료는 학습용 개념도. 실제 참가자 테스트·게임 엔진 실행·생산성/도구 성능 비교를 새로 수행하지 않음"
   }
 }

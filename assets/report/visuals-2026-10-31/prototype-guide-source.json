@@ -1,0 +1,12 @@
+{
+  "generator": "image_gen",
+  "title": "작은 시험판: 선택 하나만 확인하기",
+  "labels": [
+    "질문 정하기",
+    "단서와 선택",
+    "이유 관찰",
+    "규칙 수정"
+  ],
+  "prompt": "Korean beginner game-development educational explainer illustration, landscape 3:2. White background, navy #14243b and cobalt #2455cb, light blue, restrained amber. Very readable large accurate Hangul. Exact title \"작은 시험판: 선택 하나만 확인하기\". Exact panel labels \"질문 정하기\", \"단서와 선택\", \"이유 관찰\", \"규칙 수정\". Four clear panels in a 2x2 reading order connected with arrows. A student plans a lost-property counter game; a bag with clues and a visitor has simple two buttons exactly '반환' and '보류'; another student plays while observer writes notes; the author revises one rule card. No claims of real user tests or implemented game. Professional friendly flat editorial illustration. No other text except the specified Korean, no numbers, no brand logos, no factual graphs or measurement scores. This is an illustrative learning proposal, not a real screenshot or experimental evidence.",
+  "scope": "학습용 개념도. 실제 제품 화면·실험 결과의 증거가 아님."
+}

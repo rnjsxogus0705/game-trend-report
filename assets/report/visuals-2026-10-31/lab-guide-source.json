@@ -1,0 +1,10 @@
+{
+  "generator": "image_gen",
+  "title": "실험실: 두 가지 확인 방법",
+  "labels": [
+    "데이터 오류 검사",
+    "가상 확률 실험"
+  ],
+  "prompt": "Korean beginner game-development educational explainer illustration, landscape 3:2. White background, navy #14243b and cobalt #2455cb, light blue, restrained amber. Very readable large accurate Hangul. Exact title \"실험실: 두 가지 확인 방법\". Exact panel labels \"데이터 오류 검사\", \"가상 확률 실험\". Two equally sized clearly separated panels. Left: hand-written data rules, a table of fictional item data, magnifying glass checking red-marked invalid entries, small checklist. Right: dice, many repeated abstract game tokens with different outcomes, grouped counters representing a simulation, no quantitative values. Under left exact caption '잘못된 입력 찾기', under right exact caption '가능한 결과 살펴보기'. Make the two different purposes very obvious. Professional friendly flat editorial illustration. No other text except the specified Korean, no numbers, no brand logos, no factual graphs or measurement scores. This is an illustrative learning proposal, not a real screenshot or experimental evidence.",
+  "scope": "학습용 개념도. 실제 제품 화면·실험 결과의 증거가 아님."
+}

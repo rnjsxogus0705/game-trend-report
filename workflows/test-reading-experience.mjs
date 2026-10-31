@@ -42,7 +42,7 @@ try {
   buttons[1].click();const allClosed=groups.every(group=>!group.open);
   dispatchEvent(new Event('beforeprint'));const printOpen=[...document.querySelectorAll('main details:not(.mobile-nav)')].every(detail=>detail.open);
   dispatchEvent(new Event('afterprint'));const restored=groups.every(group=>!group.open);
-  return {skillEvidence,ideaImages,international,readerGuide,visuals,media,visualsLabeled,detailLabel,summaryPresent,highlights,count:groups.length,directHashOpen,linkedToolOpen,allOpen,allClosed,printOpen,restored,
+  return {labDataVisible:!hasClosedParent(document.querySelector('#lab .grid2 .table-scroll')),skillEvidence,ideaImages,international,readerGuide,visuals,media,visualsLabeled,detailLabel,summaryPresent,highlights,count:groups.length,directHashOpen,linkedToolOpen,allOpen,allClosed,printOpen,restored,
    previews:document.querySelectorAll('.reading-tool-previews img').length,
    benchmarkVisible:!hasClosedParent(document.getElementById('benchmark-chart')),
    simulationVisible:!hasClosedParent(document.getElementById('simulation-chart'))};
@@ -85,10 +85,10 @@ try{
   assert.ok(line,JSON.stringify(output));
   const result=JSON.parse(line.slice(7));
   assert.match(result.detailLabel,/저장소를 내 프로젝트/);
-  assert.equal(result.visuals,13);assert.equal(result.media,8);assert.equal(result.visualsLabeled,true);
+  assert.equal(result.visuals,14);assert.equal(result.media,8);assert.equal(result.visualsLabeled,true);
   assert.equal(result.toolFilters.images,15);assert.equal(result.toolFilters.steps,5);assert.equal(result.toolFilters.routeImage,true);for(const f of result.toolFilters.results){assert.equal(f.cards,f.expected);assert.equal(f.rows,f.expected);assert.equal(f.matrix,f.expected);assert.equal(f.pressed,f.value);}
   for(const key of ['cards','blocks','marked','originalDetails','rows'])assert.equal(result.skillEvidence[key],9,key);assert.equal(result.skillEvidence.toolChartOutsideSkills,true);
-  assert.equal(result.ideaImages,6);assert.equal(result.international,4);assert.equal(result.readerGuide,true);
+  assert.equal(result.ideaImages,6);assert.equal(result.labDataVisible,true);assert.equal(result.international,4);assert.equal(result.readerGuide,true);
   assert.equal(result.summaryPresent,true);
   assert.ok(result.highlights>=3);
   for(const layout of result.layouts){assert.equal(layout.compactTableFits,true,'Unnecessary short-table scrolling at '+layout.width);assert.ok(layout.minTextSize>=11,'Text below 11px at '+layout.width);assert.equal(layout.overflow,false,'overflow at '+layout.width);assert.ok(layout.paragraph>=17);assert.equal(layout.chapterBorder,2);for(const image of layout.imageSizes){assert.ok(Math.abs(image.height/image.width-image.naturalRatio)<.02,'TOP image letterboxing at '+layout.width);}for(const ratio of layout.previewRatios)assert.ok(Math.abs(ratio-9/16)<.02,'Preview stretched at '+layout.width);}

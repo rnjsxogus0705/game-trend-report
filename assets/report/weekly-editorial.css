@@ -353,3 +353,16 @@ html:has(body.weekly-editorial){scroll-padding-top:0}
 .weekly-editorial .table-scroll table:not(:has(tr > :nth-child(4))){min-width:0;width:100%;table-layout:fixed}
 .weekly-editorial .table-scroll table:not(:has(tr > :nth-child(4))) :is(th,td){overflow-wrap:anywhere}
 .weekly-editorial .table-scroll table:not(:has(tr > :nth-child(3))) :is(th,td):first-child{width:72%}
+.weekly-editorial :is(.learning-section-guide,.lab-explanation,.github-selection-map){padding:22px 24px;background:#f0f4fc;border-radius:8px;margin:24px 0}
+.weekly-editorial :is(.learning-section-guide,.lab-explanation) :is(h3,h4){margin:0 0 14px;font-size:23px;line-height:1.5}
+.weekly-editorial :is(.learning-section-guide,.lab-explanation) p{font-size:17px;line-height:1.9}
+.weekly-editorial .github-selection-map{order:3}.weekly-editorial .github-selection-map .caption{font-size:14px}
+.weekly-editorial :is(.github-selection-map,.skill-selection-map) .tool-choice-flow li::after{display:none}
+.weekly-editorial .github-selection{margin:18px 0;padding:18px 20px;background:#f3f6fc;border-radius:8px}
+.weekly-editorial .github-selection p{font-size:16px;line-height:1.85;margin:12px 0}.weekly-editorial .github-selection p:first-child{margin-top:0}
+.weekly-editorial .github-selection strong{display:block;color:#193e96;font-size:14px;margin-bottom:4px}
+.weekly-editorial .github-background>summary{font-size:14px;color:#2455cb;font-weight:600;padding:14px 0}
+.weekly-editorial .error-count-cell{white-space:nowrap}.weekly-editorial .error-count-track{display:inline-block;vertical-align:middle;width:calc(100% - 24px);height:12px;background:#e4ebf6;border-radius:4px;margin-right:8px;overflow:hidden}
+.weekly-editorial .error-count-track i{display:block;height:100%;background:#2455cb;border-radius:4px}.weekly-editorial .error-count-cell strong{font-size:15px}
+.weekly-editorial .error-chart-caption{font-size:14px;color:#536174;line-height:1.85}
+@media(max-width:600px){.weekly-editorial :is(.learning-section-guide,.lab-explanation,.github-selection-map){padding:18px}.weekly-editorial :is(.learning-section-guide,.lab-explanation) p{font-size:16px}.weekly-editorial .github-selection{padding:16px}}
