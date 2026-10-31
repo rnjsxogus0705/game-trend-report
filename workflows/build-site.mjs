@@ -5,7 +5,7 @@ const base=decodeURIComponent(root),site=path.join(base,'site'),out=path.join(si
 await fs.mkdir(out,{recursive:true});
 const esc=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 for(const name of await fs.readdir(path.join(base,'reports'))){
- if(/^weekly-\d{4}-\d{2}-\d{2}-(?:idea-0[123]|ideas|ai-workflow)\.md$/.test(name)||/^weekly-\d{4}-\d{2}-\d{2}\.(?:js|json)$/.test(name)){const text=await fs.readFile(path.join(base,'reports',name),'utf8');if(name.endsWith('.md')&&text.trim().length<300)throw Error('Empty idea draft: '+name);if(/(?:github_pat_[A-Za-z0-9_]+|gh[pousr]_[A-Za-z0-9]+)/.test(text))throw Error('Possible credential in public asset: '+name);await fs.writeFile(path.join(out,name),text,'utf8');continue;}
+ if(/^weekly-\d{4}-\d{2}-\d{2}-(?:idea-0[123]|ideas|ai-workflow|ai-plan-0[123]|ai-plans)\.md$/.test(name)||/^weekly-\d{4}-\d{2}-\d{2}\.(?:js|json)$/.test(name)){const text=await fs.readFile(path.join(base,'reports',name),'utf8');if(name.endsWith('.md')&&text.trim().length<300)throw Error('Empty idea draft: '+name);if(/(?:github_pat_[A-Za-z0-9_]+|gh[pousr]_[A-Za-z0-9]+)/.test(text))throw Error('Possible credential in public asset: '+name);await fs.writeFile(path.join(out,name),text,'utf8');continue;}
  if(!/^(weekly-\d{4}-\d{2}-\d{2}|monthly-\d{4}-\d{2})\.html$/.test(name))continue;
  const html=await fs.readFile(path.join(base,'reports',name),'utf8');
  const bodyText=html.replace(/<style[\s\S]*?<\/style>/gi,'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();

@@ -5,7 +5,7 @@ if((html.match(/class="top-ten-item"/g)||[]).length!==10||!html.includes('id="to
 if(!html.includes('id="reading"'))throw Error('Missing Korean reading and video section');
 if(!html.includes('id="game-ideas"')||(html.match(/data-copy-idea="/g)||[]).length!==3)throw Error('Expected three copyable idea drafts');
 if((html.match(/class="game-dossier"/g)||[]).length<1)throw Error('Missing linked game evidence and analysis');
-const priority=['top10','github-trending','game-ai-tools','ai-only-lab','games','game-ideas','reading'].map(id=>html.indexOf('id="'+id+'"'));if(priority.some(p=>p<0)||priority.some((p,i)=>i>0&&p<priority[i-1]))throw Error('Sections must follow the current TOP 10 / GitHub / tools priority');
+const priority=['top10','github-trending','game-ai-tools','ai-only-lab','games','game-ideas','ai-production','reading'].map(id=>html.indexOf('id="'+id+'"'));if(priority.some(p=>p<0)||priority.some((p,i)=>i>0&&p<priority[i-1]))throw Error('Sections must follow the current TOP 10 / GitHub / tools priority');
 for(const kind of ['article','video','post'])if(!html.includes('data-kind="'+kind+'"'))throw Error('Missing resource category: '+kind);
 if(review.schemaVersion!==2||review.sha256!==crypto.createHash('sha256').update(html).digest('hex'))throw Error('Content review does not match this report');
 if(!file.endsWith('weekly-'+review.reportDate+'.html'))throw Error('Report date mismatch');
@@ -20,3 +20,5 @@ console.log('Content contract, review hash, coverage, section links and local as
 if(!html.includes('data-ai-case=')||!html.includes('data-ai-resource="video"')||!html.includes('data-ai-skill=')||!html.includes('data-copy-workflow=')||!html.includes('ai-workflow.md'))throw Error('Missing AI-centered games, Korean resources, skills or reusable workflow');
 
 if(html.includes('class="game-dossier tool-research-card"')){const cards=(html.match(/class="game-dossier tool-research-card"/g)||[]).length;if(!html.includes('id="tool-choice"')||!html.includes('id="tool-goal"')||(html.match(/class="tool-media"/g)||[]).length!==cards||(html.match(/data-compare-goals="/g)||[]).length!==cards)throw Error('Tool cards require matching previews, comparison rows and a choice filter');}
+
+if(!html.includes('id="ai-production"')||(html.match(/data-copy-ai-plan="/g)||[]).length!==3)throw Error('Missing separate AI production ideas and workflows');
