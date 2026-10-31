@@ -27,10 +27,10 @@ export function validateWeeklyPresentation(html,{reportDate}={}){
  const assert=(condition,message)=>{if(!condition)throw Error(message);};
  const descendants=(node,predicate)=>elements.filter(child=>within(child,node)&&predicate(child));
  assert(elements.some(node=>node.tag==='body'&&hasClass(node,'weekly-editorial')),'Missing weekly-editorial body class');
- const styles=elements.filter(node=>node.tag==='link'&&node.attrs.rel==='stylesheet').map(node=>node.attrs.href);
+ const styles=elements.filter(node=>node.tag==='link'&&node.attrs.rel==='stylesheet').map(node=>(node.attrs.href||'').split('?')[0]);
  assert(styles.at(-1)==='../assets/report/weekly-editorial.css','Weekly editorial stylesheet must be last');
  for(const asset of ['report.css','share.css','reading-experience.css'])assert(styles.includes('../assets/report/'+asset),'Missing required report stylesheet: '+asset);
- const scripts=elements.filter(node=>node.tag==='script').map(node=>node.attrs.src);
+ const scripts=elements.filter(node=>node.tag==='script').map(node=>(node.attrs.src||'').split('?')[0]);
  for(const asset of ['share.js','reading-experience.js'])assert(scripts.includes('../assets/report/'+asset),'Missing required report script: '+asset);
  if(reportDate>='2026-11-07')assert(scripts.includes(`weekly-${reportDate}.js`)&&!scripts.includes('../assets/report/report.js'),'New reports require an issue-specific UI/chart script');
  assert(elements.some(node=>node.tag==='html'&&node.attrs.lang==='ko'),'Report language must be Korean');

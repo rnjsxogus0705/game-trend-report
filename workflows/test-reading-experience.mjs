@@ -43,6 +43,11 @@ try {
    benchmarkVisible:!hasClosedParent(document.getElementById('benchmark-chart')),
    simulationVisible:!hasClosedParent(document.getElementById('simulation-chart'))};
  });
+ result.toolFilters=await page.evaluate(()=>{
+  const select=document.getElementById('tool-goal'),values=[...select.options].map(o=>o.value),results=[];
+  for(const value of values){document.querySelector('.tool-filter-buttons button[data-goal="'+value+'"]').click();const visible=selector=>[...document.querySelectorAll(selector)].filter(n=>!n.hidden).length;results.push({value,expected:[...document.querySelectorAll('.tool-research-card')].filter(c=>value==='all'||c.dataset.toolGoals.split(' ').includes(value)).length,cards:visible('.tool-result'),rows:visible('.tool-comparison tr[data-compare-goals]'),matrix:visible('.tool-matrix tbody tr'),pressed:document.querySelector('.tool-filter-buttons [aria-pressed=true]')?.dataset.goal});}
+  document.querySelector('.tool-filter-buttons button[data-goal=all]').click();return {results,images:document.querySelectorAll('.tool-result img').length,steps:document.querySelectorAll('.production-route-flow li').length,routeImage:!!document.querySelector('.route-visual img')};
+ });
  result.layouts=[];
  for(const width of [320,390,768,1440]){
   await page.cdp('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:width<768});
@@ -73,6 +78,7 @@ try{
   const result=JSON.parse(line.slice(7));
   assert.match(result.detailLabel,/저장소를 내 프로젝트/);
   assert.equal(result.visuals,13);assert.equal(result.media,8);assert.equal(result.visualsLabeled,true);
+  assert.equal(result.toolFilters.images,15);assert.equal(result.toolFilters.steps,5);assert.equal(result.toolFilters.routeImage,true);for(const f of result.toolFilters.results){assert.equal(f.cards,f.expected);assert.equal(f.rows,f.expected);assert.equal(f.matrix,f.expected);assert.equal(f.pressed,f.value);}
   assert.equal(result.summaryPresent,true);
   assert.ok(result.highlights>=3);
   for(const layout of result.layouts){assert.equal(layout.overflow,false,'overflow at '+layout.width);assert.ok(layout.paragraph>=17);assert.equal(layout.chapterBorder,2);for(const image of layout.imageSizes){assert.ok(Math.abs(image.height/image.width-image.naturalRatio)<.02,'TOP image letterboxing at '+layout.width);}for(const ratio of layout.previewRatios)assert.ok(Math.abs(ratio-9/16)<.02,'Preview stretched at '+layout.width);}

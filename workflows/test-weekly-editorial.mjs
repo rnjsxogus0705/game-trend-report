@@ -16,11 +16,11 @@ for(const change of audit.changes.filter(change=>change.file===file)){
 
 const bodyText=html=>html.match(/<body\b[^>]*>([\s\S]*?)<\/body>/i)[1]
  .replace(/<header\b[^>]*data-editorial-cover[\s\S]*?<\/header>/i,'').replace(/<section\b[^>]*data-editorial-summary[\s\S]*?<\/section>/i,'').replace('<a href="#issue-summary">이번 호 한눈에 보기</a>','')
- .replace(/<details class="mobile-nav">[\s\S]*?<\/details>/i,'').replace(/<figure class="chapter-visual"[\s\S]*?<\/figure>/g,'').replace(/<div class="top-evidence">[\s\S]*?<\/div>/g,'').replace(/<p class="top-visual-note"[^>]*>[\s\S]*?<\/p>/g,'').replace(/<aside\b[^>]*>[\s\S]*?<\/aside>/gi,'').replace(/<p\b[^>]*data-editorial-ui[\s\S]*?<\/p>/gi,'').replace(/<summary\b[^>]*data-editorial-ui[\s\S]*?<\/summary>/gi,'')
+ .replace(/<details class="mobile-nav">[\s\S]*?<\/details>/i,'').replace(/<figure class="route-visual"[\s\S]*?<\/figure>/g,'').replace(/<ol class="production-route-flow"[\s\S]*?<\/ol>/g,'').replace(/<dl class="route-checks"[\s\S]*?<\/dl>/g,'').replace(/<figure class="chapter-visual"[\s\S]*?<\/figure>/g,'').replace(/<div class="top-evidence">[\s\S]*?<\/div>/g,'').replace(/<p class="top-visual-note"[^>]*>[\s\S]*?<\/p>/g,'').replace(/<aside\b[^>]*>[\s\S]*?<\/aside>/gi,'').replace(/<p\b[^>]*data-editorial-ui[\s\S]*?<\/p>/gi,'').replace(/<summary\b[^>]*data-editorial-ui[\s\S]*?<\/summary>/gi,'')
  .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi,'')
  .replace(/<\/?mark\b[^>]*>/g,'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
 assert.deepEqual(bodyText(current).split(/\s+/).sort(),bodyText(approved).split(/\s+/).sort(),'승인된 문장 교정 외 본문 누락·중복이 없어야 합니다.');
-const urls=html=>[...html.replace(/<details class="mobile-nav">[\s\S]*?<\/details>/i,'').replace(/<aside\b[^>]*>[\s\S]*?<\/aside>/gi,'').matchAll(/(?:href|src)="([^"]+)"/g)].map(m=>m[1]).filter(s=>!s.includes('weekly-editorial.css')&&s!=='#issue-summary');
+const urls=html=>[...html.replace(/<details class="mobile-nav">[\s\S]*?<\/details>/i,'').replace(/<aside\b[^>]*>[\s\S]*?<\/aside>/gi,'').matchAll(/(?:href|src)="([^"]+)"/g)].map(m=>!/^https?:/.test(m[1])&&/\.(css|js)\?/.test(m[1])?m[1].split('?')[0]:m[1]).filter(s=>!s.includes('weekly-editorial.css')&&s!=='#issue-summary');
 const remaining=urls(current);for(const url of urls(previous)){const index=remaining.indexOf(url);assert.ok(index>=0,'기존 링크 보존: '+url);remaining.splice(index,1);}
 assert.deepEqual([...current.matchAll(/data-report-part="([^"]+)"/g)].map(m=>m[1]),['overview','tools','making','resources']);
 assert.deepEqual([...current.matchAll(/data-toc-group="([^"]+)"/g)].map(m=>m[1]),['overview','tools','making','resources']);
@@ -28,7 +28,7 @@ assert.ok(current.includes('<body class="weekly-editorial">'),'주간 디자인 
 assert.equal((current.match(/<h1\b/g)||[]).length,1);
 assert.match(current,/<h2>이번 주 꼭 볼 TOP 10<\/h2>/);
 assert.equal((current.match(/class="top-ten-item"/g)||[]).length,10);
-const cssLinks=[...current.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g)].map(m=>m[1]);
+const cssLinks=[...current.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g)].map(m=>m[1].split('?')[0]);
 assert.equal(cssLinks.at(-1),'../assets/report/weekly-editorial.css');
 console.log('본문·기존 링크 보존과 카테고리 일치, 단일 h1, TOP 10, 마지막 주간 스타일 연결 검사 통과');
 for(const name of audit.filesReviewed.filter(name=>name.endsWith('.md'))){

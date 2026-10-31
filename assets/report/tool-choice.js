@@ -15,8 +15,49 @@ const bars = visual.querySelector('.tool-visual-bars');
 const costs = visual.querySelector('.tool-cost-list');
 const groups = [...select.options].filter(option => option.value !== 'all');
 
+const filterLabel = select.closest('label');
+filterLabel.hidden = true;
+select.hidden = true;
+const explanation = document.createElement('p');
+explanation.className = 'tool-filter-explanation';
+explanation.textContent = '선택하면 바로 아래 도구 사진 목록과 비교표가 바뀌어요. 도구 실행이나 회원가입은 아니에요.';
+const filters = document.createElement('div');
+filters.className = 'tool-filter-buttons';
+filters.setAttribute('role', 'group');
+filters.setAttribute('aria-label', '만들고 싶은 결과물 선택');
+for (const option of select.options) {
+  const button = document.createElement('button');
+  button.type = 'button'; button.dataset.goal = option.value;
+  button.textContent = option.value === 'all' ? '전체 보기' : option.textContent;
+  button.addEventListener('click', () => {select.value = option.value; select.dispatchEvent(new Event('change'));});
+  filters.append(button);
+}
+filterLabel.before(explanation, filters);
+const results = document.createElement('div'); results.className = 'tool-results';
+const resultsTitle = document.createElement('h4'); resultsTitle.textContent = '선택한 작업의 도구';
+const resultsGrid = document.createElement('div'); resultsGrid.className = 'tool-results-grid';
+results.append(resultsTitle, resultsGrid); status.after(results);
+for (const card of cards) {
+  const row = rows.find(item => item.querySelector('th a')?.getAttribute('href') === '#' + card.id);
+  const cells = row?.querySelectorAll('th, td');
+  const item = document.createElement('article'); item.className = 'tool-result'; item.dataset.toolGoals = card.dataset.toolGoals;
+  const sourceImage = card.querySelector('.tool-media img');
+  if (sourceImage) {
+    const image = sourceImage.cloneNode(false); image.removeAttribute('id'); image.removeAttribute('width'); image.removeAttribute('height');
+    image.loading = 'lazy'; image.addEventListener('error', () => {image.hidden = true;}); const imageSource=card.querySelector('.tool-media a[href^="http"]'); if(imageSource){const imageLink=imageSource.cloneNode(false);imageLink.append(image);item.append(imageLink);}else item.append(image);
+  }
+  const name = document.createElement('h5'); name.textContent = card.querySelector('h3')?.textContent.trim() || '';
+  const functionLine = document.createElement('p'); functionLine.textContent = cells?.[3]?.textContent.trim() || '';
+  const links = document.createElement('div'); links.className = 'tool-result-links';
+  const detail = document.createElement('a'); detail.href = '#' + card.id; detail.textContent = '도구 자세히 보기'; links.append(detail);
+  const source = card.querySelector('.tool-media a[href^="http"]');
+  if (source) {const official = source.cloneNode(false); official.textContent = '공식 자료'; links.append(official);}
+  item.append(name, functionLine, links); resultsGrid.append(item);
+}
+
+
 const chart = visual.querySelector('.tool-price-chart');
-chart.innerHTML = '<h5>월 표기 가격 · USD/월</h5><p>표에 적힌 월 가격을 같은 0축에서 표시했어요. 기능과 조건이 달라 가격만으로 가치를 비교할 수 없어요. 환율·세금·할인은 포함하지 않아요.</p><div class="tool-price-bars"></div><div class="tool-price-separate"></div><p>월 표기와 실제 청구 주기는 다를 수 있어요. 실제 결제 전 원문을 다시 확인해요.</p>';
+chart.innerHTML = '<h5>월 표기 가격 · USD/월</h5><p>이 그래프는 선택한 목적과 관계없이 전체 후보 중 월 표기 가격을 보여줘요. 표에 적힌 월 가격을 같은 0축에서 표시했어요. 기능과 조건이 달라 가격만으로 가치를 비교할 수 없어요. 환율·세금·할인은 포함하지 않아요.</p><div class="tool-price-bars"></div><div class="tool-price-separate"></div><p>월 표기와 실제 청구 주기는 다를 수 있어요. 실제 결제 전 원문을 다시 확인해요.</p>';
 const priceRows = rows.map(row => {
   const cells = row.querySelectorAll('th, td');
   return { name: cells[0].textContent.trim(), text: cells[2].textContent.trim(), price: monthlyPrice(cells[2].textContent), source: cells[5].querySelector('a') };
@@ -101,4 +142,4 @@ for (const row of rows) {
   costs.append(item);
 }
 root.querySelector('.tool-comparison').before(visual);
-const matches=(value,goals)=>value==='all'||goals.split(' ').includes(value);function apply(){let count=0;for(const c of cards){c.hidden=!matches(select.value,c.dataset.toolGoals||'');if(!c.hidden)count++;}for(const r of [...rows,...costs.children,...matrix.querySelectorAll('tbody tr')])r.hidden=!matches(select.value,r.dataset.compareGoals||'');status.textContent=count+'개 후보를 보여드려요. 성능 순위가 아니라 작업 목적에 맞춘 목록이에요.';}select.addEventListener('change',apply);root.querySelectorAll('a[href^="#tool-"]').forEach(a=>a.addEventListener('click',()=>{const target=document.getElementById(a.hash.slice(1));if(target?.hidden){select.value='all';apply();}}));root.querySelectorAll('.tool-demo').forEach(d=>d.addEventListener('toggle',()=>{const v=d.querySelector('video');if(d.open&&v.dataset.src&&!v.src){v.src=v.dataset.src;v.load();}if(!d.open)v.pause();}));root.querySelectorAll('.tool-demo video').forEach(v=>v.addEventListener('error',()=>{v.parentElement.querySelector('[role=status]').textContent='이 환경에서는 영상을 불러오지 못했어요. 공식 원문 링크에서 확인해 주세요.';}));apply();})();
+const matches=(value,goals)=>value==='all'||hasGoal(goals,value);function apply(){let count=0;for(const c of cards){c.hidden=!matches(select.value,c.dataset.toolGoals||'');if(!c.hidden)count++;}for(const r of [...rows,...costs.children,...matrix.querySelectorAll('tbody tr')])r.hidden=!matches(select.value,r.dataset.compareGoals||'');for(const item of resultsGrid.children)item.hidden=!matches(select.value,item.dataset.toolGoals||'');for(const button of filters.children)button.setAttribute('aria-pressed',String(button.dataset.goal===select.value));const choice=select.selectedOptions[0]?.textContent||'';status.textContent=choice+' · '+count+'개 후보. 성능 순위가 아니라 작업 목적에 맞춘 목록이에요.';}select.addEventListener('change',apply);root.querySelectorAll('a[href^="#tool-"]').forEach(a=>a.addEventListener('click',()=>{const target=document.getElementById(a.hash.slice(1));if(target?.hidden){select.value='all';apply();}}));root.querySelectorAll('.tool-demo').forEach(d=>d.addEventListener('toggle',()=>{const v=d.querySelector('video');if(d.open&&v.dataset.src&&!v.src){v.src=v.dataset.src;v.load();}if(!d.open)v.pause();}));root.querySelectorAll('.tool-demo video').forEach(v=>v.addEventListener('error',()=>{v.parentElement.querySelector('[role=status]').textContent='이 환경에서는 영상을 불러오지 못했어요. 공식 원문 링크에서 확인해 주세요.';}));apply();})();

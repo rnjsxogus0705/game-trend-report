@@ -11,8 +11,9 @@ async function fixture(t){
  const htmlPath=path.join(reports,'weekly-2026-11-07.html');await fs.writeFile(htmlPath,html);
  for(const [,url]of html.matchAll(/(?:href|src)="([^"]+)"/g)){
   if(url.startsWith('#')||/^(https?:|data:|mailto:)/.test(url))continue;
-  const localIssueAsset=/\.(?:md|js|json)$/.test(url)&&!url.includes('..');
-  const target=path.resolve(localIssueAsset?reports:siteReports,url);
+  const assetUrl=url.split(/[?#]/)[0];
+  const localIssueAsset=/\.(?:md|js|json)$/.test(assetUrl)&&!assetUrl.includes('..');
+  const target=path.resolve(localIssueAsset?reports:siteReports,assetUrl);
   if(url.endsWith('/')){await fs.mkdir(target,{recursive:true});continue;}
   await fs.mkdir(path.dirname(target),{recursive:true});await fs.writeFile(target,'synthetic fixture asset');
  }

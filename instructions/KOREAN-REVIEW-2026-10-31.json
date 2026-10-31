@@ -1292,7 +1292,7 @@
       }
     ],
     "fileHashes": {
-      "weekly-2026-10-31.html": "985f128f9c35cc1a7541d6085237721552f325110819bb890f53d75980452d73",
+      "weekly-2026-10-31.html": "e6ac5323859b435697f55e3a7017e350bea624405071b060083ffe68e61d207d",
       "weekly-2026-10-31-ai-plan-01.md": "55aae6d568301fdf18438e57430969df932b05f4e191824a44d535469fdcbd1b",
       "weekly-2026-10-31-ai-plan-02.md": "a32bba89f4da73b596bec9a8055d798aaacb5b23c60740d047f73f6885cbd3b7",
       "weekly-2026-10-31-ai-plan-03.md": "52952992fc41f3652692c3a01c5cdfee45a104d3269f44387bfe8cba00651d18",
@@ -1336,5 +1336,12 @@
     "visibleOfficialMediaPreviews": 8,
     "limitation": "개념 그림은 제품 기능·성능·출시 증거가 아니며 영상 전체 시청 및 실험 재현을 주장하지 않음",
     "layoutReview": "TOP 10 그림 원본 비율 유지·공식 미리보기 16:9 contain·복제 크기 속성 제거. 제작자 영상 2개와 공식 게임 HLS 트레일러 1개를 대표 미리보기에 노출. 전체 영상 시청은 미실시."
+  },
+  "toolChoiceReview": {
+    "reviewer": "/root/final_review",
+    "disposition": "approved",
+    "scope": "7개 목적 버튼의 설명·현재 선택·후보 수, 공식 이미지 15개, 원표/비용/매트릭스 동기화, 제작 경로 5단계와 2D/3D/음향 확인 항목, 생성 이미지 한글 문구 대조",
+    "imageSource": "assets/report/visuals-2026-10-31/production-route-source.json",
+    "limitation": "후보 필터와 제작 확인 절차의 편집 안내이며 도구 실행·성능 실측은 하지 않음"
   }
 }

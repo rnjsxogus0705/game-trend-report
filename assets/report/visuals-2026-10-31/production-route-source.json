@@ -1,0 +1,6 @@
+{
+  "generator": "image_gen",
+  "prompt": "Create a premium clear Korean educational infographic, wide landscape 3:2, white background, navy #14243b and cobalt #2455cb with pale blue and restrained amber. Exact large title: \"무료보다 먼저 제작 경로 확인\". Five clearly separated stages linked by arrows, use spacious 3-over-2 serpentine composition if five across is too cramped. Exact stage labels in logical reading order: \"입력 준비\", \"생성\", \"사람이 수정\", \"엔진 가져오기\", \"실제 플레이 확인\". Illustrate respectively reference sketch and folder; small friendly low-poly character emerging beside spark; human hand adjusting mesh and colors; character moving into a miniature game scene; gamepad with checklist and magnifying glass. Large legible accurate Hangul, no other text or English, no numbers, no brand logos, no data charts. The infographic explains a generic production process; it must not pretend to be a real product screenshot or evidence of actual performance. Consistent rounded professional editorial illustration, no detailed background.",
+  "filename": "production-route.webp",
+  "purpose": "일반 게임 자산 제작 경로의 개념 설명. 실제 도구 화면·성능 실측 아님."
+}
