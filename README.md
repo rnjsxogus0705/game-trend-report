@@ -148,6 +148,50 @@ Test-Path "$env:USERPROFILE\.codex\skills\style-guide\SKILL.md"
 
 기존 지침에 남은 `C:/Users/TAEHYEON/.codex/skills/` 표기는 새 PC의 실제 설치 위치로 해석합니다. 스킬 이름만 적거나 검사 기록 JSON을 자동 생성하는 것으로 교정을 대신하지 않습니다.
 
+추가 한국어 문맥 검수에는 [k-skill](https://github.com/NomaDamas/k-skill)의 `korean-humanizer`와 `korean-spell-check` 두 가지만 설치합니다. 다음 예시는 소스 커밋 `cf462ca81af7f83691e7c4b7c4fe0ceb0331fefa`를 고정합니다. 기존 설치를 덮어쓰지 않으며, 전체 스킬을 자동 갱신하지 않습니다.
+
+```powershell
+$kSkillRevision = 'cf462ca81af7f83691e7c4b7c4fe0ceb0331fefa'
+$kSkillRoot = Join-Path $env:USERPROFILE '.codex\skills'
+$kSkillNames = @('korean-humanizer', 'korean-spell-check')
+foreach ($name in $kSkillNames) {
+  if (Test-Path -LiteralPath (Join-Path $kSkillRoot $name)) { throw "이미 설치됨: $name. 기존 버전과 변경을 먼저 확인하세요." }
+}
+$kSkillClone = Join-Path $env:TEMP ('k-skill-' + [guid]::NewGuid().ToString('N'))
+git clone --no-checkout https://github.com/NomaDamas/k-skill.git $kSkillClone
+if ($LASTEXITCODE -ne 0) { throw 'k-skill 소스를 받지 못했습니다.' }
+git -C $kSkillClone checkout --detach $kSkillRevision
+if ($LASTEXITCODE -ne 0) { throw '고정 커밋을 확인하지 못했습니다.' }
+New-Item -ItemType Directory -Force -Path $kSkillRoot | Out-Null
+foreach ($name in $kSkillNames) {
+  Copy-Item -LiteralPath (Join-Path $kSkillClone $name) -Destination (Join-Path $kSkillRoot $name) -Recurse
+  if (!(Test-Path -LiteralPath (Join-Path $kSkillRoot "$name\SKILL.md"))) { throw "설치 확인 실패: $name" }
+}
+$env:KSKILL_ANALYTICS_DISABLED = '1'
+npx -y @nomadamas/k-skill@0.10.4 instruct korean-humanizer
+npx -y @nomadamas/k-skill@0.10.4 instruct korean-spell-check
+```
+
+스킬 파일은 CLI 안내 스텁이므로 출력된 실제 지침 전체를 읽고, Codex를 다시 열어 설치된 스킬을 인식시킵니다. 외부 웹 맞춤법 검사는 사용자가 요청한 소량 검사에 한하며 정기 작업에서 대량 호출하지 않습니다. 수행하지 않았으면 `externalVerified=false`를 기록하고 모델·수동으로 검토합니다. 새 검수 기준은 2026-11-07 이후 발행 호에 적용하며 [한국어 편집 기준](instructions/KOREAN-EDITORIAL-POLICY.md)에 기록 형식이 있습니다.
+
+다음은 `.language-review.json`의 **추가 필드 구조 예시**입니다. 실제 발행 때는 해당 호의 모든 section ID와 `agent-skills`, 모든 호별 Markdown 파일과 실제 최종 SHA-256을 기입해야 합니다. 아래 값은 설명용이며 검수 영수증으로 사용할 수 없습니다. 기존 `pipeline`, `sha256`, `meaningChecks` 등도 유지합니다.
+
+```json
+{
+  "naturalnessReview": {
+    "editor": "수정 실행 주체",
+    "reviewer": "독립 검수 실행 주체",
+    "coverage": ["body", "headings", "tables", "captions", "collapsed", "copy", "downloads", "terms"],
+    "sectionIdsReviewed": ["issue-summary", "top10", "agent-skills"],
+    "changes": [{"path": "weekly-YYYY-MM-DD.html", "before": "기존 문구", "after": "수정 문구", "reason": "문맥을 명확하게 정리"}],
+    "fileHashes": {"weekly-YYYY-MM-DD.html": "실제 최종 SHA-256", "weekly-YYYY-MM-DD-ideas.md": "실제 최종 SHA-256"},
+    "externalVerified": false,
+    "externalScope": "",
+    "method": "모델 문맥 검수와 독립 최종 검수"
+  }
+}
+```
+
 화면 디자인에는 [Impeccable](https://github.com/pbakaus/impeccable) 4.8.0을 사용합니다. 아래 예시는 이번에 확인한 소스 커밋을 고정해 새 PC에 설치하며, 기존 설치가 있으면 덮어쓰지 않습니다. Codex를 다시 열어 스킬을 인식시킵니다. 실행기가 처음 사용할 엔진을 받으려면 네트워크가 필요할 수 있습니다.
 
 ```powershell
@@ -234,7 +278,8 @@ YYYY-MM-DD는 실제 발행일로 바꿉니다. publish-report는 검수 → 원
 저장소 루트에서 실행합니다. 처음 세 검사는 Node.js만 사용하고, 읽기 상호작용 검사는 설치·연결된 ego-browser가 필요합니다.
 
 ```sh
-node --test workflows/test-build-site.mjs
+node --test workflows/test-build-site.mjs workflows/test-language-review.mjs
+node workflows/test-weekly-editorial.mjs
 node workflows/test-public-assets.mjs
 node workflows/test-tool-visuals.mjs
 node workflows/test-reading-experience.mjs

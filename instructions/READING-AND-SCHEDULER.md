@@ -9,11 +9,36 @@
 - 가장 최근 월은 처음부터 보여 주고 이전 월은 접는다. 각 묶음의 제목에 연월과 건수를 적는다. 스크립트를 사용할 수 없어도 목록의 모든 링크를 펼쳐 접근할 수 있어야 한다. 단순한 목록을 불필요하게 여러 페이지로 쪼개지 않는다.
 - 새 호 발행 시 사이트 생성기가 최신 주간 연결과 목록을 다시 만든다. 생성된 index.html만 수정하지 말고 `workflows/build-site.mjs`의 생성 원본도 함께 반영한다. 검색·필터 초기화, 월 경계와 주간 파일이 없는 경우를 검사한다.
 
+## 본문과 목차의 네 범주 (2026-11-07부터 최우선)
+
+아래 순서는 이전의 단일 목차 및 섹션 간 배치 규정보다 우선한다. 기존의 필수 내용·출처·사실과 앵커 ID는 유지한다. 커버는 맨 앞, 푸터는 맨 끝에 둔다. 본문은 네 개의 `.report-part` 요소에 `data-report-part` 값을 붙여 순서대로 묶는다. 왼쪽 목차도 같은 순서의 `details.toc-group[data-toc-group]` 네 개로 구성한다.
+
+| 값과 범주 | 본문 순서와 포함할 내용 |
+|---|---|
+| `overview` 핵심 요약 | `issue-summary` → `top10`. 기존 `brief`와 안내문은 `issue-about` 접힌 개요에 보존 |
+| `tools` AI 도구와 기술 | `game-ai-tools`(하위 `agent-skills`) → `github-trending` → `ai-trends` → `game-ai` → `ai-releases` → `techniques` |
+| `making` 게임 분석과 제작 | `games` → `reverse` → `ai-only-lab` → `ai-planning` → `game-ideas` → `ai-production` → `prototype` → `lab` |
+| `resources` 취업과 참고 자료 | `careers` → `opportunities` → `reading`(하위 `media-guide`) → `sources` |
+
+범주에는 명확한 `.part-heading` 구분 막대를 두고 각 장 사이에는 아래의 구분선 기준을 적용한다. 왼쪽 목차의 네 `details`는 `name="report-toc"`을 공유해 한 범주씩 열며 기본은 `overview`다. 현재 위치의 범주를 자동으로 열고 현재 항목을 표시한다. 모바일 접는 목차에도 네 범주명과 동일한 링크 순서를 제공하고 `agent-skills`는 하위 들여쓰기로 구분한다. 기존 요약의 중복 목차 링크는 정리하되 `brief` 내용과 안내문은 삭제하지 않는다. 상단 핵심 판단·도구 선택·이번 주 할 일 세 줄은 매주 해당 호의 실제 새 조사에 근거해 다시 작성한다.
+
+2026-11-07 이후 호는 `validate-issue.mjs`의 범주 순서 검사를 통과해야 하며, 실제 사실과 원문 보존 여부도 별도로 확인한다. 범주 이동 자체를 문장 삭제로 취급하지 않는다.
+
 ## 긴 리포트의 구성과 접근성
 
-- 목차, TOP 10, 핵심 발견과 선택에 필요한 요약·가격 조건은 바로 볼 수 있게 둔다. 상세 설명·긴 출처 목록 등 보조 자료만 제목이 구체적인 `details`/`summary`로 접는다. 독자가 핵심 내용을 읽으려고 모든 항목을 열어야 하는 구성은 피한다.
+- 목차, TOP 10 중 우선 읽을 처음 3개, 핵심 발견과 선택에 필요한 요약·가격 조건은 바로 볼 수 있게 둔다. TOP 10의 나머지 7개는 순서와 출처를 유지하며 선택해 펼칠 수 있게 한다. 상세 설명·긴 출처 목록 등 보조 자료만 제목이 구체적인 `details`/`summary`로 접는다. 독자가 핵심 내용을 읽으려고 모든 항목을 열어야 하는 구성은 피한다.
 - 가능하면 상세 전체 펼치기·접기를 제공한다. 본문 앵커로 이동하면 대상의 접힌 상위 항목이 열려야 하고, 키보드와 스크린 리더에서 상태와 조작이 이해되어야 한다. 인쇄·PDF에는 접힌 정보도 포함한다. JS 실패 시에도 기본 내용을 읽고 상세를 열 수 있도록 한다.
 - 모바일 320px 이상과 데스크톱에서 목차 이동, 키보드 초점, 펼침 상태, 표의 가로 스크롤, 이미지 대체 텍스트, 인쇄, 공유·복사·다운로드·영상 재생을 실제로 검사한다. 새 UI가 기존 도구 필터나 과거 호의 기능을 바꾸지 않도록 확인한다.
+
+## 주간 편집형 화면의 출력 규칙
+
+- 새 주간 호의 `body`에 `weekly-editorial` 클래스를 적용하고 `../assets/report/weekly-editorial.css`를 해당 HTML의 **마지막 스타일시트**로 포함한다. 이 스타일은 주간 화면에만 적용하며 이전 월간 호를 바꾸지 않는다. 자산이 없거나 로드할 수 없으면 발행을 중단하고 경로를 바로잡는다.
+- 커버에 이 호의 고유 제목인 유일한 `h1`을 둔다. 커버 바로 다음과 TOP 10 앞에 `.issue-summary#issue-summary`를 배치하고 목차 첫 링크로 연결한다. `h2`는 ‘이번 호 한눈에 보기’이며 해당 호의 실제 내용에서 다시 작성한 핵심 판단·도구 선택·이번 주 할 일 세 가지와 도구·게임·아이디어·취업·기회 바로가기 링크를 담는다. 확인되지 않은 기능·성능 순위를 만들지 않는다. `#top10`의 제목은 `h2`, 각 항목은 적절한 하위 제목으로 작성한다. TOP 10을 평면 목록으로 구성해 처음 3개를 먼저 보여주고 나머지 7개도 펼쳐 읽을 수 있게 한다. 정보·링크·출처를 줄이거나 순번을 바꾸지 않는다.
+- `redesign/DESIGN.md`의 색상·Pretendard·18px/1.85 본문·최대 72ch 문단·제목/캡션 크기와 여백을 따른다. 큰 장 위에 2px `#AEBCCD` 구분선을 두고 위쪽 간격 64px(모바일 48px)을 확보한다. 장 제목 아래에는 1px 보조선을 두고 `h2`를 먼저, `.chapter-index` 메타데이터를 그 아래에 둔다. 데스크톱 목차의 독립 스크롤과 현재 항목 표시, 모바일 고정 접기 목차, 모든 섹션의 일관된 펼침 표시를 제공한다.
+- 핵심 판단과 실행은 `mark` 배경 `#E2EBFF`, 글자 `#193E96`으로 필요한 곳에만 강조한다. 주의 조건은 `mark.caution`의 배경 `#FFF0CA`, 글자 `#704708`, 점선 밑줄을 사용한다. 색만으로 뜻을 전달하지 않으며 강조 과정에서 문구·부정·불확실성을 없애지 않는다. 한 장에서 남발하지 않는다.
+- 조작 아이콘은 고정된 로컬 Lucide SVG 스프라이트(`assets/report/icons/lucide.svg`, ISC)와 공용 `share.js`를 재사용한다. 공유·복사·다운로드·인쇄·닫기 등 모든 버튼에 텍스트 또는 접근 가능한 이름을 둔다. 공유 메뉴의 `share-mark.png`는 image_gen 장식 이미지다. 설명에 새 삽화가 필요하면 image_gen을 사용하되, 실제 도구 화면은 공식 원본을 우선하고 차트·수치는 검증된 데이터와 코드/SVG로만 만든다. 생성 이미지의 출처와 프롬프트는 `assets/report/icons/SOURCES.md` 등 해당 자산의 출처 문서에 기록한다.
+- 기존 `reading-experience.js`의 상세 접기·앵커 이동·인쇄 동작과 `tool-choice.js`의 목적 필터 및 비교 기능, 공유·복사·미디어·그래프 기능을 연결하고 호별 데이터와 IDs를 확인한다. 필요한 경우 호 전용 자산으로 구현해 기존 호의 사실과 기능을 변경하지 않는다.
+- 320·390·768·1440px에서 커버, 제목 계층, 본문 폭과 색 대비, 목차 독립 스크롤과 현재 위치, 모바일 목차, 첫 3개 및 나머지 항목, 표·차트·영상, 상세 펼치기와 해시 이동, 키보드 조작, 인쇄의 내용 보존을 확인한다. JavaScript 미지원 시에도 필수 본문과 수동으로 열 수 있는 상세가 접근 가능해야 한다.
 
 ## 비교와 시각 자료
 
@@ -39,7 +64,7 @@ C:\내문서\GameTrendReport\sync-instructions.ps1을 실행해 main의 지침�
 **매주 토요일 07:00 — 조사·작성·배포**
 
 ```text
-C:\내문서\GameTrendReport\site\README.md와 site\instructions\WORKFLOW.md를 읽고 sync-instructions.ps1을 실행한다. 동기화 후 REPORT-GUIDE.md, REPORT-OUTPUT-CONTRACT.md, READING-AND-SCHEDULER.md, KOREAN-EDITORIAL-POLICY.md, redesign\DESIGN.md, redesign\references\DESIGN-REFERENCE-GUIDE.md를 다시 읽는다. 최근 7일의 실제 원문을 조사해 당일 주간 리포트와 조사 원장·호별 자료를 작성한다. 필수 섹션, 출처·날짜·조건, 읽기 구조·접기·도구 비교 시각 자료와 이미지/영상 규칙을 적용한다. humanizer → grammar-checker → style-guide로 실제 교정하고 내용·언어 검수 기록을 만든다. 화면·모바일·목차·펼치기·인쇄·링크·필터·미디어·공유·복사·다운로드와 최신 주간 링크를 검사하고 validate-issue.mjs 및 publish-report.ps1을 실행해 Pages와 Vercel의 실제 본문을 확인한다. 해당 호 요약을 저장한다. 이 단계에서 Discord 메시지를 보내지 않는다. 오류를 숨기거나 이전 호를 새 호로 대체하지 않는다.
+C:\내문서\GameTrendReport\site\README.md와 site\instructions\WORKFLOW.md를 읽고 sync-instructions.ps1을 실행한다. 동기화 후 REPORT-GUIDE.md, REPORT-OUTPUT-CONTRACT.md, READING-AND-SCHEDULER.md, KOREAN-EDITORIAL-POLICY.md, redesign\DESIGN.md, redesign\references\DESIGN-REFERENCE-GUIDE.md를 다시 읽는다. 최근 7일의 실제 원문을 조사해 당일 주간 리포트와 조사 원장·호별 자료를 작성한다. 필수 섹션을 핵심 요약·AI 도구와 기술·게임 분석과 제작·취업과 참고 자료의 네 범주로 본문과 목차에 같은 순서로 배치하고, 실제 호의 한눈에 보기 요약과 주제 링크, 접근 가능한 강조·아이콘, 출처·날짜·조건, 주간 편집형 화면 규칙(body.weekly-editorial, 마지막 weekly-editorial.css, 커버 h1·TOP 10 h2), 읽기 구조·접기·도구 비교 시각 자료와 이미지/영상 규칙을 적용한다. 기존 humanizer와 k-skill korean-humanizer로 문맥을 교정한 뒤 grammar-checker → style-guide를 적용한다. HTML의 끝 문장·접힌 내용·제목·캡션·표·복사용 요청서와 각 호별 Markdown 전체를 검수하고, 수정자와 독립된 최종 검수자가 의미 보존·변경 전후·이유·최종 파일 해시를 기록한다. 정기 예약은 외부 맞춤법 웹 검사기에 대량 요청하지 않으며 수행하지 않은 외부 검사는 externalVerified=false로 남긴다. 내용·언어 검수 기록을 만든다. 화면·모바일·목차·펼치기·인쇄·링크·필터·미디어·공유·복사·다운로드와 최신 주간 링크를 검사하고 validate-issue.mjs 및 publish-report.ps1을 실행해 Pages와 Vercel의 실제 본문을 확인한다. 해당 호 요약을 저장한다. 이 단계에서 Discord 메시지를 보내지 않는다. 오류를 숨기거나 이전 호를 새 호로 대체하지 않는다.
 ```
 
 **매주 토요일 08:00 — 검증 후 전송**

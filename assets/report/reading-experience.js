@@ -2,20 +2,21 @@
   'use strict';
   const main=document.querySelector('main.content');
   if(!main)return;
-  const groups=[];
+  const groups=[...main.querySelectorAll('.top-ten-more')];
   function fold(nodes,label){
     if(!nodes.length)return;
     const details=document.createElement('details');
     details.className='reading-detail';
     const summary=document.createElement('summary');
     summary.textContent=label;
+    globalThis.ReportIcons?.add(summary,'chevron-down');
     details.append(summary);
     nodes[0].before(details);
     nodes.forEach(node=>details.append(node));
     details.addEventListener('toggle',()=>{if(details.open)window.dispatchEvent(new Event('resize'));});
     groups.push(details);
   }
-  main.querySelectorAll(':scope > section.chapter').forEach(section=>{
+  main.querySelectorAll('section.chapter').forEach(section=>{
     if(section.id==='game-ai-tools'){
       const skills=section.querySelector(':scope > #agent-skills');
       if(skills)fold([skills],'게임 개발 스킬 자세히 보기');
@@ -55,6 +56,7 @@
   controls.setAttribute('aria-label','리포트 상세 내용');
   for(const [label,open] of [['상세 내용 모두 펼치기',true],['상세 내용 모두 접기',false]]){
     const button=document.createElement('button');button.type='button';button.textContent=label;
+    globalThis.ReportIcons?.add(button,open?'chevron-down':'chevron-up');
     button.addEventListener('click',()=>groups.forEach(group=>{group.open=open;}));
     controls.append(button);
   }
@@ -78,7 +80,7 @@
   revealHash();
   let printState;
   addEventListener('beforeprint',()=>{
-    const details=[...document.querySelectorAll('details')];
+    const details=[...main.querySelectorAll('details:not(.mobile-nav)')];
     printState=details.map(detail=>[detail,detail.open]);
     details.forEach(detail=>{detail.open=true;});
   });

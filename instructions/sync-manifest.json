@@ -34,6 +34,10 @@
       "local": "validate-issue.mjs"
     },
     {
+      "repo": "workflows/validate-language-review.mjs",
+      "local": "validate-language-review.mjs"
+    },
+    {
       "repo": "workflows/publish-report.ps1",
       "local": "publish-report.ps1"
     },

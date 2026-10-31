@@ -11,7 +11,7 @@ $stateFile=Join-Path $PSScriptRoot 'private/instruction-sync.json'
 $state=@{}
 if (Test-Path $stateFile) { $old=Get-Content $stateFile -Raw|ConvertFrom-Json; foreach($p in $old.hashes.PSObject.Properties){$state[$p.Name]=$p.Value} }
 $allowed=@{'instructions/REPORT-GUIDE.md'='REPORT-GUIDE.md';'instructions/REPORT-OUTPUT-CONTRACT.md'='REPORT-OUTPUT-CONTRACT.md';'instructions/READING-AND-SCHEDULER.md'='READING-AND-SCHEDULER.md';'instructions/KOREAN-EDITORIAL-POLICY.md'='KOREAN-EDITORIAL-POLICY.md';'instructions/CONTENT-AUDIT-2026-10-31.md'='CONTENT-AUDIT-2026-10-31.md';'instructions/DESIGN.md'='redesign/DESIGN.md'}
-foreach($n in @('build-site.mjs','validate-issue.mjs','publish-report.ps1','dispatch-report.ps1','send-report.ps1','deploy-vercel.mjs','vercel-api.mjs','github-env.ps1')){$allowed['workflows/'+$n]=$n}
+foreach($n in @('build-site.mjs','validate-issue.mjs','validate-language-review.mjs','publish-report.ps1','dispatch-report.ps1','send-report.ps1','deploy-vercel.mjs','vercel-api.mjs','github-env.ps1')){$allowed['workflows/'+$n]=$n}
 foreach($n in @('toss.md','google-design-md/README.md','google-design-md/LICENSE','google-design-md/spec.md','google-design-md/spec-config.yaml','google-design-md/upstream-package.json')){$allowed['instructions/references/'+$n]='redesign/references/'+$n}
 foreach($n in @('DESIGN-REFERENCE-GUIDE.md','DESIGN-ASSETS.json')){$allowed['instructions/'+$n]='redesign/references/'+$n}
 $pending=@()

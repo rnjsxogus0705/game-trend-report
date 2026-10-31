@@ -13,9 +13,19 @@ if (typeof document !== 'undefined') {
   const $ = id => document.getElementById(id);
   $('print-button').addEventListener('click', () => window.print());
   const navLinks = [...document.querySelectorAll('#side-nav a')];
-  $('mobile-links').innerHTML = navLinks.map(a=>`<a href="${a.getAttribute('href')}">${a.textContent.trim().replace(/^(\d{2})/,'$1 · ')}</a>`).join('');
+  const tocGroups=[...document.querySelectorAll('#side-nav .toc-group')];
+  if(tocGroups.length){
+    $('mobile-links').replaceChildren(...tocGroups.map(group=>{
+      const block=document.createElement('div');block.className='toc-mobile-group';
+      const heading=document.createElement('h3');heading.textContent=group.querySelector('summary').textContent;
+      block.append(heading,...[...group.querySelectorAll('a')].map(a=>a.cloneNode(true)));return block;
+    }));
+  }else{
+    $('mobile-links').innerHTML = navLinks.map(a=>`<a href="${a.getAttribute('href')}">${a.textContent.trim().replace(/^(\d{2})/,'$1 · ')}</a>`).join('');
+  }
+
   document.querySelectorAll('#mobile-links a').forEach(a=>a.addEventListener('click',()=>document.querySelector('.mobile-nav').open=false));
-  let scrollQueued = false;
+  let scrollQueued = false,previousActive;
   const updateReading = () => {
     const distance = document.documentElement.scrollHeight - innerHeight;
     const percent = distance > 0 ? Math.min(100,Math.round(scrollY/distance*100)) : 100;
@@ -23,6 +33,8 @@ if (typeof document !== 'undefined') {
     let active = navLinks[0];
     for(const a of navLinks){const section=document.querySelector(a.getAttribute('href'));if(section && section.getClientRects().length && section.getBoundingClientRect().top<180)active=a;}
     navLinks.forEach(a=>{a.classList.toggle('active',a===active);if(a===active)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});
+    if(active!==previousActive){const group=active?.closest('.toc-group');if(group)group.open=true;previousActive=active;}
+    document.querySelectorAll('#mobile-links a').forEach(a=>{const selected=a.getAttribute('href')===active?.getAttribute('href');a.classList.toggle('active',selected);if(selected)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});
     scrollQueued=false;
   };
   addEventListener('scroll',()=>{if(!scrollQueued){scrollQueued=true;requestAnimationFrame(updateReading);}},{passive:true});

@@ -6,7 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
-const types={'.html':'text/html; charset=utf-8','.js':'text/javascript','.css':'text/css','.png':'image/png','.woff2':'font/woff2'};
+const types={'.html':'text/html; charset=utf-8','.js':'text/javascript','.css':'text/css','.png':'image/png','.svg':'image/svg+xml','.woff2':'font/woff2'};
 const server=createServer(async(req,res)=>{
   const file=path.resolve(root,'.'+decodeURIComponent(new URL(req.url,'http://localhost').pathname));
   if(!file.startsWith(root+path.sep)){res.writeHead(403).end();return;}
@@ -23,6 +23,8 @@ try {
  const result=await page.evaluate(async()=>{
   const groups=[...document.querySelectorAll('.reading-detail')];
   const hasClosedParent=el=>{for(let node=el?.parentElement;node;node=node.parentElement)if(node.tagName==='DETAILS'&&!node.open)return true;return false;};
+  const summaryPresent=!!document.querySelector('#issue-summary');
+  const highlights=document.querySelectorAll('mark').length;
   const directHashOpen=!hasClosedParent(document.getElementById('tool-meshy'));
   document.getElementById('tool-meshy').closest('.reading-detail').open=false;
   const link=document.querySelector('.reading-tool-previews a[href="#tool-spritegen"]');
@@ -31,13 +33,22 @@ try {
   const buttons=document.querySelectorAll('.reading-controls button');
   buttons[0].click();const allOpen=groups.every(group=>group.open);
   buttons[1].click();const allClosed=groups.every(group=>!group.open);
-  dispatchEvent(new Event('beforeprint'));const printOpen=[...document.querySelectorAll('details')].every(detail=>detail.open);
+  dispatchEvent(new Event('beforeprint'));const printOpen=[...document.querySelectorAll('main details:not(.mobile-nav)')].every(detail=>detail.open);
   dispatchEvent(new Event('afterprint'));const restored=groups.every(group=>!group.open);
-  return {count:groups.length,directHashOpen,linkedToolOpen,allOpen,allClosed,printOpen,restored,
+  return {summaryPresent,highlights,count:groups.length,directHashOpen,linkedToolOpen,allOpen,allClosed,printOpen,restored,
    previews:document.querySelectorAll('.reading-tool-previews img').length,
    benchmarkVisible:!hasClosedParent(document.getElementById('benchmark-chart')),
    simulationVisible:!hasClosedParent(document.getElementById('simulation-chart'))};
  });
+ result.layouts=[];
+ for(const width of [320,390,768,1440]){
+  await page.cdp('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:width<768});
+  result.layouts.push(await page.evaluate(()=>({width:innerWidth,overflow:document.documentElement.scrollWidth>innerWidth,paragraph:parseFloat(getComputedStyle(document.querySelector('.chapter-head p')).fontSize),chapterBorder:parseFloat(getComputedStyle(document.querySelector('#ai-trends')).borderTopWidth)})));
+ }
+ await page.click('#report-share');
+ result.share=await page.evaluate(()=>({open:document.querySelector('.share-dialog').open,icons:document.querySelectorAll('.share-dialog .action-icon').length,closeLabel:document.querySelector('.share-close').getAttribute('aria-label')}));
+ await page.press('.share-close','Escape');
+ result.share.closed=await page.evaluate(()=>!document.querySelector('.share-dialog').open);
  console.log('RESULT '+JSON.stringify(result));
 } finally {await task.finish({keep:[]});}
 `;
@@ -51,6 +62,10 @@ try{
   const line=output.split('\n').find(line=>line.startsWith('RESULT '));
   assert.ok(line,JSON.stringify(output));
   const result=JSON.parse(line.slice(7));
+  assert.equal(result.summaryPresent,true);
+  assert.ok(result.highlights>=3);
+  for(const layout of result.layouts){assert.equal(layout.overflow,false,'overflow at '+layout.width);assert.ok(layout.paragraph>=17);assert.equal(layout.chapterBorder,2);}
+  assert.equal(result.share.open,true);assert.equal(result.share.closed,true);assert.ok(result.share.icons>=8);assert.equal(result.share.closeLabel,'공유 메뉴 닫기');
   assert.ok(result.count>=10,'expected collapsed detail groups');
   assert.equal(result.previews,3,'expected three tool previews');
   for(const key of ['directHashOpen','linkedToolOpen','allOpen','allClosed','printOpen','restored','benchmarkVisible','simulationVisible'])assert.equal(result[key],true,key);
