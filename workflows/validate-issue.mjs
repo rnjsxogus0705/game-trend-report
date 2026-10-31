@@ -8,6 +8,13 @@ if((html.match(/class="game-dossier"/g)||[]).length<1)throw Error('Missing linke
 const priority=['top10','github-trending','game-ai-tools','ai-only-lab','games','game-ideas','ai-production','reading'].map(id=>html.indexOf('id="'+id+'"'));if(priority.some(p=>p<0)||priority.some((p,i)=>i>0&&p<priority[i-1]))throw Error('Sections must follow the current TOP 10 / GitHub / tools priority');
 for(const kind of ['article','video','post'])if(!html.includes('data-kind="'+kind+'"'))throw Error('Missing resource category: '+kind);
 if(review.schemaVersion!==2||review.sha256!==crypto.createHash('sha256').update(html).digest('hex'))throw Error('Content review does not match this report');
+if(review.reportDate>='2026-10-31'){
+ const skill=review.coverage?.find(c=>c.category==='agent-skills');
+ if(!html.includes('id="agent-skills"')||!html.includes('href="#agent-skills"')||!review.sections?.includes('agent-skills')||!skill||!['updated','no_material_change','unverified'].includes(skill.status)||!skill.sourceUrls?.length||!skill.limitation)throw Error('Missing visible game-development Agent Skills research and coverage');
+ if(skill.status==='updated'&&!html.includes('data-agent-skill="'))throw Error('Updated skills research requires identifiable candidates');
+ const observation='../assets/report/research/agent-skills-'+review.reportDate+'.json';
+ if(!html.includes(observation))throw Error('Missing issue-specific Agent Skills observation data');
+}
 if(!file.endsWith('weekly-'+review.reportDate+'.html'))throw Error('Report date mismatch');
 const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);if(new Set(ids).size!==ids.length)throw Error('Duplicate DOM IDs');
 for(const id of sections)if(!ids.includes(id)||!review.sections.includes(id))throw Error('Missing required section: '+id);
