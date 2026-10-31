@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "capturedAt": "2026-10-31T09:36:28.745Z",
+  "capturedAt": "2026-10-31T10:38:18.374Z",
   "googleDesignMd": {
     "source": "https://github.com/google-labs-code/design.md",
     "package": "@google/design.md",
@@ -207,8 +207,8 @@
     },
     {
       "path": "assets/report/tool-choice.css",
-      "bytes": 2283,
-      "sha256": "abfa51d7de61b469bfe8ab3af9c33a9e981e910d93d1548cd2577d427524a1d5"
+      "bytes": 2638,
+      "sha256": "d26214020e37329d6a5dc6322fed2738580e2233419a52f23e6b1c0175ca2c18"
     },
     {
       "path": "assets/report/tool-choice.js",
@@ -294,6 +294,11 @@
       "path": "assets/report/tool-previews/varco.png",
       "bytes": 108031,
       "sha256": "3e45479b98b764c2ef4149b49c64ca76ecbf7e3bbdfce5940cc50f34e2227ec3"
+    },
+    {
+      "path": "assets/report/research/agent-skills-2026-10-31.json",
+      "bytes": 21640,
+      "sha256": "13d16d639ce6ab39840f55ae1d8f55e3b494f43ecefd8cb488712545984697c1"
     }
   ],
   "updatedAt": "2026-10-31T10:26:24.566Z"
