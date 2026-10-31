@@ -3,3 +3,8 @@ private/
 *.dpapi
 *.sent.json
 node_modules/
+_workspace/
+*.content-review.json
+*.language-review.json
+*.published.json
+*.vercel-published.json

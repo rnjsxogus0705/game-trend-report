@@ -1,0 +1,112 @@
+{
+  "scope": "independent specification read-through, not runtime skill activation",
+  "reviewer": "/root/harness_forward_test",
+  "triggerCases": [
+    {
+      "prompt": "$weekly-game-report로 이번 주 리포트 작성",
+      "trigger": true,
+      "reason": "명시적 스킬 호출"
+    },
+    {
+      "prompt": "매주 최신 게임과 AI 리포트를 조사부터 검수까지 생성",
+      "trigger": true,
+      "reason": "새 주간 게임·AI 리포트의 조사부터 검수까지 요청"
+    },
+    {
+      "prompt": "Generate this week’s Game Trend Report end to end",
+      "trigger": true,
+      "reason": "이번 주 Game Trend Report 전체 제작 요청"
+    },
+    {
+      "prompt": "이번 토요일 주간 보고서에 실습·그림·해외사례 포함해서 작성",
+      "trigger": true,
+      "reason": "주간 보고서 작성과 실습·그림·해외사례 요청"
+    },
+    {
+      "prompt": "새 원문으로 이번 주호를 만들어 배포 준비까지",
+      "trigger": true,
+      "reason": "이번 주호 신규 원문 조사와 배포 준비 요청"
+    },
+    {
+      "prompt": "이번 주 게임 트렌드 보고서 전체를 독립 검수까지 마쳐줘",
+      "trigger": true,
+      "reason": "이번 주 게임 트렌드 전체 제작과 독립 검수 요청"
+    },
+    {
+      "prompt": "Build my weekly game report using current sources and Korean review",
+      "trigger": true,
+      "reason": "최신 출처와 한국어 검수를 포함한 주간 게임 보고서 제작"
+    },
+    {
+      "prompt": "새 주간호 조사와 시각 자료와 실습 프롬프트를 작성",
+      "trigger": true,
+      "reason": "새 주간호 조사와 필수 제작 요소 요청"
+    },
+    {
+      "prompt": "예약 제작 작업으로 당일 주간 리포트 준비",
+      "trigger": true,
+      "reason": "예약 제작에서 당일 주간 리포트 준비 요청"
+    },
+    {
+      "prompt": "지난주 구조를 참고하되 이번 주 사실로 리포트 새로 생성",
+      "trigger": true,
+      "reason": "지난주 구조만 참고해 이번 주 새 리포트 생성"
+    },
+    {
+      "prompt": "표 열 너비만 바꿔",
+      "trigger": false,
+      "reason": "기존 표의 국소 수정"
+    },
+    {
+      "prompt": "제목 한 줄만 고쳐",
+      "trigger": false,
+      "reason": "기존 제목의 국소 수정"
+    },
+    {
+      "prompt": "이 리포트 요약해줘",
+      "trigger": false,
+      "reason": "기존 보고서 설명·요약"
+    },
+    {
+      "prompt": "이미 발행한 링크 전송해",
+      "trigger": false,
+      "reason": "기발행 링크 전송"
+    },
+    {
+      "prompt": "예약 설정 방법 알려줘",
+      "trigger": false,
+      "reason": "스케줄러 설정 설명"
+    },
+    {
+      "prompt": "이 코드 테스트 실패 고쳐",
+      "trigger": false,
+      "reason": "일반 코드 테스트 수정"
+    },
+    {
+      "prompt": "하네스 스킬 오타만 수정",
+      "trigger": false,
+      "reason": "스킬 문서의 국소 수정"
+    },
+    {
+      "prompt": "이전 해외 영상 제목 확인해줘",
+      "trigger": false,
+      "reason": "이전 자료의 특정 사실 확인"
+    },
+    {
+      "prompt": "Compare these two tools without writing a report",
+      "trigger": false,
+      "reason": "보고서 없이 도구 비교"
+    },
+    {
+      "prompt": "도구 필터 버튼 색만 변경",
+      "trigger": false,
+      "reason": "기존 UI의 국소 수정"
+    }
+  ],
+  "runtimeActivation": "unverified",
+  "realWeeklyGeneration": "not run",
+  "windowsScheduler": "not run",
+  "baselineCostLatency": "not measured",
+  "dynamicFanout": "not applicable; static serial DAG",
+  "optionalWorker": "not applicable; all stages required; optional media fallback is content policy"
+}

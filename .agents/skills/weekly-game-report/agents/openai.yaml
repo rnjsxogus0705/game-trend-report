@@ -1,0 +1,4 @@
+interface:
+  display_name: "주간 게임 리포트 제작"
+  short_description: "주간 게임 리포트 제작용 재사용 가능한 Codex 워크플로우"
+  default_prompt: "$weekly-game-report 스킬로 이 재사용 워크플로우를 실행하고 산출물을 검증하세요."

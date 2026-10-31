@@ -34,3 +34,6 @@ workflows/에 현재 실행 스크립트를 보관합니다. 환경별 private/ 
 
 ## 매주 품질을 일정하게 유지하는 실행 기준
 READING-AND-SCHEDULER.md의 품질 검수 6단계와 실습 DOM 계약을 따른다. 원문 조사는 ego-browser를 사용한다. 이번 호에서 실제 읽은 지침 커밋과 서로 다른 편집자·최종 검수자, 9개 기준별 확인 근거·한계·미해결 문제를 .content-review.json의 qualityReview에 남긴다. 다음 호 검증기는 이 기록과 프롬프트 구조를 검사하며, 사람이 읽어 이해할 수 있는지는 실제 독립 문맥 검수로 확인한다. 예시 보고서를 날짜만 바꿔 발행하거나 08시 일정 때문에 필수 검수를 생략하지 않는다. 도구·출처 접근 실패는 가능한 대안을 검토한 뒤 정확한 누락 범위를 알리고, 필수 품질이 충족되지 않으면 발행·전송을 중단한다.
+
+## 주간 제작 하네스
+전체 새 호 작성은 site/.agents/skills/weekly-game-report/SKILL.md의 $weekly-game-report를 진입점으로 사용한다. 명세가 preflight→research→compose→editorial-review→verify→handoff→final-review를 정한다. 기존 지침은 품질 기준이며 하네스는 역할·단계·필수 산출물·수정상한·hash 결속을 관리한다. 독립 검수와 최종 게이트가 통과한 ready 묶음을 운영 reports로 안전하게 인계한 뒤에만 기존publish/dispatch를 이어간다. 단계 실패·stale·입력부족이면 하위 단계는 실행하지 않는다. 기록은 _workspace에 비공개로 보존한다. 생성과 실제배포/전송의 완료상태를 섞지 않는다.

@@ -16,6 +16,14 @@
 
 새 PC는 스킬 설치뿐 아니라 image_gen 사용 가능 여부도 확인합니다. 한국어 생성 그림은 실제로 열어 읽고 오류를 보정합니다. 사용할 수 없으면 정확한 HTML 설명과 누락 범위를 기록하며, 별도 유료 API를 자동 결제하는 방식으로 대체하지 않습니다. Codex 예약은 저장소에 포함되지 않으므로 아래 초기 설정 후 최신 전문으로 다시 등록합니다. 이번 점검은 기존 예약을 새로 만들거나 메시지를 전송하지 않습니다.
 
+## 주간 리포트 하네스
+
+저장소에서 `$weekly-game-report 이번 주 리포트를 생성하고 검수해 줘`로 호출합니다. [프로젝트 스킬](.agents/skills/weekly-game-report/SKILL.md)과 [명세](.agents/skills/weekly-game-report/references/harness-spec.json)가 조사·작성·독립 검수·화면 검사·배포 준비의 순서를 고정합니다. 실제 품질 기준은 기존 instructions를 재사용합니다.
+
+작성자와 다른 네이티브 검수자가 전체 한국어·내용·최종 파일을 검토하고, 수정은 최대2회입니다. 지침·파일·upstream hash가 바뀌면 하위 검수는 다시 수행합니다. 저장소에서 `node workflows/check-report-harness.mjs --run 실제-run-id`로 준비 묶음을 검사합니다. `_workspace/`의 실행 기록과 검수 영수증은 Git에 넣지 않습니다.
+
+새 PC에서는 프로젝트 스킬과 검사기가 clone으로 함께 내려옵니다. Codex를 저장소 site에서 열고 스킬 인식을 확인하세요. 예약 전문은 [최신 예약 지침](instructions/READING-AND-SCHEDULER.md)을 사용합니다. 실제 리포트 작성·배포·메시지 전송은 하네스 설치와 별개이며, 기존07시 제작/08시 전송 검증을 유지합니다. 자동 부분 재개 엔진과 별도 모델 서버는 포함하지 않습니다.
+
 ## 다른 컴퓨터에서 처음 설정하기
 
 현재 운영 스크립트는 **Windows용이며, 아래의 동일 경로와 기존 GitHub·Vercel·Discord 대상**을 사용합니다. 저장소를 클론하는 것만으로 AI 조사·배포·봇 인증·예약 작업이 설치되지는 않습니다. 같은 계정 또는 해당 저장소·프로젝트·서버에 권한이 있는 계정으로 설정하세요.
@@ -286,7 +294,7 @@ YYYY-MM-DD는 실제 발행일로 바꿉니다. publish-report는 검수 → 원
 저장소 루트에서 실행합니다. 브라우저 상호작용 검사를 제외한 검사는 Node.js만 사용하고, 읽기 상호작용 검사는 설치·연결된 ego-browser가 필요합니다.
 
 ```sh
-node --test workflows/test-build-site.mjs workflows/test-language-review.mjs workflows/test-weekly-presentation.mjs workflows/test-portable-issue.mjs workflows/test-learning-sections.mjs
+node --test workflows/test-build-site.mjs workflows/test-language-review.mjs workflows/test-weekly-presentation.mjs workflows/test-portable-issue.mjs workflows/test-learning-sections.mjs workflows/test-report-harness.mjs
 node workflows/test-weekly-editorial.mjs
 node workflows/test-public-assets.mjs
 node workflows/test-tool-visuals.mjs

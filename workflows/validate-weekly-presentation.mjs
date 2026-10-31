@@ -1,6 +1,6 @@
 // This checks the project's well-formed static report markup, not arbitrary third-party HTML.
 const voidTags=new Set(['area','base','br','col','embed','hr','img','input','link','meta','param','source','track','wbr']);
-function reportElements(html){
+export function reportElements(html){
  const root={tag:'root',attrs:{},parent:null,start:0,end:html.length},elements=[],stack=[root];
  const source=html.replace(/(<(?:script|style)\b[^>]*>)[\s\S]*?(<\/(?:script|style)>)/gi,'$1$2');
  for(const match of source.matchAll(/<!--[\s\S]*?-->|<\/?([a-z][\w-]*)\b([^>]*)>/gi)){
