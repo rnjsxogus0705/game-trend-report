@@ -288,12 +288,16 @@ html:has(body.weekly-editorial){scroll-padding-top:0}
 .weekly-editorial .top-evidence .top-source{padding-top:12px;border-top:1px solid #dce2e9;font-size:13px;color:#536174}
 .weekly-editorial .top-source a{font-weight:700;text-decoration:underline}
 .weekly-editorial .chapter-visual{margin:24px 0 32px;background:#f8faff;border:1px solid #dce2e9;border-radius:12px;overflow:hidden}
-.weekly-editorial .chapter-visual img{width:100%;max-height:440px;object-fit:contain;display:block;background:#fff}
+.weekly-editorial .chapter-visual img{width:100%;max-height:none;object-fit:contain;display:block;background:#fff}
 .weekly-editorial .chapter-visual figcaption{padding:16px 20px;font-size:14px;line-height:1.8;color:#43556c}
 .weekly-editorial .chapter-visual figcaption strong{display:block;color:#223046;font-size:16px;margin-bottom:6px}
 .weekly-editorial .chapter-visual figcaption small{display:block;margin-top:8px;font-size:12px;color:#536174}
-.weekly-editorial .top-visual{display:block;width:100%;max-height:220px;object-fit:contain;background:#fff;margin:12px 0;border:1px solid #dce2e9;border-radius:8px}
+.weekly-editorial .top-visual{display:block;width:100%;max-width:780px;height:auto;max-height:none;object-fit:contain;background:#fff;margin:12px 0;border:1px solid #dce2e9;border-radius:8px}
 .weekly-editorial .top-visual-note{font-size:12px!important;color:#536174;margin:4px 0 12px!important}
-@media(max-width:600px){.weekly-editorial .top-evidence{padding:14px}.weekly-editorial .top-evidence p{font-size:14px}.weekly-editorial .chapter-visual figcaption{padding:14px 16px}.weekly-editorial .chapter-visual img{max-height:none}.weekly-editorial .top-visual{max-height:180px}}
+@media(max-width:600px){.weekly-editorial .top-evidence{padding:14px}.weekly-editorial .top-evidence p{font-size:14px}.weekly-editorial .chapter-visual figcaption{padding:14px 16px}.weekly-editorial .chapter-visual img{max-height:none}.weekly-editorial .top-visual{max-height:none}}
 @media print{.weekly-editorial .chapter-visual{break-inside:avoid}.weekly-editorial .chapter-visual img{max-height:240px}}
 .weekly-editorial .chapter-visual img{height:auto;aspect-ratio:3/2}
+
+.weekly-editorial .tool-media img{width:auto;max-width:100%;height:auto;max-height:720px;margin-inline:auto;object-fit:contain}
+
+.weekly-editorial .top-visual{margin-inline:auto}

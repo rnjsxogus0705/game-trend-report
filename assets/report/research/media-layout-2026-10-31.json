@@ -1,0 +1,188 @@
+{
+  "scope": "렌더링된 DOM의 섹션별 미디어 배치 검사. 전체 영상 시청/외부 재생의 지속 가능성을 보장하지 않음.",
+  "sections": [
+    {
+      "section": "issue-summary",
+      "generatedFigures": 0,
+      "visiblePreviews": 0,
+      "videoSources": [],
+      "videoButtonsOutsideDetails": 0,
+      "imageCount": 0
+    },
+    {
+      "section": "top10",
+      "generatedFigures": 0,
+      "visiblePreviews": 0,
+      "videoSources": [],
+      "videoButtonsOutsideDetails": 0,
+      "imageCount": 3
+    },
+    {
+      "section": "game-ai-tools",
+      "generatedFigures": 1,
+      "visiblePreviews": 2,
+      "videoSources": [
+        "zVu9YlbPtog",
+        "eUz19GROIpY"
+      ],
+      "videoButtonsOutsideDetails": 2,
+      "imageCount": 24
+    },
+    {
+      "section": "",
+      "generatedFigures": 0,
+      "visiblePreviews": 0,
+      "videoSources": [],
+      "videoButtonsOutsideDetails": 0,
+      "imageCount": 0
+    },
+    {
+      "section": "github-trending",
+      "generatedFigures": 1,
+      "visiblePreviews": 0,
+      "videoSources": [],
+      "videoButtonsOutsideDetails": 0,
+      "imageCount": 1
+    },
+    {
+      "section": "ai-trends",
+      "generatedFigures": 1,
+      "visiblePreviews": 0,
+      "videoSources": [],
+      "videoButtonsOutsideDetails": 0,
+      "imageCount": 1
+    },
+    {
+      "section": "game-ai",
+      "generatedFigures": 1,
+      "visiblePreviews": 0,
+      "videoSources": [],
+      "videoButtonsOutsideDetails": 0,
+      "imageCount": 1
+    },
+    {
+      "section": "ai-releases",
+      "generatedFigures": 1,
+      "visiblePreviews": 0,
+      "videoSources": [],
+      "videoButtonsOutsideDetails": 0,
+      "imageCount": 1
+    },
+    {
+      "section": "techniques",
+      "generatedFigures": 1,
+      "visiblePreviews": 0,
+      "videoSources": [],
+      "videoButtonsOutsideDetails": 0,
+      "imageCount": 1
+    },
+    {
+      "section": "games",
+      "generatedFigures": 0,
+      "visiblePreviews": 2,
+      "videoSources": [
+        "https://video.akamai.steamstatic.com/store_trailers/4348910/1029376199/a658a0ad7992fdb9eba32eadff946e0d84c4d06c/1793112587/hls_264_master.m3u8?t=1793192060",
+        "https://video.akamai.steamstatic.com/store_trailers/5335510/784761556/7f2635011f003ecf63a4665d7277f9f6d33d67ef/1792140508/hls_264_master.m3u8?t=1792140969",
+        "https://video.akamai.steamstatic.com/store_trailers/1799840/1595505907/8f31c901c73ea2dc6084f8295815c5bca4024522/1793272639/hls_264_master.m3u8?t=1793379345"
+      ],
+      "videoButtonsOutsideDetails": 1,
+      "imageCount": 10
+    },
+    {
+      "section": "reverse",
+      "generatedFigures": 1,
+      "visiblePreviews": 0,
+      "videoSources": [],
+      "videoButtonsOutsideDetails": 0,
+      "imageCount": 1
+    },
+    {
+      "section": "ai-only-lab",
+      "generatedFigures": 0,
+      "visiblePreviews": 2,
+      "videoSources": [
+        "_3JR1CKHdsg",
+        "q5m_HKWvdUE",
+        "BsFscfTiGJA",
+        "Twwh5M9tIuA"
+      ],
+      "videoButtonsOutsideDetails": 1,
+      "imageCount": 8
+    },
+    {
+      "section": "ai-planning",
+      "generatedFigures": 1,
+      "visiblePreviews": 0,
+      "videoSources": [],
+      "videoButtonsOutsideDetails": 0,
+      "imageCount": 1
+    },
+    {
+      "section": "game-ideas",
+      "generatedFigures": 1,
+      "visiblePreviews": 0,
+      "videoSources": [],
+      "videoButtonsOutsideDetails": 0,
+      "imageCount": 1
+    },
+    {
+      "section": "ai-production",
+      "generatedFigures": 1,
+      "visiblePreviews": 0,
+      "videoSources": [],
+      "videoButtonsOutsideDetails": 0,
+      "imageCount": 1
+    },
+    {
+      "section": "prototype",
+      "generatedFigures": 1,
+      "visiblePreviews": 0,
+      "videoSources": [],
+      "videoButtonsOutsideDetails": 0,
+      "imageCount": 1
+    },
+    {
+      "section": "lab",
+      "generatedFigures": 0,
+      "visiblePreviews": 0,
+      "videoSources": [],
+      "videoButtonsOutsideDetails": 0,
+      "imageCount": 0
+    },
+    {
+      "section": "careers",
+      "generatedFigures": 1,
+      "visiblePreviews": 0,
+      "videoSources": [],
+      "videoButtonsOutsideDetails": 0,
+      "imageCount": 1
+    },
+    {
+      "section": "opportunities",
+      "generatedFigures": 1,
+      "visiblePreviews": 0,
+      "videoSources": [],
+      "videoButtonsOutsideDetails": 0,
+      "imageCount": 1
+    },
+    {
+      "section": "reading",
+      "generatedFigures": 0,
+      "visiblePreviews": 2,
+      "videoSources": [
+        "fA3TssbQdTc",
+        "2W367UciTQk"
+      ],
+      "videoButtonsOutsideDetails": 2,
+      "imageCount": 4
+    },
+    {
+      "section": "sources",
+      "generatedFigures": 0,
+      "visiblePreviews": 0,
+      "videoSources": [],
+      "videoButtonsOutsideDetails": 0,
+      "imageCount": 0
+    }
+  ]
+}

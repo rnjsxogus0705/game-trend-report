@@ -1333,7 +1333,8 @@
     "disposition": "approved with generated-concept captions",
     "generatedImages": 8,
     "chapterPlacements": 13,
-    "visibleOfficialMediaPreviews": 6,
-    "limitation": "개념 그림은 제품 기능·성능·출시 증거가 아니며 영상 전체 시청 및 실험 재현을 주장하지 않음"
+    "visibleOfficialMediaPreviews": 8,
+    "limitation": "개념 그림은 제품 기능·성능·출시 증거가 아니며 영상 전체 시청 및 실험 재현을 주장하지 않음",
+    "layoutReview": "TOP 10 그림 원본 비율 유지·공식 미리보기 16:9 contain·복제 크기 속성 제거. 제작자 영상 2개와 공식 게임 HLS 트레일러 1개를 대표 미리보기에 노출. 전체 영상 시청은 미실시."
   }
 }
