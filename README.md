@@ -7,3 +7,6 @@
 이 저장소의 main 브랜치 루트를 GitHub Pages로 배포합니다. 새 HTML 리포트와 index.html을 main에 푸시하면 사이트가 갱신됩니다. 조사·리포트 작성은 별도로 설정된 Codex 정기 작업이 수행합니다.
 
 공개용 HTML과 정적 페이지로만 구성됩니다. 인증 토큰, 개인 정보, Discord 발송 설정은 포함하지 않습니다.
+
+## 리포트 지침을 수정하려면
+[작성·출력·교정 지침](instructions/README.md)과 [작업 흐름](instructions/WORKFLOW.md)을 참고하세요. 실행 스크립트는 [workflows/](workflows/)에 있습니다. main에 커밋·푸시하면 실행 중인 로컬 Codex가 매시간 및 토요일 작업 직전에 최신 커밋을 확인해 적용합니다. 로컬 수정 충돌은 덮어쓰지 않습니다. 비밀키와 환경별 인증은 이 저장소에 포함하지 않습니다.
