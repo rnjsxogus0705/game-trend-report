@@ -192,8 +192,8 @@
     },
     {
       "path": "assets/report/ai100.js",
-      "bytes": 491,
-      "sha256": "610f54d2b73d7d4dc6fd0bd19b693e8804c9617fd05f467383c80fc4e2e501a7"
+      "bytes": 921,
+      "sha256": "d6c7abca087b643a8acdde5dc5be7a5e73260efb69915fc688e5a4162496e238"
     },
     {
       "path": "assets/report/vendor/chart.umd.js",
