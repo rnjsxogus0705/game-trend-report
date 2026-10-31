@@ -303,3 +303,10 @@ node workflows/build-site.mjs
 ```
 
 사이트 생성기는 저장소 안에서는 현재 `reports/`로 메인을 다시 만들고, Windows 운영 폴더에 동기화한 사본은 기존 `reports/`에서 `site/reports/`로 복사합니다. 두 환경 모두 과거 발행물을 보존합니다. 전체 발행 검수는 별도의 실제 조사·교정 영수증과 `validate-issue.mjs`를 계속 사용합니다.
+
+## 이 Mac의 두 Discord 채널 전송
+로컬 `.env`의 `DISCORD_BOT_TOKEN`에 기존 Game Trend Report 봇 토큰을 보관합니다. 파일은 Git에서 제외하며 빈 항목만으로 인증이 구성되었다고 표시하지 않습니다. 토큰 재발급은 기존 Windows 인증에도 영향을 주므로 임의로 하지 않습니다.
+
+`node workflows/discord-delivery.mjs --check`는 지정 봇(ID1565897943184310342)과 두 서버/채널 접근만 검사하고 메시지를 보내지 않습니다. 실제 검수·공개 배포가 끝난 호는 `node workflows/discord-delivery.mjs --send YYYY-MM-DD`로 요약과 Pages/Vercel 링크를 보냅니다. 서버1488793489800957966의 채널1565894418156879942와 서버1346955649132527707의 채널1566098427052298342만 대상으로 고정합니다. 채널별 private/delivery 영수증으로 중복을 막고 전송 결과가 불확실한 pending 기록은 자동 재전송하지 않습니다.
+
+이 Mac의 등록 예약은 토요일08:00에 제작을 시작하며 검수·배포가 끝난 뒤 전송합니다. 기존 Windows의07시 준비/08시 전송 구성과 동시에 활성화하지 않습니다. OS별 실제 실행과 인증이 다르므로 Node 경로에서 Windows PowerShell을 실행한 것으로 기록하지 않습니다.
