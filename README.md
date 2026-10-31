@@ -36,7 +36,7 @@ ego-browser 안내가 `[ego-browser:skill] end of guide`로 끝나는지 확인�
 ```powershell
 $reportRoot = 'C:\내문서\GameTrendReport'
 if (Test-Path -LiteralPath $reportRoot) { throw '이미 존재하는 작업 폴더입니다. 기존 내용을 먼저 확인하세요.' }
-New-Item -ItemType Directory -Path $reportRoot | Out-Null
+New-Item -ItemType Directory -Path $reportRoot -Force | Out-Null
 git clone https://github.com/rnjsxogus0705/game-trend-report.git "$reportRoot\site"
 if ($LASTEXITCODE -ne 0) { throw '클론 실패' }
 foreach ($folder in @('reports','private','redesign','research')) {
@@ -249,7 +249,7 @@ YYYY-MM-DD는 실제 발행일로 바꿉니다. publish-report는 검수 → 원
 | 매주 토요일 07:00 | 지침 동기화·재독 → 최근 7일 조사 → 작성·교정·검수 → 두 사이트 배포 → 요약 저장. 전송하지 않음 |
 | 매주 토요일 08:00 | 지침 동기화 → dispatch-report.ps1 → 당일 검수·배포 확인 → 두 링크 전송 |
 
-각 예약에 복사할 전체 실행 문구와 UI·출력 검수 기준은 [읽기 경험과 예약 작업 재현 지침](instructions/READING-AND-SCHEDULER.md)에 있습니다.
+각 예약에 복사할 전체 실행 문구와 UI·출력 검수 기준은 [읽기 경험과 예약 작업 재현 지침](instructions/READING-AND-SCHEDULER.md)에 있습니다. 재현 항목과 검증 범위는 [새 PC 재현 점검표](instructions/PORTABILITY-AUDIT.md)에서 확인합니다.
 
 담당 PC를 옮기면 이전 PC의 조사·전송 예약을 중지하고 새 PC만 활성화하세요. 이 예약은 클라우드 실행이 아니므로 PC와 Codex가 실행 중이어야 합니다. 로그인·수면 상태·네트워크로 실제 실행 시각이 달라질 수 있습니다. 예약 문구에는 이 README와 instructions/WORKFLOW.md를 먼저 읽고 실패 시 과거 호로 대체하지 않는 조건도 넣습니다.
 
@@ -266,7 +266,7 @@ YYYY-MM-DD는 실제 발행일로 바꿉니다. publish-report는 검수 → 원
 | 검수/영수증 없음 | 실제 조사·교정·검수 수행 후 해당 호의 기록을 새로 작성했는지 |
 | 동기화 충돌 | 로컬 변경을 먼저 보존·검토해 instructions/ 또는 workflows/에 반영하고 커밋·푸시. 강제 초기화하지 않음 |
 
-현재 GitHub 계정/저장소, Pages 주소, Discord ID, Vercel ID는 스크립트에 고정되어 있습니다. 다른 대상으로 fork하려면 publish-report.ps1·send-report.ps1·dispatch-report.ps1·deploy-vercel.mjs의 허용 대상/주소, private/vercel-project.json, Git 원격, 실제 서비스 설정을 함께 바꿔 검증해야 합니다. 다른 경로를 쓰려면 deploy-vercel.mjs·validate-issue.mjs·vercel-api.mjs의 고정 경로와 예약 문구도 함께 수정합니다. **현재는 환경변수만으로 임의 계정·운영체제·경로에 이식하는 구조가 아닙니다.** 변경은 workflows/ 원본에 커밋하고 sync-instructions의 허용 목록·상태와 일치시킵니다.
+현재 GitHub 계정/저장소, Pages 주소, Discord ID, Vercel ID는 스크립트에 고정되어 있습니다. 다른 대상으로 fork하려면 publish-report.ps1·send-report.ps1·dispatch-report.ps1·deploy-vercel.mjs의 허용 대상/주소, private/vercel-project.json, Git 원격, 실제 서비스 설정을 함께 바꿔 검증해야 합니다. 다른 경로를 쓰려면 deploy-vercel.mjs·vercel-api.mjs의 고정 경로와 예약 문구도 함께 수정합니다. **현재는 환경변수만으로 임의 계정·운영체제·경로에 이식하는 구조가 아닙니다.** 변경은 workflows/ 원본에 커밋하고 sync-instructions의 허용 목록·상태와 일치시킵니다.
 
 설정이 완료되면 최신 지침 적용 커밋, 실제 양쪽 공개 본문, 봇·채널 확인 결과, 첫 전송 기록을 확인하세요. 토큰·private/·검수 및 전송 영수증은 Git에 올리지 않습니다.
 
@@ -275,10 +275,10 @@ YYYY-MM-DD는 실제 발행일로 바꿉니다. publish-report는 검수 → 원
 
 ## 화면 변경 검증
 
-저장소 루트에서 실행합니다. 처음 세 검사는 Node.js만 사용하고, 읽기 상호작용 검사는 설치·연결된 ego-browser가 필요합니다.
+저장소 루트에서 실행합니다. 브라우저 상호작용 검사를 제외한 검사는 Node.js만 사용하고, 읽기 상호작용 검사는 설치·연결된 ego-browser가 필요합니다.
 
 ```sh
-node --test workflows/test-build-site.mjs workflows/test-language-review.mjs
+node --test workflows/test-build-site.mjs workflows/test-language-review.mjs workflows/test-weekly-presentation.mjs workflows/test-portable-issue.mjs
 node workflows/test-weekly-editorial.mjs
 node workflows/test-public-assets.mjs
 node workflows/test-tool-visuals.mjs

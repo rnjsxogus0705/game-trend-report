@@ -7,10 +7,10 @@
 4. 동기화 후 변경된 지침을 다시 읽고 작업합니다. 지침 변경이 기존 호를 자동 재작성하거나 재전송하지는 않습니다. 새 호부터 적용하며 과거 호 변경은 별도 작업으로 처리합니다.
 
 ## 토요일 07:00 한국 시간: 조사·작성·배포
-동기화 → 최신 지침 읽기 → 최근 7일 원문 조사 → 출처·주장·출시 상태 기록 → HTML·호별 자료 작성 → 한국어 교정 → 실제 화면·링크·복사·다운로드 검사 → validate-issue.mjs → publish-report.ps1 → Pages와 Vercel 본문 일치 확인 → 요약 저장. 이 단계에서는 전송하지 않습니다.
+동기화 → 최신 지침 읽기 → 최근 7일 원문 조사 → 출처·주장·출시 상태 기록 → HTML·호별 자료 작성 → 한국어 교정 → build-site.mjs로 로컬 site/reports에 복사 → site를 루트로 한 HTTP 미리보기에서 실제 화면·링크·복사·다운로드 검사 → validate-issue.mjs → publish-report.ps1 → Pages와 Vercel 본문 일치 확인 → 요약 저장. 이 단계에서는 전송하지 않습니다.
 
 ## 토요일 08:00 한국 시간: 전송
-동기화 → dispatch-report.ps1 → 당일 호·검수·배포 기록 확인 → 두 공개 사이트 본문 비교 → Game Trend Report 봇으로 두 링크 전송 → 응답 확인·중복 방지 기록. 실패하거나 미완성인 호를 이전 호로 대체하지 않습니다.
+동기화 → dispatch-report.ps1에서 당일 호 validate-issue.mjs 실행 → 검수·배포 기록 확인 → 두 공개 사이트 본문 비교 → Game Trend Report 봇으로 두 링크 전송 → 응답 확인·중복 방지 기록. 실패하거나 미완성인 호를 이전 호로 대체하지 않습니다.
 
 ## 다른 컴퓨터에서 실행하려면
 공개 소스만으로 봇 인증이 복원되지는 않습니다. 로컬 작업 폴더 아래 site/에 이 저장소를 체크아웃하고 workflows/의 파일을 작업 폴더에 배치합니다. GH_TOKEN·Git 작성자 설정·VERCEL_TOKEN과 배포 대상 설정, Windows 사용자별 봇 DPAPI 인증, 한국어 스킬, ego-browser, Node.js·PowerShell·gh CLI·예약 작업을 그 환경에서 별도로 준비해야 합니다. 비밀 값은 Git에 커밋하지 않습니다.
@@ -28,3 +28,6 @@ workflows/에 현재 실행 스크립트를 보관합니다. 환경별 private/ 
 
 ## 2026-11-07 이후 자연스러움 최종 검수
 `KOREAN-EDITORIAL-POLICY.md`의 k-skill 두 스킬 지침과 범위를 적용한다. 문맥을 실제로 검토하고 수정자와 독립된 최종 검수자가 HTML과 호별 Markdown의 모든 독자용 문구를 대조한다. 기존 3단계 교정 영수증과 별도로 자연스러움 검수 범위·변경 전후·사유·최종 파일별 해시를 남긴다. 정기 예약은 외부 공개 검사기를 배치 호출하지 않으며, 외부 검사가 없으면 `externalVerified=false`와 대체 방법을 기록한다.
+
+## 발행·전송의 공통 최종 검사
+2026-11-07 이후 호는 `validate-issue.mjs`가 `validate-weekly-presentation.mjs`와 `validate-language-review.mjs`를 호출한다. 07시 발행 전에 검사하고 08시 `dispatch-report.ps1`에서도 다시 검사한다. 요약·강조·분류가 빠졌거나 파일이 최종 검수 해시와 다르면 배포·전송을 진행하지 않는다. 동기화 후 이 WORKFLOW도 site/instructions에서 다시 읽는다. Markdown 첨부는 해당 호 HTML의 명시적 링크와 함께 게시하며, 미연결 문서는 조용히 누락시키지 않고 생성 단계에서 중단한다.

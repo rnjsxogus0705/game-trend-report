@@ -26,8 +26,16 @@ export function renderIndex(issues) {
 export async function buildSite({site, source}) {
  const out=path.join(site,'reports');
  await fs.mkdir(out,{recursive:true});
+ const markdownPattern=/^weekly-\d{4}-\d{2}-\d{2}(?:-[A-Za-z0-9_-]+)?\.md$/;
+ const publishedMarkdown=new Set();
+ const reportNames=new Set([...(await fs.readdir(source)),...(await fs.readdir(out))].filter(name=>reportPattern.test(name)));
+ for(const name of reportNames){
+  let html;try{html=await fs.readFile(path.join(source,name),'utf8');}catch(error){if(error.code!=='ENOENT')throw error;html=await fs.readFile(path.join(out,name),'utf8');}
+  for(const [,asset] of html.matchAll(/href=["'](weekly-[^"'/?#]+\.md)["']/g))if(markdownPattern.test(asset))publishedMarkdown.add(asset);
+ }
  for(const name of await fs.readdir(source)) {
-  if(/^weekly-\d{4}-\d{2}-\d{2}-(?:idea-0[123]|ideas|ai-workflow|ai-plan-0[123]|ai-plans)\.md$/.test(name)||/^weekly-\d{4}-\d{2}-\d{2}\.(?:js|json)$/.test(name)) {
+  if(markdownPattern.test(name)||/^weekly-\d{4}-\d{2}-\d{2}\.(?:js|json)$/.test(name)) {
+   if(name.endsWith('.md')&&!publishedMarkdown.has(name))throw Error('Report Markdown must be explicitly linked from its issue HTML: '+name);
    const text=await fs.readFile(path.join(source,name),'utf8');
    if(name.endsWith('.md')&&text.trim().length<300)throw Error('Empty idea draft: '+name);
    if(/(?:github_pat_[A-Za-z0-9_]+|gh[pousr]_[A-Za-z0-9]+)/.test(text))throw Error('Possible credential in public asset: '+name);

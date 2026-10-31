@@ -1,0 +1,13 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs/promises';
+import {validateWeeklyPresentation} from './validate-weekly-presentation.mjs';
+const html=await fs.readFile(new URL('../reports/weekly-2026-10-31.html',import.meta.url),'utf8');
+const future=html.replace('../assets/report/report.js','weekly-2026-11-07.js');
+const check=value=>validateWeeklyPresentation(value,{reportDate:'2026-11-07'});
+test('이번 디자인과 다음 호 스크립트 계약 검증',()=>{validateWeeklyPresentation(html,{reportDate:'2026-10-31'});check(future);});
+test('CSS 마지막 순서와 필수 스크립트 누락 차단',()=>{assert.throws(()=>check(future.replace('weekly-editorial.css','missing.css')),/stylesheet must be last/);assert.throws(()=>check(future.replace('reading-experience.js','missing.js')),/required report script/);});
+test('과거 호 차트 스크립트 재사용 차단',()=>assert.throws(()=>check(html),/issue-specific/));
+test('요약 세 항목과 주제 이동 누락 차단',()=>{assert.throws(()=>check(future.replace('<dd>AI가','<p>AI가').replace('확인해요.</dd>','확인해요.</p>')),/takeaways/);assert.throws(()=>check(future.replace('<a href="#careers"><strong>취업과 포트폴리오','<a href="#sources"><strong>취업과 포트폴리오')),/topic links/);});
+test('범주 밖 본문과 잘못된 목차 차단',()=>{assert.throws(()=>check(future.replace('data-report-part="tools"','data-report-part="wrong"')),/category structure/);assert.throws(()=>check(future.replace('<a href="#github-trending">GitHub 트렌딩','<a href="#games">GitHub 트렌딩')),/Navigation links/);});
+test('강조·모바일 대안·단일 표지 제목 누락 차단',()=>{assert.throws(()=>check(future.replace(/<\/?mark\b[^>]*>/g,'')),/highlighted/);assert.throws(()=>check(future.replace('<nav id="mobile-links">','<nav id="missing-mobile-links">')),/mobile navigation/);assert.throws(()=>check(future.replace('<h1>','<h2>').replace('</h1>','</h2>')),/one h1/);});
+test('TOP 10 공개 영역 수와 잘못된 HTML 구조 차단',()=>{assert.throws(()=>check(future.replace('class="top-ten-item"','class="missing-item"')),/three items/);assert.throws(()=>check(future.replace('</dl>','</div>')),/nesting/);});
+test('범주 구분선 제목과 요약 역할도 재현',()=>{assert.throws(()=>check(future.replace('id="part-tools" data-editorial-ui>AI 도구와 기술','id="part-tools" data-editorial-ui>다른 이름')),/divider label/);assert.throws(()=>check(future.replace('<dt>핵심 판단</dt>','<dt>다른 이름</dt>')),/takeaway labels/);});

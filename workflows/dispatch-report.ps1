@@ -7,6 +7,8 @@ if (!$CheckOnly -and ($IssueDate -ne $nowKst.ToString('yyyy-MM-dd') -or $nowKst.
 $reportPath=Join-Path $PSScriptRoot ('reports\weekly-'+$IssueDate+'.html')
 if (!(Test-Path -LiteralPath $reportPath)) {throw 'The current issue is not prepared; no earlier issue will be substituted.'}
 if (!$CheckOnly -and (Test-Path -LiteralPath ($reportPath+'.sent.json'))) {Write-Output 'This issue was already delivered; no duplicate sent.';return}
+node (Join-Path $PSScriptRoot 'validate-issue.mjs') $reportPath
+if ($LASTEXITCODE -ne 0) {throw 'Current issue failed content, presentation or language verification; no message sent.'}
 $hash=(Get-FileHash -LiteralPath $reportPath -Algorithm SHA256).Hash
 $review=Get-Content -LiteralPath ($reportPath+'.language-review.json') -Raw | ConvertFrom-Json
 $publication=Get-Content -LiteralPath ($reportPath+'.published.json') -Raw | ConvertFrom-Json

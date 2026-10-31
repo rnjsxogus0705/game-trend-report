@@ -35,3 +35,15 @@ test('동기화 환경의 과거 호 보존과 콘텐츠 검증',async()=>{
   await assert.rejects(buildSite({source,site}),/lacks substantive research/);
  }finally{await fs.rm(base,{recursive:true,force:true});}
 });
+test('추가 Markdown은 명시한 첨부만 게시하고 미연결 문서는 중단',async()=>{
+ const base=await fs.mkdtemp(path.join(os.tmpdir(),'gtr-attachments-'));
+ try{
+  const source=path.join(base,'reports'),site=path.join(base,'site');await fs.mkdir(source);
+  const name='weekly-2026-11-07-tool-comparison.md',body='첨부 비교 내용 '.repeat(100);
+  const html='<h2>분석</h2>'.repeat(5)+'<a href="https://example.com">출처</a>'.repeat(5)+'확인일 '+'조사 '.repeat(1500)+`<a href="${name}" download>비교표</a>`;
+  await fs.writeFile(path.join(source,'weekly-2026-11-07.html'),html);await fs.writeFile(path.join(source,name),body);
+  await buildSite({site,source});assert.equal(await fs.readFile(path.join(site,'reports',name),'utf8'),body);
+  await fs.writeFile(path.join(source,'weekly-2026-11-07-private-notes.md'),body);
+  await assert.rejects(buildSite({site,source}),/explicitly linked/);
+ }finally{await fs.rm(base,{recursive:true,force:true});}
+});

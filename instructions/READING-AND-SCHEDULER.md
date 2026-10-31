@@ -37,7 +37,7 @@
 - `redesign/DESIGN.md`의 색상·Pretendard·18px/1.85 본문·최대 72ch 문단·제목/캡션 크기와 여백을 따른다. 큰 장 위에 2px `#AEBCCD` 구분선을 두고 위쪽 간격 64px(모바일 48px)을 확보한다. 장 제목 아래에는 1px 보조선을 두고 `h2`를 먼저, `.chapter-index` 메타데이터를 그 아래에 둔다. 데스크톱 목차의 독립 스크롤과 현재 항목 표시, 모바일 고정 접기 목차, 모든 섹션의 일관된 펼침 표시를 제공한다.
 - 핵심 판단과 실행은 `mark` 배경 `#E2EBFF`, 글자 `#193E96`으로 필요한 곳에만 강조한다. 주의 조건은 `mark.caution`의 배경 `#FFF0CA`, 글자 `#704708`, 점선 밑줄을 사용한다. 색만으로 뜻을 전달하지 않으며 강조 과정에서 문구·부정·불확실성을 없애지 않는다. 한 장에서 남발하지 않는다.
 - 조작 아이콘은 고정된 로컬 Lucide SVG 스프라이트(`assets/report/icons/lucide.svg`, ISC)와 공용 `share.js`를 재사용한다. 공유·복사·다운로드·인쇄·닫기 등 모든 버튼에 텍스트 또는 접근 가능한 이름을 둔다. 공유 메뉴의 `share-mark.png`는 image_gen 장식 이미지다. 설명에 새 삽화가 필요하면 image_gen을 사용하되, 실제 도구 화면은 공식 원본을 우선하고 차트·수치는 검증된 데이터와 코드/SVG로만 만든다. 생성 이미지의 출처와 프롬프트는 `assets/report/icons/SOURCES.md` 등 해당 자산의 출처 문서에 기록한다.
-- 기존 `reading-experience.js`의 상세 접기·앵커 이동·인쇄 동작과 `tool-choice.js`의 목적 필터 및 비교 기능, 공유·복사·미디어·그래프 기능을 연결하고 호별 데이터와 IDs를 확인한다. 필요한 경우 호 전용 자산으로 구현해 기존 호의 사실과 기능을 변경하지 않는다.
+- 상세 접기·앵커 이동·인쇄, 목적 필터와 비교, 공유·복사·미디어·그래프 기능을 연결하고 호별 데이터와 ID를 확인한다. 현재 공용 `tool-choice.js`는 성능 직접 비교를 하지 않았다는 문구와 비교표의 세 번째 가격 열·여섯 번째 출처 열을 전제로 한다. `reading-experience.js`의 미리보기는 `tool-spritegen`, `tool-meshy`, `tool-runway` 세 ID를 찾는다. 새 호의 실제 실험 범위, 표 또는 후보가 다르면 과거 호의 공용 파일을 덮어쓰지 말고 호 전용 JS를 작성하며 공식 미디어와 해당 호 조사 원장도 함께 갱신한다. 미리보기·차트의 문구와 데이터가 새 조사 결과와 일치하는지 확인한다.
 - 320·390·768·1440px에서 커버, 제목 계층, 본문 폭과 색 대비, 목차 독립 스크롤과 현재 위치, 모바일 목차, 첫 3개 및 나머지 항목, 표·차트·영상, 상세 펼치기와 해시 이동, 키보드 조작, 인쇄의 내용 보존을 확인한다. JavaScript 미지원 시에도 필수 본문과 수동으로 열 수 있는 상세가 접근 가능해야 한다.
 
 ## 비교와 시각 자료
@@ -58,17 +58,33 @@
 **매시간 15분 — 지침 동기화**
 
 ```text
-C:\내문서\GameTrendReport\sync-instructions.ps1을 실행해 main의 지침을 동기화한다. 변경이 없으면 조용히 종료한다. 로컬 수정 충돌이나 인증·동기화 실패는 덮어쓰거나 초기화하지 말고 원인을 알린다.
+C:\내문서\GameTrendReport\sync-instructions.ps1을 실행해 main의 지침을 동기화한다. 실패하거나 충돌하면 즉시 중단하고 원인을 알리며 덮어쓰거나 초기화하지 않는다. 정상 실행되고 변경이 없으면 조용히 종료한다. 과거 호를 새 호로 대체하지 않는다.
 ```
 
 **매주 토요일 07:00 — 조사·작성·배포**
 
 ```text
-C:\내문서\GameTrendReport\site\README.md와 site\instructions\WORKFLOW.md를 읽고 sync-instructions.ps1을 실행한다. 동기화 후 REPORT-GUIDE.md, REPORT-OUTPUT-CONTRACT.md, READING-AND-SCHEDULER.md, KOREAN-EDITORIAL-POLICY.md, redesign\DESIGN.md, redesign\references\DESIGN-REFERENCE-GUIDE.md를 다시 읽는다. 최근 7일의 실제 원문을 조사해 당일 주간 리포트와 조사 원장·호별 자료를 작성한다. 필수 섹션을 핵심 요약·AI 도구와 기술·게임 분석과 제작·취업과 참고 자료의 네 범주로 본문과 목차에 같은 순서로 배치하고, 실제 호의 한눈에 보기 요약과 주제 링크, 접근 가능한 강조·아이콘, 출처·날짜·조건, 주간 편집형 화면 규칙(body.weekly-editorial, 마지막 weekly-editorial.css, 커버 h1·TOP 10 h2), 읽기 구조·접기·도구 비교 시각 자료와 이미지/영상 규칙을 적용한다. 기존 humanizer와 k-skill korean-humanizer로 문맥을 교정한 뒤 grammar-checker → style-guide를 적용한다. HTML의 끝 문장·접힌 내용·제목·캡션·표·복사용 요청서와 각 호별 Markdown 전체를 검수하고, 수정자와 독립된 최종 검수자가 의미 보존·변경 전후·이유·최종 파일 해시를 기록한다. 정기 예약은 외부 맞춤법 웹 검사기에 대량 요청하지 않으며 수행하지 않은 외부 검사는 externalVerified=false로 남긴다. 내용·언어 검수 기록을 만든다. 화면·모바일·목차·펼치기·인쇄·링크·필터·미디어·공유·복사·다운로드와 최신 주간 링크를 검사하고 validate-issue.mjs 및 publish-report.ps1을 실행해 Pages와 Vercel의 실제 본문을 확인한다. 해당 호 요약을 저장한다. 이 단계에서 Discord 메시지를 보내지 않는다. 오류를 숨기거나 이전 호를 새 호로 대체하지 않는다.
+C:\내문서\GameTrendReport\site\README.md와 site\instructions\WORKFLOW.md를 읽고 sync-instructions.ps1을 실행한다. 동기화 실패 시 즉시 중단하고 원인을 알리며 과거 호로 대체하지 않는다. 성공하면 최신 site\README.md와 site\instructions\WORKFLOW.md를 다시 읽고 REPORT-GUIDE.md, REPORT-OUTPUT-CONTRACT.md, READING-AND-SCHEDULER.md, KOREAN-EDITORIAL-POLICY.md, redesign\DESIGN.md, redesign\references\DESIGN-REFERENCE-GUIDE.md와 실제 설치된 한국어 스킬의 전체 지침을 읽는다. k-skill은 지정 버전 instruct 출력 전체를 읽는다. 최근 7일의 실제 원문으로 당일 주간 리포트와 조사 원장·호별 자료를 새로 작성한다. 과거 호의 차트 데이터·도구 비교 문구·가격·후보·이미지·영상·출처를 새 호의 사실로 복사하지 않고 실제 조사 및 공식 미디어에 맞춰 호별 JS와 원장을 작성한다.
+
+네 범주를 본문과 목차에 같은 순서로 배치하고, 커버와 단일 h1, 마지막 weekly-editorial.css, 실제 호를 반영한 요약 3개와 주제 링크 5개, TOP 10, 접근 가능한 아이콘, 필요한 곳의 핵심 강조와 주의 조건, 반응형 목차·접기·도구 비교·이미지·영상·출처를 지침대로 완성한다. 과거 본문과 수치, 확인하지 않은 성능 순위를 재사용하지 않는다. 설치된 Impeccable·humanizer·grammar-checker·style-guide의 SKILL.md와 관련 참조, k-skill @0.10.4의 instruct korean-humanizer 및 instruct korean-spell-check 출력 전체를 실제로 읽는다. 스킬이나 필수 지침을 읽을 수 없으면 중단하고 누락을 알린다. Impeccable 실행기 오류 시에는 README에 명시한 디자인 지침 직접 읽기 대안을 적용하되 수행 범위를 기록한다. 기존 humanizer와 k-skill korean-humanizer로 문맥을 교정한 뒤 grammar-checker와 style-guide를 적용한다.
+
+먼저 build-site.mjs로 reports/의 초안을 로컬 site/reports/에 복사한다. 이 단계는 커밋·공개 배포·전송이 아니다. site/를 루트로 한 로컬 HTTP 미리보기에서 reports/weekly-YYYY-MM-DD.html을 열어 화면·모바일·목차·펼치기·인쇄·링크·필터·미디어·공유·복사·다운로드와 최신 주간 링크를 실제로 확인한다. source reports/의 HTML을 파일 URL로 직접 열어 자산 경로 검사를 대신하지 않는다.
+
+HTML의 끝 문장·접힌 내용·제목·캡션·표·복사용 요청서와 각 호별 Markdown 전체를 실제로 검수하고, 수정자와 독립된 최종 검수자가 의미 보존·변경 전후·이유·파일별 최종 SHA-256을 기록한다. 최종 검수 후 보정하면 해당 파일을 재검수하고 해시를 다시 기록한다. 원본을 고친 뒤에는 build-site.mjs도 다시 실행해 미리보기 사본을 갱신한다. 정기 예약은 외부 맞춤법 웹 검사기에 대량 요청하지 않으며 수행하지 않은 외부 검사는 externalVerified=false로 남긴다.
+
+내용·언어 검수 기록을 직접 수행한 결과로만 작성하고 validate-issue.mjs를 통과시킨 후 publish-report.ps1을 실행한다. Pages와 Vercel의 실제 본문을 확인하고 해당 호 요약을 저장해야 준비 완료다. 이 단계에서 Discord 메시지를 보내지 않는다. 완료 후 정기 상태 메시지는 남기지 않고 종료한다. 실패·미완성은 조용히 성공 처리하지 말고 원인을 알린다.
 ```
 
 **매주 토요일 08:00 — 검증 후 전송**
 
 ```text
-C:\내문서\GameTrendReport\site\README.md와 site\instructions\WORKFLOW.md를 읽고 sync-instructions.ps1을 실행한 뒤 최신 지침을 확인한다. dispatch-report.ps1을 실행해 한국 시간 당일 주간 호의 실제 검수·배포 기록과 Pages·Vercel 본문을 확인한 후 기존 봇으로 두 링크를 전송한다. 중복 전송 기록이 있거나 준비가 미완료·검증 실패라면 전송하지 않는다. 이전 호로 대체하거나 전송 기록을 삭제하지 않는다. 실패와 실제 상태를 알린다.
+C:\내문서\GameTrendReport\site\README.md와 site\instructions\WORKFLOW.md를 읽고 sync-instructions.ps1을 실행한다. 동기화 실패 시 즉시 중단하고 원인을 알린다. 성공하면 최신 지침을 확인하고 최신 site\README.md, site\instructions\WORKFLOW.md와 READING-AND-SCHEDULER.md를 다시 읽고 dispatch-report.ps1을 실행한다. dispatch가 당일 호에 대해 validate-issue.mjs와 실제 검수·배포 기록, Pages·Vercel 본문과 중복 전송 여부를 확인한 후 기존 봇으로 두 링크를 전송한다. 검수 JSON이나 전송 기록을 직접 수정해 검증을 우회하지 않는다. 이전 호로 대체하지 않고 실패·미완성·중복 상태를 알린다. 검증된 당일 호의 전송이 성공하면 별도 정기 상태 메시지 없이 종료한다.
 ```
+
+## 새 PC에서 예약을 켜기 전 확인
+
+1. README의 초기 배치·인증·스킬 설치를 마치고 `sync-instructions.ps1`을 성공시킨다. 최신 manifest의 모든 지침과 검사 모듈이 배치돼야 한다. 공용 CSS·폰트·Lucide·생성 이미지는 `site/assets/report/`에서 Git으로 갱신하며 작업 폴더 루트로 별도 복사하지 않는다.
+2. 저장소 루트에서 `node --test workflows/test-weekly-presentation.mjs workflows/test-language-review.mjs workflows/test-portable-issue.mjs workflows/test-build-site.mjs`를 실행한다. 이 검사는 가상의 새 호·검수 기록으로 모듈 연결을 검사하며 실제 조사·교정 영수증이 아니다.
+3. 발행할 새 호에는 마지막 주간 CSS, 호 전용 JS, 세 요약·다섯 주제 링크, 같은 네 범주·목차, 핵심 하이라이트와 독립 한국어 검수 기록을 만든다. 모든 Markdown 첨부는 해당 호 HTML에 명시적으로 연결한다. 연결하지 않은 작업 메모를 같은 호 첨부 이름으로 두면 사이트 생성이 중단된다. 과거 호의 기사·수치·실측 여부·도구 ID를 그대로 복사하지 않는다.
+4. 최종 HTML·Markdown을 수정했다면 내용·한국어·화면 검수를 다시 하고 최종 해시를 기록한다. `validate-issue.mjs` 성공 후에만 배포한다. 08시 dispatch도 같은 검증을 다시 실행한다. 실패한 검사를 우회하거나 JSON 필드를 임의로 채우지 않는다.
+5. 위 세 예약은 새 PC에 별도로 등록하고 전송 담당은 한 대만 활성화한다. Windows에서 실제 예약 실행을 확인하기 전에는 설치/실행 확인을 완료로 기록하지 않는다.
