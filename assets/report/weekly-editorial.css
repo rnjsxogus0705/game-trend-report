@@ -220,8 +220,8 @@ body.weekly-editorial {
  .weekly-editorial .top-ten-item {break-inside:avoid}
  .weekly-editorial :is(p,.chapter-head>p,.card p) {font-size:11pt;line-height:1.7}
  .weekly-editorial :is(.table-scroll,.tool-matrix-scroll) {overflow:visible}
- .weekly-editorial table {min-width:0!important;font-size:9pt}
- .weekly-editorial :is(th,td,.tool-comparison td,.tool-comparison th,.tool-matrix td,.tool-matrix th) {font-size:9pt;padding:6px}
+ .weekly-editorial table {min-width:0!important;font-size:11pt}
+ .weekly-editorial :is(th,td,.tool-comparison td,.tool-comparison th,.tool-matrix td,.tool-matrix th) {font-size:11pt;padding:6px}
  .weekly-editorial .reading-detail>summary {display:none}
  .weekly-editorial .mobile-nav {display:none}
 }
