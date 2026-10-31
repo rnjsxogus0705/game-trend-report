@@ -15,3 +15,15 @@ test('두 섹션의 그림·근거 안내와 기존 조작 요소 유지',()=>{
  for(const marker of ['prototype-guide.webp','lab-guide.webp','learning-section-guide','lab-explanation','data-check="hypothesis"','id="chance"','id="trials"','id="simulation-chart"','id="simulation-table"'])assert.ok(html.includes(marker),marker);
  assert.equal((html.match(/class="github-selection"/g)||[]).length,3);assert.ok(html.includes('github-selection-2026-10-31.json'));
 });
+test('실습 프롬프트 9개는 복사 대상·입력·결과·직접 확인과 후속 질문을 제공',()=>{
+ const prompts=[...html.matchAll(/<details class="practice-prompt">([\s\S]*?)<\/details>/g)];assert.equal(prompts.length,9);
+ for(const [,block] of prompts){const target=block.match(/data-copy-workflow="([^"]+)"/)[1];assert.ok(block.includes('id="'+target+'"'));for(const label of ['받을 결과','직접 확인','이어서 물어보기'])assert.ok(block.includes(label));assert.match(block,/\[[^\]]+\]/);}
+ for(const id of ['prototype','lab','reverse','ai-planning','game-ai-tools','agent-skills','ai-production'])assert.ok(html.includes('id="practice-'+id+'-1"'));
+ assert.ok(!html.includes('작은 시험판'));assert.ok(!html.includes('직접 만지는 실험실'));
+});
+test('해외 사례는 10월 최신3개로 교체하고 AI 범위·관심지표·원문을 기록',async()=>{
+ const data=JSON.parse(await fs.readFile(new URL('../assets/report/research/international-resources-2026-10-31.json',import.meta.url),'utf8'));assert.equal(data.resources.length,3);assert.match(data.method,/ego-browser/);
+ for(const item of data.resources){assert.match(item.date,/^2026-10-/);assert.match(item.videoId,/^[\w-]{11}$/);assert.ok(item.selectionReason&&item.aiScope&&item.humanRole);assert.ok(item.highlights.length>0);assert.ok(item.popularity.views>0);assert.equal(item.popularity.evidenceUrl,item.videoUrl);assert.equal(item.popularity.checkedAt,'2026-10-31');assert.ok(item.chapters.every(c=>c.seconds<item.durationSeconds));}
+ const max=data.resources.find(i=>i.creator==='Max Blade');assert.match(max.aiScope,/98%/);assert.match(max.aiScope,/100% AI 제작을 뜻하는 수치는 아니에요/);
+ assert.ok(!JSON.stringify(data).includes('4RlpMhBKNr0'));
+});

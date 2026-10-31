@@ -366,3 +366,15 @@ html:has(body.weekly-editorial){scroll-padding-top:0}
 .weekly-editorial .error-count-track i{display:block;height:100%;background:#2455cb;border-radius:4px}.weekly-editorial .error-count-cell strong{font-size:15px}
 .weekly-editorial .error-chart-caption{font-size:14px;color:#536174;line-height:1.85}
 @media(max-width:600px){.weekly-editorial :is(.learning-section-guide,.lab-explanation,.github-selection-map){padding:18px}.weekly-editorial :is(.learning-section-guide,.lab-explanation) p{font-size:16px}.weekly-editorial .github-selection{padding:16px}}
+
+/* Copyable practice stays in the reading flow; each exercise opens on demand. */
+.weekly-editorial .practice-prompts{margin:36px 0;padding:24px 0;border-top:1px solid #c8d2e0;border-bottom:1px solid #c8d2e0}
+.weekly-editorial .practice-prompts h3{margin:0 0 12px}
+.weekly-editorial .practice-prompt{margin:16px 0 0;border:1px solid #d8e0ec;border-radius:12px;padding:0 20px;background:#fff}
+.weekly-editorial .practice-prompt>summary{padding:18px 0;font-size:17px;font-weight:700;cursor:pointer;line-height:1.6}
+.weekly-editorial .practice-prompt pre{max-width:100%;padding:20px;background:#f0f4fa;color:#14243b;white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;line-height:1.8}
+.weekly-editorial .practice-prompt code{font-family:inherit;font-size:inherit;white-space:inherit}
+.weekly-editorial .practice-prompt .source-links{align-items:center}
+.weekly-editorial .practice-prompt button{font:inherit;min-height:44px;padding:9px 14px;border:1px solid #2455cb;border-radius:8px;color:#1c45a6;background:#fff;cursor:pointer}
+.weekly-editorial .practice-prompt button:focus-visible,.weekly-editorial .practice-prompt summary:focus-visible{outline:3px solid #2455cb;outline-offset:3px}
+@media(max-width:600px){.weekly-editorial .practice-prompt{padding:0 14px}.weekly-editorial .practice-prompt pre{padding:14px}}

@@ -2,7 +2,7 @@
   'use strict';
   const main=document.querySelector('main.content');
   if(!main)return;
-  const groups=[...main.querySelectorAll('.top-ten-more,.reader-example')];
+  const groups=[...main.querySelectorAll('.top-ten-more,.reader-example,.practice-prompt')];
   function fold(nodes,label){
     if(!nodes.length)return;
     const details=document.createElement('details');
@@ -117,7 +117,7 @@
     if(nodes.length>1 && nodes[0].textContent.trim().length<1500)nodes.shift();
     if(section.id==='techniques' || section.id==='lab')nodes.shift();
     const title=head.querySelector('h2')?.innerText.trim().replace(/\s+/g,' ')||'이 장';
-    fold(nodes.filter(node=>!(section.id==='lab'&&node.matches('.grid2'))&&!node.querySelector('canvas,.flow,.github-selection')&&!node.matches('.flow,.chapter-visual,.learning-section-guide,.lab-explanation')),title+' · 자세히 보기');
+    fold(nodes.filter(node=>!(section.id==='lab'&&node.matches('.grid2'))&&!node.querySelector('canvas,.flow,.github-selection')&&!node.matches('.flow,.chapter-visual,.learning-section-guide,.lab-explanation,.practice-prompts')),title+' · 자세히 보기');
     showMedia(section,head);
   });
   if(!groups.length)return;

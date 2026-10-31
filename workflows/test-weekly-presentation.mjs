@@ -14,3 +14,9 @@ test('범주 구분선 제목과 요약 역할도 재현',()=>{assert.throws(()=
 test('TOP 10 출처·선정 이유·실행 누락 차단',()=>{assert.throws(()=>check(future.replace('class="top-why"','class="missing-why"')),/visible evidence/);assert.throws(()=>check(future.replace('class="top-source"','class="missing-source"')),/visible evidence/);});
 test('여섯 아이디어의 설명 그림 누락 차단',()=>assert.throws(()=>check(future.replace('class="idea-concept"','class="missing-concept"')),/six ideas/));
 test('스킬 선정 이유·강점·한계 누락 차단',()=>assert.throws(()=>check(future.replace('class="note skill-selection"','class="note missing-selection"')),/Agent Skill needs/));
+
+test('학습 프롬프트 누락·잘못된 복사 대상 차단',()=>{
+ assert.throws(()=>check(future.replace('id="practice-lab-1"','id="missing-practice-lab-1"')),/Practice prompt needs a copy target/);
+ assert.throws(()=>check(future.replace('data-copy-workflow="practice-prototype-1"','data-copy-workflow="missing-prompt"')),/Practice prompt needs a copy target/);
+ assert.throws(()=>check(future.replace('class="practice-prompt"','class="missing-prompt"')),/Missing practice prompts/);
+});

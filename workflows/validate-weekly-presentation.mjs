@@ -51,6 +51,18 @@ export function validateWeeklyPresentation(html,{reportDate}={}){
   assert(groups[index].tag==='details'&&groups[index].attrs.name==='report-toc','Navigation categories require native grouped details');
   assert(JSON.stringify(descendants(groups[index],node=>node.tag==='a').map(node=>node.attrs.href))===JSON.stringify(ids.map(id=>'#'+id)),'Navigation links differ from the category: '+key);
  });
+ if(reportDate>='2026-11-07'){
+  for(const [id,count] of [['reverse',1],['ai-planning',1],['prototype',1],['lab',2],['game-ai-tools',1],['agent-skills',1],['ai-production',1]]){
+   const prompts=descendants(oneId(id),node=>hasClass(node,'practice-prompt'));
+   assert(prompts.length>=count,'Missing practice prompts in section: '+id);
+   for(const prompt of prompts){
+    const copy=descendants(prompt,node=>node.tag==='button'&&node.attrs['data-copy-workflow'])[0];
+    const code=copy&&oneId(copy.attrs['data-copy-workflow']);
+    assert(code&&within(code,prompt)&&/\[[^\]]+\]/.test(text(code)),'Practice prompt needs a copy target and editable input: '+id);
+    assert(['받을 결과','직접 확인','이어서 물어보기'].every(label=>text(prompt).includes(label)),'Practice prompt needs output, verification and follow-up: '+id);
+   }
+  }
+ }
  const summary=oneId('issue-summary'),top=oneId('top10');
  assert(summary&&hasClass(summary,'issue-summary')&&cover.start<summary.start&&summary.start<top.start,'Summary must follow cover and precede TOP 10');
  const takeaways=elements.find(node=>hasClass(node,'issue-takeaways')&&within(node,summary));

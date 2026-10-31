@@ -20,7 +20,7 @@ const task=await taskSpace(${JSON.stringify('reading-regression-'+Date.now())});
 try {
  const page=task.page('p1');
  await page.goto(${JSON.stringify(url+'#tool-meshy')});
- await page.waitForFunction(()=>document.querySelectorAll('.international-resource').length===4);
+ await page.waitForFunction(()=>document.querySelectorAll('.international-resource').length===3);
  const result=await page.evaluate(async()=>{
   const groups=[...document.querySelectorAll('.reading-detail')];
   const hasClosedParent=el=>{for(let node=el?.parentElement;node;node=node.parentElement)if(node.tagName==='DETAILS'&&!node.open)return true;return false;};
@@ -46,6 +46,18 @@ try {
    previews:document.querySelectorAll('.reading-tool-previews img').length,
    benchmarkVisible:!hasClosedParent(document.getElementById('benchmark-chart')),
    simulationVisible:!hasClosedParent(document.getElementById('simulation-chart'))};
+ });
+ result.practice=await page.evaluate(async()=>{
+  const original=navigator.clipboard.writeText,copied=[];
+  try{
+   navigator.clipboard.writeText=async text=>{copied.push(text);};
+   const buttons=[...document.querySelectorAll('.practice-prompt [data-copy-workflow]')];
+   for(const button of buttons){button.click();await Promise.resolve();}
+   const exact=buttons.every((button,i)=>copied[i]===document.getElementById(button.dataset.copyWorkflow).textContent);
+   navigator.clipboard.writeText=async()=>{throw Error('test denied');};buttons[0].click();await Promise.resolve();
+   const fallback=buttons[0].parentElement.querySelector('[role=status]').textContent.includes('직접 선택해 복사');
+   return {count:buttons.length,exact,fallback,toolPromptVisible:!document.getElementById('practice-game-ai-tools-1').closest('.reading-detail')};
+  }finally{navigator.clipboard.writeText=original;}
  });
  result.toolFilters=await page.evaluate(()=>{
   const select=document.getElementById('tool-goal'),values=[...select.options].map(o=>o.value),results=[];
@@ -84,12 +96,12 @@ try{
   const line=output.split('\n').find(line=>line.startsWith('RESULT '));
   assert.ok(line,JSON.stringify(output));
   const result=JSON.parse(line.slice(7));
-  assert.match(result.detailLabel,/저장소를 내 프로젝트/);
+  assert.match(result.detailLabel,/인기 GitHub 저장소 중 게임 개발에 참고할 자료/);
   assert.equal(result.visuals,14);assert.equal(result.media,8);assert.equal(result.visualsLabeled,true);
   assert.equal(result.toolFilters.images,15);assert.equal(result.toolFilters.steps,5);assert.equal(result.toolFilters.routeImage,true);for(const f of result.toolFilters.results){assert.equal(f.cards,f.expected);assert.equal(f.rows,f.expected);assert.equal(f.matrix,f.expected);assert.equal(f.pressed,f.value);}
   for(const key of ['cards','blocks','marked','originalDetails','rows'])assert.equal(result.skillEvidence[key],9,key);assert.equal(result.skillEvidence.toolChartOutsideSkills,true);
-  assert.equal(result.ideaImages,6);assert.equal(result.labDataVisible,true);assert.equal(result.international,4);assert.equal(result.readerGuide,true);
-  assert.equal(result.summaryPresent,true);
+  assert.equal(result.ideaImages,6);assert.equal(result.labDataVisible,true);assert.equal(result.international,3);assert.equal(result.readerGuide,true);
+  assert.equal(result.summaryPresent,true);assert.deepEqual(result.practice,{count:9,exact:true,fallback:true,toolPromptVisible:true});
   assert.ok(result.highlights>=3);
   for(const layout of result.layouts){assert.equal(layout.compactTableFits,true,'Unnecessary short-table scrolling at '+layout.width);assert.ok(layout.minTextSize>=11,'Text below 11px at '+layout.width);assert.equal(layout.overflow,false,'overflow at '+layout.width);assert.ok(layout.paragraph>=17);assert.equal(layout.chapterBorder,2);for(const image of layout.imageSizes){assert.ok(Math.abs(image.height/image.width-image.naturalRatio)<.02,'TOP image letterboxing at '+layout.width);}for(const ratio of layout.previewRatios)assert.ok(Math.abs(ratio-9/16)<.02,'Preview stretched at '+layout.width);}
   assert.equal(result.share.open,true);assert.equal(result.share.closed,true);assert.ok(result.share.icons>=8);assert.equal(result.share.closeLabel,'공유 메뉴 닫기');
