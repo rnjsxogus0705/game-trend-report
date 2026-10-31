@@ -1470,6 +1470,48 @@
       "before": "AI 제작 아이디어·순서",
       "after": "AI 중심 제작 아이디어 3개",
       "reason": "사용자가 지정한 목차 항목명으로 변경"
+    },
+    {
+      "file": "reports/weekly-2026-10-31.html",
+      "before": "매주 토요일 오전 7시에 조사와 교정, 배포를 준비하고 오전 8시에 링크를 보내요.",
+      "after": "매주 토요일 오전 8시에 리포트 제작을 시작하고, 검수와 공개 배포를 마친 뒤 링크를 보내요.",
+      "reason": "2026-11-01 실제 원문·현재 예약·한국어 독립 재검수에서 확인한 표현 보정"
+    },
+    {
+      "file": "reports/weekly-2026-10-31.html",
+      "before": "Editor agent plugins를 향후 분기에 제공할 내용으로 소개해요.",
+      "after": "Editor agent plugins를 이번 분기 중 추후 제공할 예정이라고 소개해요.",
+      "reason": "2026-11-01 실제 원문·현재 예약·한국어 독립 재검수에서 확인한 표현 보정"
+    },
+    {
+      "file": "reports/weekly-2026-10-31.html",
+      "before": "이름이 다른 도구 두 개를 바꾸면서 과제도 바꾸면 비교가 어려워져요.",
+      "after": "도구를 바꿀 때마다 과제도 달라지면 결과를 비교하기 어려워요.",
+      "reason": "2026-11-01 실제 원문·현재 예약·한국어 독립 재검수에서 확인한 표현 보정"
+    },
+    {
+      "file": "reports/weekly-2026-10-31.html",
+      "before": "한 번도 안 터짐",
+      "after": "한 번도 발동하지 않음",
+      "reason": "2026-11-01 실제 원문·현재 예약·한국어 독립 재검수에서 확인한 표현 보정"
+    },
+    {
+      "file": "reports/weekly-2026-10-31.html",
+      "before": "상점은 최대 16인 협동을 안내해요.",
+      "after": "상점은 최대 16인 협동을 안내해요. 2026.11.01 재검수에서 상점의 AI 사용 공시는 게임 내 텍스트 번역 보조를 명시했어요. 이것을 게임 전체 AI 제작으로 분류하지 않아요.",
+      "reason": "Steam 공식 상점 AI 공시를 실제 열어 확인한 범위를 보완"
+    },
+    {
+      "file": "reports/weekly-2026-10-31.html",
+      "before": "세 게임의 AI 제작 여부도 이번 자료만으로 판단하지 않아요.",
+      "after": "AI 사용 여부와 사용 범위는 게임별 공시를 따로 확인해요. 차트 순위만으로 AI 제작 여부를 판단하지 않아요.",
+      "reason": "Moon Sweepers의 번역 AI 공시 확인을 반영하고 순위만으로 판단하지 않는다는 분석 범위를 명확히 함"
+    },
+    {
+      "file": "reports/weekly-2026-10-31.html",
+      "before": "Editor agent plugins를 이번 분기 중 추후 제공할 예정이라고 소개해요.",
+      "after": "Editor agent plugins를 이번 분기 안에 제공할 예정이라고 소개해요.",
+      "reason": "실제 원문 later this quarter와 독립 한국어 재검수에 따라 중복 표현 보정"
     }
   ],
   "limitations": [
@@ -1489,7 +1531,7 @@
   },
   "naturalnessReview": {
     "editor": "/root",
-    "reviewer": "/root/practice_final_review",
+    "reviewer": "/root/review_korean_current",
     "coverage": [
       "body",
       "headings",
@@ -2951,10 +2993,52 @@
         "before": "AI 제작 아이디어·순서",
         "after": "AI 중심 제작 아이디어 3개",
         "reason": "사용자가 지정한 목차 항목명으로 변경"
+      },
+      {
+        "path": "reports/weekly-2026-10-31.html",
+        "before": "매주 토요일 오전 7시에 조사와 교정, 배포를 준비하고 오전 8시에 링크를 보내요.",
+        "after": "매주 토요일 오전 8시에 리포트 제작을 시작하고, 검수와 공개 배포를 마친 뒤 링크를 보내요.",
+        "reason": "2026-11-01 실제 원문·현재 예약·한국어 독립 재검수에서 확인한 표현 보정"
+      },
+      {
+        "path": "reports/weekly-2026-10-31.html",
+        "before": "Editor agent plugins를 향후 분기에 제공할 내용으로 소개해요.",
+        "after": "Editor agent plugins를 이번 분기 중 추후 제공할 예정이라고 소개해요.",
+        "reason": "2026-11-01 실제 원문·현재 예약·한국어 독립 재검수에서 확인한 표현 보정"
+      },
+      {
+        "path": "reports/weekly-2026-10-31.html",
+        "before": "이름이 다른 도구 두 개를 바꾸면서 과제도 바꾸면 비교가 어려워져요.",
+        "after": "도구를 바꿀 때마다 과제도 달라지면 결과를 비교하기 어려워요.",
+        "reason": "2026-11-01 실제 원문·현재 예약·한국어 독립 재검수에서 확인한 표현 보정"
+      },
+      {
+        "path": "reports/weekly-2026-10-31.html",
+        "before": "한 번도 안 터짐",
+        "after": "한 번도 발동하지 않음",
+        "reason": "2026-11-01 실제 원문·현재 예약·한국어 독립 재검수에서 확인한 표현 보정"
+      },
+      {
+        "path": "reports/weekly-2026-10-31.html",
+        "before": "상점은 최대 16인 협동을 안내해요.",
+        "after": "상점은 최대 16인 협동을 안내해요. 2026.11.01 재검수에서 상점의 AI 사용 공시는 게임 내 텍스트 번역 보조를 명시했어요. 이것을 게임 전체 AI 제작으로 분류하지 않아요.",
+        "reason": "Steam 공식 상점 AI 공시를 실제 열어 확인한 범위를 보완"
+      },
+      {
+        "path": "reports/weekly-2026-10-31.html",
+        "before": "세 게임의 AI 제작 여부도 이번 자료만으로 판단하지 않아요.",
+        "after": "AI 사용 여부와 사용 범위는 게임별 공시를 따로 확인해요. 차트 순위만으로 AI 제작 여부를 판단하지 않아요.",
+        "reason": "Moon Sweepers의 번역 AI 공시 확인을 반영하고 순위만으로 판단하지 않는다는 분석 범위를 명확히 함"
+      },
+      {
+        "path": "reports/weekly-2026-10-31.html",
+        "before": "Editor agent plugins를 이번 분기 중 추후 제공할 예정이라고 소개해요.",
+        "after": "Editor agent plugins를 이번 분기 안에 제공할 예정이라고 소개해요.",
+        "reason": "실제 원문 later this quarter와 독립 한국어 재검수에 따라 중복 표현 보정"
       }
     ],
     "fileHashes": {
-      "weekly-2026-10-31.html": "576339efc7bcdd5928250321f44faf8a862983704283c3f56f01c50262755205",
+      "weekly-2026-10-31.html": "dba33fa47042a0cd8aefc9eb58602262e9a293e7363728348dfe99a34e885434",
       "weekly-2026-10-31-ai-plan-01.md": "55aae6d568301fdf18438e57430969df932b05f4e191824a44d535469fdcbd1b",
       "weekly-2026-10-31-ai-plan-02.md": "a32bba89f4da73b596bec9a8055d798aaacb5b23c60740d047f73f6885cbd3b7",
       "weekly-2026-10-31-ai-plan-03.md": "52952992fc41f3652692c3a01c5cdfee45a104d3269f44387bfe8cba00651d18",
@@ -2966,9 +3050,10 @@
       "weekly-2026-10-31-ideas.md": "01f26e6b492601d9c8f98b95b5ef7427f0c04376cc0b2066dc8b28157faa706e"
     },
     "externalVerified": false,
-    "externalScope": "전체 문서 외부 검사 미실시. 별도 외부 표본은 5문단·6문장 1청크에 한정.",
-    "method": "기존 전체 본문·표·캡션·호별 Markdown 검토에 더해, 이번에는 별도 모델이 20개 섹션 제목과 도입문의 교정 후보를 검토했고 편집자가 문맥·의미를 확인해 반영했다. 또 다른 독립 모델이 변경 문장, 새 실습 프롬프트 9개와 해외 최신 사례 3개의 요약·AI 범위·출처·한계 및 생성 이미지 한글을 최종 검수했다. 기존 본문은 승인된 교정 전후를 재생하는 회귀 검사로, Markdown 9개와 복사용 문서 6개는 대조 검사로 검증했다. 외부 대량 맞춤법 검사, 해외 영상 전체 시청, 게임 제작 재현은 이번에 하지 않았다.",
-    "disposition": "approved"
+    "externalScope": "이번 재검수에서 외부 맞춤법 검사기 사용 안 함",
+    "method": "2026-11-01 기존 승인본 재사용만으로 끝내지 않고 독립 모델이 전체 HTML 1837행·Markdown9개·동적문구와 생성그림17개를 읽었다. 수정 후 추가 문장·캡션·단위를 diff로 재독하고 현재 전체 파일hash를 대조했다. 원문 사실 검증은 별도 ego-browser 검수 근거와 결합하며 외부 문법검사·실제 게임플레이·유료도구 성능실측·영상전체시청을 주장하지 않는다.",
+    "disposition": "approved",
+    "reviewEvidence": "private/review-2026-11-01/korean-independent.json"
   },
   "externalSample": {
     "service": "바른한글 공개 맞춤법 검사기",
@@ -3075,5 +3160,25 @@
     "method": "320/390/768/1440px 브라우저에서 기록할 내용 열이60% 이상인지 회귀 검사. 수정 전320px실패 재현.",
     "reviewer": "/root/practice_final_review",
     "disposition": "approved"
+  },
+  "deliveryReReview": {
+    "reviewedAt": "2026-11-01",
+    "sha256": "dba33fa47042a0cd8aefc9eb58602262e9a293e7363728348dfe99a34e885434",
+    "reviewer": "/root/review_korean_current",
+    "sourceReviewers": [
+      "/root/recheck_primary_sources",
+      "/root/recheck_tool_sources",
+      "/root"
+    ],
+    "scope": "전체내용/원문/한국어/화면실제재검수후비공개실행영수증작성.소급추정/빈체크자동승인아님",
+    "previousIssueCompared": false,
+    "sourceLimitations": "게임 직접플레이·독립흥행측정·유료AI성능비교·영상전체시청은 수행하지 않았다. 과거별수/순위/리뷰/조회수는10월31일 관측값이며 현재원문으로과거값을 재현했다고 하지 않는다.",
+    "publicCorrections": [
+      "실제08시제작시작일정",
+      "Unity이번분기예고",
+      "MoonSweepers번역AI공시",
+      "VARCO포인트단위/현재확인불가조건표시",
+      "Recraft/Hi3Dv1현재원문재확인범위"
+    ]
   }
 }

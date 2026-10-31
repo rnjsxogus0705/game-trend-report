@@ -36,7 +36,19 @@ if(!file.endsWith('weekly-'+review.reportDate+'.html'))throw Error('Report date 
 if(review.reportDate>='2026-11-07'){const languageReview=JSON.parse((await fs.readFile(file+'.language-review.json','utf8')).replace(/^\uFEFF/,''));await validateLanguageReview({htmlPath:file,html,reportDate:review.reportDate,review:languageReview});}
 const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);if(new Set(ids).size!==ids.length)throw Error('Duplicate DOM IDs');
 for(const id of sections)if(!ids.includes(id)||!review.sections.includes(id))throw Error('Missing required section: '+id);
-for(const key of ['sourcesVerified','releaseStatesChecked','aiScopeSeparated','hotnessEvidenceChecked','jobsSampleDisclosed','previousIssueCompared','techniqueReproducibilityReviewed','mobileChecked','shareChecked'])if(review.checks[key]!==true)throw Error('Editorial or UI check missing: '+key);
+for(const key of ['sourcesVerified','releaseStatesChecked','aiScopeSeparated','hotnessEvidenceChecked','jobsSampleDisclosed','techniqueReproducibilityReviewed','mobileChecked','shareChecked'])if(review.checks[key]!==true)throw Error('Editorial or UI check missing: '+key);
+// A first issue can document that comparison is unavailable; never certify a comparison that was not performed.
+if(review.checks.previousIssueCompared!==true){
+ const comparison=review.previousIssueComparison;
+ if(review.checks.previousIssueCompared!==false||comparison?.status!=='not_comparable'||comparison.scope!=='first_issue'||!Object.hasOwn(comparison,'priorIssue')||comparison.priorIssue!==null||typeof comparison.reason!=='string'||!comparison.reason.trim()||typeof comparison.evidence!=='string'||!comparison.evidence.trim()||!html.includes('전주 비교 자료가 없어'))throw Error('Previous issue comparison evidence missing');
+ const directory=path.dirname(file),parent=path.dirname(directory);
+ const locations=new Set([directory,path.join(parent,'site/reports')]);
+ if(path.basename(parent)==='site')locations.add(path.join(parent,'../reports'));
+ for(const location of locations){
+  let names;try{names=await fs.readdir(location);}catch(error){if(error.code==='ENOENT')continue;throw error;}
+  for(const name of names){const date=name.match(/^weekly-(\d{4}-\d{2}-\d{2})\.html$/)?.[1];if(!date)continue;const parsed=Date.parse(date+'T00:00:00Z');if(!Number.isFinite(parsed)||new Date(parsed).toISOString().slice(0,10)!==date)throw Error('Invalid prior issue date');if(date<review.reportDate)throw Error('Earlier weekly issue exists; first-issue exception rejected');}
+ }
+}
 for(const category of ['ai-only-lab','games','ai-trends','ai-planning','game-ai','ai-releases','techniques','github-trending','game-ai-tools','careers','opportunities']){const c=review.coverage?.find(c=>c.category===category);if(!c||!['updated','no_material_change','unverified'].includes(c.status)||!c.sourceUrls?.length||c.sourceUrls.some(u=>!u.startsWith('https://')))throw Error('Missing research coverage: '+category);if(c.status==='unverified'&&!c.limitation)throw Error('Missing limitation: '+category);}
 for(const [,url]of html.matchAll(/(?:href|src)="([^"]+)"/g)){if(url.startsWith('#')){if(!ids.includes(url.slice(1)))throw Error('Broken anchor: '+url);}else if(!/^(https?:|data:|mailto:)/.test(url)){const assetUrl=url.split(/[?#]/)[0];const localIssueAsset=/\.(?:md|js|json)$/.test(assetUrl)&&!assetUrl.includes('..');const local=path.resolve(path.dirname(file),assetUrl);try{await fs.access(local);}catch(error){if(error.code!=='ENOENT'||localIssueAsset)throw error;await fs.access(path.resolve(path.dirname(file),'../site/reports',assetUrl));}}}
 if(review.reportDate>='2026-11-02'&&html.includes('src="../assets/report/report.js"'))throw Error('Use an issue-specific chart script instead of the example data script');

@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import {validateLanguageReview} from './validate-language-review.mjs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {execFileSync} from 'node:child_process';
@@ -42,6 +43,8 @@ if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.ur
   if(!checkOnly){
    const file=path.join(root,'reports','weekly-'+issueDate+'.html');
    execFileSync(process.execPath,[path.join(root,'workflows/validate-issue.mjs'),file],{stdio:'inherit'});
+   const languageReview=JSON.parse((await fs.readFile(file+'.language-review.json','utf8')).replace(/^\uFEFF/,''));
+   await validateLanguageReview({htmlPath:file,html:await fs.readFile(file,'utf8'),reportDate:issueDate,review:languageReview});
    const local=await fs.readFile(file,'utf8'),urls=['https://rnjsxogus0705.github.io/game-trend-report/reports/weekly-'+issueDate+'.html','https://game-trend-report.vercel.app/reports/weekly-'+issueDate+'.html'];
    for(const url of urls){const response=await fetch(url,{signal:AbortSignal.timeout(30000)});if(!response.ok||(await response.text()).replaceAll('\r\n','\n')!==local.replaceAll('\r\n','\n'))throw Error('공개 본문이 검수된 호와 다릅니다.');}
    summary=(await fs.readFile(file+'.summary.txt','utf8')).trim();if(summary.length<10||summary.length>1200)throw Error('전송 요약 길이가 잘못됐습니다.');summary+='\n'+urls.join('\n');

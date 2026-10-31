@@ -166,3 +166,5 @@ game-ai-tools는 Agent Skill 소개만으로 채우지 않고 실제 AI 게임 �
 2026-11-07부터 content-review의 qualityReview에 적용 지침 커밋, 서로 다른 편집자·검수자, research/overseas/selection/practice/visuals/media/layout/korean/files의 실제 확인 근거와 한계, 미해결 문제를 기록한다. 미해결 문제가 없고 전체 검증을 통과한 호만 발행·전송한다. 정확한 필드와 최신 기준은 [출력 계약](../instructions/REPORT-OUTPUT-CONTRACT.md), [품질 검수 6단계와 예약 전문](../instructions/READING-AND-SCHEDULER.md)을 따른다. 자동 검사는 원문의 진위나 한국어 자연스러움에 대한 실제 독립 검수를 대신하지 않는다.
 
 2열 표는 셀 내용에 맞게 너비를 배분한다. 짧은 항목명과 긴 설명으로 구성된 표는 항목32%·설명68%를 기본으로 하고, 오류 개수 등 숫자 요약 표는 항목72%·숫자28%처럼 별도로 조정한다. 모든 2열 표에 동일한 넓은 항목 열을 강제하지 않는다. 320/390/768/1440px에서 설명 열의 실제 너비·줄바꿈·가로 넘침을 확인하고 글자를 줄여 해결하지 않는다.
+
+전주 비교는 실제 수행했을 때만 checks.previousIssueCompared=true로 기록한다. 첫 주간호여서 비교할 이전 자료가 없으면 false로 두고 previousIssueComparison에 status=not_comparable, scope=first_issue, priorIssue=null, 구체적 reason과 실제 이력 조사 evidence를 기록한다. 본문에도 ‘전주 비교 자료가 없어’라는 안내와 비교하지 않은 범위를 밝힌다. 검사기는 해당 운영 배치들에 이전 주간 HTML이 없는지 확인하며, 이전 파일이 있거나 근거가 없으면 이 예외를 거부한다. 다른 출처·언어·화면 검사를 생략하는 예외로 쓰지 않는다.

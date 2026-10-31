@@ -8,3 +8,4 @@ _workspace/
 *.language-review.json
 *.published.json
 *.vercel-published.json
+*.summary.txt

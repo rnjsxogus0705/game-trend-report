@@ -71,3 +71,12 @@ test('새 PC의 최신 지침·예약 전문과 검사 모듈 연결',async()=>{
   assert.ok(manifest.files.some(entry=>entry.repo==='instructions/'+name));assert.ok(sync.includes(name));
  }
 });
+
+test('첫 호 비교 불가 기록은 근거·본문·이전호 부재를 모두 요구',async t=>{
+ const f=await fixture(t);let html=f.html.replace('</body>','<p>전주 비교 자료가 없어 수치 변화를 비교하지 않습니다.</p></body>');await fs.writeFile(f.htmlPath,html);
+ const reviewPath=f.htmlPath+'.content-review.json';const review=JSON.parse((await fs.readFile(reviewPath,'utf8')).replace(/^\uFEFF/,''));review.sha256=digest(html);review.checks.previousIssueCompared=false;review.previousIssueComparison={status:'not_comparable',scope:'first_issue',priorIssue:null,reason:'Synthetic first-issue inventory',evidence:'Synthetic directory inventory only'};
+ await fs.writeFile(reviewPath,JSON.stringify(review));const language=f.naturalnessReview;language.fileHashes[path.basename(f.htmlPath)]=digest(html);await fs.writeFile(f.htmlPath+'.language-review.json',JSON.stringify({naturalnessReview:language}));
+ assert.match(f.run(),/Content contract/);
+ const original=structuredClone(review);delete review.previousIssueComparison.priorIssue;await fs.writeFile(reviewPath,JSON.stringify(review));assert.throws(f.run,error=>String(error.stderr).includes('comparison evidence'));
+ await fs.writeFile(reviewPath,JSON.stringify(original));await fs.writeFile(path.join(f.root,'site/reports/weekly-2026-10-24.html'),'prior');assert.throws(f.run,error=>String(error.stderr).includes('Earlier weekly issue'));
+});
