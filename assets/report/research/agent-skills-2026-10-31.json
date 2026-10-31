@@ -1,0 +1,273 @@
+{
+  "schemaVersion": 1,
+  "observationDate": "2026-10-31",
+  "timezone": "Asia/Seoul",
+  "method": "GitHub repository searches sorted by stars: claude game skills, codex game skills, godot skills, unreal skills; top 8 per query, deduplicated, supplemented by official Unity and Edgegap repositories. Selected 8 candidates plus 1 low-star new watch item. Not GitHub Trending rank, not comprehensive.",
+  "weeklyStarGrowth": null,
+  "executionTested": false,
+  "repositories": [
+    {
+      "repo": "Donchitos/Claude-Code-Game-Studios",
+      "url": "https://github.com/Donchitos/Claude-Code-Game-Studios",
+      "stars": 30621,
+      "observedAt": "2026-10-31T10:32:42.200Z",
+      "createdAt": "2026-02-12T05:21:38Z",
+      "pushedAt": "2026-10-19T02:43:42Z",
+      "latestCommit": {
+        "sha": "05ad7c8a5b8aa2aa86bbd3439ae7cf7295cac418",
+        "date": "2026-10-19T02:09:09Z",
+        "message": "Release 1.2.0 — the main path, rebuilt and tested\n\nMinor release after 1.1.3: the story skills are rebuilt around shared\nhelper scripts, a read guard stops whole-file reads of large design docs,\nthe engine references move to Godot 4.7 and Unreal Engine 5.8, and no\nskill pre-approves every shell command any more. Details in CHANGELOG.md;\nupgrade steps in UPGRADING.md (v1.1.3 → v1.2.0).\n\nRefs #58\nRefs #64\nRefs #76\nRefs #121\nRefs #133\nRefs #136\nRefs #140\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01J9wxspZHKt6QmB2vW9trry"
+      },
+      "latestRelease": {
+        "tag": "v1.2.0",
+        "published": "2026-10-19T02:44:23Z",
+        "url": "https://github.com/Donchitos/Claude-Code-Game-Studios/releases/tag/v1.2.0"
+      },
+      "license": "MIT",
+      "scope": "제작 전체·기획·QA",
+      "compatibility": "Claude Code 중심 / Codex 이식 미검증",
+      "compatibilityEvidence": "README claim; not installed or executed",
+      "status": "기존 참고 · v1.2.0, 10월 19일",
+      "experiment": "규칙 하나의 기획서에서 성공·실패·예외 상황을 뽑고 qa-plan으로 검사 계획을 정리해요.",
+      "limitation": "문서가 많다고 재미가 검증되지는 않아요. 작은 범위로 시작할 후보예요.",
+      "skillUrls": [
+        "https://github.com/Donchitos/Claude-Code-Game-Studios/blob/main/.claude/skills/qa-plan/SKILL.md"
+      ],
+      "pinnedSkillUrls": [
+        "https://github.com/Donchitos/Claude-Code-Game-Studios/blob/05ad7c8a5b8aa2aa86bbd3439ae7cf7295cac418/.claude/skills/qa-plan/SKILL.md"
+      ]
+    },
+    {
+      "repo": "htdt/godogen",
+      "url": "https://github.com/htdt/godogen",
+      "stars": 7254,
+      "observedAt": "2026-10-31T10:32:44.389Z",
+      "createdAt": "2026-02-06T18:46:52Z",
+      "pushedAt": "2026-10-16T14:56:03Z",
+      "latestCommit": {
+        "sha": "40542b6c8efbdc40112c2b004fbaa6d67141846d",
+        "date": "2026-10-16T14:53:57Z",
+        "message": "Local assets by default; audio; GDScript and three.js (#54)\n\n* Local assets by default through godogen_assets; paid APIs in api.md; audio\n\nasset-gen/SKILL.md is a TL;DR of godogen_assets' local generators (images,\n3D, rigging, Kimodo moves, lip-sync, sound effects, voice) that links to its\nREADMEs instead of repeating them, plus what the game side needs: -o into the\nproject, one GPU job at a time, a gen3d face budget, .ogg for Bevy, the asset\nmanifest. publish.sh writes the checkout recorded in the git-ignored\n.godogen_assets into the skill; without it the skill says none and every\nasset goes to the paid APIs.\n\nasset-gen/api.md holds the paid path, read only when a local part is missing\nor can't make the asset: Gemini / Grok images, sprite video, Tripo 3D, and\naudio - Gemini TTS voice acting (asset_gen.py speech) and Lyria music\n(asset_gen.py music, loop_audio.py for seamless loops).\n\nmotion.md keeps the game side of add-moves output (authored poses as spec\nconstraints, root motion and impact timing from rootmotion.json, prop gates)\nand points to godogen_assets for generation. KIMODO_HOME is gone; setup.md\npoints to the godogen_assets setup, and API keys and the Tripo CLI are\noptional.\n\nCo-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>\n\n* Gemini 3.8 TTS; designed character voices\n\nasset_gen.py speech runs gemini-3.8-flash-tts through the Interactions API.\nThe text is a verbatim transcript: whole-line delivery goes in --style,\nmoments in inline <tags>, and --speakers takes \"Name (style): text\" lines\nstaged in conversational mode (sent raw, since the SDK's typed speech_config\ndrops \"mode\"). Output is WAV from the API; cost comes from reported usage at\nthe introductory prices, doubled from 2027-01-01.\n\nasset_gen.py voice design creates a persistent voice_... from a short\ndescription and saves its in-character audition; voice list browses the\nvoice library, voice delete frees a slot.\n\napi.md covers casting (library voices for realistic humans, designed voices\nfor everything else), tags-only barks, two-speaker clips, the refusal of\nchild voices, and the user's own replicated voice. google-genai>=2.25.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* GDScript and three.js engines; choosing-an-engine guide\n\n- engines/godot-gdscript.md: Godot 4 in statically typed GDScript on any\n  Godot build; same scene builders and movie-writer capture as C#, gated\n  on --check-only and SCRIPT ERROR in the log.\n- engines/threejs.md: three.js + Vite + TypeScript at a live URL, Rapier\n  for physics, step-driven headless Chrome capture.\n- publish.sh: --engine godot-gdscript and --engine threejs.\n- README \"Choosing an engine\"; setup, PROJECT, CHANGELOG updated.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* minor\n\n* Held props and contact in the asset manual\n\n- asset-gen/SKILL.md: grip-prop in the command table; a prop a character\n  holds goes on through grip-prop and add-moves --hold.\n- asset-gen/motion.md: \"Held props and contact\" (the one-number attachment\n  check, moves generated for their prop, how two characters meet), with the\n  full rules in godogen_assets' motion/HELD_PROPS.md; impact timing describes\n  frameData as measured on the move alone.\n- CHANGELOG.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* Blender as a recommended dep; asset-gen tip for built 3D and animation\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* Merge branch changelog entries into one dated 2026-10-16\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Opus 5.5 (1M context) <noreply@anthropic.com>"
+      },
+      "latestRelease": null,
+      "license": "MIT",
+      "scope": "게임 생성·실행 확인",
+      "compatibility": "Claude Code·Codex / 복수 엔진",
+      "compatibilityEvidence": "README claim; not installed or executed",
+      "status": "기존 참고 · 마지막 커밋 10월 16일",
+      "experiment": "한 규칙·한 화면 게임을 요청하고 실행 영상에서 조작·실패·재시작이 작동하는지 확인해요.",
+      "limitation": "자동 생성기 자체가 완성 게임은 아니에요. README의 시연과 내 프로젝트 성공 여부를 구분해요.",
+      "skillUrls": [
+        "https://github.com/htdt/godogen/blob/master/asset-gen/SKILL.md"
+      ],
+      "pinnedSkillUrls": [
+        "https://github.com/htdt/godogen/blob/master/asset-gen/SKILL.md"
+      ]
+    },
+    {
+      "repo": "gamedev-skills/awesome-gamedev-agent-skills",
+      "url": "https://github.com/gamedev-skills/awesome-gamedev-agent-skills",
+      "stars": 6204,
+      "observedAt": "2026-10-31T10:32:43.514Z",
+      "createdAt": "2026-06-24T07:18:39Z",
+      "pushedAt": "2026-10-28T03:10:14Z",
+      "latestCommit": {
+        "sha": "19d93f97c9c1ea0f8b306e77aa81e0d3e352d3e9",
+        "date": "2026-10-28T03:10:14Z",
+        "message": "Merge pull request #32 from 2328312928-commits/feat/roblox-simulator-economy\n\nfeat(roblox): add roblox-simulator-economy skill"
+      },
+      "latestRelease": {
+        "tag": "v1.1.0",
+        "published": "2026-06-26T13:03:02Z",
+        "url": "https://github.com/gamedev-skills/awesome-gamedev-agent-skills/releases/tag/v1.1.0"
+      },
+      "license": "Apache-2.0",
+      "scope": "엔진별 구현·게임 경제",
+      "compatibility": "Claude Code·Codex 등 / 문서상 지원",
+      "compatibilityEvidence": "README claim; not installed or executed",
+      "status": "새 스킬 추가 · 커밋 10월 28일",
+      "experiment": "업그레이드 비용·수입을 표로 만들고 첫 구매와 다음 환생까지 걸리는 시간을 비교해요. Roblox를 쓰지 않으면 계산 원리만 참고해요.",
+      "limitation": "전체 README는 77개 스킬을 소개하고 현재 트리는 router 포함 SKILL.md 78개예요. 단순 링크 모음으로만 분류하지 않았어요.",
+      "skillUrls": [
+        "https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/main/skills/other-engines/roblox-simulator-economy/SKILL.md"
+      ],
+      "pinnedSkillUrls": [
+        "https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/19d93f97c9c1ea0f8b306e77aa81e0d3e352d3e9/skills/other-engines/roblox-simulator-economy/SKILL.md"
+      ]
+    },
+    {
+      "repo": "aldegad/sprite-gen",
+      "url": "https://github.com/aldegad/sprite-gen",
+      "stars": 3121,
+      "observedAt": "2026-10-31T10:32:45.286Z",
+      "createdAt": "2026-05-12T06:49:09Z",
+      "pushedAt": "2026-10-30T23:19:05Z",
+      "latestCommit": {
+        "sha": "1fdf789d60321a6852319920339a9c0279d41e56",
+        "date": "2026-10-30T23:18:51Z",
+        "message": "Merge pull request #162 from aldegad/plan/walk-cycle-witness-1028\n\nv3.13.0: merge walk loop cuts, cycle witnesses, and 3.13.0 release into main"
+      },
+      "latestRelease": {
+        "tag": "v3.13.0",
+        "published": "2026-10-30T23:22:01Z",
+        "url": "https://github.com/aldegad/sprite-gen/releases/tag/v3.13.0"
+      },
+      "license": "Apache-2.0",
+      "scope": "2D 스프라이트·애니메이션",
+      "compatibility": "Claude·Codex 스킬 + Python CLI",
+      "compatibilityEvidence": "README claim; not installed or executed",
+      "status": "업데이트 · v3.13.0, 10월 31일",
+      "experiment": "같은 캐릭터의 대기·걷기 두 상태를 만들고 투명 가장자리, 발 미끄러짐, 반복 연결, 엔진 재생을 비교해요.",
+      "limitation": "방향 판정과 반복 구간에는 경고가 남을 수 있어요. spritegen.io 서비스와 이름이 비슷하지만 별개 프로젝트예요.",
+      "skillUrls": [
+        "https://github.com/aldegad/sprite-gen/blob/main/SKILL.md"
+      ],
+      "pinnedSkillUrls": [
+        "https://github.com/aldegad/sprite-gen/blob/1fdf789d60321a6852319920339a9c0279d41e56/SKILL.md"
+      ]
+    },
+    {
+      "repo": "EpicGames/unreal-engine-skills-for-claude-code-plugin",
+      "url": "https://github.com/EpicGames/unreal-engine-skills-for-claude-code-plugin",
+      "stars": 1737,
+      "observedAt": "2026-10-31T10:32:46.215Z",
+      "createdAt": "2026-06-08T19:59:22Z",
+      "pushedAt": "2026-10-27T21:36:42Z",
+      "latestCommit": {
+        "sha": "0e27bde2b55c5d3f6948532f4296aaa3654d8f4b",
+        "date": "2026-10-23T17:54:46Z",
+        "message": "[MCP] Document running several editors at once, bump to `3.1.2`\n\nEvery editor serves MCP on port 8000 by default, so a second editor can't\nbind it and its client silently reaches the first editor. setup.md gains a\nstep 5: one fixed port per workspace (ini or -ModelContextProtocolPort),\na matching .mcp.json with the proxy installed, sessions started per\nworkspace. operations.md gains \"Identify the editor\": read the instance\nmetadata the engine now returns on initialize / server/discover, a pid\ncheck for the session's own connection, and the port-owner fallback for\nolder builds.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+      },
+      "latestRelease": null,
+      "license": "MIT",
+      "scope": "Unreal 에디터 조작",
+      "compatibility": "Claude Code 공식 플러그인 / Codex 미검증",
+      "compatibilityEvidence": "README claim; not installed or executed",
+      "status": "기존 공식 스킬 · 커밋 10월 24일",
+      "experiment": "현재 레벨 액터 목록 읽기 → 소품 하나 배치 → 화면 확인을 작은 시험으로 삼아요.",
+      "limitation": "MCP 도구와 사용 지침을 묶은 플러그인이에요. 범용 Codex 스킬이나 새 게임 엔진으로 소개하지 않아요.",
+      "skillUrls": [
+        "https://github.com/EpicGames/unreal-engine-skills-for-claude-code-plugin/blob/main/skills/unreal-mcp/SKILL.md"
+      ],
+      "pinnedSkillUrls": [
+        "https://github.com/EpicGames/unreal-engine-skills-for-claude-code-plugin/blob/0e27bde2b55c5d3f6948532f4296aaa3654d8f4b/skills/unreal-mcp/SKILL.md"
+      ]
+    },
+    {
+      "repo": "scenario-labs/skills",
+      "url": "https://github.com/scenario-labs/skills",
+      "stars": 1316,
+      "observedAt": "2026-10-31T10:32:47.671Z",
+      "createdAt": "2026-08-12T10:08:49Z",
+      "pushedAt": "2026-10-30T23:53:34Z",
+      "latestCommit": {
+        "sha": "7f4b801c7248d51b093ec365aceb114bd06139e6",
+        "date": "2026-10-30T23:53:09Z",
+        "message": "ci(deps): bump the actions group with 3 updates (#343)\n\nBumps the actions group with 3 updates: [actions/setup-python](https://github.com/actions/setup-python), [astral-sh/setup-uv](https://github.com/astral-sh/setup-uv) and [github/codeql-action/upload-sarif](https://github.com/github/codeql-action).\n\n\nUpdates `actions/setup-python` from 7.0.0 to 7.1.0\n- [Release notes](https://github.com/actions/setup-python/releases)\n- [Commits](https://github.com/actions/setup-python/compare/5fda3b95a4ea91299a34e894583c3862153e4b97...6d4fd22b20465ccc0f7354476588e8df7c9ca0e0)\n\nUpdates `astral-sh/setup-uv` from 10.3.0 to 10.3.2\n- [Release notes](https://github.com/astral-sh/setup-uv/releases)\n- [Commits](https://github.com/astral-sh/setup-uv/compare/1c37ad07a6a961277cf70c0d37d6f313000f5884...07a047e608db84b3d8c06cd9a7c7dcc9c355c18e)\n\nUpdates `github/codeql-action/upload-sarif` from 4.39.0 to 4.39.1\n- [Release notes](https://github.com/github/codeql-action/releases)\n- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/github/codeql-action/compare/6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee...9b3254085494b55a0f7c4c2b3d2d52cc712ce370)\n\n---\nupdated-dependencies:\n- dependency-name: actions/setup-python\n  dependency-version: 7.1.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n  dependency-group: actions\n- dependency-name: astral-sh/setup-uv\n  dependency-version: 10.3.2\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n  dependency-group: actions\n- dependency-name: github/codeql-action/upload-sarif\n  dependency-version: 4.39.1\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n  dependency-group: actions\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>"
+      },
+      "latestRelease": {
+        "tag": "skills-v0.60.1",
+        "published": "2026-10-29T15:25:46Z",
+        "url": "https://github.com/scenario-labs/skills/releases/tag/skills-v0.60.1"
+      },
+      "license": "MIT",
+      "scope": "게임 자산·생성 모델 선택",
+      "compatibility": "Claude Code·Codex 등 / 문서상 지원",
+      "compatibilityEvidence": "README claim; not installed or executed",
+      "status": "수정 릴리스 · skills-v0.60.1, 10월 30일",
+      "experiment": "캐릭터 한 명의 대기·걷기 상태를 요청하고 같은 외형, 프레임 수, 알파·내보내기 조건을 먼저 적어요.",
+      "limitation": "서비스 도구와 스킬 저장소는 별개로 비교해요. 생성물 권리와 비용은 선택 모델·계정 조건을 다시 확인해요.",
+      "skillUrls": [
+        "https://github.com/scenario-labs/skills/blob/main/skills/scenario-sprite-animation/SKILL.md"
+      ],
+      "pinnedSkillUrls": [
+        "https://github.com/scenario-labs/skills/blob/7f4b801c7248d51b093ec365aceb114bd06139e6/skills/scenario-sprite-animation/SKILL.md"
+      ]
+    },
+    {
+      "repo": "Unity-Technologies/skills",
+      "url": "https://github.com/Unity-Technologies/skills",
+      "stars": 1190,
+      "observedAt": "2026-10-31T10:32:49.955Z",
+      "createdAt": "2026-05-05T09:18:23Z",
+      "pushedAt": "2026-10-30T19:35:29Z",
+      "latestCommit": {
+        "sha": "089bedebab64e9e75943b19a364c7aec2162a7e7",
+        "date": "2026-10-30T19:35:25Z",
+        "message": "chore: publish 1 skill (unity-pipeline) (#133)\n\nCo-authored-by: elham-saboori <elham-saboori@users.noreply.github.com>"
+      },
+      "latestRelease": null,
+      "license": "Unity Companion License",
+      "scope": "Unity 실행·테스트·화면 확인",
+      "compatibility": "Claude Code·Codex 공식 플러그인 안내",
+      "compatibilityEvidence": "README claim; not installed or executed",
+      "status": "스킬 공개 커밋 · unity-pipeline, 10월 31일",
+      "experiment": "아이템 획득 규칙을 바꾸고 컴파일 → Play Mode → 로그·화면 확인의 결과를 남겨요.",
+      "limitation": "Claude Code·Codex에는 같은 스킬을 묶은 공식 unity-agent-plugin을 먼저 안내해요. 이번 조사에서 설치·실행하지는 않았어요.",
+      "skillUrls": [
+        "https://github.com/Unity-Technologies/skills/blob/main/skills/unity-pipeline/SKILL.md"
+      ],
+      "pinnedSkillUrls": [
+        "https://github.com/Unity-Technologies/skills/blob/089bedebab64e9e75943b19a364c7aec2162a7e7/skills/unity-pipeline/SKILL.md"
+      ]
+    },
+    {
+      "repo": "EL4CTEO/blender-skills",
+      "url": "https://github.com/EL4CTEO/blender-skills",
+      "stars": 609,
+      "observedAt": "2026-10-31T10:32:48.675Z",
+      "createdAt": "2026-10-14T19:08:14Z",
+      "pushedAt": "2026-10-30T20:35:01Z",
+      "latestCommit": {
+        "sha": "fb92cfb4cc5a238c22113a6a230b09f535bd0656",
+        "date": "2026-10-30T20:34:49Z",
+        "message": "Release 1.2.0: six new skills, retargeting, QA texture checks\n\n- New: blender-texturing, blender-stylized-npr, blender-hair-grooming, blender-environment-kits, blender-clothing, blender-video-editing\n- Animation: retarget.py (auto bone maps), loop_check.py\n- Asset QA: empty material slots, missing textures, sRGB data maps\n- Sculpting reference; validator checks script names\n- Fix: re-running surface_weather.py no longer unlinks the layer\n- Verified on Blender 5.2.3 (67 tests)\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01X1bScbXEEccdn5x1Byeygb"
+      },
+      "latestRelease": {
+        "tag": "v1.2.0",
+        "published": "2026-10-30T20:35:01Z",
+        "url": "https://github.com/EL4CTEO/blender-skills/releases/tag/v1.2.0"
+      },
+      "license": "MIT",
+      "scope": "3D 제작·리깅·자산 QA",
+      "compatibility": "Claude Code·Codex 등 / 문서상 지원",
+      "compatibilityEvidence": "README claim; not installed or executed",
+      "status": "최근 생성 + 새 스킬 6개 · v1.2.0, 10월 31일",
+      "experiment": "소품 하나의 면 수·법선·UV·누락 텍스처를 검사하고 GLB/FBX를 대상 엔진에서 열어 크기·재질을 확인해요.",
+      "limitation": "낮은 별 수라도 최근 추가된 자산 검수 기능 때문에 살펴볼 후보예요. 생성 품질이나 시간 절감은 직접 측정하지 않았어요.",
+      "skillUrls": [
+        "https://github.com/EL4CTEO/blender-skills/blob/main/skills/blender-asset-qa/SKILL.md"
+      ],
+      "pinnedSkillUrls": [
+        "https://github.com/EL4CTEO/blender-skills/blob/fb92cfb4cc5a238c22113a6a230b09f535bd0656/skills/blender-asset-qa/SKILL.md"
+      ]
+    },
+    {
+      "repo": "edgegap/llm-agent-skills",
+      "url": "https://github.com/edgegap/llm-agent-skills",
+      "stars": 0,
+      "observedAt": "2026-10-31T10:32:51.277Z",
+      "createdAt": "2026-10-09T16:14:53Z",
+      "pushedAt": "2026-10-29T19:30:26Z",
+      "latestCommit": {
+        "sha": "d72278963b86acdd160667ad88d7da147442b7f1",
+        "date": "2026-10-29T19:30:26Z",
+        "message": "Merge pull request #41 from edgegap/feature/colyseus-cocos-plugin\n\nedgegap-colyseus 0.3.0: Cocos projects use the Edgegap Cocos extension (pack 0.25.0)"
+      },
+      "latestRelease": null,
+      "license": "Apache-2.0",
+      "scope": "멀티플레이 서버·배포",
+      "compatibility": "에이전트용 SKILL.md / 클라이언트별 미검증",
+      "compatibilityEvidence": "README claim; not installed or executed",
+      "status": "신규 관찰 · 저장소 생성 10월 10일",
+      "experiment": "이미 멀티플레이 규칙이 있다면 로컬 서버에서 두 클라이언트 연결·종료부터 시험해요.",
+      "limitation": "조회 시 별 0개로 인기 후보는 아니에요. 새 공식 자료로만 관찰하며, 싱글플레이 기획 단계에서 먼저 도입할 이유는 적어요.",
+      "skillUrls": [
+        "https://github.com/edgegap/llm-agent-skills/blob/main/skills/edgegap-deployments-api/SKILL.md"
+      ],
+      "pinnedSkillUrls": [
+        "https://github.com/edgegap/llm-agent-skills/blob/d72278963b86acdd160667ad88d7da147442b7f1/skills/edgegap-deployments-api/SKILL.md"
+      ]
+    }
+  ]
+}
