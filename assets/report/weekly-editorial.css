@@ -348,3 +348,8 @@ html:has(body.weekly-editorial){scroll-padding-top:0}
 .weekly-editorial .skill-evidence-figure figcaption{padding:14px 18px;font-size:14px;line-height:1.8}
 .weekly-editorial .skill-background{border-top:1px solid #dce2e9;margin-top:20px}.weekly-editorial .skill-background>summary{font-size:14px;color:#2455cb;font-weight:600;padding:14px 0}
 .weekly-editorial .skill-selection-map table{min-width:780px}.weekly-editorial #agent-skills [data-agent-skill]>h4{font-size:22px;overflow-wrap:anywhere}
+
+/* Compact summaries fit their container; wide comparison matrices retain their own minimum widths. */
+.weekly-editorial .table-scroll table:not(:has(tr > :nth-child(4))){min-width:0;width:100%;table-layout:fixed}
+.weekly-editorial .table-scroll table:not(:has(tr > :nth-child(4))) :is(th,td){overflow-wrap:anywhere}
+.weekly-editorial .table-scroll table:not(:has(tr > :nth-child(3))) :is(th,td):first-child{width:72%}

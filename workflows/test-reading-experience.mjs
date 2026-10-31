@@ -58,11 +58,13 @@ try {
   result.layouts.push(await page.evaluate(async()=>{
    const topImages=[...document.querySelectorAll('.top-visual')].slice(0,2);
    await Promise.all(topImages.map(async image=>{image.loading='eager';await image.decode();}));
+   const labTable=document.querySelector('#lab .grid2 .table-scroll');for(let n=labTable;n;n=n.parentElement)if(n.tagName==='DETAILS')n.open=true;
+   const compactTableFits=labTable.scrollWidth<=labTable.clientWidth+1;
    const textSizes=[...document.querySelectorAll('body *')].filter(e=>!['SCRIPT','STYLE'].includes(e.tagName)&&[...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim())).map(e=>parseFloat(getComputedStyle(e).fontSize)).filter(Number.isFinite);
    const minTextSize=Math.min(...textSizes);
    const imageSizes=topImages.map(image=>{const r=image.getBoundingClientRect();return {width:r.width,height:r.height,naturalRatio:image.naturalHeight/image.naturalWidth};});
    const previewRatios=[...document.querySelectorAll('.reading-media-previews figure>a img')].map(image=>{const r=image.getBoundingClientRect();return r.height/r.width;});
-   return {minTextSize,width:innerWidth,overflow:document.documentElement.scrollWidth>innerWidth,paragraph:parseFloat(getComputedStyle(document.querySelector('.chapter-head p')).fontSize),chapterBorder:parseFloat(getComputedStyle(document.querySelector('#ai-trends')).borderTopWidth),imageSizes,previewRatios};
+   return {compactTableFits,minTextSize,width:innerWidth,overflow:document.documentElement.scrollWidth>innerWidth,paragraph:parseFloat(getComputedStyle(document.querySelector('.chapter-head p')).fontSize),chapterBorder:parseFloat(getComputedStyle(document.querySelector('#ai-trends')).borderTopWidth),imageSizes,previewRatios};
   }));
  }
  await page.click('#report-share');
@@ -89,7 +91,7 @@ try{
   assert.equal(result.ideaImages,6);assert.equal(result.international,4);assert.equal(result.readerGuide,true);
   assert.equal(result.summaryPresent,true);
   assert.ok(result.highlights>=3);
-  for(const layout of result.layouts){assert.ok(layout.minTextSize>=11,'Text below 11px at '+layout.width);assert.equal(layout.overflow,false,'overflow at '+layout.width);assert.ok(layout.paragraph>=17);assert.equal(layout.chapterBorder,2);for(const image of layout.imageSizes){assert.ok(Math.abs(image.height/image.width-image.naturalRatio)<.02,'TOP image letterboxing at '+layout.width);}for(const ratio of layout.previewRatios)assert.ok(Math.abs(ratio-9/16)<.02,'Preview stretched at '+layout.width);}
+  for(const layout of result.layouts){assert.equal(layout.compactTableFits,true,'Unnecessary short-table scrolling at '+layout.width);assert.ok(layout.minTextSize>=11,'Text below 11px at '+layout.width);assert.equal(layout.overflow,false,'overflow at '+layout.width);assert.ok(layout.paragraph>=17);assert.equal(layout.chapterBorder,2);for(const image of layout.imageSizes){assert.ok(Math.abs(image.height/image.width-image.naturalRatio)<.02,'TOP image letterboxing at '+layout.width);}for(const ratio of layout.previewRatios)assert.ok(Math.abs(ratio-9/16)<.02,'Preview stretched at '+layout.width);}
   assert.equal(result.share.open,true);assert.equal(result.share.closed,true);assert.ok(result.share.icons>=8);assert.equal(result.share.closeLabel,'공유 메뉴 닫기');
   assert.ok(result.count>=10,'expected collapsed detail groups');
   assert.equal(result.previews,3,'expected three tool previews');
