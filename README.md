@@ -310,3 +310,9 @@ node workflows/build-site.mjs
 `node workflows/discord-delivery.mjs --check`는 지정 봇(ID1565897943184310342)과 두 서버/채널 접근만 검사하고 메시지를 보내지 않습니다. 실제 검수·공개 배포가 끝난 호는 `node workflows/discord-delivery.mjs --send YYYY-MM-DD`로 요약과 Pages/Vercel 링크를 보냅니다. 서버1488793489800957966의 채널1565894418156879942와 서버1346955649132527707의 채널1566098427052298342만 대상으로 고정합니다. 채널별 private/delivery 영수증으로 중복을 막고 전송 결과가 불확실한 pending 기록은 자동 재전송하지 않습니다.
 
 이 Mac의 등록 예약은 토요일08:00에 제작을 시작하며 검수·배포가 끝난 뒤 전송합니다. 기존 Windows의07시 준비/08시 전송 구성과 동시에 활성화하지 않습니다. OS별 실제 실행과 인증이 다르므로 Node 경로에서 Windows PowerShell을 실행한 것으로 기록하지 않습니다.
+
+## 취업·진로 조사와 다른 PC에서의 재현
+
+매주 스타트업·소규모 게임사 채용, 취업 행사, 게임 제작 부트캠프, 대학 입시, 진로 뉴스를 빠짐없이 조사합니다. 모집이 없거나 원문을 확인하지 못한 범주도 검색 범위와 확인일·한계를 남깁니다. [출력 계약](instructions/REPORT-OUTPUT-CONTRACT.md)의 다섯 범주와 [프로젝트 스킬 명세](.agents/skills/weekly-game-report/references/harness-spec.json)의 조사→작성→독립 검수→준비 게이트가 연결됩니다. 조사 기록 누락·오래된 확인일·출처 미결속·본문 검수 기록 불일치·범주별 독립 검수 누락은 준비/발행 검사에서 차단합니다.
+
+새 PC는 최신 main을 받아 저장소에서 스킬을 실행합니다. 프로젝트의 `.agents/skills/weekly-game-report`, `workflows/check-report-harness.mjs`와 지침은 Git으로 함께 내려오며 전역 harness 생성기/Python은 매주 실행에 필요하지 않습니다. Windows 운영 root의 24개 동기화 목록과 site 저장소 내부 파일의 역할을 혼동하지 마세요. Windows의 07시 준비/08시 전송 전문과 macOS의 08시 단일 예약 전문은 [예약 재현 지침](instructions/READING-AND-SCHEDULER.md)에 각각 있습니다. 예약 객체·토큰·스킬 도구 설치는 Git만으로 복원되지 않으므로 해당 PC에 준비하고 기존 전송 PC와 동시에 활성화하지 않습니다.

@@ -10,6 +10,7 @@
 | 강조·접근성 | 위 지침의 `mark`, `mark.caution`, `assets/report/icons/` | 의미 있는 핵심에 강조를 쓰고 주의 조건이 있을 때 구분. 색 외 텍스트·접근 가능한 이름 유지 | 구조 검사와 대비·키보드·인쇄 직접 검사 |
 | AI 실습 프롬프트 | `READING-AND-SCHEDULER.md`, `REPORT-OUTPUT-CONTRACT.md` | 프로토타입·데이터 검사·확률 실습과 관련 제작 장마다 입력·결과·확인 기준이 있는 복사 가능한 요청을 작성 | 미래 호의7영역/복사대상/입력·결과·직접확인·후속질문 구조 검사와 실제 복사·실패 대안·모바일 확인 |
 | 최근 해외 AI 제작 사례 | 위 지침의 해외 제작 자료 기준 | 최근 30일 우선, 부족 시 90일까지 조사하고 선정 근거·AI 범위·사람의 역할·출처를 기록 | 제작자 원문·날짜·관심도 관측·영상과 링크 직접 확인 |
+| 게임 취업·진로 다섯 범주 | `REPORT-OUTPUT-CONTRACT.md`, 프로젝트 스킬 운영 계약 | 스타트업·소규모 게임사 채용, 취업 행사, 부트캠프, 대학 입시, 진로 뉴스를 각각 조사하고 모집 상태·대상·원문·확인일과 한계를 기록 | `careerCoverage`와 두 독립 검수 기록, 화면의 다섯 범주 및 `validate-issue.mjs`·`check-report-harness.mjs`로 기록 결속 확인. 실제 원문은 독립 검수자가 대조 |
 | 한국어 최종 검수 | `KOREAN-EDITORIAL-POLICY.md`, 고정 버전 스킬 지침 | 전체 독자용 문구와 호별 Markdown을 교정하고 독립 검수자·범위·수정·최종 파일 해시 기록 | `validate-issue.mjs` → `validate-language-review.mjs`의 형식·범위·해시 검사와 실제 문맥 검토 |
 
 2026-11-07 이후 발행 호에 새 화면과 한국어 게이트를 적용한다. 검증기는 구조와 기록의 일치 여부를 검사하며, 사실의 진위나 문장의 자연스러움을 자동으로 보장하지 않는다. 스킬을 설치하거나 모델에 지침만 읽힌 것으로 실제 교정·독립 검수를 대체하지 않는다.
@@ -39,3 +40,11 @@
 ## 프로젝트 하네스 연결
 
 `.agents/skills/weekly-game-report`의 생성된 SKILL·JSON 명세·운영 계약과 `site/workflows/check-report-harness.mjs`를 Git으로 배포한다. 전역 harness 스킬과 Python 생성기는 구축 시에만 사용했고 매주 실행의 필수 의존성이 아니다. 새 PC 실행은 기존 Node·Codex·ego-browser·이미지/한국어 스킬을 사용한다. 생성기는 macOS에서 실행·검증했으며 Windows에서 재생성할 필요가 없다. 실행 기록은 `_workspace`에 보존하되 공개하지 않는다. 새 하네스 준비 게이트와 기존 validate-issue 및 08시 dispatch를 모두 통과해야 인계·전송할 수 있다. 실제 새 주간호의 무인 생성·Windows 예약 실행·배포/전송은 구축 검사와 구분해 확인한다.
+
+Windows에서는 저장소를 `site/`에 클론하고 프로젝트 스킬, 하네스 검사기와 `site/instructions/WORKFLOW.md` 등 저장소 지침을 그 위치에서 직접 읽는다. 별도 운영 root의 24개 manifest는 작성 지침과 PowerShell/Node 실행 모듈을 복사하는 목록이며, 저장소 안 `.agents/skills/weekly-game-report/`와 `site/workflows/check-report-harness.mjs`를 운영 root로 중복 복사하는 목록이 아니다. `context.instructionFiles`에는 실제 읽은 프로젝트 스킬과 운영 계약, 명세 및 출력 지침의 SHA-256을 결속한다. Windows 07시 준비·08시 전송 예약과 Mac 토요일 08시 제작 시작 예약은 각 환경에 맞게 `READING-AND-SCHEDULER.md`의 전문을 등록하며 동시에 켜지 않는다. Git 클론만으로 예약과 환경별 인증이 생성되지는 않는다.
+
+새 PC fixture 검사는 가상의 조사·영수증으로 필수 범주와 근거 누락, 조사일·한계·독립 검수·지침 해시 불일치를 차단하는지 검증한다. 이 검사는 실제 Windows 초기 설정이나 예약 실행, 새 주간호의 원문 조사와 화면 검수를 대신하지 않는다.
+
+## 전송 구현의 별도 한계
+
+현재 Windows `send-report.ps1`은 첫 번째 Discord 채널 한 곳만 전송한다. 두 공개 사이트 링크를 한 메시지에 넣는 것과 두 Discord 채널에 전송하는 것은 다르다. Mac의 `workflows/discord-delivery.mjs`는 두 채널을 대상으로 하며 채널별 기록을 사용한다. 이번 진로 조사·검수 기준 보완은 Windows의 두 채널 전송을 구현하거나 실제 Windows 전송을 검증한 것이 아니다. 새 Windows 담당 PC에서 두 채널 전송이 필요하면 전송 구현과 중복 방지·실패 복구를 별도로 보완하고 검증해야 한다.

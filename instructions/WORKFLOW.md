@@ -43,3 +43,6 @@ READING-AND-SCHEDULER.md의 품질 검수 6단계와 실습 DOM 계약을 따른
 
 ## 철회한 발행물
 사용자 요청으로 monthly-2026-10.html은 공개 목록과 파일에서 제거했다. build-site.mjs의 withdrawnReports가 이 파일을 이전 PC 원본에서 다시 복원하지 않게 한다. 다른 과거 호는 기존 보존 규칙을 따른다.
+
+## 취업·진로 다섯 범주 확인 게이트
+스킬 명세 research→compose→editorial-review→verify→final-review가 다섯 진로 범주를 명시적으로 요구한다. 조사 원장의 careerCoverage와 내용 검수 영수증을 결속하고, 두 독립 검수 기록의 careerCategoriesReviewed와 최신 SKILL·operating-contract 해시까지 준비 게이트에서 확인한다. 모집이 없는 주도 조사 범위를 기록하며 범주를 삭제하지 않는다. Mac의 실제 08시 예약 전문과 Windows 재등록 전문은 READING-AND-SCHEDULER.md에서 함께 관리하고, 새 PC에서 최신 main을 동기화한 뒤 그 OS에 맞는 하나의 운영 방식을 선택한다.

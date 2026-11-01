@@ -1,6 +1,7 @@
 // These artifacts are synthetic gate fixtures, never research or publication receipts.
 import {test} from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs/promises';import os from 'node:os';import path from 'node:path';import crypto from 'node:crypto';
 import {checkReportHarness} from './check-report-harness.mjs';
+import {careerCategories} from './validate-weekly-presentation.mjs';
 const specPath='.agents/skills/weekly-game-report/references/harness-spec.json';
 const spec=JSON.parse(await fs.readFile(new URL('../'+specPath,import.meta.url),'utf8'));
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
@@ -9,22 +10,26 @@ async function fixture(t){
  const runId='2026-11-07-test',revision='a'.repeat(40),digests={},records={};
  const write=async(p,bytes)=>{const target=path.join(root,p);await fs.mkdir(path.dirname(target),{recursive:true});await fs.writeFile(target,bytes);};
  await write(specPath,JSON.stringify(spec));const file='reports/weekly-2026-11-07.html';await write(file,'synthetic HTML, no real report');
- for(const file of ['README.md','instructions/WORKFLOW.md','instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/READING-AND-SCHEDULER.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md'])await write(file,'synthetic instruction');
- const instructionFiles={};for(const file of ['README.md','instructions/WORKFLOW.md','instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/READING-AND-SCHEDULER.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md',specPath])instructionFiles[file]=hash(await fs.readFile(path.join(root,file)));
+ const instructionPaths=['README.md','instructions/WORKFLOW.md','instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/READING-AND-SCHEDULER.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md','.agents/skills/weekly-game-report/SKILL.md','.agents/skills/weekly-game-report/references/operating-contract.md'];
+ for(const file of instructionPaths)await write(file,'synthetic instruction');
+ const instructionFiles={};for(const file of [...instructionPaths,specPath])instructionFiles[file]=hash(await fs.readFile(path.join(root,file)));
  const evidence={path:'_workspace/harness/weekly-game-report/'+runId+'/evidence/fixture.txt',sha256:hash('synthetic evidence')};await write(evidence.path,'synthetic evidence');
- const files=[{path:file,sha256:hash('synthetic HTML, no real report'),publish:true}],reviewedFiles=Object.fromEntries(files.map(f=>[f.path,f.sha256]));
+ const careerCoverage=careerCategories.map(category=>({category,status:'unverified',searchedAt:'2026-11-07',searchScope:'Synthetic search scope',finding:'No actual search in fixture',sourceUrls:['https://example.test/fixture'],limitation:'Synthetic fixture only'}));
+ const contentPath=file+'.content-review.json',content=JSON.stringify({careerCoverage});await write(contentPath,content);
+ const files=[{path:file,sha256:hash('synthetic HTML, no real report'),publish:true},{path:contentPath,sha256:hash(content),publish:false}],reviewedFiles=Object.fromEntries(files.map(f=>[f.path,f.sha256]));
  const paths=Object.fromEntries(spec.outputs.map(o=>[o.id,o.path.replace('{run_id}',runId)]));
  for(const task of spec.tasks)for(const id of task.outputs){
   const record={runId,issueDate:'2026-11-07',instructionRevision:revision,inputs:Object.fromEntries(task.inputs.filter(i=>Object.hasOwn(digests,i)).map(i=>[i,digests[i]]))};
   if(id==='context')Object.assign(record,{authorization:{generate:true,publish:false,send:false},instructionFiles});
-  if(id==='research')record.sources=[{uri:'https://example.test/fixture',publisher:'fixture',retrievedAt:'2026-11-07',kind:'background',scope:'Synthetic, no actual research'}];
+  if(id==='research'){record.sources=[{uri:'https://example.test/fixture',publisher:'fixture',retrievedAt:'2026-11-07',kind:'background',scope:'Synthetic, no actual research'}];record.careerCoverage=careerCoverage;}
   if(id==='issue')Object.assign(record,{editor:'fixture-writer',editorSessionId:'fixture-writer-session',files});
-  if(id.endsWith('review'))Object.assign(record,{reviewer:'fixture-reviewer',method:'native-subagent',sessionId:'fixture-review-session',verdict:'approved',blockers:[],reviewedFiles});
+  if(id.endsWith('review'))Object.assign(record,{reviewer:'fixture-reviewer',method:'native-subagent',sessionId:'fixture-review-session',verdict:'approved',blockers:[],reviewedFiles,careerCategoriesReviewed:[...careerCategories]});
   if(id==='verification')Object.assign(record,{passed:true,commands:['build-site.mjs','validate-issue.mjs'].map(name=>({argv:['node',name],exitCode:0,evidence})),ui:{widths:[320,390,768,1440],checks:['navigation','disclosure','filter','copy','share','media','downloads','print','typography','tables'],evidence:[evidence]}});
-  if(id==='ready')Object.assign(record,{status:'ready',files,handoff:[{source:file,destination:file}]});
+  if(id==='ready')Object.assign(record,{status:'ready',files,handoff:files.map(f=>({source:f.path,destination:f.path}))});
   const bytes=JSON.stringify(record);await write(paths[id],bytes);records[id]=record;digests[id]=hash(bytes);
  }
- return {root,runId,revision,paths,records,write,check:()=>checkReportHarness({root,runId,revision})};
+ const rebind=async()=>{const hashes={};for(const task of spec.tasks)for(const id of task.outputs){for(const input of task.inputs)if(hashes[input])records[id].inputs[input]=hashes[input];const bytes=JSON.stringify(records[id]);await write(paths[id],bytes);hashes[id]=hash(bytes);}};
+ return {root,runId,revision,paths,records,write,rebind,check:()=>checkReportHarness({root,runId,revision})};
 }
 test('검수·파일·upstream 해시가 맞는 로컬 준비 묶음',async t=>{const f=await fixture(t);assert.equal((await f.check()).status,'ready');});
 test('필수 upstream 누락, 파일 변조와 오래된 지침 차단',async t=>{
@@ -73,4 +78,19 @@ test('프로젝트 스킬·저장소 내 검사기와 예약 진입점 연결',a
  const schedule=await fs.readFile(new URL('../instructions/READING-AND-SCHEDULER.md',import.meta.url),'utf8');assert.ok(schedule.includes('$weekly-game-report'));assert.ok(schedule.includes('node workflows/check-report-harness.mjs --run'));
  const gate=await fs.readFile(new URL('./check-report-harness.mjs',import.meta.url),'utf8');assert.ok(gate.includes("workflows/validate-issue.mjs"));
  assert.ok(spec.tasks.at(-1).inputs.includes('ready'));assert.equal(spec.review_policy.max_revisions,2);assert.equal(spec.failure_policy.retry_limit,1);
+});
+
+test('진로 조사 누락·오래된 날짜·출처 미결속·미확인 한계 누락 차단',async t=>{
+ for(const [change,pattern] of [
+  [r=>delete r.careerCoverage,/five unique categories/],
+  [r=>r.careerCoverage.pop(),/five unique categories/],
+  [r=>r.careerCoverage[0].searchedAt='2026-10-01',/date is stale/],
+  [r=>r.careerCoverage[0].sourceUrls=['https://example.test/not-read'],/not in research.sources/],
+  [r=>r.careerCoverage[0].limitation='',/limitation missing/]
+ ]){const f=await fixture(t);change(f.records.research);await f.rebind();await assert.rejects(f.check,pattern);}
+});
+test('진로별 독립 검수·내용 영수증 일치·스킬 계약 신선도 강제',async t=>{
+ for(const id of ['editorial-review','final-review']){const f=await fixture(t);f.records[id].careerCategoriesReviewed.pop();await f.rebind();await assert.rejects(f.check,/Independent career category review/);}
+ const f=await fixture(t);f.records.research.careerCoverage[0].finding='Changed without content review';await f.rebind();await assert.rejects(f.check,/coverage differs/);
+ for(const file of ['.agents/skills/weekly-game-report/SKILL.md','.agents/skills/weekly-game-report/references/operating-contract.md']){const f=await fixture(t);await f.write(file,'modified after preflight');await assert.rejects(f.check,/Stale instruction file/);}
 });

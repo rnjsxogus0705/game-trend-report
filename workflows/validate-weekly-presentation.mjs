@@ -20,6 +20,20 @@ export function reportElements(html){
 }
 const hasClass=(node,name)=>(node.attrs.class||'').split(/\s+/).includes(name);
 const within=(node,parent)=>{for(let current=node.parent;current;current=current.parent)if(current===parent)return true;return false;};
+export const careerCategories=['startups','events','bootcamps','admissions','news'];
+export function validateCareerCoverage(coverage,{issueDate}={}){
+ const nonempty=value=>typeof value==='string'&&value.trim().length>0;
+ if(!Array.isArray(coverage)||coverage.length!==careerCategories.length||new Set(coverage.map(item=>item?.category)).size!==careerCategories.length)throw Error('Career research must cover five unique categories');
+ for(const category of careerCategories){
+  const item=coverage.find(item=>item?.category===category);
+  if(!item||!['updated','no_material_change','unverified'].includes(item.status)||!nonempty(item.searchScope)||!nonempty(item.finding))throw Error('Career research evidence missing: '+category);
+  if(!Array.isArray(item.sourceUrls)||!item.sourceUrls.length||item.sourceUrls.some(url=>typeof url!=='string'||!url.startsWith('https://')))throw Error('Career research sources missing: '+category);
+  const checked=typeof item.searchedAt==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(item.searchedAt)?Date.parse(item.searchedAt+'T00:00:00Z'):NaN;
+  const issue=Date.parse(issueDate+'T00:00:00Z');
+  if(!Number.isFinite(checked)||!Number.isFinite(issue)||new Date(checked).toISOString().slice(0,10)!==item.searchedAt||checked>issue||checked<issue-7*86400000)throw Error('Career research date is stale or invalid: '+category);
+  if(item.status==='unverified'&&!nonempty(item.limitation))throw Error('Career research limitation missing: '+category);
+ }
+}
 export function validateWeeklyPresentation(html,{reportDate}={}){
  const {elements,source}=reportElements(html);
  const oneId=id=>elements.find(node=>node.attrs.id===id);
@@ -53,7 +67,7 @@ export function validateWeeklyPresentation(html,{reportDate}={}){
  });
  if(reportDate>='2026-11-07'){
   const careers=oneId('careers');
-  for(const category of ['startups','events','bootcamps','admissions','news']){
+  for(const category of careerCategories){
    const block=descendants(careers,node=>node.attrs['data-career-category']===category)[0];
    assert(block&&text(block).length>0,'Career coverage missing: '+category);
    assert(descendants(block,node=>node.tag==='a'&&/^https:\/\//.test(node.attrs.href||'')).length>0,'Career source missing: '+category);

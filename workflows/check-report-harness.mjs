@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
-import {reportElements} from './validate-weekly-presentation.mjs';
+import {reportElements,careerCategories,validateCareerCoverage} from './validate-weekly-presentation.mjs';
+import {isDeepStrictEqual} from 'node:util';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import {execFileSync} from 'node:child_process';
@@ -39,7 +40,7 @@ export async function checkReportHarness({root,runId,revision}){
  }
  const context=records.context;
  insist(context.authorization?.generate===true&&context.authorization?.publish===false&&context.authorization?.send===false,'Harness scope must be local generation only');
- const instructions=['README.md','instructions/WORKFLOW.md','instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/READING-AND-SCHEDULER.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md','.agents/skills/weekly-game-report/references/harness-spec.json'];
+ const instructions=['README.md','instructions/WORKFLOW.md','instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/READING-AND-SCHEDULER.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md','.agents/skills/weekly-game-report/SKILL.md','.agents/skills/weekly-game-report/references/operating-contract.md','.agents/skills/weekly-game-report/references/harness-spec.json'];
  for(const file of instructions)insist(context.instructionFiles?.[file]===hash(await read(file)),'Stale instruction file: '+file);
  insist(Array.isArray(records.research.sources)&&records.research.sources.length>0&&records.research.sources.every(source=>/^https:\/\//.test(source.uri||'')&&source.publisher&&source.retrievedAt&&source.scope),'Research evidence metadata missing');
  const issueDay=Date.parse(context.issueDate+'T00:00:00Z'),day=86400000;
@@ -55,6 +56,9 @@ export async function checkReportHarness({root,runId,revision}){
   if(source.kind==='unverified')insist(typeof source.limitation==='string'&&source.limitation.trim(),'Unverified source limitation missing');
  }
 
+ validateCareerCoverage(records.research.careerCoverage,{issueDate:context.issueDate});
+ for(const item of records.research.careerCoverage)insist(item.sourceUrls.every(url=>records.research.sources.some(source=>source.uri===url)),'Career source is not in research.sources: '+item.category);
+
  const issue=records.issue;
  insist(Array.isArray(issue.files)&&issue.files.length>0,'Issue file list missing');
  const reviewed={};let htmlPath;
@@ -67,6 +71,10 @@ export async function checkReportHarness({root,runId,revision}){
  }
  insist(htmlPath,'Canonical weekly HTML missing');
  const html=(await read(htmlPath)).toString('utf8');
+ const contentPath=htmlPath+'.content-review.json';
+ insist(Object.hasOwn(reviewed,contentPath),'Career content review missing from issue index');
+ const contentReview=JSON.parse(await read(contentPath));
+ insist(isDeepStrictEqual(contentReview.careerCoverage,records.research.careerCoverage),'Career coverage differs between research and content review');
  const {elements}=reportElements(html);
  const urls=elements.flatMap(node=>[node.attrs.href,node.attrs.src,...(node.attrs.srcset||'').split(',').map(part=>part.trim().split(/\s+/)[0])].filter(Boolean));
  for(const url of urls){
@@ -77,6 +85,7 @@ export async function checkReportHarness({root,runId,revision}){
  }
  for(const id of ['editorial-review','final-review']){
   const review=records[id];insist(review.verdict==='approved'&&Array.isArray(review.blockers)&&review.blockers.length===0,'Review gate not approved: '+id);
+  insist(Array.isArray(review.careerCategoriesReviewed)&&review.careerCategoriesReviewed.length===careerCategories.length&&careerCategories.every(category=>review.careerCategoriesReviewed.includes(category)),'Independent career category review missing: '+id);
   insist(review.method==='native-subagent'&&typeof review.sessionId==='string'&&review.sessionId&&typeof issue.editorSessionId==='string'&&issue.editorSessionId&&review.sessionId!==issue.editorSessionId,'Independent review execution record missing');
   insist(typeof review.reviewer==='string'&&review.reviewer.trim()&&typeof issue.editor==='string'&&issue.editor.trim()&&review.reviewer.trim()!==issue.editor.trim(),'Independent reviewer required');
   insist(Object.keys(reviewed).length===Object.keys(review.reviewedFiles||{}).length&&Object.entries(reviewed).every(([p,d])=>review.reviewedFiles[p]===d),'Review does not cover final files: '+id);

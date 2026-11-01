@@ -100,7 +100,7 @@
     },
     {
       "custom_agent": false,
-      "instructions": "ego-browser 원문 조사, image_gen 개념 설명, 실습·선정 근거·시각 자료와 한국어 교정은 최신 지침을 따른다. reports와 assets/report 안의 새 호 파일만 작성하고 과거 발행물·공용 JS·전역 지침을 수정하지 않는다. issue-index에 해당 호 모든 파일의 저장소 상대 경로와 SHA256을 기록한다.",
+      "instructions": "ego-browser 원문 조사, image_gen 개념 설명, 실습·선정 근거·시각 자료와 한국어 교정은 최신 지침을 따른다. reports와 assets/report 안의 새 호 파일만 작성하고 과거 발행물·공용 JS·전역 지침을 수정하지 않는다. issue-index에 해당 호 모든 파일의 저장소 상대 경로와 SHA256을 기록한다. 취업·진로 다섯 범주는 결과 유무와 무관하게 매주 조사 기록을 남긴다.",
       "kind": "builtin",
       "name": "writer",
       "owns": [
@@ -114,7 +114,7 @@
     },
     {
       "custom_agent": false,
-      "instructions": "작성자와 다른 네이티브 서브에이전트로 실행한다. 작성 파일을 수정하지 않는다. 최종 HTML·MD·복사 문구·한글 그림·본문 전부와 9개 품질 기준을 읽고 verdict/차단 findings/검토한 실제 파일 hashes를 기록한다. 역할 이름만 바꾼 자기 검수를 금지한다.",
+      "instructions": "작성자와 다른 네이티브 서브에이전트로 실행한다. 작성 파일을 수정하지 않는다. 최종 HTML·MD·복사 문구·한글 그림·본문 전부와 9개 품질 기준을 읽고 verdict/차단 findings/검토한 실제 파일 hashes를 기록한다. 역할 이름만 바꾼 자기 검수를 금지한다. 다섯 진로 범주를 직접 대조하고 careerCategoriesReviewed로 누락을 확인한다.",
       "kind": "builtin",
       "name": "reviewer",
       "owns": [
@@ -143,7 +143,7 @@
       "required": true
     },
     {
-      "completion": "ego-browser 원문·날짜·관심도·선정 이유·AI와 사람의 역할·7일/해외 30일/90일·미확인을 기록한다. 이전 호 사실을 재사용하지 않는다.",
+      "completion": "ego-browser 원문·날짜·관심도·선정 이유·AI와 사람의 역할·7일/해외 30일/90일·미확인을 기록한다. 이전 호 사실을 재사용하지 않는다. 스타트업·소규모 게임사 채용(startups), 취업 행사(events), 부트캠프(bootcamps), 대학 입시(admissions), 진로 뉴스(news)를 매주 모두 조사하고 research.careerCoverage에 범주별 searchedAt(한국 날짜), searchScope, status(updated/no_material_change/unverified), sourceUrls, finding과 미확인 limitation을 기록한다. 출처는 research.sources에도 연결하며 결과가 없는 범주도 검색 범위와 한계를 남긴다.",
       "depends_on": [
         "preflight"
       ],
@@ -159,7 +159,7 @@
       "required": true
     },
     {
-      "completion": "4범주·요약·TOP10·스킬/도구·아이디어 3+3·7영역 프롬프트·그림/공식 미디어를 작성하고 한국어를 교정한다. issue-index는 모든 공개 파일과 비공개 검수 기록 경로/hash를 나눠 기록한다. 기존 검사기 통과와 실제 화면 검사 완료가 필요하다.",
+      "completion": "4범주·요약·TOP10·스킬/도구·아이디어 3+3·7영역 프롬프트·그림/공식 미디어를 작성하고 한국어를 교정한다. issue-index는 모든 공개 파일과 비공개 검수 기록 경로/hash를 나눠 기록한다. 기존 검사기 통과와 실제 화면 검사 완료가 필요하다. 취업·진로 다섯 범주를 본문에 구분하고 모집 상태·지원 자격·학년도/기수·비용·마감·선정 이유·다음 행동을 표시한다. 실제 조사 careerCoverage를 내용 검수 영수증에 동일하게 보존한다.",
       "depends_on": [
         "research"
       ],
@@ -176,7 +176,7 @@
       "required": true
     },
     {
-      "completion": "검수자가 index의 실제 파일을 직접 읽고 최신 내용·전체 한국어·20개 섹션 제목/도입·그림/표/접힘/복사/첨부를 독립 검토한다. 2회 안에서 작성자가 수정하고 재검수한다. approval은 검토된 최종 hash와 묶고 미해결 중간 등급 이상 문제가 없어야 한다.",
+      "completion": "검수자가 index의 실제 파일을 직접 읽고 최신 내용·전체 한국어·20개 섹션 제목/도입·그림/표/접힘/복사/첨부를 독립 검토한다. 2회 안에서 작성자가 수정하고 재검수한다. approval은 검토된 최종 hash와 묶고 미해결 중간 등급 이상 문제가 없어야 한다. 취업·진로 다섯 범주의 원문과 조건·미확인·한국어를 각각 확인하고 careerCategoriesReviewed에 다섯 범주 ID를 기록한다.",
       "depends_on": [
         "compose"
       ],
@@ -194,7 +194,7 @@
       "required": true
     },
     {
-      "completion": "승인 hash를 대조하고 build-site/validate-issue와 ego-browser 4개 폭·필터·복사·공유·영상·첨부·인쇄를 실제 검사한다. 수정이 있으면 compose와 검수부터 무효화한다. verification에 명령/결과와 UI 증거 기록, 모든 검사 통과와 검수 영수증 최종 hash 확인을 남긴다.",
+      "completion": "승인 hash를 대조하고 build-site/validate-issue와 ego-browser 4개 폭·필터·복사·공유·영상·첨부·인쇄를 실제 검사한다. 수정이 있으면 compose와 검수부터 무효화한다. verification에 명령/결과와 UI 증거 기록, 모든 검사 통과와 검수 영수증 최종 hash 확인을 남긴다. 다섯 범주 조사 누락·오래된 확인일·원장 밖 출처·내용 영수증 불일치·범주별 독립 검수 누락을 차단한다.",
       "depends_on": [
         "editorial-review"
       ],
@@ -233,7 +233,7 @@
       "required": true
     },
     {
-      "completion": "ready와 그 안의 최종 파일을 직접 대조하고 상위 index/원문/검수/검사 hash와 승인 일치를 확인한다. node workflows/check-report-harness.mjs --run 실행 ID를 통과한 상태만 준비 완료다. 실제 배포 성공으로 표현하지 않는다.",
+      "completion": "ready와 그 안의 최종 파일을 직접 대조하고 상위 index/원문/검수/검사 hash와 승인 일치를 확인한다. node workflows/check-report-harness.mjs --run 실행 ID를 통과한 상태만 준비 완료다. 실제 배포 성공으로 표현하지 않는다. careerCategoriesReviewed에 취업·진로 다섯 범주 확인을 남기고 조사 원장과 본문의 미확인·모집 상태가 일치하는지 재대조한다.",
       "depends_on": [
         "handoff"
       ],

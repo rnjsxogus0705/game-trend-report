@@ -1,4 +1,4 @@
-import {validateWeeklyPresentation} from './validate-weekly-presentation.mjs';
+import {validateWeeklyPresentation,validateCareerCoverage} from './validate-weekly-presentation.mjs';
 import {validateLanguageReview} from './validate-language-review.mjs';
 import fs from 'node:fs/promises';import path from 'node:path';import crypto from 'node:crypto';
 const file=path.resolve(process.argv[2]||''),html=await fs.readFile(file,'utf8'),review=JSON.parse((await fs.readFile(file+'.content-review.json','utf8')).replace(/^\uFEFF/,''));
@@ -12,6 +12,7 @@ const ordered=grouped?['issue-summary','top10','game-ai-tools','github-trending'
 const priority=ordered.map(id=>html.indexOf('id="'+id+'"'));if(priority.some(p=>p<0)||priority.some((p,i)=>i>0&&p<priority[i-1]))throw Error('Report sections do not follow the declared category order');
 if(review.reportDate>='2026-11-07'){
  validateWeeklyPresentation(html,{reportDate:review.reportDate});
+ validateCareerCoverage(review.careerCoverage,{issueDate:review.reportDate});
  const quality=review.qualityReview;
  if(!quality||!/^([a-f0-9]{40})$/i.test(quality.instructionRevision||'')||typeof quality.editor!=='string'||!quality.editor.trim()||typeof quality.reviewer!=='string'||!quality.reviewer.trim()||quality.editor.trim()===quality.reviewer.trim())throw Error('Missing quality review instruction revision or independent reviewer');
  if(!Array.isArray(quality.blockingFindings)||quality.blockingFindings.length)throw Error('Quality review has unresolved blocking findings');

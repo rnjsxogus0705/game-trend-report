@@ -3,6 +3,7 @@ import {test} from 'node:test';import assert from 'node:assert/strict';import fs
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const manifest=JSON.parse(await fs.readFile(path.join(repo,'instructions/sync-manifest.json'),'utf8'));
 const digest=value=>crypto.createHash('sha256').update(value).digest('hex');
+const careerCoverage=['startups','events','bootcamps','admissions','news'].map(category=>({category,status:'unverified',searchedAt:'2026-11-07',searchScope:'Synthetic official source search',finding:'No real research in this fixture',sourceUrls:['https://example.test/fixture'],limitation:'Synthetic fixture only'}));
 async function fixture(t){
  const root=await fs.mkdtemp(path.join(os.tmpdir(),'gtr-new-pc-'));t.after(()=>fs.rm(root,{recursive:true,force:true}));
  const reports=path.join(root,'reports'),siteReports=path.join(root,'site/reports');await fs.mkdir(reports);await fs.mkdir(siteReports,{recursive:true});
@@ -20,7 +21,7 @@ async function fixture(t){
  const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
  const categories=['ai-only-lab','games','ai-trends','ai-planning','game-ai','ai-releases','techniques','github-trending','game-ai-tools','careers','opportunities','agent-skills'];
  const checks=Object.fromEntries(['sourcesVerified','releaseStatesChecked','aiScopeSeparated','hotnessEvidenceChecked','jobsSampleDisclosed','previousIssueCompared','techniqueReproducibilityReviewed','mobileChecked','shareChecked'].map(key=>[key,true]));
- const content={schemaVersion:2,reportDate:'2026-11-07',sha256:digest(html),sections:ids,checks,coverage:categories.map(category=>({category,status:'unverified',sourceUrls:['https://example.test/fixture'],limitation:'Synthetic fixture, not research'}))};
+ const content={schemaVersion:2,reportDate:'2026-11-07',sha256:digest(html),sections:ids,checks,careerCoverage,coverage:categories.map(category=>({category,status:'unverified',sourceUrls:['https://example.test/fixture'],limitation:'Synthetic fixture, not research'}))};
  const qualityIds=['research','overseas','selection','practice','visuals','media','layout','korean','files'];
  content.qualityReview={instructionRevision:'a'.repeat(40),editor:'fixture-editor',reviewer:'fixture-reviewer',blockingFindings:[],criteria:qualityIds.map(id=>({id,status:'limited',evidence:'Synthetic fixture tests wiring only',limitation:'Not a real review'}))};
  const files=(await fs.readdir(reports)).filter(name=>name.endsWith('.md')||name.endsWith('.html'));
@@ -43,6 +44,12 @@ test('새 PC에서도 디자인 누락과 독립 검수 누락은 통과하지 �
 test('08시 전송 경로가 전체 검증 실패를 전송 전에 차단',async()=>{
  const source=await fs.readFile(path.join(repo,'workflows/dispatch-report.ps1'),'utf8');
  const validation=source.indexOf("'validate-issue.mjs'");assert.ok(validation>=0);assert.ok(source.indexOf('$LASTEXITCODE -ne 0',validation)>validation);assert.ok(source.indexOf("'send-report.ps1'")>validation);
+});
+test('새 PC의 발행·전송 검사도 다섯 진로 조사 기록을 요구',async t=>{
+ const f=await fixture(t),file=f.htmlPath+'.content-review.json',original=JSON.parse((await fs.readFile(file,'utf8')).replace(/^\uFEFF/,''));
+ for(const change of [r=>delete r.careerCoverage,r=>r.careerCoverage.pop(),r=>r.careerCoverage[0].searchedAt='2026-02-31',r=>r.careerCoverage[0].searchedAt='2026-11-08',r=>r.careerCoverage[0].searchScope='',r=>r.careerCoverage[0].limitation='']){
+  const review=structuredClone(original);change(review);await fs.writeFile(file,JSON.stringify(review));assert.throws(f.run,error=>String(error.stderr).includes('Career research'));
+ }
 });
 
 test('새 PC에서도 품질 검수 누락·같은 검수자·미해결 문제·근거 누락 차단',async t=>{
@@ -70,6 +77,16 @@ test('새 PC의 최신 지침·예약 전문과 검사 모듈 연결',async()=>{
  for(const name of ['REPORT-OUTPUT-CONTRACT.md','READING-AND-SCHEDULER.md','KOREAN-EDITORIAL-POLICY.md']){
   assert.ok(manifest.files.some(entry=>entry.repo==='instructions/'+name));assert.ok(sync.includes(name));
  }
+});
+
+test('Windows와 Mac 예약 모두 스킬·다섯 진로 범주·검수 게이트로 연결',async()=>{
+ const schedule=await fs.readFile(path.join(repo,'instructions/READING-AND-SCHEDULER.md'),'utf8');
+ const windows=schedule.split('**매주 토요일 07:00 — 조사·작성·배포**')[1].split('**매주 토요일 08:00')[0];
+ const mac=schedule.split('**macOS 매주 토요일 08:00 — 생성·검수 후 배포·전송**')[1].split('```text')[1].split('```')[0];
+ for(const prompt of [windows,mac])for(const text of ['$weekly-game-report','careerCoverage','careerCategoriesReviewed','startups','events','bootcamps','admissions','news','check-report-harness.mjs'])assert.ok(prompt.includes(text),text);
+ for(const text of ['Asia/Seoul','--check','--send','1565894418156879942','1566098427052298342','sent/pending'])assert.ok(mac.includes(text),text);
+ const spec=JSON.parse(await fs.readFile(path.join(repo,'.agents/skills/weekly-game-report/references/harness-spec.json'),'utf8'));
+ for(const id of ['research','editorial-review','final-review'])assert.ok(spec.tasks.find(task=>task.id===id).completion.includes(id==='research'?'careerCoverage':'careerCategoriesReviewed'));
 });
 
 test('첫 호 비교 불가 기록은 근거·본문·이전호 부재를 모두 요구',async t=>{

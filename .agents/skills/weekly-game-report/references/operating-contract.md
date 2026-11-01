@@ -31,7 +31,9 @@ Windows의 운영 root는 `C:\내문서\GameTrendReport`, 저장소는 그 아�
 출처: 로컬 harness 스킬의 명세·생성기를 사용해 이 프로젝트 계약을 작성했다. 수정 고지: 2026-10-31 Game Trend Report의 기존 검사기와 한국어/디자인 기준에 맞게 DAG·경로·운영 인계를 구성했다. 라이선스와 NOTICE는 스킬 assets에 보존했다.
 
 ## 준비 게이트의 필수 증거 필드
-context.authorization은 `{generate:true,publish:false,send:false}`다. 이 범위는 하네스 자체이며 외부 배포·전송의 기존 권한을 대체하지 않는다. context.instructionFiles는 README, WORKFLOW, REPORT-GUIDE, REPORT-OUTPUT-CONTRACT, READING-AND-SCHEDULER, KOREAN-EDITORIAL-POLICY, DESIGN, harness-spec 각각의 저장소 상대 경로→실제 SHA256이다. research.sources는 uri(https), publisher, retrievedAt, scope를 포함한다. 조회·관측의 세부 시각과 불확실성은 기존 조사 기준도 따른다.
+context.authorization은 `{generate:true,publish:false,send:false}`다. 이 범위는 하네스 자체이며 외부 배포·전송의 기존 권한을 대체하지 않는다. context.instructionFiles는 README, WORKFLOW, REPORT-GUIDE, REPORT-OUTPUT-CONTRACT, READING-AND-SCHEDULER, KOREAN-EDITORIAL-POLICY, DESIGN, 프로젝트 스킬 `SKILL.md`, `references/operating-contract.md`, `references/harness-spec.json` 각각의 저장소 상대 경로→실제 SHA256이다. research.sources는 uri(https), publisher, retrievedAt, scope를 포함한다. 조회·관측의 세부 시각과 불확실성은 기존 조사 기준도 따른다.
+
+research.careerCoverage와 최종 `.content-review.json`의 careerCoverage는 서로 같은 배열이다. `startups`·`events`·`bootcamps`·`admissions`·`news` 다섯 category를 각각 한 번씩 기록한다. 각 항목은 status(`updated`/`no_material_change`/`unverified`), searchedAt(한국 날짜 `YYYY-MM-DD`, 발행일 7일 전부터 발행일까지), 실제 searchScope·finding·HTTPS sourceUrls를 포함하며, unverified에는 limitation도 남긴다. 각 sourceUrls는 research.sources의 uri에 존재해야 한다. 해당 호에 확인 가능한 기회가 없으면 실제 조사한 공식 목록과 미확인 범위·이유를 기록하고 오래된 공고를 현재 모집으로 표시하지 않는다. 확인한 출처가 전혀 없다면 없는 근거를 만들지 않고 준비를 중단한다. editorial-review와 final-review에는 실제로 대조한 다섯 ID를 중복 없이 careerCategoriesReviewed에 기록한다. 형식 검사는 실제 조사나 독립 검수를 대신하지 않는다.
 
 issue.editorSessionId와 검수 기록의 method(native-subagent), sessionId는 실제 생성·독립 검수 실행 식별자를 기록한다. 단순 문자열 검사는 실행 주체의 신원을 인증하지 못하므로 실제 네이티브 위임 기록과 대조한다. 기록만 만들어 독립 검수를 수행했다고 주장하지 않는다.
 
