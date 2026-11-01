@@ -52,6 +52,14 @@ export function validateWeeklyPresentation(html,{reportDate}={}){
   assert(JSON.stringify(descendants(groups[index],node=>node.tag==='a').map(node=>node.attrs.href))===JSON.stringify(ids.map(id=>'#'+id)),'Navigation links differ from the category: '+key);
  });
  if(reportDate>='2026-11-07'){
+  const careers=oneId('careers');
+  for(const category of ['startups','events','bootcamps','admissions','news']){
+   const block=descendants(careers,node=>node.attrs['data-career-category']===category)[0];
+   assert(block&&text(block).length>0,'Career coverage missing: '+category);
+   assert(descendants(block,node=>node.tag==='a'&&/^https:\/\//.test(node.attrs.href||'')).length>0,'Career source missing: '+category);
+   assert(descendants(block,node=>['listed','open','planned','closed','unknown'].includes(node.attrs['data-career-status'])).length>0,'Career status missing: '+category);
+   assert(/확인일/.test(text(block)),'Career retrieval date missing: '+category);
+  }
   for(const [id,count] of [['reverse',1],['ai-planning',1],['prototype',1],['lab',2],['game-ai-tools',1],['agent-skills',1],['ai-production',1]]){
    const prompts=descendants(oneId(id),node=>hasClass(node,'practice-prompt'));
    assert(prompts.length>=count,'Missing practice prompts in section: '+id);

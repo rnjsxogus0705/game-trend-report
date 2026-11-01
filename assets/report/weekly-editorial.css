@@ -131,6 +131,20 @@ body.weekly-editorial {
 .weekly-editorial .eyebrow {letter-spacing:0;font-size:14px;color:var(--secondary)}
 .weekly-editorial .primary {background:var(--action);border-radius:8px;font-size:16px}
 .weekly-editorial .job-meta {font-size:14px}
+.weekly-editorial .career-paths {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 24px;margin:24px 0}
+.weekly-editorial .career-paths a {display:block;padding:16px 0;border-bottom:1px solid var(--line);min-height:44px}
+.weekly-editorial .career-paths span {display:block;font-size:14px;color:var(--secondary)}
+.weekly-editorial .career-topic {margin:40px 0;padding-top:24px;border-top:1px solid #aebccd;scroll-margin-top:140px}
+.weekly-editorial .career-topic>h3 {margin:0 0 16px}
+.weekly-editorial .career-topic .job-card h4 {font-size:20px;margin:0}
+.weekly-editorial .career-topic .job-card .job-meta {margin:8px 0 0}
+.weekly-editorial .career-priorities {margin:24px 0;padding:20px;background:var(--weak);border-radius:8px}
+.weekly-editorial .career-more {border-top:1px solid var(--line);padding:12px 0}
+.weekly-editorial .career-more>summary {font-size:17px;font-weight:700;color:var(--ink)}
+.weekly-editorial .career-example {margin:24px 0;max-width:720px}
+.weekly-editorial .career-example img {display:block;width:100%;height:auto;border-radius:8px}
+.weekly-editorial .career-topic table th {width:50%}
+.weekly-editorial .career-deadlines {padding:20px 0;border-bottom:1px solid var(--line)}
 .weekly-editorial :is(.checklist label,.detail-list,.event-list p,.sources-list p) {font-size:16px;line-height:1.85}
 .weekly-editorial .sources-list a {font-size:17px;line-height:1.7}
 .weekly-editorial .footer {border-top:2px solid #aebccd;margin-top:64px;padding-top:28px}

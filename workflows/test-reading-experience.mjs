@@ -33,6 +33,7 @@ try {
   const visuals=document.querySelectorAll('.chapter-visual').length,media=document.querySelectorAll('.reading-media-previews figure').length;
   const visualsLabeled=[...document.querySelectorAll('.chapter-visual')].every(f=>f.querySelector('img').alt.includes('AI 생성 개념도')&&f.querySelector('figcaption').textContent.includes('실제 제품'));
   const directHashOpen=!hasClosedParent(document.getElementById('tool-meshy'));
+  const careers={visible:!hasClosedParent(document.querySelector('.career-guide')),paths:document.querySelectorAll('.career-paths a').length,categories:document.querySelectorAll('[data-career-category]').length,headerPreviews:document.querySelectorAll('#careers .chapter-head .reading-media-previews').length};
   document.getElementById('tool-meshy').closest('.reading-detail').open=false;
   const link=document.querySelector('.reading-tool-previews a[href="#tool-spritegen"]');
   link.click();
@@ -42,7 +43,7 @@ try {
   buttons[1].click();const allClosed=groups.every(group=>!group.open);
   dispatchEvent(new Event('beforeprint'));const printOpen=[...document.querySelectorAll('main details:not(.mobile-nav)')].every(detail=>detail.open);
   dispatchEvent(new Event('afterprint'));const restored=groups.every(group=>!group.open);
-  return {labDataVisible:!hasClosedParent(document.querySelector('#lab .grid2 .table-scroll')),skillEvidence,ideaImages,international,readerGuide,visuals,media,visualsLabeled,detailLabel,summaryPresent,highlights,count:groups.length,directHashOpen,linkedToolOpen,allOpen,allClosed,printOpen,restored,
+  return {careers,labDataVisible:!hasClosedParent(document.querySelector('#lab .grid2 .table-scroll')),skillEvidence,ideaImages,international,readerGuide,visuals,media,visualsLabeled,detailLabel,summaryPresent,highlights,count:groups.length,directHashOpen,linkedToolOpen,allOpen,allClosed,printOpen,restored,
    previews:document.querySelectorAll('.reading-tool-previews img').length,
    benchmarkVisible:!hasClosedParent(document.getElementById('benchmark-chart')),
    simulationVisible:!hasClosedParent(document.getElementById('simulation-chart'))};
@@ -100,6 +101,7 @@ try{
   const line=output.split('\n').find(line=>line.startsWith('RESULT '));
   assert.ok(line,JSON.stringify(output));
   const result=JSON.parse(line.slice(7));
+  assert.deepEqual(result.careers,{visible:true,paths:4,categories:5,headerPreviews:0});
   assert.match(result.detailLabel,/인기 GitHub 저장소 중 게임 개발에 참고할 자료/);
   assert.equal(result.visuals,14);assert.equal(result.media,8);assert.equal(result.visualsLabeled,true);
   assert.equal(result.toolFilters.images,15);assert.equal(result.toolFilters.steps,5);assert.equal(result.toolFilters.routeImage,true);for(const f of result.toolFilters.results){assert.equal(f.cards,f.expected);assert.equal(f.rows,f.expected);assert.equal(f.matrix,f.expected);assert.equal(f.pressed,f.value);}

@@ -85,6 +85,7 @@
     if(gallery.children.length)head.querySelector('h2')?.after(gallery);
   }
   main.querySelectorAll('section.chapter').forEach(section=>{
+    if(section.id==='careers'&&section.querySelector('[data-career-expansion]'))return;
     if(section.id==='game-ai-tools'){
       const skills=section.querySelector(':scope > #agent-skills');
       if(skills)fold([skills],'게임 개발 스킬 자세히 보기');
