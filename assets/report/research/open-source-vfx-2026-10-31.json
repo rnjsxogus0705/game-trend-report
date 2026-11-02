@@ -1,0 +1,44 @@
+{
+  "issueDate": "2026-10-31",
+  "supplementCheckedAt": "2026-11-02",
+  "method": "ego-browser 공식 갤러리·README·실제 스킬·LICENSE/NOTICE·블로그/라이브러리와 외부 YouTube 제목·설명·게시정보 확인",
+  "tools": [
+    {
+      "id": "pixelfx",
+      "source": "https://github.com/patch-gg/pixelfx",
+      "demo": "https://patch-gg.github.io/pixelfx/",
+      "license": "코드·효과 MIT, Patch Pixel 폰트 제외",
+      "engineRoute": "문서상 JS 직접 사용 또는 PNG+JSON 시트 내보내기",
+      "executed": false
+    },
+    {
+      "id": "spritefusion",
+      "source": "https://www.spritefusion.com/blog/how-to-make-good-pixel-art-effects-with-claude",
+      "publishedAt": "2026-10-28",
+      "demo": "https://www.spritefusion.com/pixel-art-vfx",
+      "license": "공식 VFX 페이지 MIT 안내, 유료 제품 전체에 일반화하지 않음",
+      "engineRoute": "문서상 JS/TS 직접 사용, 다른 엔진은 포팅 또는 별도 프레임 추출",
+      "executed": false
+    }
+  ],
+  "relationship": "pixelfx README/NOTICE가 Sprite Fusion 방법과 일부 코드의 출처를 명시. 독립 유행 근거 두 건으로 중복 집계하지 않음",
+  "video": {
+    "url": "https://www.youtube.com/watch?v=8cYwqU1NtBQ",
+    "creator": "연세의 게임개발",
+    "publishedKoreanDate": "2026-11-01",
+    "durationSeconds": 269,
+    "kind": "외부 개발자 소개, 제작사 공식 시연 아님",
+    "scope": "제목·설명·게시정보 확인, 전체 시청·재현 미실시"
+  },
+  "media": [
+    {
+      "path": "assets/report/open-source-vfx-2026-10-31/pixelfx-campfire.png",
+      "kind": "공식 갤러리 캔버스 정지 캡처, 저장된 PNG 192x160",
+      "licenseNotice": "assets/report/open-source-vfx-2026-10-31/MIT-LICENSE.txt"
+    },
+    {
+      "url": "https://www.spritefusion.com/blog/how-to-make-good-pixel-art-effects-with-claude/freeze-and-plasma-orb.webp",
+      "kind": "제작자 호스트의 공식 시연 포스터"
+    }
+  ]
+}

@@ -1608,6 +1608,12 @@
       "before": "구체적인 필수 제출물·근무지는 원문에서 추가 확인하세요.",
       "after": "공고는 이력서·포트폴리오와 본인이 작업한 UI 아트워크 첨부를 요구해요. 이펙트 직무와 UI 제출물의 관계는 지원 전에 문의하세요. 페이지의 회사 주소는 경기 성남시 분당구 대왕판교로 660으로 표시돼 있어 실제 근무지도 확인해야 해요.",
       "reason": "독립 원문 대조: 실제 제출물과 회사 주소를 추가하고 직무·제출물 불일치 및 근무지 확인 필요를 명시"
+    },
+    {
+      "file": "reports/weekly-2026-10-31.html",
+      "before": "아래 목록은 2026년 10월 31일 조사 자료예요. 11월 1일 재확인과 취업·진로 보완 자료는 각 본문에 표시한 확인일과 원문 링크를 참고하세요.",
+      "after": "아래 목록은 2026년 10월 31일 조사 자료예요. 11월 1일 재확인·취업 자료와 11월 2일 픽셀 이펙트 보완 자료는 각 본문의 확인일과 원문 링크를 참고하세요.",
+      "reason": "11월 2일 보완 원문과 기존 조사 목록의 확인 시점을 구분"
     }
   ],
   "limitations": [
@@ -1627,7 +1633,7 @@
   },
   "naturalnessReview": {
     "editor": "/root",
-    "reviewer": "/root/career_final_review",
+    "reviewer": "/root/pixelfx_report_review",
     "coverage": [
       "body",
       "headings",
@@ -3233,10 +3239,16 @@
         "before": "구체적인 필수 제출물·근무지는 원문에서 추가 확인하세요.",
         "after": "공고는 이력서·포트폴리오와 본인이 작업한 UI 아트워크 첨부를 요구해요. 이펙트 직무와 UI 제출물의 관계는 지원 전에 문의하세요. 페이지의 회사 주소는 경기 성남시 분당구 대왕판교로 660으로 표시돼 있어 실제 근무지도 확인해야 해요.",
         "reason": "독립 원문 대조: 실제 제출물과 회사 주소를 추가하고 직무·제출물 불일치 및 근무지 확인 필요를 명시"
+      },
+      {
+        "path": "reports/weekly-2026-10-31.html",
+        "before": "아래 목록은 2026년 10월 31일 조사 자료예요. 11월 1일 재확인과 취업·진로 보완 자료는 각 본문에 표시한 확인일과 원문 링크를 참고하세요.",
+        "after": "아래 목록은 2026년 10월 31일 조사 자료예요. 11월 1일 재확인·취업 자료와 11월 2일 픽셀 이펙트 보완 자료는 각 본문의 확인일과 원문 링크를 참고하세요.",
+        "reason": "11월 2일 보완 원문과 기존 조사 목록의 확인 시점을 구분"
       }
     ],
     "fileHashes": {
-      "weekly-2026-10-31.html": "bcad248f7521c202207b16bfed2980120604d04965ffb52bf720f9c2c7d505fb",
+      "weekly-2026-10-31.html": "a628dfc27f82799766f91491f7bc4d2f5d4a78e3c2caeb793c1c7ab3ff0fb518",
       "weekly-2026-10-31-ai-plan-01.md": "55aae6d568301fdf18438e57430969df932b05f4e191824a44d535469fdcbd1b",
       "weekly-2026-10-31-ai-plan-02.md": "a32bba89f4da73b596bec9a8055d798aaacb5b23c60740d047f73f6885cbd3b7",
       "weekly-2026-10-31-ai-plan-03.md": "52952992fc41f3652692c3a01c5cdfee45a104d3269f44387bfe8cba00651d18",
@@ -3248,8 +3260,8 @@
       "weekly-2026-10-31-ideas.md": "01f26e6b492601d9c8f98b95b5ef7427f0c04376cc0b2066dc8b28157faa706e"
     },
     "externalVerified": false,
-    "externalScope": "이번 재검수에서 외부 맞춤법 검사기 사용 안 함",
-    "method": "기존 전체 검수 기록을 보존하고 변경 없는 본문·다운로드는 바이트/해시로 대조했다. 이번 취업·진로 확장, 제목·목차·요약·출처 안내는 humanizer→grammar-checker→style-guide 및 pinned k-skill 한국어 지침을 읽은 편집자와 독립 검수자가 원문 기록·PDF와 문맥을 실제 대조해 수정 후 재검수했다. 외부 맞춤법 검사기는 이번 보완에서 사용하지 않았다.",
+    "externalScope": "",
+    "method": "이전 전체 검수는 보존하고 변경 없는 본문·9개 Markdown은 범위/해시로 대조했다. 11월 2일 pixelfx·Sprite Fusion 보완의 제목·본문·표·공식 캡처/포스터 캡션·접힘·두 실습 프롬프트·영상 출처와 확인일을 편집자와 독립 모델 검수자가 원문 기록으로 대조하고 교정했다. k-skill 고정 버전 지침과 humanizer→grammar-checker→style-guide를 읽고 적용했으며 이번 보완에 외부 맞춤법 검사기는 사용하지 않았다.",
     "disposition": "approved"
   },
   "externalSample": {
@@ -3301,7 +3313,12 @@
     "assets/report/research/international-resources-2026-10-31.json": "3233f8b9d69dd4b100b084ec6fb032497b9f4ec75ce0dde0ff37a76e7fab9e57",
     "assets/report/research/agent-skill-selection-2026-10-31.json": "0c724874284a49150c80ec2080d6bde2c401b9c3bae2a2476e3c929bc76f4391",
     "assets/report/international-resources-2026-10-31.js": "4ce5713400aa8c504bbd32dcb04da410ca7a3c2368981fdcf57d3e06934ecf60",
-    "assets/report/tool-choice.js": "7f07eded8a09ff7301705f865e066f9fd7601b1f274d6a38bb277b2ad25564cd"
+    "assets/report/tool-choice.js": "7f07eded8a09ff7301705f865e066f9fd7601b1f274d6a38bb277b2ad25564cd",
+    "assets/report/open-source-vfx-2026-10-31/pixelfx-campfire.png": "7154b7f732c8785eb8422416cf782c873a3e01363b03b5565bece584599d323c",
+    "assets/report/open-source-vfx-2026-10-31/SOURCES.md": "86c12b25da234a2175f368f87351a7ebec968818bc22d9143622647d5bac057f",
+    "assets/report/open-source-vfx-2026-10-31/MIT-LICENSE.txt": "0a77565a50c3462831244452f129c38d2adc4fd07897cbeba8adc943f958604e",
+    "assets/report/research/open-source-vfx-2026-10-31.json": "ea103555ec98a67a5d56a34868a3d31a1cf2b4bda433f6f87611c1c50b92ccc6",
+    "assets/report/weekly-editorial.css": "d7d6878696d085ec516b63c58d18d37ba13a2606a4bb4bacb189af6d49960311"
   },
   "skillSelectionReview": {
     "reviewer": "/root/final_review",
@@ -3393,5 +3410,23 @@
     ],
     "limitations": "외부맞춤법검사·취업지원·교육수강·행사현장참여·전체영상시청미실시",
     "verification": "48개테스트,4화면폭넘침없음·최소12px,공유/필터/복사/해시/인쇄회귀와390/1440육안검수"
+  },
+  "pixelVfxSupplementReview": {
+    "reviewedAt": "2026-11-02",
+    "sha256": "a628dfc27f82799766f91491f7bc4d2f5d4a78e3c2caeb793c1c7ab3ff0fb518",
+    "reviewer": "/root/pixelfx_report_review",
+    "scope": "기존 전체 검수 승계. before.html 대비 신규 보완, 보완 바로가기, 출처 안내, CSS 캐시 변경을 확인; 신규 제목·본문·표·캡션·접힌 설명·복사용 프롬프트·출처를 원문 기록과 직접 대조. 기존 Markdown 9개는 이전 언어 검수 해시와 대조. 이후 이미지 표시 크기 정정과 관련 CSS·출처·조사 JSON을 재검수했다.",
+    "practicePromptsAdded": 2,
+    "practicePromptsTotal": 11,
+    "sources": "보고서 각 보완 항목과 open-source-vfx-2026-10-31.json에 공식 출처·확인일 표시",
+    "image": "공식캔버스정지캡처192x160,MIT고지보존.제작자호스트의공식포스터·시연과외부개발자YouTube소개를구분",
+    "verification": "54개Node테스트,4폭페이지넘침없음/최소12px/새캡처최대576px/비율,11개복사/실패대안·공유·필터·해시·인쇄,3이미지로드와YouTube클릭iframe/원문대안확인",
+    "limitations": [
+      "외부 맞춤법 검사에 문서 제출하지 않음. 모델 문맥 검수이며 사람 검수 아님",
+      "라이브러리 설치, 명령 실행, 내보내기, 엔진 호환과 성능 측정 미실시",
+      "영상 전체 시청과 게임 결과 재현 미실시; Sprite Fusion 다운로드 ZIP 내부 라이선스 미검증",
+      "자동 본문 보존 검사는 일부 영역을 제외하고 단어를 정렬하므로 원문 의미 검증을 대신하지 않음",
+      "기존 전체 본문은 이전 독립 검수 승계 및 변경 범위 대조이며 이번 보완 조사에서 전체 출처를 재검증하지 않음"
+    ]
   }
 }

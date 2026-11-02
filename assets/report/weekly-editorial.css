@@ -145,6 +145,20 @@ body.weekly-editorial {
 .weekly-editorial .career-example img {display:block;width:100%;height:auto;border-radius:8px}
 .weekly-editorial .career-topic table th {width:50%}
 .weekly-editorial .career-deadlines {padding:20px 0;border-bottom:1px solid var(--line)}
+.weekly-editorial .open-source-supplement {margin:40px 0;padding:28px 0;border-top:2px solid #aebccd;border-bottom:1px solid var(--line)}
+.weekly-editorial .vfx-jump {display:flex;flex-wrap:wrap;gap:4px 20px;margin:20px 0}
+.weekly-editorial .vfx-jump a {padding:8px 0;min-height:44px;font-size:16px}
+.weekly-editorial .vfx-topic {padding-top:24px;margin-top:28px;border-top:1px solid var(--line);scroll-margin-top:140px}
+.weekly-editorial .vfx-topic>h4 {margin-top:0;font-size:23px;word-break:keep-all;overflow-wrap:break-word}
+.weekly-editorial :is(.vfx-media,.open-source-supplement .youtube-preview) {max-width:720px;margin:24px 0}
+.weekly-editorial .vfx-media img {display:block;width:100%;height:auto;border-radius:8px}
+.weekly-editorial .pixel-capture {image-rendering:pixelated}
+.weekly-editorial .open-source-supplement .vfx-pixel-capture {max-width:576px}
+.weekly-editorial .vfx-official-demo video {display:block;width:100%;max-width:720px;height:auto}
+.weekly-editorial .vfx-workflow {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 32px;margin:28px 0;padding-left:24px}
+.weekly-editorial .vfx-workflow li {padding:12px 0;margin:0;border-top:1px solid var(--line)}
+.weekly-editorial .vfx-workflow span {display:block;font-size:16px}
+@media(max-width:600px) {.weekly-editorial .vfx-workflow {grid-template-columns:minmax(0,1fr)}}
 .weekly-editorial :is(.checklist label,.detail-list,.event-list p,.sources-list p) {font-size:16px;line-height:1.85}
 .weekly-editorial .sources-list a {font-size:17px;line-height:1.7}
 .weekly-editorial .footer {border-top:2px solid #aebccd;margin-top:64px;padding-top:28px}
