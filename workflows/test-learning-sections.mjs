@@ -15,8 +15,8 @@ test('두 섹션의 그림·근거 안내와 기존 조작 요소 유지',()=>{
  for(const marker of ['prototype-guide.webp','lab-guide.webp','learning-section-guide','lab-explanation','data-check="hypothesis"','id="chance"','id="trials"','id="simulation-chart"','id="simulation-table"'])assert.ok(html.includes(marker),marker);
  assert.equal((html.match(/class="github-selection"/g)||[]).length,3);assert.ok(html.includes('github-selection-2026-10-31.json'));
 });
-test('실습 프롬프트 11개는 복사 대상·입력·결과·직접 확인과 후속 질문을 제공',()=>{
- const prompts=[...html.matchAll(/<details class="practice-prompt">([\s\S]*?)<\/details>/g)];assert.equal(prompts.length,11);
+test('실습 프롬프트 12개는 복사 대상·입력·결과·직접 확인과 후속 질문을 제공',()=>{
+ const prompts=[...html.matchAll(/<details class="practice-prompt">([\s\S]*?)<\/details>/g)];assert.equal(prompts.length,12);
  for(const [,block] of prompts){const target=block.match(/data-copy-workflow="([^"]+)"/)[1];assert.ok(block.includes('id="'+target+'"'));for(const label of ['받을 결과','직접 확인','이어서 물어보기'])assert.ok(block.includes(label));assert.match(block,/\[[^\]]+\]/);}
  for(const id of ['prototype','lab','reverse','ai-planning','game-ai-tools','agent-skills','ai-production'])assert.ok(html.includes('id="practice-'+id+'-1"'));
  assert.ok(!html.includes('작은 시험판'));assert.ok(!html.includes('직접 만지는 실험실'));
@@ -36,11 +36,11 @@ test('해외 사례는 10월 최신3개로 교체하고 AI 범위·관심지표�
  const max=data.resources.find(i=>i.creator==='Max Blade');assert.match(max.aiScope,/98%/);assert.match(max.aiScope,/100% AI 제작을 뜻하는 수치는 아니에요/);
  assert.ok(!JSON.stringify(data).includes('4RlpMhBKNr0'));
 });
-test('한국어 AI 제작 채널 18곳과 개별 영상 3편은 근거·역할·배경 자료를 구분',async()=>{
+test('한국어 AI 제작 채널 19곳과 개별 영상 3편은 근거·역할·배경 자료를 구분',async()=>{
  const watch=JSON.parse(await fs.readFile(new URL('../instructions/AI-SOLO-CREATOR-WATCHLIST.json',import.meta.url),'utf8'));
  const data=JSON.parse(await fs.readFile(new URL('../assets/report/research/ai-solo-creators-2026-10-31.json',import.meta.url),'utf8'));
- const handles=['PatrickGamesKR','yeonseDev','durigungri','zenonkim5126','hero_inc-l6u','만들다-보니','jsmgames2026','BamonStudio','kwakamole_official','nunchigames','딸깍아닙니다','김뽑희AI','jhkgame','maenglab','gamealmot-dev','데브-ai','SmartDaddyAI','akarolls'];
- assert.equal(data.channels.length,18);assert.deepEqual(watch.channels.map(c=>c.handle).sort(),handles.sort());
+ const handles=['PatrickGamesKR','yeonseDev','durigungri','zenonkim5126','hero_inc-l6u','만들다-보니','jsmgames2026','BamonStudio','kwakamole_official','nunchigames','딸깍아닙니다','김뽑희AI','jhkgame','maenglab','gamealmot-dev','데브-ai','SmartDaddyAI','akarolls','AI놀이터'];
+ assert.equal(data.channels.length,19);assert.deepEqual(watch.channels.map(c=>c.handle).sort(),handles.sort());
  for(const c of data.channels){assert.ok(handles.includes(c.handle));assert.match(c.videoId,/^[\w-]{11}$/);assert.ok(html.includes('data-creator-handle="'+c.handle+'"'));assert.ok(html.includes('data-youtube-play="'+c.videoId+'"'));assert.ok(c.selectionReason&&c.aiAndHumanScope&&c.viewingQuestion);assert.match(c.reviewScope,/전체 시청/);assert.equal(new Date(c.publishedAt).toLocaleDateString('sv-SE',{timeZone:'Asia/Seoul'}),c.publishedDateKst);assert.ok(c.publishedDateKst<='2026-11-02');if(c.freshness!=='background')assert.ok(c.publishedDateKst>='2026-08-05');}
  assert.match(data.channels.find(c=>c.handle==='durigungri').aiAndHumanScope,/1인 제작 사례로 분류하지/);
  assert.match(data.channels.find(c=>c.handle==='딸깍아닙니다').aiAndHumanScope,/유료 에셋/);
@@ -49,4 +49,13 @@ test('한국어 AI 제작 채널 18곳과 개별 영상 3편은 근거·역할·
  for(const v of data.referenceVideos){assert.equal(v.monitorChannel,false);assert.ok(html.includes('data-reference-video=\"'+v.videoId+'\"'));assert.ok(v.selectionReason&&v.aiAndHumanScope);}
  assert.equal(data.channels.find(c=>c.handle==='데브-ai').freshness,'background');assert.match(data.channels.find(c=>c.handle==='gamealmot-dev').viewingQuestion,/유료 광고/);assert.match(data.channels.find(c=>c.handle==='SmartDaddyAI').viewingQuestion,/종료/);assert.equal(data.discovery.queries.length,2);
  const reading=await fs.readFile(new URL('../assets/report/reading-experience.js',import.meta.url),'utf8');assert.ok(reading.includes('.practice-prompts,.creator-supplement'));
+});
+test('Scenario 공개 3D 자료는 예제·출력 수와 형식·라이선스 예외·실습을 구분',async()=>{
+ const data=JSON.parse(await fs.readFile(new URL('../assets/report/research/scenario-3d-2026-10-31.json',import.meta.url),'utf8'));
+ assert.equal(data.examples,1342);assert.equal(data.outputFiles,1500);assert.equal(data.sizeGBShown,38.7);assert.equal(Object.values(data.formats).reduce((a,b)=>a+b,0),1500);assert.equal(Object.values(data.models).reduce((a,b)=>a+b,0),1342);
+ for(const [name,count] of Object.entries(data.formats))assert.ok(html.includes('data-output-format="'+name+'" data-output-count="'+count+'"'));
+ assert.ok(data.models['gpt-6-astra']>0&&data.models['claude-opus-5-5']>0);assert.equal(data.executedInEngine,false);assert.equal(data.fullCollectionDownloaded,false);
+ for(const marker of ['id="scenario-3d-collection"','id="practice-scenario-3d-1"','대한민국·EU·영국','텍스처 2개','null'])assert.ok(html.includes(marker),marker);
+ const crypto=await import('node:crypto');const image=await fs.readFile(new URL('../'+data.preview.path,import.meta.url));assert.equal(crypto.createHash('sha256').update(image).digest('hex'),data.preview.sha256);
+ const channel=JSON.parse(await fs.readFile(new URL('../assets/report/research/ai-solo-creators-2026-10-31.json',import.meta.url),'utf8')).channels.find(c=>c.handle==='AI놀이터');assert.equal(channel.videoId,'jh9QgRpGU0E');assert.equal(channel.publishedDateKst,'2026-09-24');assert.equal(channel.freshness,'quarter');
 });

@@ -92,6 +92,12 @@
       "handle": "akarolls",
       "channelUrl": "https://www.youtube.com/@akarolls",
       "name": "Akarolls-아카롤스"
+    },
+    {
+      "handle": "AI놀이터",
+      "channelUrl": "https://www.youtube.com/@AI%EB%86%80%EC%9D%B4%ED%84%B0",
+      "name": "AI놀이터",
+      "scope": "AI 게임 제작·코딩 실험 영상만 선별. 일반 AI 이미지·영상·광고 콘텐츠는 게임 개발과 관련 있을 때만 참고한다."
     }
   ],
   "discoveryPolicy": "주시 목록 밖의 최신 AI 게임 개발·개발일지·에셋 제작·테스트·출시 콘텐츠도 한국어와 영어 검색어로 매주 탐색한다. 실제 검색어·검색 범위·출처·확인일·선정 또는 제외 이유를 research.creatorContentSearch.discovery에 기록한다. 기존 공개 리포트의 영상 ID와 비교해 신규 콘텐츠를 찾고, 새 채널의 지속 추적 여부는 제작 주제와 공개 근거를 검토한 뒤 목록 변경으로 남긴다.",

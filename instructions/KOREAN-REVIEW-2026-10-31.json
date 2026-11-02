@@ -1632,6 +1632,18 @@
       "before": "AI 게임 제작 채널 12곳은 11월 2일에 추가 조사해 아래에 따로 모았어요.",
       "after": "AI 게임 제작 채널 18곳과 개별 참고 영상 3편은 11월 2일에 추가 조사해 아래에 따로 모았어요.",
       "reason": "추가 6개 채널과 개별 영상 3편의 조사 범위를 안내"
+    },
+    {
+      "file": "reports/weekly-2026-10-31.html",
+      "before": "AI 게임 제작 채널 18곳과 개별 참고 영상 3편은",
+      "after": "AI 게임 제작 채널 19곳과 개별 참고 영상 3편은",
+      "reason": "AI놀이터 추가로 현재 주시 채널 수를 갱신"
+    },
+    {
+      "file": "reports/weekly-2026-10-31.html",
+      "before": "11월 2일 픽셀 이펙트·한국어 AI 제작 채널 보완 자료",
+      "after": "11월 2일 픽셀 이펙트·공개 3D 자료·한국어 AI 제작 채널 보완 자료",
+      "reason": "공개 3D 자료의 추가 조사 범위를 안내"
     }
   ],
   "limitations": [
@@ -3281,10 +3293,22 @@
         "before": "AI 게임 제작 채널 12곳은 11월 2일에 추가 조사해 아래에 따로 모았어요.",
         "after": "AI 게임 제작 채널 18곳과 개별 참고 영상 3편은 11월 2일에 추가 조사해 아래에 따로 모았어요.",
         "reason": "추가 6개 채널과 개별 영상 3편의 조사 범위를 안내"
+      },
+      {
+        "path": "reports/weekly-2026-10-31.html",
+        "before": "AI 게임 제작 채널 18곳과 개별 참고 영상 3편은",
+        "after": "AI 게임 제작 채널 19곳과 개별 참고 영상 3편은",
+        "reason": "AI놀이터 추가로 현재 주시 채널 수를 갱신"
+      },
+      {
+        "path": "reports/weekly-2026-10-31.html",
+        "before": "11월 2일 픽셀 이펙트·한국어 AI 제작 채널 보완 자료",
+        "after": "11월 2일 픽셀 이펙트·공개 3D 자료·한국어 AI 제작 채널 보완 자료",
+        "reason": "공개 3D 자료의 추가 조사 범위를 안내"
       }
     ],
     "fileHashes": {
-      "weekly-2026-10-31.html": "2c39a654177835f7f516c9c2a65d43cc88648a8a0611a2992e22786a48864ef6",
+      "weekly-2026-10-31.html": "e98c29b3f1cacebcd705b02f55457aee18f9ba1778769fa28129a4b8c56dc93c",
       "weekly-2026-10-31-ai-plan-01.md": "55aae6d568301fdf18438e57430969df932b05f4e191824a44d535469fdcbd1b",
       "weekly-2026-10-31-ai-plan-02.md": "a32bba89f4da73b596bec9a8055d798aaacb5b23c60740d047f73f6885cbd3b7",
       "weekly-2026-10-31-ai-plan-03.md": "52952992fc41f3652692c3a01c5cdfee45a104d3269f44387bfe8cba00651d18",
@@ -3297,7 +3321,7 @@
     },
     "externalVerified": false,
     "externalScope": "",
-    "method": "이전 전체 검수·VFX·12개 채널 검수를 보존했다. 기존 본문·12개 영상 설명과 9개 Markdown은 이전 산출물과 대조했다. 추가 6개 채널과 개별 영상 3편의 제목·본문·접힌 설명·출처·한국 날짜·AI와 사람 역할·광고·지난 행사·배경 자료를 편집자와 독립 모델 검수자가 ego-browser 원문 기록과 대조하고 한국어 의미 보존 6항을 검토했다. 외부 맞춤법 검사기는 사용하지 않았다.",
+    "method": "기존 전체 검수와 18채널·개별3편 보완 검수를 보존했다. 변경 없는 본문·영상 설명·9개 Markdown은 이전 산출물로 대조했다. Scenario 추가 본문·차트·공식 이미지 캡션·이용 조건 접힘·실습 프롬프트와 AI놀이터 소개를 실제 원문 기록과 대조해 편집자와 독립 모델 검수자가 한국어 및 의미 보존 6항을 검토했다. 고정 k-skill과 humanizer→grammar-checker→style-guide 지침을 재사용했고 외부 맞춤법 검사는 하지 않았다.",
     "disposition": "approved"
   },
   "externalSample": {
@@ -3354,9 +3378,13 @@
     "assets/report/open-source-vfx-2026-10-31/SOURCES.md": "86c12b25da234a2175f368f87351a7ebec968818bc22d9143622647d5bac057f",
     "assets/report/open-source-vfx-2026-10-31/MIT-LICENSE.txt": "0a77565a50c3462831244452f129c38d2adc4fd07897cbeba8adc943f958604e",
     "assets/report/research/open-source-vfx-2026-10-31.json": "ea103555ec98a67a5d56a34868a3d31a1cf2b4bda433f6f87611c1c50b92ccc6",
-    "assets/report/weekly-editorial.css": "5fa82c68e902c1ba9d381a22c687c597b2f57a3e4c9b53935a702e64ceab6fd7",
-    "assets/report/research/ai-solo-creators-2026-10-31.json": "f7e822bb7013ab881ad052df506700898746e924f9a075f0ff9cf89a40ab88ab",
-    "assets/report/reading-experience.js": "3903e61db604956965ff7b3571c89cc0a977e7f6be04c6a26a141a5951487ab8"
+    "assets/report/weekly-editorial.css": "3427051f4d779fc89507c31ddaa097ed54412d948da4aac04a1119d1193cd945",
+    "assets/report/research/ai-solo-creators-2026-10-31.json": "a9da1fe8ea31553d59e24e9e648c9ff016d856a80ab45e78e15416372d67c37a",
+    "assets/report/reading-experience.js": "3903e61db604956965ff7b3571c89cc0a977e7f6be04c6a26a141a5951487ab8",
+    "assets/report/research/scenario-3d-2026-10-31.json": "dfb11c0d7efa09c5cb4358b1bbe0d8488b0853c0a17c28988397c505aeab9ea6",
+    "assets/report/scenario-3d-2026-10-31/meshy-example.jpg": "75ba805fc709cc7d0367c9501eae9c3c5248e1fd971b7e4dc027d10130999e08",
+    "assets/report/scenario-3d-2026-10-31/SOURCES.md": "408e2aaa5b981fae9512981777306076d4f32077e1137da34339c1cad28b52c9",
+    "assets/report/scenario-3d-2026-10-31/LICENSE.txt": "929fa01d9111e0b91694aac008abd6d782545be96c9cd08fed27184b959396c6"
   },
   "skillSelectionReview": {
     "reviewer": "/root/final_review",
@@ -3507,6 +3535,29 @@
       "화면 배치·클릭·반응형 검사는 이 검수자가 직접 수행하지 않음",
       "이전 본문과 Markdown은 재조사하지 않고 이전 파일과 보존을 비교함",
       "하네스 자동 검사는 조사 기록의 형식·신선도·출처 결속을 검증하며 실제 조사나 사실성을 보증하지 않음"
+    ]
+  },
+  "scenarioSupplementReview": {
+    "reviewedAt": "2026-11-02",
+    "sha256": "e98c29b3f1cacebcd705b02f55457aee18f9ba1778769fa28129a4b8c56dc93c",
+    "reviewer": "/root/creator_content_review",
+    "scope": [
+      "Scenario 데이터 카드·README·LICENSE·메타데이터 조회와 본문·공개 원장의 1,342예제·1,500파일·38.7GB·형식별 개수 및 52개 식별자 대조",
+      "제작자의 구조 검사·Blender 137건 및 텍스처 누락과 독립 재현·품질 인증의 차이 확인",
+      "CC BY 4.0 Scenario 출처·라이선스·수정 고지 및 별도 Hunyuan 공개 카드의 지역·AI 학습 제한·Pro 별도 조건·미열람 범위 대조",
+      "AI놀이터 원문 제목·2026.09.24 한국 날짜·37:46·비공식 팬 제작·일반 AI 채널 중 게임 제작 영상 선별을 확인",
+      "공식 JPEG 미리보기의 실제 이미지·라이선스·원문 SHA256과 로컬 복제 해시 확인",
+      "한국어 신규 내용의 숫자·날짜·명칭/인과/부정/인용/핵심 주장과 불확실성/말투를 원문과 대조",
+      "기존 채널 18개·개별 영상 3개 각 HTML 블록과 원장 보존, Markdown 9개 및 복사 원문 6개 동일, 프롬프트 12개 확인",
+      "데이터셋의 코드·가중치 구분과 조건 확인이 스킬·운영 계약·예약 전문에 연결됨을 확인",
+      "후속 요청인 새로운 유용 제작 자료 탐색·선정 근거·무료 범위/라이선스/엔진/실습·대표 자료 요약/전송 반영이 출력 계약과 Windows/Mac 예약 전문에 연결되고 기존 검수·전송 게이트 및 오래된 자료 구분을 유지하는지 대조"
+    ],
+    "verification": "59개Node테스트와4폭브라우저회귀·12복사·새영역최소14px·미리보기640px/3:2·차트1500합·독립내용/한국어/라이선스대조",
+    "limitations": [
+      "전체 영상 시청·전체 데이터셋 및 3D 모델 다운로드·모델 생성·게임 엔진 실행을 수행하지 않음",
+      "별도 Hunyuan 컬렉션의 gated LICENSE·NOTICE 원문은 열지 않았고 공개 카드만 확인",
+      "반응형 화면 및 복사 동작 브라우저 검사는 이 검수자가 수행하지 않았으며 주 에이전트 검증 범위",
+      "실제 주간 예약 실행과 Discord 전송을 수행하지 않음"
     ]
   }
 }

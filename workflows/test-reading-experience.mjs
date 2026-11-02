@@ -36,6 +36,7 @@ try {
   const careers={visible:!hasClosedParent(document.querySelector('.career-guide')),paths:document.querySelectorAll('.career-paths a').length,categories:document.querySelectorAll('[data-career-category]').length,headerPreviews:document.querySelectorAll('#careers .chapter-head .reading-media-previews').length};
   const vfx=document.querySelector('.open-source-supplement'),openSourceVfx={visible:!hasClosedParent(vfx),tools:vfx.querySelectorAll('[data-open-source-tool]').length,prompts:vfx.querySelectorAll('.practice-prompt').length,links:[...vfx.querySelectorAll('.vfx-jump a')].every(a=>document.querySelector(a.getAttribute('href'))),videoPreload:vfx.querySelector('video').preload,autoplay:vfx.querySelector('video').autoplay};
   const creatorRoot=document.getElementById('ai-solo-creators'),creators={visible:!hasClosedParent(creatorRoot),channels:creatorRoot.querySelectorAll('[data-creator-handle]').length,groups:creatorRoot.querySelectorAll('.creator-group').length,openGroups:creatorRoot.querySelectorAll('.creator-group[open]').length,previews:creatorRoot.querySelectorAll('[data-youtube-play]').length,references:creatorRoot.querySelectorAll('[data-reference-video]').length,iframes:creatorRoot.querySelectorAll('iframe').length};
+  const collectionRoot=document.getElementById('scenario-3d-collection'),collection={visible:!hasClosedParent(collectionRoot),formats:collectionRoot.querySelectorAll('[data-output-count]').length,total:[...collectionRoot.querySelectorAll('[data-output-count]')].reduce((n,e)=>n+Number(e.dataset.outputCount),0),steps:collectionRoot.querySelectorAll('.vfx-workflow li').length,prompts:collectionRoot.querySelectorAll('.practice-prompt').length};
   document.querySelector('a[href=\"#ai-solo-content-reference\"]').click();creators.referenceOpens=document.getElementById('ai-solo-content-reference').open;
   document.getElementById('tool-meshy').closest('.reading-detail').open=false;
   const link=document.querySelector('.reading-tool-previews a[href="#tool-spritegen"]');
@@ -46,7 +47,7 @@ try {
   buttons[1].click();const allClosed=groups.every(group=>!group.open);
   dispatchEvent(new Event('beforeprint'));const printOpen=[...document.querySelectorAll('main details:not(.mobile-nav)')].every(detail=>detail.open);
   dispatchEvent(new Event('afterprint'));const restored=groups.every(group=>!group.open);
-  return {creators,openSourceVfx,careers,labDataVisible:!hasClosedParent(document.querySelector('#lab .grid2 .table-scroll')),skillEvidence,ideaImages,international,readerGuide,visuals,media,visualsLabeled,detailLabel,summaryPresent,highlights,count:groups.length,directHashOpen,linkedToolOpen,allOpen,allClosed,printOpen,restored,
+  return {collection,creators,openSourceVfx,careers,labDataVisible:!hasClosedParent(document.querySelector('#lab .grid2 .table-scroll')),skillEvidence,ideaImages,international,readerGuide,visuals,media,visualsLabeled,detailLabel,summaryPresent,highlights,count:groups.length,directHashOpen,linkedToolOpen,allOpen,allClosed,printOpen,restored,
    previews:document.querySelectorAll('.reading-tool-previews img').length,
    benchmarkVisible:!hasClosedParent(document.getElementById('benchmark-chart')),
    simulationVisible:!hasClosedParent(document.getElementById('simulation-chart'))};
@@ -82,10 +83,11 @@ try {
 
    const textSizes=[...document.querySelectorAll('body *')].filter(e=>!['SCRIPT','STYLE'].includes(e.tagName)&&[...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim())).map(e=>parseFloat(getComputedStyle(e).fontSize)).filter(Number.isFinite);
    const minTextSize=Math.min(...textSizes);
+   const cr=document.querySelector('.collection-preview img').getBoundingClientRect(),collectionPreview={width:cr.width,height:cr.height};
    const vfxImageSizes=[...document.querySelectorAll('.vfx-media img')].map(image=>{const r=image.getBoundingClientRect();return {width:r.width,height:r.height};});
    const imageSizes=topImages.map(image=>{const r=image.getBoundingClientRect();return {width:r.width,height:r.height,naturalRatio:image.naturalHeight/image.naturalWidth};});
    const previewRatios=[...document.querySelectorAll('.reading-media-previews figure>a img')].map(image=>{const r=image.getBoundingClientRect();return r.height/r.width;});
-   return {vfxImageSizes,recordColumnShare,compactTableFits,minTextSize,width:innerWidth,overflow:document.documentElement.scrollWidth>innerWidth,paragraph:parseFloat(getComputedStyle(document.querySelector('.chapter-head p')).fontSize),chapterBorder:parseFloat(getComputedStyle(document.querySelector('#ai-trends')).borderTopWidth),imageSizes,previewRatios};
+   return {collectionPreview,vfxImageSizes,recordColumnShare,compactTableFits,minTextSize,width:innerWidth,overflow:document.documentElement.scrollWidth>innerWidth,paragraph:parseFloat(getComputedStyle(document.querySelector('.chapter-head p')).fontSize),chapterBorder:parseFloat(getComputedStyle(document.querySelector('#ai-trends')).borderTopWidth),imageSizes,previewRatios};
   }));
  }
  await page.click('#report-share');
@@ -105,7 +107,8 @@ try{
   const line=output.split('\n').find(line=>line.startsWith('RESULT '));
   assert.ok(line,JSON.stringify(output));
   const result=JSON.parse(line.slice(7));
-  assert.deepEqual(result.creators,{visible:true,channels:18,groups:5,openGroups:1,previews:21,references:3,iframes:0,referenceOpens:true});
+  assert.deepEqual(result.collection,{visible:true,formats:6,total:1500,steps:4,prompts:1});
+  assert.deepEqual(result.creators,{visible:true,channels:19,groups:5,openGroups:1,previews:22,references:3,iframes:0,referenceOpens:true});
   assert.deepEqual(result.careers,{visible:true,paths:4,categories:5,headerPreviews:0});
   assert.deepEqual(result.openSourceVfx,{visible:true,tools:2,prompts:2,links:true,videoPreload:'none',autoplay:false});
   assert.match(result.detailLabel,/인기 GitHub 저장소 중 게임 개발에 참고할 자료/);
@@ -113,9 +116,9 @@ try{
   assert.equal(result.toolFilters.images,15);assert.equal(result.toolFilters.steps,5);assert.equal(result.toolFilters.routeImage,true);for(const f of result.toolFilters.results){assert.equal(f.cards,f.expected);assert.equal(f.rows,f.expected);assert.equal(f.matrix,f.expected);assert.equal(f.pressed,f.value);}
   for(const key of ['cards','blocks','marked','originalDetails','rows'])assert.equal(result.skillEvidence[key],9,key);assert.equal(result.skillEvidence.toolChartOutsideSkills,true);
   assert.equal(result.ideaImages,6);assert.equal(result.labDataVisible,true);assert.equal(result.international,3);assert.equal(result.readerGuide,true);
-  assert.equal(result.summaryPresent,true);assert.deepEqual(result.practice,{count:11,exact:true,fallback:true,toolPromptVisible:true});
+  assert.equal(result.summaryPresent,true);assert.deepEqual(result.practice,{count:12,exact:true,fallback:true,toolPromptVisible:true});
   assert.ok(result.highlights>=3);
-  for(const layout of result.layouts){assert.ok(layout.vfxImageSizes[0].width<=576,'Pixel capture enlarged too far at '+layout.width);assert.ok(Math.abs(layout.vfxImageSizes[0].width/layout.vfxImageSizes[0].height-1.2)<.02,'Pixel capture stretched');assert.ok(layout.recordColumnShare>=.6,'Explanation column too narrow at '+layout.width);assert.equal(layout.compactTableFits,true,'Unnecessary short-table scrolling at '+layout.width);assert.ok(layout.minTextSize>=11,'Text below 11px at '+layout.width);assert.equal(layout.overflow,false,'overflow at '+layout.width);assert.ok(layout.paragraph>=17);assert.equal(layout.chapterBorder,2);for(const image of layout.imageSizes){assert.ok(Math.abs(image.height/image.width-image.naturalRatio)<.02,'TOP image letterboxing at '+layout.width);}for(const ratio of layout.previewRatios)assert.ok(Math.abs(ratio-9/16)<.02,'Preview stretched at '+layout.width);}
+  for(const layout of result.layouts){assert.ok(layout.collectionPreview.width<=640);assert.ok(Math.abs(layout.collectionPreview.width/layout.collectionPreview.height-1.5)<.02);assert.ok(layout.vfxImageSizes[0].width<=576,'Pixel capture enlarged too far at '+layout.width);assert.ok(Math.abs(layout.vfxImageSizes[0].width/layout.vfxImageSizes[0].height-1.2)<.02,'Pixel capture stretched');assert.ok(layout.recordColumnShare>=.6,'Explanation column too narrow at '+layout.width);assert.equal(layout.compactTableFits,true,'Unnecessary short-table scrolling at '+layout.width);assert.ok(layout.minTextSize>=11,'Text below 11px at '+layout.width);assert.equal(layout.overflow,false,'overflow at '+layout.width);assert.ok(layout.paragraph>=17);assert.equal(layout.chapterBorder,2);for(const image of layout.imageSizes){assert.ok(Math.abs(image.height/image.width-image.naturalRatio)<.02,'TOP image letterboxing at '+layout.width);}for(const ratio of layout.previewRatios)assert.ok(Math.abs(ratio-9/16)<.02,'Preview stretched at '+layout.width);}
   assert.equal(result.share.open,true);assert.equal(result.share.closed,true);assert.ok(result.share.icons>=8);assert.equal(result.share.closeLabel,'공유 메뉴 닫기');
   assert.ok(result.count>=10,'expected collapsed detail groups');
   assert.equal(result.previews,3,'expected three tool previews');

@@ -425,3 +425,11 @@ html:has(body.weekly-editorial){scroll-padding-top:0}
  .weekly-editorial .creator-item {grid-template-columns:minmax(0,1fr);gap:16px}
  .weekly-editorial .creator-group>summary {font-size:20px}
 }
+
+.weekly-editorial .collection-supplement {scroll-margin-top:140px}
+.weekly-editorial .collection-supplement .collection-preview {max-width:640px}
+.weekly-editorial .collection-bars {list-style:none;margin:24px 0;padding:0}
+.weekly-editorial .collection-bars li {margin:0 0 16px}
+.weekly-editorial .collection-bars li>div:first-child {display:flex;justify-content:space-between;gap:16px;font-size:16px}
+.weekly-editorial .collection-track {height:12px;background:var(--surface);margin-top:6px}
+.weekly-editorial .collection-track span {display:block;height:100%;background:var(--brand)}

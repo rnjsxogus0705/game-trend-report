@@ -101,12 +101,16 @@ Toss 스타일·Pretendard·반응형 목차·읽기 요약·차트 수치표·�
 - 후보마다 해결할 제작 문제, 선정 이유, 실제 입출력과 적용 예, 엔진 경로(직접 런타임/포팅/스프라이트 시트 내보내기), OS·GPU·의존성·에이전트 비용, 강점·제약·직접 실행 여부를 정리한다. 공식 미리보기·GIF·영상·코드·라이선스 직접 링크를 연결하고, 30~60분 분량의 작은 실습과 AI에 줄 프롬프트를 편집 제안으로 제공한다. 코드 초안→렌더→눈으로 비교→수정→엔진 확인 흐름을 도표로 설명한다. 데모나 홍보 영상만 보고 엔진 호환·성능·제작 시간 단축을 실측한 것처럼 쓰지 않는다.
 - 연구 산출물의 `openSourceToolSearch`에 `status`(updated/no_material_change/unverified), 실제 `searchedAt`(날짜 또는 시간대가 있는 시각), `searchScope`, `sourceUrls`, `finding`과 미확인일 때 `limitation`을 기록한다. 확인일은 발행일의 한국 날짜 기준 7일 전부터 당일까지이고, 각 sourceUrls는 research.sources.uri에도 있어야 한다. 새 소식이 없어도 공식 목록을 실제 확인한 범위와 결과를 기록한다. 후보는 기존 game-tools.json에 보존하고 본문 game-ai-tools에 ‘게임 제작 오픈소스·코드 기반 도구’로 묶으며 Agent Skill·GitHub 섹션에서는 같은 자료를 재집계하지 않고 연결한다. 하네스는 조사 기록 누락·오래된 확인일·원장 밖 출처·미확인 한계 누락을 차단한다. 형식 검사는 실제 조사와 내용 검수를 대신하지 않는다.
 
+유용한 제작 자료는 현재 추적 예시에 한정하지 않고 공식 저장소·제작자 글·데이터셋 원문에서 새 후보를 찾는다. 실제 게임 제작 문제와 연결되는 자료를 선정하고 핵심 활용법·무료/유료 범위·라이선스 예외·엔진 적용 경로·직접 확인한 범위·작은 실습을 정리한다. 대표 자료가 있는 주에는 상단 요약과 전송용 `.summary.txt`에도 선정 이유와 핵심 한 가지, 출처 또는 본문 해당 항목 링크를 담는다. 전송기 길이 제한을 지키고 검수·배포 대조 후 기존 봇 경로로 보낸다. 새 자료가 없으면 없는 사실을 밝히며 이전 자료를 매주 새 소식처럼 채우지 않는다.
+
 초기 추적 예시(2026.11.02 확인):
 
 | 후보·자료 | 확인한 내용과 선정 이유 | 추적 원문·한계 |
 |---|---|---|
 | pixelfx / patch-gg | README는 코드 기반 픽셀 효과와 브라우저 직접 사용, PNG+JSON 스프라이트 시트 내보내기, Claude Code 스킬을 설명한다. AI에게 효과 변형을 요청하고 렌더 결과를 비교하는 실습에 적합하다. 코드·효과는 MIT이며 포함 폰트는 별도 조건이다. | [공식 데모](https://patch-gg.github.io/pixelfx/), [저장소](https://github.com/patch-gg/pixelfx), [README](https://raw.githubusercontent.com/patch-gg/pixelfx/main/README.md), [LICENSE](https://raw.githubusercontent.com/patch-gg/pixelfx/main/LICENSE), [NOTICE](https://raw.githubusercontent.com/patch-gg/pixelfx/main/NOTICE.md), [실제 스킬](https://raw.githubusercontent.com/patch-gg/pixelfx/main/skills/pixelfx/SKILL.md). 저장소 생성일은 2026.10.30으로 확인했지만 정식 버전 출시일로 간주하지 않는다. 확인 시 공개 GitHub Releases는 비어 있었다. 설치·내보내기·엔진 호환·성능은 직접 시험하지 않았다. |
 | Sprite Fusion 픽셀 VFX와 Claude 제작 글 / Hugo Duprez | [2026.10.28 제작 글](https://www.spritefusion.com/blog/how-to-make-good-pixel-art-effects-with-claude)은 여러 코드 시안을 렌더하고 눈으로 선택·수정하는 방법을 설명한다. [VFX 라이브러리](https://www.spritefusion.com/pixel-art-vfx)와 [Dash & Blink](https://www.spritefusion.com/pixel-art-vfx/movement)는 소스 다운로드와 MIT 상업 이용 안내를 제공한다. | 제작 방법 글과 코드 라이브러리를 구분한다. TypeScript 효과는 JS/TS에서 사용하고 다른 엔진은 포팅 또는 별도 시트 추출이 필요하다는 공식 설명이다. 이 MIT 안내를 Sprite Fusion의 유료 생성기·API·사이트 전체에 일반화하지 않는다. ZIP의 실제 라이선스 파일·MCP 인증/요금·엔진 포팅은 시험하지 않았다. |
+
+공개 3D 자료도 추적한다. [Scenario 3D Collection](https://huggingface.co/datasets/scenario-labs/3d-collection)은 2026.11.02에 예제 1,342개·출력 1,500개·38.7GB와 메타데이터를 확인한 신규 관찰 자료다. 코드·가중치 공개와 자산 배포를 구분하고, 다음 호에서는 원문 revision·예제 수/출력 수/용량·누락된 입력·형식·항목별 라이선스·구조 검사와 엔진 검증 차이를 다시 확인한다. 본 컬렉션 CC BY 4.0과 별도 Hunyuan 393개 자체 조건을 합치지 않는다. 이전 수치나 상업 이용 조건을 새 확인 없이 복사하거나 이 자료를 매주 새 출시로 소개하지 않는다.
 
 pixelfx의 README/NOTICE가 Sprite Fusion 방식과 일부 코드의 출처를 명시한다. 두 자료는 서로 관련된 사례이며 독립적인 유행 근거 두 건으로 부풀리지 않는다. 위 목록은 탐색 출발점이며 고정 추천이나 다음 호의 새 소식을 대신하지 않는다. 각 호는 그 주에 다시 확인하고, 10/28 글이 최근 7일 밖이면 배경 자료로 분류한다.
 
