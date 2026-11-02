@@ -53,6 +53,8 @@ READING-AND-SCHEDULER.md의 품질 검수 6단계와 실습 DOM 계약을 따른
 ## 코드 기반 게임 제작 오픈소스 조사
 research 단계에서 REPORT-OUTPUT-CONTRACT.md의 오픈소스 탐색을 수행하고 openSourceToolSearch와 출처 원장을 결속한다. pixelfx·Sprite Fusion 유형의 작은 제작 도구도 탐색하며 그 주의 새 변경과 기존 참고를 구분한다. 후보의 공개 코드·라이선스 예외·엔진 경로·선정 이유·공식 미디어·실습을 작성하고 독립 검수한다. 준비 게이트는 이 탐색 기록·확인일·출처·미확인 사유 누락을 차단한다.
 
+공개 자산·데이터셋도 Scenario 같은 초기 예시 밖에서 새 후보를 탐색한다. 코드/가중치 공개와 자산 배포, 예제/출력 수·누락 입력·형식·엔진 경로·라이선스 예외를 구분하고 `openSourceToolSearch.publicAssets`에 별도 조사 기록을 남긴다. 두 독립 검수의 `publicAssetsReviewed`가 있어야 준비 게이트를 통과한다. 선정한 대표 자료는 상단 요약·전송 요약과 출처에 연결하며 기존 검수·배포 대조·봇 전송 검증을 유지한다.
+
 ## AI 게임 제작 채널의 조사와 공개 원장
 매주 저장소의 `instructions/AI-SOLO-CREATOR-WATCHLIST.json`에서 현재 주시 채널 19곳과 개별 참고 영상 3편을 확인한다. 개별 영상의 채널을 자동으로 주시하지 않고 매주 모든 영상을 반복 추천하지 않는다. 목록 밖에서도 한국어·영어로 최신 콘텐츠를 검색하고 존재하는 유효한 이전 호 공개 원장 전체의 `videos`·`channels`·`referenceVideos`에 담긴 videoId와 대조해 재소개 사유를 기록한다. 해당 호의 `assets/report/research/ai-solo-creators-YYYY-MM-DD.json`은 `reportDate`·`videos`를 담아 공개 파일 목록과 최종 해시 검수에 포함한다. `research.creatorContentSearch.referenceVideos`·`selectedVideos`와 독립 검수의 `referenceVideoIdsReviewed`를 운영 계약에 맞게 기록한다. 조사·선정·참고 영상과 독립 검수의 세부 필드 및 차단 기준은 [운영 계약](../.agents/skills/weekly-game-report/references/operating-contract.md)과 [출력 계약](REPORT-OUTPUT-CONTRACT.md)을 따른다.
 

@@ -55,3 +55,5 @@ Windows에서는 저장소를 `site/`에 클론하고 프로젝트 스킬, 하�
 - 매호 `assets/report/research/ai-solo-creators-YYYY-MM-DD.json` 공개 원장의 `reportDate`와 `videos`를 issue-index 및 최종 해시에 포함한다. 공개 원장이 Git에 남아야 다른 PC의 다음 호에서도 비교할 수 있다. 채널 조사·참고 영상·선정 영상·독립 검수의 세부 필드는 최신 [운영 계약](../.agents/skills/weekly-game-report/references/operating-contract.md)과 [출력 계약](REPORT-OUTPUT-CONTRACT.md)이 기준이다. 형식 검사는 실제 원문 대조나 중복 판단을 대신하지 않는다.
 - [새 Mac 설정 순서](../README.md#새-mac에서-처음-설정하기)에 클론·프로젝트 등록·도구·인증·연결 검사·예약 등록을 모았다. Mac은 토요일 08시에 제작을 시작하고 검수·배포 후 두 채널에 전송한다. Windows의 07시 준비·08시 전송 구현은 현재 한 채널만 지원한다. 실제 새 Mac/Windows의 예약 실행과 전송은 별도 확인이 필요하다.
 - PC 변경 시 예약·토큰·비공개 전송 기록은 Git으로 복원되지 않는다. 이전 PC의 기록을 안전하게 인계하고 실제 채널 메시지를 확인한 뒤 진행한다. 같은 호를 임의로 다시 보내거나 영수증을 조작해 검증을 우회하지 않는다.
+
+공개 자산·데이터셋은 `openSourceToolSearch.publicAssets`의 별도 조사 기록·신선도·출처·미확인 한계를 검사하고, 양 독립 검수의 `publicAssetsReviewed`를 요구한다. Scenario는 초기 관찰 자료이며 다음 호의 수치·권리 조건은 원문에서 다시 확인한다. AI놀이터를 포함한 채널은 주시 목록의 `scope`에 맞는 게임 제작 콘텐츠만 선별한다. 이 지침과 검사기는 Git으로 함께 내려오며 실제 예약 객체는 최신 전문으로 별도 등록한다.

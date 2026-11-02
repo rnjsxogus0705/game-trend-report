@@ -342,6 +342,8 @@ node workflows/build-site.mjs
 
 AI 게임 제작 오픈소스도 매주 조사합니다. pixelfx·Sprite Fusion의 코드 기반 픽셀 VFX처럼 대형 서비스나 Trending 밖의 실제 제작 도구를 [출력 계약의 탐색 기준과 초기 추적 예시](instructions/REPORT-OUTPUT-CONTRACT.md)에 포함했습니다. 스킬·하네스·OS별 예약 전문이 research.openSourceToolSearch로 연결되며, 새 PC도 최신 main과 예약 전문을 사용합니다. 소개만을 위해 외부 스킬을 자동 설치하거나 코드를 실행하지 않습니다.
 
+공개 자산·데이터셋도 별도로 조사합니다. Scenario 3D Collection은 초기 관찰 예시이며 매주 수치와 이용 조건을 검증 없이 재사용하지 않습니다. `research.openSourceToolSearch.publicAssets`의 조사 범위·확인일·출처·상태·한계와 두 독립 검수의 `publicAssetsReviewed`를 준비 게이트에서 확인합니다. 코드·가중치·자산 배포, 예제 수와 출력 파일 수, 누락 메타데이터, 형식·엔진 경로, 항목별 라이선스와 별도 컬렉션 조건을 구분합니다. 유용한 대표 자료는 선정 이유·공식 미디어·실습과 함께 리포트 및 전송 요약에 반영합니다.
+
 ## AI 게임 제작 채널과 다음 호 중복 확인
 
 [주시 목록](instructions/AI-SOLO-CREATOR-WATCHLIST.json)은 저장소 `instructions/`에서 직접 읽는 현재 19개 채널과 개별 참고 영상 3편의 기준입니다. Windows에서는 `site/instructions/` 경로입니다. 세 영상의 채널 전체를 자동 주시 목록에 넣거나 매주 모든 영상을 반복 추천하지 않습니다. 목록 밖의 최신 제작 영상도 한국어와 영어로 검색하고, 존재하는 유효한 이전 호 원장 전체의 `videos`·`channels`·`referenceVideos`에 담긴 videoId와 비교해 재소개 사유를 기록합니다.

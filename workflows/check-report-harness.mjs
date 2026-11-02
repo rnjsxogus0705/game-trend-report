@@ -64,6 +64,12 @@ export async function checkReportHarness({root,runId,revision}){
  insist(Number.isFinite(toolSearchDay)&&toolSearchDay>=issueDay-7*day&&toolSearchDay<=issueDay,'Open-source tool search date is stale or invalid');
  insist(Array.isArray(openTools.sourceUrls)&&openTools.sourceUrls.length>0&&openTools.sourceUrls.every(url=>records.research.sources.some(source=>source.uri===url)),'Open-source tool search sources are not linked to research.sources');
  if(openTools.status==='unverified')insist(typeof openTools.limitation==='string'&&openTools.limitation.trim(),'Open-source tool search limitation missing');
+ const publicAssets=openTools.publicAssets;
+ insist(publicAssets&&['updated','no_material_change','unverified'].includes(publicAssets.status)&&['searchScope','finding'].every(key=>typeof publicAssets[key]==='string'&&publicAssets[key].trim()),'Public assets search record missing or incomplete');
+ const assetsSearchDay=sourceDay(publicAssets.searchedAt);
+ insist(Number.isFinite(assetsSearchDay)&&assetsSearchDay>=issueDay-7*day&&assetsSearchDay<=issueDay,'Public assets search date is stale or invalid');
+ insist(Array.isArray(publicAssets.sourceUrls)&&publicAssets.sourceUrls.length>0&&publicAssets.sourceUrls.every(url=>records.research.sources.some(source=>source.uri===url)),'Public assets search sources are not linked to research.sources');
+ if(publicAssets.status==='unverified')insist(typeof publicAssets.limitation==='string'&&publicAssets.limitation.trim(),'Public assets search limitation missing');
 
  const watchlist=JSON.parse(await read('instructions/AI-SOLO-CREATOR-WATCHLIST.json'));
  const handles=watchlist.channels?.map(channel=>channel.handle);
@@ -146,6 +152,7 @@ export async function checkReportHarness({root,runId,revision}){
  }
  for(const id of ['editorial-review','final-review']){
   const review=records[id];insist(review.verdict==='approved'&&Array.isArray(review.blockers)&&review.blockers.length===0,'Review gate not approved: '+id);
+  insist(review.publicAssetsReviewed===true,'Independent public assets review missing: '+id);
   insist(Array.isArray(review.referenceVideoIdsReviewed)&&review.referenceVideoIdsReviewed.length===referenceVideos.length&&new Set(review.referenceVideoIdsReviewed).size===referenceVideos.length&&referenceVideos.every(v=>review.referenceVideoIdsReviewed.includes(v.videoId)),'Independent creator reference review missing: '+id);
   insist(Array.isArray(review.careerCategoriesReviewed)&&review.careerCategoriesReviewed.length===careerCategories.length&&careerCategories.every(category=>review.careerCategoriesReviewed.includes(category)),'Independent career category review missing: '+id);
   insist(review.method==='native-subagent'&&typeof review.sessionId==='string'&&review.sessionId&&typeof issue.editorSessionId==='string'&&issue.editorSessionId&&review.sessionId!==issue.editorSessionId,'Independent review execution record missing');
