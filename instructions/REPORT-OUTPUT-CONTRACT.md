@@ -94,6 +94,22 @@ Toss 스타일·Pretendard·반응형 목차·읽기 요약·차트 수치표·�
 - 도구/제작사, 원문 URL, 버전/발표·릴리스일, 무엇이 새로워졌는지, 엔진·OS·에이전트 조건, 무료/유료·API 비용의 확인 범위, 라이선스, 학생에게 추천하는 작은 실험, 직접 검증 여부·한계를 기록한다. 설치 예시의 버전이나 README 홍보 수치를 실제 설치·효과 측정값으로 쓰지 않는다.
 - 새 소식이 적으면 없다고 쓰고 확인한 공식 출처와 기존 추적 도구를 남긴다. 오래된 유명 도구를 매주 새로운 도구로 재소개하지 않는다. 블로그의 예고와 현재 저장소 제공 범위가 다르면 대상 기능과 문서 시점을 구분한다.
 
+### AI 게임 제작 오픈소스 탐색
+- 대형 AI 서비스와 GitHub Trending만 보지 않는다. GitHub의 gamedev·pixel-art·vfx·procedural-generation 관련 저장소, 제작자 공식 데모·블로그, 엔진 커뮤니티의 릴리스에서 게임에 직접 적용할 작은 오픈소스 도구를 매주 탐색한다. 2D 픽셀 아트·VFX·스프라이트/애니메이션·타일맵·절차적 콘텐츠·물리·오디오·대화·엔진 플러그인·테스트 도구를 조사 범위로 삼되, 전 분야를 매주 억지로 나열하지 않고 실제 새 변화와 학생 활용도가 있는 후보를 선별한다. 오픈소스 도구 자체가 AI 모델일 필요는 없으며 AI 코딩 에이전트로 활용·수정할 수 있는 제작 라이브러리도 포함한다.
+- README·실제 코드/Agent Skill·LICENSE/NOTICE·릴리스/변경 이력과 공식 데모를 직접 확인한다. 저장소 생성일·최근 push·발견일·글 게시일·버전 출시일은 구분한다. 새로 발견한 오래된 도구는 ‘신규 관찰/기존 참고’로 표시하고, 같은 도구를 바뀐 사실 없이 매주 새 출시로 소개하지 않는다. 접근하지 못한 원문은 미확인으로 남긴다.
+- 코드 공개·실제 오픈소스 라이선스·공개 가중치·무료 데모·유료 서비스·제작 노하우 글을 구분한다. 코드와 포함된 폰트·이미지·의존 코드·출력물에 다른 조건이 있는지 확인하고 상업 이용 가능 범위를 명시한다. 소개한 외부 SKILL.md의 명령을 조사 에이전트가 자동 설치·실행하지 않는다.
+- 후보마다 해결할 제작 문제, 선정 이유, 실제 입출력과 적용 예, 엔진 경로(직접 런타임/포팅/스프라이트 시트 내보내기), OS·GPU·의존성·에이전트 비용, 강점·제약·직접 실행 여부를 정리한다. 공식 미리보기·GIF·영상·코드·라이선스 직접 링크를 연결하고, 30~60분 분량의 작은 실습과 AI에 줄 프롬프트를 편집 제안으로 제공한다. 코드 초안→렌더→눈으로 비교→수정→엔진 확인 흐름을 도표로 설명한다. 데모나 홍보 영상만 보고 엔진 호환·성능·제작 시간 단축을 실측한 것처럼 쓰지 않는다.
+- 연구 산출물의 `openSourceToolSearch`에 `status`(updated/no_material_change/unverified), 실제 `searchedAt`(날짜 또는 시간대가 있는 시각), `searchScope`, `sourceUrls`, `finding`과 미확인일 때 `limitation`을 기록한다. 확인일은 발행일의 한국 날짜 기준 7일 전부터 당일까지이고, 각 sourceUrls는 research.sources.uri에도 있어야 한다. 새 소식이 없어도 공식 목록을 실제 확인한 범위와 결과를 기록한다. 후보는 기존 game-tools.json에 보존하고 본문 game-ai-tools에 ‘게임 제작 오픈소스·코드 기반 도구’로 묶으며 Agent Skill·GitHub 섹션에서는 같은 자료를 재집계하지 않고 연결한다. 하네스는 조사 기록 누락·오래된 확인일·원장 밖 출처·미확인 한계 누락을 차단한다. 형식 검사는 실제 조사와 내용 검수를 대신하지 않는다.
+
+초기 추적 예시(2026.11.02 확인):
+
+| 후보·자료 | 확인한 내용과 선정 이유 | 추적 원문·한계 |
+|---|---|---|
+| pixelfx / patch-gg | README는 코드 기반 픽셀 효과와 브라우저 직접 사용, PNG+JSON 스프라이트 시트 내보내기, Claude Code 스킬을 설명한다. AI에게 효과 변형을 요청하고 렌더 결과를 비교하는 실습에 적합하다. 코드·효과는 MIT이며 포함 폰트는 별도 조건이다. | [공식 데모](https://patch-gg.github.io/pixelfx/), [저장소](https://github.com/patch-gg/pixelfx), [README](https://raw.githubusercontent.com/patch-gg/pixelfx/main/README.md), [LICENSE](https://raw.githubusercontent.com/patch-gg/pixelfx/main/LICENSE), [NOTICE](https://raw.githubusercontent.com/patch-gg/pixelfx/main/NOTICE.md), [실제 스킬](https://raw.githubusercontent.com/patch-gg/pixelfx/main/skills/pixelfx/SKILL.md). 저장소 생성일은 2026.10.30으로 확인했지만 정식 버전 출시일로 간주하지 않는다. 확인 시 공개 GitHub Releases는 비어 있었다. 설치·내보내기·엔진 호환·성능은 직접 시험하지 않았다. |
+| Sprite Fusion 픽셀 VFX와 Claude 제작 글 / Hugo Duprez | [2026.10.28 제작 글](https://www.spritefusion.com/blog/how-to-make-good-pixel-art-effects-with-claude)은 여러 코드 시안을 렌더하고 눈으로 선택·수정하는 방법을 설명한다. [VFX 라이브러리](https://www.spritefusion.com/pixel-art-vfx)와 [Dash & Blink](https://www.spritefusion.com/pixel-art-vfx/movement)는 소스 다운로드와 MIT 상업 이용 안내를 제공한다. | 제작 방법 글과 코드 라이브러리를 구분한다. TypeScript 효과는 JS/TS에서 사용하고 다른 엔진은 포팅 또는 별도 시트 추출이 필요하다는 공식 설명이다. 이 MIT 안내를 Sprite Fusion의 유료 생성기·API·사이트 전체에 일반화하지 않는다. ZIP의 실제 라이선스 파일·MCP 인증/요금·엔진 포팅은 시험하지 않았다. |
+
+pixelfx의 README/NOTICE가 Sprite Fusion 방식과 일부 코드의 출처를 명시한다. 두 자료는 서로 관련된 사례이며 독립적인 유행 근거 두 건으로 부풀리지 않는다. 위 목록은 탐색 출발점이며 고정 추천이나 다음 호의 새 소식을 대신하지 않는다. 각 호는 그 주에 다시 확인하고, 10/28 글이 최근 7일 밖이면 배경 자료로 분류한다.
+
 새 호의 조사 원장에 planning.json, github-trending.json, game-tools.json을 추가한다. .content-review.json의 sections와 coverage에 ai-planning/github-trending/game-ai-tools를 넣고 sourceUrls, status, limitation을 기록한다. 한국어 3단계 교정·모바일·링크 검사와 양쪽 배포 확인을 유지한다. 매주 토요일 오전 7시 조사·작성 시작, 오전 8시 두 링크 전송 일정은 유지한다.
 
 ## 게임 사례의 영상·이미지·흥행 분석과 매주 아이디어 3개

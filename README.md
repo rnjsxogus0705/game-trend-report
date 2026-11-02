@@ -316,3 +316,5 @@ node workflows/build-site.mjs
 매주 스타트업·소규모 게임사 채용, 취업 행사, 게임 제작 부트캠프, 대학 입시, 진로 뉴스를 빠짐없이 조사합니다. 모집이 없거나 원문을 확인하지 못한 범주도 검색 범위와 확인일·한계를 남깁니다. [출력 계약](instructions/REPORT-OUTPUT-CONTRACT.md)의 다섯 범주와 [프로젝트 스킬 명세](.agents/skills/weekly-game-report/references/harness-spec.json)의 조사→작성→독립 검수→준비 게이트가 연결됩니다. 조사 기록 누락·오래된 확인일·출처 미결속·본문 검수 기록 불일치·범주별 독립 검수 누락은 준비/발행 검사에서 차단합니다.
 
 새 PC는 최신 main을 받아 저장소에서 스킬을 실행합니다. 프로젝트의 `.agents/skills/weekly-game-report`, `workflows/check-report-harness.mjs`와 지침은 Git으로 함께 내려오며 전역 harness 생성기/Python은 매주 실행에 필요하지 않습니다. Windows 운영 root의 24개 동기화 목록과 site 저장소 내부 파일의 역할을 혼동하지 마세요. Windows의 07시 준비/08시 전송 전문과 macOS의 08시 단일 예약 전문은 [예약 재현 지침](instructions/READING-AND-SCHEDULER.md)에 각각 있습니다. 예약 객체·토큰·스킬 도구 설치는 Git만으로 복원되지 않으므로 해당 PC에 준비하고 기존 전송 PC와 동시에 활성화하지 않습니다.
+
+AI 게임 제작 오픈소스도 매주 조사합니다. pixelfx·Sprite Fusion의 코드 기반 픽셀 VFX처럼 대형 서비스나 Trending 밖의 실제 제작 도구를 [출력 계약의 탐색 기준과 초기 추적 예시](instructions/REPORT-OUTPUT-CONTRACT.md)에 포함했습니다. 스킬·하네스·OS별 예약 전문이 research.openSourceToolSearch로 연결되며, 새 PC도 최신 main과 예약 전문을 사용합니다. 소개만을 위해 외부 스킬을 자동 설치하거나 코드를 실행하지 않습니다.

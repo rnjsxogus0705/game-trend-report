@@ -58,6 +58,12 @@ export async function checkReportHarness({root,runId,revision}){
 
  validateCareerCoverage(records.research.careerCoverage,{issueDate:context.issueDate});
  for(const item of records.research.careerCoverage)insist(item.sourceUrls.every(url=>records.research.sources.some(source=>source.uri===url)),'Career source is not in research.sources: '+item.category);
+ const openTools=records.research.openSourceToolSearch;
+ insist(openTools&&['updated','no_material_change','unverified'].includes(openTools.status)&&['searchScope','finding'].every(key=>typeof openTools[key]==='string'&&openTools[key].trim()),'Open-source tool search record missing or incomplete');
+ const toolSearchDay=sourceDay(openTools.searchedAt);
+ insist(Number.isFinite(toolSearchDay)&&toolSearchDay>=issueDay-7*day&&toolSearchDay<=issueDay,'Open-source tool search date is stale or invalid');
+ insist(Array.isArray(openTools.sourceUrls)&&openTools.sourceUrls.length>0&&openTools.sourceUrls.every(url=>records.research.sources.some(source=>source.uri===url)),'Open-source tool search sources are not linked to research.sources');
+ if(openTools.status==='unverified')insist(typeof openTools.limitation==='string'&&openTools.limitation.trim(),'Open-source tool search limitation missing');
 
  const issue=records.issue;
  insist(Array.isArray(issue.files)&&issue.files.length>0,'Issue file list missing');

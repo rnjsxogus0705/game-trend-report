@@ -204,3 +204,6 @@ TOP 10은 실측 순위가 아닌 편집 우선순위다. 각 항목에 이번 �
 
 ## 최근 개선 사항의 매주 적용
 원문 조사는 ego-browser를 사용하고 READING-AND-SCHEDULER.md의 실습 DOM 계약·품질 검수 6단계를 따른다. REPORT-OUTPUT-CONTRACT.md의 qualityReview 기록은 2026-11-07부터 필수다. 편집자와 독립 검수자가 지적 사항을 수정·재검수한 뒤 최종 해시를 확정한다. 해외 전체 AI 제작 주장과 범위가 다른 보조 비교 사례를 구분하며 오래된 일반 강연을 대신 넣지 않는다.
+
+## AI 게임 제작 오픈소스
+매주 대형 AI 서비스·Trending 외에도 코드 기반 픽셀 VFX·스프라이트·타일맵·절차 생성·엔진 도구를 탐색한다. pixelfx·Sprite Fusion은 REPORT-OUTPUT-CONTRACT.md의 초기 추적 예시이며 실제 그 주의 출시·변경·라이선스·사용 경로를 다시 확인한다. 조사 기록은 하네스 research.openSourceToolSearch로 남기고 후보별 근거·공식 미디어·작은 실습을 기존 game-tools.json과 game-ai-tools에 정리한다. 코드 라이브러리와 노하우 글, 유료 제품을 구분하며 무료 데모를 오픈소스나 상업 이용 허용으로 추정하지 않는다.

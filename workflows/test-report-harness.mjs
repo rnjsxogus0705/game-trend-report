@@ -21,7 +21,7 @@ async function fixture(t){
  for(const task of spec.tasks)for(const id of task.outputs){
   const record={runId,issueDate:'2026-11-07',instructionRevision:revision,inputs:Object.fromEntries(task.inputs.filter(i=>Object.hasOwn(digests,i)).map(i=>[i,digests[i]]))};
   if(id==='context')Object.assign(record,{authorization:{generate:true,publish:false,send:false},instructionFiles});
-  if(id==='research'){record.sources=[{uri:'https://example.test/fixture',publisher:'fixture',retrievedAt:'2026-11-07',kind:'background',scope:'Synthetic, no actual research'}];record.careerCoverage=careerCoverage;}
+  if(id==='research'){record.sources=[{uri:'https://example.test/fixture',publisher:'fixture',retrievedAt:'2026-11-07',kind:'background',scope:'Synthetic, no actual research'}];record.careerCoverage=careerCoverage;record.openSourceToolSearch={status:'unverified',searchedAt:'2026-11-07',searchScope:'Synthetic open-source tools search',finding:'No actual search',sourceUrls:['https://example.test/fixture'],limitation:'Synthetic fixture only'};}
   if(id==='issue')Object.assign(record,{editor:'fixture-writer',editorSessionId:'fixture-writer-session',files});
   if(id.endsWith('review'))Object.assign(record,{reviewer:'fixture-reviewer',method:'native-subagent',sessionId:'fixture-review-session',verdict:'approved',blockers:[],reviewedFiles,careerCategoriesReviewed:[...careerCategories]});
   if(id==='verification')Object.assign(record,{passed:true,commands:['build-site.mjs','validate-issue.mjs'].map(name=>({argv:['node',name],exitCode:0,evidence})),ui:{widths:[320,390,768,1440],checks:['navigation','disclosure','filter','copy','share','media','downloads','print','typography','tables'],evidence:[evidence]}});
@@ -93,4 +93,14 @@ test('진로별 독립 검수·내용 영수증 일치·스킬 계약 신선도 
  for(const id of ['editorial-review','final-review']){const f=await fixture(t);f.records[id].careerCategoriesReviewed.pop();await f.rebind();await assert.rejects(f.check,/Independent career category review/);}
  const f=await fixture(t);f.records.research.careerCoverage[0].finding='Changed without content review';await f.rebind();await assert.rejects(f.check,/coverage differs/);
  for(const file of ['.agents/skills/weekly-game-report/SKILL.md','.agents/skills/weekly-game-report/references/operating-contract.md']){const f=await fixture(t);await f.write(file,'modified after preflight');await assert.rejects(f.check,/Stale instruction file/);}
+});
+test('AI 게임 제작 오픈소스 탐색의 누락·오래된 조사·미결속 출처·한계 누락 차단',async t=>{
+ for(const [change,pattern] of [
+  [r=>delete r.openSourceToolSearch,/Open-source tool search record/],
+  [r=>r.openSourceToolSearch.searchScope='',/Open-source tool search record/],
+  [r=>r.openSourceToolSearch.searchedAt='2026-10-01',/Open-source tool search date/],
+  [r=>r.openSourceToolSearch.searchedAt='2026-11-08',/Open-source tool search date/],
+  [r=>r.openSourceToolSearch.sourceUrls=['https://example.test/not-read'],/Open-source tool search sources/],
+  [r=>delete r.openSourceToolSearch.limitation,/Open-source tool search limitation/]
+ ]){const f=await fixture(t);change(f.records.research);await f.rebind();await assert.rejects(f.check,pattern);}
 });

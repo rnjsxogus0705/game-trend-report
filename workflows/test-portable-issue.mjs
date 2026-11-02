@@ -83,7 +83,7 @@ test('Windows와 Mac 예약 모두 스킬·다섯 진로 범주·검수 게이�
  const schedule=await fs.readFile(path.join(repo,'instructions/READING-AND-SCHEDULER.md'),'utf8');
  const windows=schedule.split('**매주 토요일 07:00 — 조사·작성·배포**')[1].split('**매주 토요일 08:00')[0];
  const mac=schedule.split('**macOS 매주 토요일 08:00 — 생성·검수 후 배포·전송**')[1].split('```text')[1].split('```')[0];
- for(const prompt of [windows,mac])for(const text of ['$weekly-game-report','careerCoverage','careerCategoriesReviewed','startups','events','bootcamps','admissions','news','check-report-harness.mjs'])assert.ok(prompt.includes(text),text);
+ for(const prompt of [windows,mac])for(const text of ['$weekly-game-report','careerCoverage','careerCategoriesReviewed','startups','events','bootcamps','admissions','news','check-report-harness.mjs','openSourceToolSearch','pixelfx','Sprite Fusion'])assert.ok(prompt.includes(text),text);
  for(const text of ['Asia/Seoul','--check','--send','1565894418156879942','1566098427052298342','sent/pending'])assert.ok(mac.includes(text),text);
  const spec=JSON.parse(await fs.readFile(path.join(repo,'.agents/skills/weekly-game-report/references/harness-spec.json'),'utf8'));
  for(const id of ['research','editorial-review','final-review'])assert.ok(spec.tasks.find(task=>task.id===id).completion.includes(id==='research'?'careerCoverage':'careerCategoriesReviewed'));

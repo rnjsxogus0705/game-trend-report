@@ -46,3 +46,6 @@ READING-AND-SCHEDULER.md의 품질 검수 6단계와 실습 DOM 계약을 따른
 
 ## 취업·진로 다섯 범주 확인 게이트
 스킬 명세 research→compose→editorial-review→verify→final-review가 다섯 진로 범주를 명시적으로 요구한다. 조사 원장의 careerCoverage와 내용 검수 영수증을 결속하고, 두 독립 검수 기록의 careerCategoriesReviewed와 최신 SKILL·operating-contract 해시까지 준비 게이트에서 확인한다. 모집이 없는 주도 조사 범위를 기록하며 범주를 삭제하지 않는다. Mac의 실제 08시 예약 전문과 Windows 재등록 전문은 READING-AND-SCHEDULER.md에서 함께 관리하고, 새 PC에서 최신 main을 동기화한 뒤 그 OS에 맞는 하나의 운영 방식을 선택한다.
+
+## 코드 기반 게임 제작 오픈소스 조사
+research 단계에서 REPORT-OUTPUT-CONTRACT.md의 오픈소스 탐색을 수행하고 openSourceToolSearch와 출처 원장을 결속한다. pixelfx·Sprite Fusion 유형의 작은 제작 도구도 탐색하며 그 주의 새 변경과 기존 참고를 구분한다. 후보의 공개 코드·라이선스 예외·엔진 경로·선정 이유·공식 미디어·실습을 작성하고 독립 검수한다. 준비 게이트는 이 탐색 기록·확인일·출처·미확인 사유 누락을 차단한다.

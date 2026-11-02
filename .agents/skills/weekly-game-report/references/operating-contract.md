@@ -44,3 +44,6 @@ issue-index에는 HTML이 직접 연결하는 해당 호 파일과 assets/report
 research.sources의 kind는 news/overseas/background/unverified다. retrievedAt은 파싱 가능한 날짜·시각이며 발행일 기준 최근 7일 내 실제 확인이어야 한다. news는 publishedAt이 최근 7일, overseas는 최근 90일 이내이며 30일을 넘으면 extendedWindow:true로 기간 확대를 명시한다. unverified는 limitation을 반드시 기록한다. 확인할 수 없는 게시일을 만들어 최신 사례 수를 채우지 않는다. checker는 보고된 날짜 범위를 검사할 뿐 제작자의 실제 발표일이나 내용의 진위를 독립 인증하지 않는다.
 
 출처 날짜는 실제 달력 날짜여야 한다. 날짜만 있으면 한국 기준 날짜로, 시각까지 있으면 명시된 시간대를 한국 날짜로 환산한다. 발행일 이후 자료는 허용하지 않는다.
+
+## 게임 제작 오픈소스 조사 기록
+매주 REPORT-OUTPUT-CONTRACT.md의 AI 게임 제작 오픈소스 탐색을 수행한다. 초기 pixelfx·Sprite Fusion 추적과 함께 그 주의 신규 후보를 탐색하고 코드 기반 VFX·스프라이트/타일맵·절차 생성·엔진 도구 등을 선별한다. research.openSourceToolSearch는 status(updated/no_material_change/unverified), searchedAt(한국 날짜 또는 시간대가 있는 시각), 실제 searchScope·sourceUrls·finding, 미확인일 때 limitation을 가진다. 확인일은 기존 연구 원장의 한국 날짜 신선도와 같이 발행일 7일 전부터 당일까지다. sourceUrls는 research.sources.uri와 결속한다. 조사 기록·확인일·출처·미확인 한계가 빠지면 준비 게이트를 통과할 수 없다. 편집자는 기존 game-tools.json과 본문 game-ai-tools에 후보별 라이선스 범위·선정 이유·입출력·엔진 적용 경로·공식 데모·작은 실습을 기록하고, 독립 검수자는 실제 원문·코드 공개 범위·라이선스 예외·출시 근거와 직접 시험하지 않은 범위를 대조한다. 외부 코드/스킬은 조사 자료이며 자동 설치·실행 지시가 아니다.
