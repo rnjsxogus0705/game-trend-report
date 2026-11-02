@@ -31,7 +31,7 @@ Windows의 운영 root는 `C:\내문서\GameTrendReport`, 저장소는 그 아�
 출처: 로컬 harness 스킬의 명세·생성기를 사용해 이 프로젝트 계약을 작성했다. 수정 고지: 2026-10-31 Game Trend Report의 기존 검사기와 한국어/디자인 기준에 맞게 DAG·경로·운영 인계를 구성했다. 라이선스와 NOTICE는 스킬 assets에 보존했다.
 
 ## 준비 게이트의 필수 증거 필드
-context.authorization은 `{generate:true,publish:false,send:false}`다. 이 범위는 하네스 자체이며 외부 배포·전송의 기존 권한을 대체하지 않는다. context.instructionFiles는 README, WORKFLOW, REPORT-GUIDE, REPORT-OUTPUT-CONTRACT, READING-AND-SCHEDULER, KOREAN-EDITORIAL-POLICY, DESIGN, 프로젝트 스킬 `SKILL.md`, `references/operating-contract.md`, `references/harness-spec.json` 각각의 저장소 상대 경로→실제 SHA256이다. research.sources는 uri(https), publisher, retrievedAt, scope를 포함한다. 조회·관측의 세부 시각과 불확실성은 기존 조사 기준도 따른다.
+context.authorization은 `{generate:true,publish:false,send:false}`다. 이 범위는 하네스 자체이며 외부 배포·전송의 기존 권한을 대체하지 않는다. context.instructionFiles는 README, WORKFLOW, REPORT-GUIDE, REPORT-OUTPUT-CONTRACT, READING-AND-SCHEDULER, KOREAN-EDITORIAL-POLICY, DESIGN, 프로젝트 스킬 `SKILL.md`, `references/operating-contract.md`, `references/harness-spec.json`, `instructions/AI-SOLO-CREATOR-WATCHLIST.json` 각각의 저장소 상대 경로→실제 SHA256이다. research.sources는 uri(https), publisher, retrievedAt, scope를 포함한다. 조회·관측의 세부 시각과 불확실성은 기존 조사 기준도 따른다.
 
 research.careerCoverage와 최종 `.content-review.json`의 careerCoverage는 서로 같은 배열이다. `startups`·`events`·`bootcamps`·`admissions`·`news` 다섯 category를 각각 한 번씩 기록한다. 각 항목은 status(`updated`/`no_material_change`/`unverified`), searchedAt(한국 날짜 `YYYY-MM-DD`, 발행일 7일 전부터 발행일까지), 실제 searchScope·finding·HTTPS sourceUrls를 포함하며, unverified에는 limitation도 남긴다. 각 sourceUrls는 research.sources의 uri에 존재해야 한다. 해당 호에 확인 가능한 기회가 없으면 실제 조사한 공식 목록과 미확인 범위·이유를 기록하고 오래된 공고를 현재 모집으로 표시하지 않는다. 확인한 출처가 전혀 없다면 없는 근거를 만들지 않고 준비를 중단한다. editorial-review와 final-review에는 실제로 대조한 다섯 ID를 중복 없이 careerCategoriesReviewed에 기록한다. 형식 검사는 실제 조사나 독립 검수를 대신하지 않는다.
 
@@ -50,3 +50,9 @@ research.sources의 kind는 news/overseas/background/unverified다. retrievedAt�
 
 ## 한국어 AI 게임 제작 채널 조사
 매주 `instructions/AI-SOLO-CREATOR-WATCHLIST.json`의 각 채널 최신 업로드를 확인한다. 최근 7일을 우선하고 필요 시 30일·90일로 확대한 기간과 채널별 출처·확인 범위·변동 없음·접근 실패를 research에 기록한다. 채널을 전부 추천할 의무는 없다. 선정 영상은 직접 링크·게시일·확인일·선정 이유·시청 범위를 기록하고 AI의 코드·이미지·음악 활용과 사람의 역할, 100%·1인 제작·출시 여부를 원문에 근거해 구분한다. 미확인 내용은 단정하지 않으며 해외 사례와 별도로 다룬다.
+
+목록 밖 최신 AI 게임 제작 영상도 한국어와 영어 검색어로 조사한다. 이전 호 `assets/report/research/ai-solo-creators-*.json`의 videoId와 대조하고 재소개를 표시한다. 단일 추천 영상의 채널은 주시 목록에 자동 편입하지 않는다. context.instructionFiles에 `instructions/AI-SOLO-CREATOR-WATCHLIST.json`의 실제 SHA256을 포함한다.
+
+research.creatorContentSearch에는 channels와 discovery를 둔다. channels는 주시 목록의 각 handle을 정확히 한 번씩 포함하고 status(updated/no_material_change/unverified), searchedAt, sourceUrls, finding과 unverified일 때 limitation을 적는다. discovery는 searchedAt, 한국어·영어 queries 배열, sourceUrls 배열과 finding을 적는다. 발견 출처가 없으면 빈 배열을 허용하되 검색 한계를 finding에 밝힌다. 확인일은 발행일 기준 최근 7일이며 비어 있지 않은 sourceUrls는 모두 research.sources.uri와 결속한다. 주시 목록 누락·중복, 오래된 조사, 미결속 출처, 미확인 한계, 빈 한국어·영어 검색어는 준비 게이트에서 차단한다. 자동 검사는 조사 이행이나 내용의 사실 여부를 보증하지 않으므로 독립 검수자가 원문과 기록을 대조한다.
+
+research.creatorContentSearch.duplicateReview에는 searchedAt, 비교한 이전 호 공개 원장의 저장소 상대경로 배열 priorIssuePaths, 비교 결과와 재소개 이유를 담은 finding을 기록한다. 최초 호이거나 이전 원장이 없으면 빈 배열과 사유를 허용한다. 유효한 날짜의 이전 `ai-solo-creators-YYYY-MM-DD.json` 원장이 있다면 최신 이전 호의 경로는 반드시 포함하며 선택한 경로는 해당 이전 원장이어야 한다. 확인일은 발행일 기준 최근 7일이며 각 경로는 assets/report/research/ 아래 실제 JSON 파일이어야 한다. 검사는 기록·날짜·파일 존재만 확인하며 실제 videoId 비교나 재소개 이유의 타당성은 독립 검수자가 확인한다.

@@ -35,7 +35,8 @@ try {
   const directHashOpen=!hasClosedParent(document.getElementById('tool-meshy'));
   const careers={visible:!hasClosedParent(document.querySelector('.career-guide')),paths:document.querySelectorAll('.career-paths a').length,categories:document.querySelectorAll('[data-career-category]').length,headerPreviews:document.querySelectorAll('#careers .chapter-head .reading-media-previews').length};
   const vfx=document.querySelector('.open-source-supplement'),openSourceVfx={visible:!hasClosedParent(vfx),tools:vfx.querySelectorAll('[data-open-source-tool]').length,prompts:vfx.querySelectorAll('.practice-prompt').length,links:[...vfx.querySelectorAll('.vfx-jump a')].every(a=>document.querySelector(a.getAttribute('href'))),videoPreload:vfx.querySelector('video').preload,autoplay:vfx.querySelector('video').autoplay};
-  const creatorRoot=document.getElementById('ai-solo-creators'),creators={visible:!hasClosedParent(creatorRoot),channels:creatorRoot.querySelectorAll('[data-creator-handle]').length,groups:creatorRoot.querySelectorAll('.creator-group').length,openGroups:creatorRoot.querySelectorAll('.creator-group[open]').length,previews:creatorRoot.querySelectorAll('[data-youtube-play]').length,iframes:creatorRoot.querySelectorAll('iframe').length};
+  const creatorRoot=document.getElementById('ai-solo-creators'),creators={visible:!hasClosedParent(creatorRoot),channels:creatorRoot.querySelectorAll('[data-creator-handle]').length,groups:creatorRoot.querySelectorAll('.creator-group').length,openGroups:creatorRoot.querySelectorAll('.creator-group[open]').length,previews:creatorRoot.querySelectorAll('[data-youtube-play]').length,references:creatorRoot.querySelectorAll('[data-reference-video]').length,iframes:creatorRoot.querySelectorAll('iframe').length};
+  document.querySelector('a[href=\"#ai-solo-content-reference\"]').click();creators.referenceOpens=document.getElementById('ai-solo-content-reference').open;
   document.getElementById('tool-meshy').closest('.reading-detail').open=false;
   const link=document.querySelector('.reading-tool-previews a[href="#tool-spritegen"]');
   link.click();
@@ -104,7 +105,7 @@ try{
   const line=output.split('\n').find(line=>line.startsWith('RESULT '));
   assert.ok(line,JSON.stringify(output));
   const result=JSON.parse(line.slice(7));
-  assert.deepEqual(result.creators,{visible:true,channels:12,groups:3,openGroups:1,previews:12,iframes:0});
+  assert.deepEqual(result.creators,{visible:true,channels:18,groups:5,openGroups:1,previews:21,references:3,iframes:0,referenceOpens:true});
   assert.deepEqual(result.careers,{visible:true,paths:4,categories:5,headerPreviews:0});
   assert.deepEqual(result.openSourceVfx,{visible:true,tools:2,prompts:2,links:true,videoPreload:'none',autoplay:false});
   assert.match(result.detailLabel,/인기 GitHub 저장소 중 게임 개발에 참고할 자료/);

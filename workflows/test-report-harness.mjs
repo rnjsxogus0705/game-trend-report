@@ -4,6 +4,8 @@ import {checkReportHarness} from './check-report-harness.mjs';
 import {careerCategories} from './validate-weekly-presentation.mjs';
 const specPath='.agents/skills/weekly-game-report/references/harness-spec.json';
 const spec=JSON.parse(await fs.readFile(new URL('../'+specPath,import.meta.url),'utf8'));
+const watchlistPath='instructions/AI-SOLO-CREATOR-WATCHLIST.json';
+const watchlist=JSON.parse(await fs.readFile(new URL('../'+watchlistPath,import.meta.url),'utf8'));
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 async function fixture(t){
  const root=await fs.mkdtemp(path.join(os.tmpdir(),'gtr-harness-'));t.after(()=>fs.rm(root,{recursive:true,force:true}));
@@ -11,8 +13,8 @@ async function fixture(t){
  const write=async(p,bytes)=>{const target=path.join(root,p);await fs.mkdir(path.dirname(target),{recursive:true});await fs.writeFile(target,bytes);};
  await write(specPath,JSON.stringify(spec));const file='reports/weekly-2026-11-07.html';await write(file,'synthetic HTML, no real report');
  const instructionPaths=['README.md','instructions/WORKFLOW.md','instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/READING-AND-SCHEDULER.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md','.agents/skills/weekly-game-report/SKILL.md','.agents/skills/weekly-game-report/references/operating-contract.md'];
- for(const file of instructionPaths)await write(file,'synthetic instruction');
- const instructionFiles={};for(const file of [...instructionPaths,specPath])instructionFiles[file]=hash(await fs.readFile(path.join(root,file)));
+ for(const file of instructionPaths)await write(file,'synthetic instruction');await write(watchlistPath,JSON.stringify(watchlist));
+ const instructionFiles={};for(const file of [...instructionPaths,specPath,watchlistPath])instructionFiles[file]=hash(await fs.readFile(path.join(root,file)));
  const evidence={path:'_workspace/harness/weekly-game-report/'+runId+'/evidence/fixture.txt',sha256:hash('synthetic evidence')};await write(evidence.path,'synthetic evidence');
  const careerCoverage=careerCategories.map(category=>({category,status:'unverified',searchedAt:'2026-11-07',searchScope:'Synthetic search scope',finding:'No actual search in fixture',sourceUrls:['https://example.test/fixture'],limitation:'Synthetic fixture only'}));
  const contentPath=file+'.content-review.json',content=JSON.stringify({careerCoverage});await write(contentPath,content);
@@ -21,7 +23,7 @@ async function fixture(t){
  for(const task of spec.tasks)for(const id of task.outputs){
   const record={runId,issueDate:'2026-11-07',instructionRevision:revision,inputs:Object.fromEntries(task.inputs.filter(i=>Object.hasOwn(digests,i)).map(i=>[i,digests[i]]))};
   if(id==='context')Object.assign(record,{authorization:{generate:true,publish:false,send:false},instructionFiles});
-  if(id==='research'){record.sources=[{uri:'https://example.test/fixture',publisher:'fixture',retrievedAt:'2026-11-07',kind:'background',scope:'Synthetic, no actual research'}];record.careerCoverage=careerCoverage;record.openSourceToolSearch={status:'unverified',searchedAt:'2026-11-07',searchScope:'Synthetic open-source tools search',finding:'No actual search',sourceUrls:['https://example.test/fixture'],limitation:'Synthetic fixture only'};}
+  if(id==='research'){record.sources=[{uri:'https://example.test/fixture',publisher:'fixture',retrievedAt:'2026-11-07',kind:'background',scope:'Synthetic, no actual research'}];record.careerCoverage=careerCoverage;record.creatorContentSearch={channels:watchlist.channels.map(({handle})=>({handle,status:'unverified',searchedAt:'2026-11-07',sourceUrls:['https://example.test/fixture'],finding:'Synthetic fixture only',limitation:'Synthetic fixture only'})),discovery:{searchedAt:'2026-11-07',queries:['AI 게임 개발','AI game development'],sourceUrls:[],finding:'Synthetic search; no actual discovery'},duplicateReview:{searchedAt:'2026-11-07',priorIssuePaths:[],finding:'Synthetic first issue; no prior ledger'}};record.openSourceToolSearch={status:'unverified',searchedAt:'2026-11-07',searchScope:'Synthetic open-source tools search',finding:'No actual search',sourceUrls:['https://example.test/fixture'],limitation:'Synthetic fixture only'};}
   if(id==='issue')Object.assign(record,{editor:'fixture-writer',editorSessionId:'fixture-writer-session',files});
   if(id.endsWith('review'))Object.assign(record,{reviewer:'fixture-reviewer',method:'native-subagent',sessionId:'fixture-review-session',verdict:'approved',blockers:[],reviewedFiles,careerCategoriesReviewed:[...careerCategories]});
   if(id==='verification')Object.assign(record,{passed:true,commands:['build-site.mjs','validate-issue.mjs'].map(name=>({argv:['node',name],exitCode:0,evidence})),ui:{widths:[320,390,768,1440],checks:['navigation','disclosure','filter','copy','share','media','downloads','print','typography','tables'],evidence:[evidence]}});
@@ -103,4 +105,31 @@ test('AI 게임 제작 오픈소스 탐색의 누락·오래된 조사·미결�
   [r=>r.openSourceToolSearch.sourceUrls=['https://example.test/not-read'],/Open-source tool search sources/],
   [r=>delete r.openSourceToolSearch.limitation,/Open-source tool search limitation/]
  ]){const f=await fixture(t);change(f.records.research);await f.rebind();await assert.rejects(f.check,pattern);}
+});
+
+test('제작 채널과 신규 콘텐츠 조사 누락·신선도·출처·한계 차단',async t=>{
+ for(const [change,pattern] of [
+  [r=>delete r.creatorContentSearch,/Creator channel coverage/],
+  [r=>r.creatorContentSearch.channels.pop(),/Creator channel coverage/],
+  [r=>r.creatorContentSearch.channels[1].handle=r.creatorContentSearch.channels[0].handle,/Creator channel coverage/],
+  [r=>r.creatorContentSearch.channels[0].searchedAt='2026-10-01',/Creator channel search date/],
+  [r=>r.creatorContentSearch.channels[0].sourceUrls=['https://example.test/not-read'],/Creator channel sources/],
+  [r=>delete r.creatorContentSearch.channels[0].limitation,/Creator channel limitation/],
+  [r=>r.creatorContentSearch.discovery.queries=[],/Creator discovery queries/],
+  [r=>r.creatorContentSearch.discovery.queries=['AI 게임 개발'],/Creator discovery queries/],
+  [r=>r.creatorContentSearch.discovery.searchedAt='2026-11-08',/Creator discovery date/],
+  [r=>r.creatorContentSearch.discovery.sourceUrls=['https://example.test/not-read'],/Creator discovery sources/],
+  [r=>delete r.creatorContentSearch.duplicateReview,/Creator duplicate review record/],
+  [r=>r.creatorContentSearch.duplicateReview.searchedAt='2026-10-01',/Creator duplicate review date/],
+  [r=>r.creatorContentSearch.duplicateReview.priorIssuePaths=['assets/report/research/ai-solo-creators-2026-10-31.json'],/Creator duplicate review prior issue path/],
+  [r=>r.creatorContentSearch.duplicateReview.priorIssuePaths=['../private/secret.json'],/Creator duplicate review prior issue path/]
+ ]){const f=await fixture(t);change(f.records.research);await f.rebind();await assert.rejects(f.check,pattern);}
+ const prior=await fixture(t),old='assets/report/research/ai-solo-creators-2026-10-24.json',latest='assets/report/research/ai-solo-creators-2026-10-31.json';
+ await prior.write(old,'{}');await prior.write(latest,'{}');
+ await assert.rejects(prior.check,/Creator duplicate review latest prior issue missing/);
+ for(const bad of [old,'assets/report/research/ai-solo-creators-2026-11-07.json','assets/report/research/ai-solo-creators-2026-11-08.json','assets/report/research/prior.json','assets/report/research/ai-solo-creators-2026-02-31.json']){
+  if(bad!==old)await prior.write(bad,'{}');prior.records.research.creatorContentSearch.duplicateReview.priorIssuePaths=[bad];await prior.rebind();await assert.rejects(prior.check,/Creator duplicate review (latest prior issue missing|prior issue path invalid)/);
+ }
+ prior.records.research.creatorContentSearch.duplicateReview.priorIssuePaths=[latest];await prior.rebind();assert.equal((await prior.check()).status,'ready');
+ const f=await fixture(t);await f.write(watchlistPath,JSON.stringify({...watchlist,purpose:'changed'}));await assert.rejects(f.check,/Stale instruction file/);
 });

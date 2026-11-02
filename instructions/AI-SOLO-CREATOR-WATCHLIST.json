@@ -1,7 +1,7 @@
 {
   "purpose": "한국어 AI 1인 게임 개발 도전 콘텐츠의 주간 조사 시작 목록. 협업·혼합 제작도 구분해 참고하며 100% AI 또는 1인 제작 인증 목록이 아님.",
   "addedAt": "2026-11-02",
-  "policy": "매주 12개 채널의 최신 업로드를 확인하고 게임 제작 관련 영상만 선별. 7일 우선, 필요 시 30일/90일 확대를 표시. 변동 없음·접근 실패도 원장에 기록. 100%의 범위와 사람 역할·출시 상태는 영상별 근거로 구분.",
+  "policy": "매주 전체 주시 채널의 최신 업로드를 확인하고 이전 호의 videoId와 대조해 신규 AI 게임 개발 영상을 우선 소개한다. 최근 7일 우선, 필요 시 30일/90일 확대를 표시하며 오래된 요청 자료는 배경 참고로 구분한다. 변동 없음·접근 실패도 원장에 기록하고 같은 영상을 다시 소개하면 새로 볼 내용과 이유를 밝힌다. 100%의 범위와 사람 역할·출시 상태는 영상별 근거로 구분한다.",
   "channels": [
     {
       "handle": "PatrickGamesKR",
@@ -62,6 +62,60 @@
       "handle": "jsmgames2026",
       "channelUrl": "https://www.youtube.com/@jsmgames2026",
       "name": "JSM games"
+    },
+    {
+      "handle": "jhkgame",
+      "channelUrl": "https://www.youtube.com/@jhkgame",
+      "name": "새벽에뜨는별"
+    },
+    {
+      "handle": "maenglab",
+      "channelUrl": "https://www.youtube.com/@maenglab",
+      "name": "맹랩"
+    },
+    {
+      "handle": "gamealmot-dev",
+      "channelUrl": "https://www.youtube.com/@gamealmot-dev",
+      "name": "겜알못"
+    },
+    {
+      "handle": "데브-ai",
+      "channelUrl": "https://www.youtube.com/@%EB%8D%B0%EB%B8%8C-ai",
+      "name": "데브"
+    },
+    {
+      "handle": "SmartDaddyAI",
+      "channelUrl": "https://www.youtube.com/@SmartDaddyAI",
+      "name": "스마트대디_SmartDaddy"
+    },
+    {
+      "handle": "akarolls",
+      "channelUrl": "https://www.youtube.com/@akarolls",
+      "name": "Akarolls-아카롤스"
+    }
+  ],
+  "discoveryPolicy": "주시 목록 밖의 최신 AI 게임 개발·개발일지·에셋 제작·테스트·출시 콘텐츠도 한국어와 영어 검색어로 매주 탐색한다. 실제 검색어·검색 범위·출처·확인일·선정 또는 제외 이유를 research.creatorContentSearch.discovery에 기록한다. 기존 공개 리포트의 영상 ID와 비교해 신규 콘텐츠를 찾고, 새 채널의 지속 추적 여부는 제작 주제와 공개 근거를 검토한 뒤 목록 변경으로 남긴다.",
+  "referenceVideos": [
+    {
+      "videoId": "TtqXdbkzusU",
+      "videoUrl": "https://www.youtube.com/watch?v=TtqXdbkzusU",
+      "title": "게임 만드는 AI 에이전트 Genex 써 봤습니다 | 그림 300장으로 3D 게임, 코드 0줄 88분",
+      "creator": "단테",
+      "scope": "이 AI 게임 개발 영상만 참고. 채널 전체를 정기 주시 목록에 자동 편입하지 않는다."
+    },
+    {
+      "videoId": "w-7FkzY8CbY",
+      "videoUrl": "https://www.youtube.com/watch?v=w-7FkzY8CbY",
+      "title": "미니맥스 디자인 + 오퍼스 5.5 조합 미쳤습니다.. 일러스트 몰라도 혼자 게임 만드는 시대.. ㄷㄷ",
+      "creator": "성공지식백과",
+      "scope": "이 AI 게임 개발 영상만 참고. 채널 전체를 정기 주시 목록에 자동 편입하지 않는다."
+    },
+    {
+      "videoId": "_Yma7J5-6Rk",
+      "videoUrl": "https://www.youtube.com/watch?v=_Yma7J5-6Rk",
+      "title": "챗GPT vs 클로드, 코딩 못해도 AI 게임 만드는 법 총정리 | 아스트라, 페이블, 힉스필드",
+      "creator": "홍아린 AI",
+      "scope": "이 AI 게임 개발 영상만 참고. 채널 전체를 정기 주시 목록에 자동 편입하지 않는다."
     }
   ]
 }

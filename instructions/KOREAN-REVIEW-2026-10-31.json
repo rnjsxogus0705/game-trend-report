@@ -1626,6 +1626,12 @@
       "before": "11월 2일 픽셀 이펙트 보완 자료",
       "after": "11월 2일 픽셀 이펙트·한국어 AI 제작 채널 보완 자료",
       "reason": "출처 안내에 새 보완 범위를 명시"
+    },
+    {
+      "file": "reports/weekly-2026-10-31.html",
+      "before": "AI 게임 제작 채널 12곳은 11월 2일에 추가 조사해 아래에 따로 모았어요.",
+      "after": "AI 게임 제작 채널 18곳과 개별 참고 영상 3편은 11월 2일에 추가 조사해 아래에 따로 모았어요.",
+      "reason": "추가 6개 채널과 개별 영상 3편의 조사 범위를 안내"
     }
   ],
   "limitations": [
@@ -3269,10 +3275,16 @@
         "before": "11월 2일 픽셀 이펙트 보완 자료",
         "after": "11월 2일 픽셀 이펙트·한국어 AI 제작 채널 보완 자료",
         "reason": "출처 안내에 새 보완 범위를 명시"
+      },
+      {
+        "path": "reports/weekly-2026-10-31.html",
+        "before": "AI 게임 제작 채널 12곳은 11월 2일에 추가 조사해 아래에 따로 모았어요.",
+        "after": "AI 게임 제작 채널 18곳과 개별 참고 영상 3편은 11월 2일에 추가 조사해 아래에 따로 모았어요.",
+        "reason": "추가 6개 채널과 개별 영상 3편의 조사 범위를 안내"
       }
     ],
     "fileHashes": {
-      "weekly-2026-10-31.html": "3e02416c6baefccde5ff79b29a15063c64d0ee0ba3464769d1b81505336ecaa7",
+      "weekly-2026-10-31.html": "2c39a654177835f7f516c9c2a65d43cc88648a8a0611a2992e22786a48864ef6",
       "weekly-2026-10-31-ai-plan-01.md": "55aae6d568301fdf18438e57430969df932b05f4e191824a44d535469fdcbd1b",
       "weekly-2026-10-31-ai-plan-02.md": "a32bba89f4da73b596bec9a8055d798aaacb5b23c60740d047f73f6885cbd3b7",
       "weekly-2026-10-31-ai-plan-03.md": "52952992fc41f3652692c3a01c5cdfee45a104d3269f44387bfe8cba00651d18",
@@ -3285,7 +3297,7 @@
     },
     "externalVerified": false,
     "externalScope": "",
-    "method": "이전 전체 검수와 픽셀 VFX 보완 검수를 보존했다. 변경 없는 본문과 9개 Markdown은 이전 산출물과 대조했다. 신규 12개 채널의 제목·본문·영상 소개·접힌 설명·출처·AI와 사람 역할을 편집자와 독립 모델 검수자가 ego-browser 원문 기록과 대조했다. 한국어 6항을 검토하고 최근 7일 경계 및 목표 달성 미확인 표현을 수정했다. 외부 맞춤법 검사기는 사용하지 않았다.",
+    "method": "이전 전체 검수·VFX·12개 채널 검수를 보존했다. 기존 본문·12개 영상 설명과 9개 Markdown은 이전 산출물과 대조했다. 추가 6개 채널과 개별 영상 3편의 제목·본문·접힌 설명·출처·한국 날짜·AI와 사람 역할·광고·지난 행사·배경 자료를 편집자와 독립 모델 검수자가 ego-browser 원문 기록과 대조하고 한국어 의미 보존 6항을 검토했다. 외부 맞춤법 검사기는 사용하지 않았다.",
     "disposition": "approved"
   },
   "externalSample": {
@@ -3343,8 +3355,8 @@
     "assets/report/open-source-vfx-2026-10-31/MIT-LICENSE.txt": "0a77565a50c3462831244452f129c38d2adc4fd07897cbeba8adc943f958604e",
     "assets/report/research/open-source-vfx-2026-10-31.json": "ea103555ec98a67a5d56a34868a3d31a1cf2b4bda433f6f87611c1c50b92ccc6",
     "assets/report/weekly-editorial.css": "5fa82c68e902c1ba9d381a22c687c597b2f57a3e4c9b53935a702e64ceab6fd7",
-    "assets/report/research/ai-solo-creators-2026-10-31.json": "e8be26246d1940f0f535d9d69ac31e074f606ef7436f24250a70d6cbad20287c",
-    "assets/report/reading-experience.js": "e78c42a6c098c860e74f26dac0bdec9e92ba977d92baacf2f3c9ba88dd0fe73f"
+    "assets/report/research/ai-solo-creators-2026-10-31.json": "f7e822bb7013ab881ad052df506700898746e924f9a075f0ff9cf89a40ab88ab",
+    "assets/report/reading-experience.js": "3903e61db604956965ff7b3571c89cc0a977e7f6be04c6a26a141a5951487ab8"
   },
   "skillSelectionReview": {
     "reviewer": "/root/final_review",
@@ -3473,6 +3485,28 @@
       "브라우저 반응형 화면과 영상 클릭은 이 검수자가 직접 확인하지 않았으며 별도 화면 검사가 필요함",
       "이전 본문과 Markdown은 내용 재조사 대신 이전 산출물과 보존 여부를 대조함",
       "매주 12채널 실제 조사 이행은 문서 계약이며 현재 자동 형식 검사는 이를 강제하지 않음"
+    ]
+  },
+  "creatorExpansionReview": {
+    "reviewedAt": "2026-11-02",
+    "sha256": "2c39a654177835f7f516c9c2a65d43cc88648a8a0611a2992e22786a48864ef6",
+    "reviewer": "/root/creator_content_review",
+    "addedChannels": 6,
+    "watchChannelsTotal": 18,
+    "individualReferenceVideos": 3,
+    "scope": [
+      "신규 6개 채널과 3개별 참고 영상의 실제 저장된 원문 9건과 제목·채널·게시 시각의 한국 날짜·길이·링크 대조",
+      "겜알못 Newtake 유료 광고, 데브 5월 배경 자료, 스마트대디 게임풍 생성 영상과 10월 31일 행사 종료, 맹랩의 10월 25일 경품 종료·9월 AI 제작 소개·가족 편집, 아카롤스 게임 속 AI와 생성형 AI 구분을 원문과 대조",
+      "신규 본문과 참고 링크의 선정 이유·AI/사람 역할·미확인·학생용 한국어, 숫자·날짜·고유명사/인과/부정/인용/주장·불확실성/말투 확인",
+      "기존 12개 본문 블록과 원장 데이터는 이전 파일과 완전히 동일하며 Markdown 9개와 HTML 복사 원문 6개 보존 확인",
+      "주시 18채널과 개별 영상 3편을 분리하고 채널 목록·운영 지침·예약 프롬프트·신선도/출처 준비 게이트를 대조"
+    ],
+    "verification": "56개 Node테스트,4폭의기존회귀및21영상썸네일로드/최소14px/넘침없음,클릭nocookie플레이어/원문대안,분류링크details열기,독립한국어검수·하네스게이트검토",
+    "limitations": [
+      "전체 영상 시청, 게임 실행, 수익·실제 AI 제작 비율의 독립 검증은 하지 않음",
+      "화면 배치·클릭·반응형 검사는 이 검수자가 직접 수행하지 않음",
+      "이전 본문과 Markdown은 재조사하지 않고 이전 파일과 보존을 비교함",
+      "하네스 자동 검사는 조사 기록의 형식·신선도·출처 결속을 검증하며 실제 조사나 사실성을 보증하지 않음"
     ]
   }
 }

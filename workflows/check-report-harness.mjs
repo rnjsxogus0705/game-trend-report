@@ -40,7 +40,7 @@ export async function checkReportHarness({root,runId,revision}){
  }
  const context=records.context;
  insist(context.authorization?.generate===true&&context.authorization?.publish===false&&context.authorization?.send===false,'Harness scope must be local generation only');
- const instructions=['README.md','instructions/WORKFLOW.md','instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/READING-AND-SCHEDULER.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md','.agents/skills/weekly-game-report/SKILL.md','.agents/skills/weekly-game-report/references/operating-contract.md','.agents/skills/weekly-game-report/references/harness-spec.json'];
+ const instructions=['README.md','instructions/WORKFLOW.md','instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/READING-AND-SCHEDULER.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md','instructions/AI-SOLO-CREATOR-WATCHLIST.json','.agents/skills/weekly-game-report/SKILL.md','.agents/skills/weekly-game-report/references/operating-contract.md','.agents/skills/weekly-game-report/references/harness-spec.json'];
  for(const file of instructions)insist(context.instructionFiles?.[file]===hash(await read(file)),'Stale instruction file: '+file);
  insist(Array.isArray(records.research.sources)&&records.research.sources.length>0&&records.research.sources.every(source=>/^https:\/\//.test(source.uri||'')&&source.publisher&&source.retrievedAt&&source.scope),'Research evidence metadata missing');
  const issueDay=Date.parse(context.issueDate+'T00:00:00Z'),day=86400000;
@@ -64,6 +64,39 @@ export async function checkReportHarness({root,runId,revision}){
  insist(Number.isFinite(toolSearchDay)&&toolSearchDay>=issueDay-7*day&&toolSearchDay<=issueDay,'Open-source tool search date is stale or invalid');
  insist(Array.isArray(openTools.sourceUrls)&&openTools.sourceUrls.length>0&&openTools.sourceUrls.every(url=>records.research.sources.some(source=>source.uri===url)),'Open-source tool search sources are not linked to research.sources');
  if(openTools.status==='unverified')insist(typeof openTools.limitation==='string'&&openTools.limitation.trim(),'Open-source tool search limitation missing');
+
+ const watchlist=JSON.parse(await read('instructions/AI-SOLO-CREATOR-WATCHLIST.json'));
+ const handles=watchlist.channels?.map(channel=>channel.handle);
+ insist(Array.isArray(handles)&&handles.length>0&&handles.every(handle=>typeof handle==='string'&&handle.trim()===handle&&handle.length>0)&&new Set(handles).size===handles.length,'Creator watchlist handles missing or duplicate');
+ const creatorSearch=records.research.creatorContentSearch;
+ insist(Array.isArray(creatorSearch?.channels)&&creatorSearch.channels.length===handles.length&&new Set(creatorSearch.channels.map(item=>item?.handle)).size===handles.length&&handles.every(handle=>creatorSearch.channels.some(item=>item?.handle===handle)),'Creator channel coverage missing or duplicate');
+ const fresh=value=>{const checked=sourceDay(value);return Number.isFinite(checked)&&checked>=issueDay-7*day&&checked<=issueDay;};
+ const linked=urls=>Array.isArray(urls)&&urls.every(url=>records.research.sources.some(source=>source.uri===url));
+ for(const item of creatorSearch.channels){
+  insist(['updated','no_material_change','unverified'].includes(item.status)&&typeof item.finding==='string'&&item.finding.trim(),'Creator channel record incomplete: '+item.handle);
+  insist(fresh(item.searchedAt),'Creator channel search date is stale or invalid: '+item.handle);
+  insist(item.sourceUrls?.length>0&&linked(item.sourceUrls),'Creator channel sources are not linked to research.sources: '+item.handle);
+  if(item.status==='unverified')insist(typeof item.limitation==='string'&&item.limitation.trim(),'Creator channel limitation missing: '+item.handle);
+ }
+ const discovery=creatorSearch.discovery;
+ insist(discovery&&typeof discovery.finding==='string'&&discovery.finding.trim()&&Array.isArray(discovery.queries)&&discovery.queries.every(q=>typeof q==='string'&&q.trim())&&discovery.queries.some(q=>/[가-힣]/.test(q))&&discovery.queries.some(q=>/[a-z]/i.test(q)&&!/[가-힣]/.test(q)),'Creator discovery queries or finding missing');
+ insist(fresh(discovery.searchedAt),'Creator discovery date is stale or invalid');
+ insist(linked(discovery.sourceUrls),'Creator discovery sources are not linked to research.sources');
+ const duplicateReview=creatorSearch.duplicateReview;
+ insist(duplicateReview&&typeof duplicateReview.finding==='string'&&duplicateReview.finding.trim()&&Array.isArray(duplicateReview.priorIssuePaths),'Creator duplicate review record missing or invalid');
+ insist(fresh(duplicateReview.searchedAt),'Creator duplicate review date is stale or invalid');
+ const researchDir=path.join(root,'assets/report/research');let previous=[];
+ try{
+  const stat=await fs.lstat(researchDir),real=await fs.realpath(researchDir);
+  insist(stat.isDirectory()&&!stat.isSymbolicLink()&&real.startsWith(root+path.sep),'Unsafe research directory');
+  previous=(await fs.readdir(researchDir,{withFileTypes:true})).filter(entry=>{
+   const match=/^ai-solo-creators-(\d{4}-\d{2}-\d{2})\.json$/.exec(entry.name),date=match&&sourceDay(match[1]);
+   return entry.isFile()&&Number.isFinite(date)&&date<issueDay;
+  }).map(entry=>'assets/report/research/'+entry.name).sort();
+ }catch(error){if(error.code!=='ENOENT')throw error;}
+ insist(duplicateReview.priorIssuePaths.every(p=>typeof p==='string'&&previous.includes(p)),'Creator duplicate review prior issue path invalid');
+ if(previous.length)insist(duplicateReview.priorIssuePaths.includes(previous.at(-1)),'Creator duplicate review latest prior issue missing');
+ for(const prior of duplicateReview.priorIssuePaths)await read(prior);
 
  const issue=records.issue;
  insist(Array.isArray(issue.files)&&issue.files.length>0,'Issue file list missing');

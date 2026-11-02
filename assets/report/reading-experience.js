@@ -133,7 +133,7 @@
   }
   main.querySelector('#top10')?.after(controls);
   function reveal(target){
-    for(let node=target?.parentElement;node;node=node.parentElement)if(node.tagName==='DETAILS')node.open=true;
+    for(let node=target;node;node=node.parentElement)if(node.tagName==='DETAILS')node.open=true;
   }
   function revealHash(){
     let id;try{id=decodeURIComponent(location.hash.slice(1));}catch{return;}
