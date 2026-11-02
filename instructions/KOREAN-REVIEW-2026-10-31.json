@@ -1614,6 +1614,18 @@
       "before": "아래 목록은 2026년 10월 31일 조사 자료예요. 11월 1일 재확인과 취업·진로 보완 자료는 각 본문에 표시한 확인일과 원문 링크를 참고하세요.",
       "after": "아래 목록은 2026년 10월 31일 조사 자료예요. 11월 1일 재확인·취업 자료와 11월 2일 픽셀 이펙트 보완 자료는 각 본문의 확인일과 원문 링크를 참고하세요.",
       "reason": "11월 2일 보완 원문과 기존 조사 목록의 확인 시점을 구분"
+    },
+    {
+      "file": "reports/weekly-2026-10-31.html",
+      "before": "모든 링크는 2026.10.31에 페이지를 열어 확인했어요.",
+      "after": "기존 기사와 영상은 2026.10.31에 확인했어요. AI 게임 제작 채널 12곳은 11월 2일에 추가 조사해 아래에 따로 모았어요.",
+      "reason": "기존 조사일과 추가된 12개 채널의 확인일을 분리"
+    },
+    {
+      "file": "reports/weekly-2026-10-31.html",
+      "before": "11월 2일 픽셀 이펙트 보완 자료",
+      "after": "11월 2일 픽셀 이펙트·한국어 AI 제작 채널 보완 자료",
+      "reason": "출처 안내에 새 보완 범위를 명시"
     }
   ],
   "limitations": [
@@ -1633,7 +1645,7 @@
   },
   "naturalnessReview": {
     "editor": "/root",
-    "reviewer": "/root/pixelfx_report_review",
+    "reviewer": "/root/creator_content_review",
     "coverage": [
       "body",
       "headings",
@@ -3245,10 +3257,22 @@
         "before": "아래 목록은 2026년 10월 31일 조사 자료예요. 11월 1일 재확인과 취업·진로 보완 자료는 각 본문에 표시한 확인일과 원문 링크를 참고하세요.",
         "after": "아래 목록은 2026년 10월 31일 조사 자료예요. 11월 1일 재확인·취업 자료와 11월 2일 픽셀 이펙트 보완 자료는 각 본문의 확인일과 원문 링크를 참고하세요.",
         "reason": "11월 2일 보완 원문과 기존 조사 목록의 확인 시점을 구분"
+      },
+      {
+        "path": "reports/weekly-2026-10-31.html",
+        "before": "모든 링크는 2026.10.31에 페이지를 열어 확인했어요.",
+        "after": "기존 기사와 영상은 2026.10.31에 확인했어요. AI 게임 제작 채널 12곳은 11월 2일에 추가 조사해 아래에 따로 모았어요.",
+        "reason": "기존 조사일과 추가된 12개 채널의 확인일을 분리"
+      },
+      {
+        "path": "reports/weekly-2026-10-31.html",
+        "before": "11월 2일 픽셀 이펙트 보완 자료",
+        "after": "11월 2일 픽셀 이펙트·한국어 AI 제작 채널 보완 자료",
+        "reason": "출처 안내에 새 보완 범위를 명시"
       }
     ],
     "fileHashes": {
-      "weekly-2026-10-31.html": "a628dfc27f82799766f91491f7bc4d2f5d4a78e3c2caeb793c1c7ab3ff0fb518",
+      "weekly-2026-10-31.html": "3e02416c6baefccde5ff79b29a15063c64d0ee0ba3464769d1b81505336ecaa7",
       "weekly-2026-10-31-ai-plan-01.md": "55aae6d568301fdf18438e57430969df932b05f4e191824a44d535469fdcbd1b",
       "weekly-2026-10-31-ai-plan-02.md": "a32bba89f4da73b596bec9a8055d798aaacb5b23c60740d047f73f6885cbd3b7",
       "weekly-2026-10-31-ai-plan-03.md": "52952992fc41f3652692c3a01c5cdfee45a104d3269f44387bfe8cba00651d18",
@@ -3261,7 +3285,7 @@
     },
     "externalVerified": false,
     "externalScope": "",
-    "method": "이전 전체 검수는 보존하고 변경 없는 본문·9개 Markdown은 범위/해시로 대조했다. 11월 2일 pixelfx·Sprite Fusion 보완의 제목·본문·표·공식 캡처/포스터 캡션·접힘·두 실습 프롬프트·영상 출처와 확인일을 편집자와 독립 모델 검수자가 원문 기록으로 대조하고 교정했다. k-skill 고정 버전 지침과 humanizer→grammar-checker→style-guide를 읽고 적용했으며 이번 보완에 외부 맞춤법 검사기는 사용하지 않았다.",
+    "method": "이전 전체 검수와 픽셀 VFX 보완 검수를 보존했다. 변경 없는 본문과 9개 Markdown은 이전 산출물과 대조했다. 신규 12개 채널의 제목·본문·영상 소개·접힌 설명·출처·AI와 사람 역할을 편집자와 독립 모델 검수자가 ego-browser 원문 기록과 대조했다. 한국어 6항을 검토하고 최근 7일 경계 및 목표 달성 미확인 표현을 수정했다. 외부 맞춤법 검사기는 사용하지 않았다.",
     "disposition": "approved"
   },
   "externalSample": {
@@ -3318,7 +3342,9 @@
     "assets/report/open-source-vfx-2026-10-31/SOURCES.md": "86c12b25da234a2175f368f87351a7ebec968818bc22d9143622647d5bac057f",
     "assets/report/open-source-vfx-2026-10-31/MIT-LICENSE.txt": "0a77565a50c3462831244452f129c38d2adc4fd07897cbeba8adc943f958604e",
     "assets/report/research/open-source-vfx-2026-10-31.json": "ea103555ec98a67a5d56a34868a3d31a1cf2b4bda433f6f87611c1c50b92ccc6",
-    "assets/report/weekly-editorial.css": "d7d6878696d085ec516b63c58d18d37ba13a2606a4bb4bacb189af6d49960311"
+    "assets/report/weekly-editorial.css": "5fa82c68e902c1ba9d381a22c687c597b2f57a3e4c9b53935a702e64ceab6fd7",
+    "assets/report/research/ai-solo-creators-2026-10-31.json": "e8be26246d1940f0f535d9d69ac31e074f606ef7436f24250a70d6cbad20287c",
+    "assets/report/reading-experience.js": "e78c42a6c098c860e74f26dac0bdec9e92ba977d92baacf2f3c9ba88dd0fe73f"
   },
   "skillSelectionReview": {
     "reviewer": "/root/final_review",
@@ -3427,6 +3453,26 @@
       "영상 전체 시청과 게임 결과 재현 미실시; Sprite Fusion 다운로드 ZIP 내부 라이선스 미검증",
       "자동 본문 보존 검사는 일부 영역을 제외하고 단어를 정렬하므로 원문 의미 검증을 대신하지 않음",
       "기존 전체 본문은 이전 독립 검수 승계 및 변경 범위 대조이며 이번 보완 조사에서 전체 출처를 재검증하지 않음"
+    ]
+  },
+  "creatorSupplementReview": {
+    "reviewedAt": "2026-11-02",
+    "sha256": "3e02416c6baefccde5ff79b29a15063c64d0ee0ba3464769d1b81505336ecaa7",
+    "reviewer": "/root/creator_content_review",
+    "channels": 12,
+    "scope": [
+      "추천 12개 채널 목록과 영상별 원문 저장 기록의 채널명·제목·게시 시각의 한국 날짜·길이·직접 링크 대조",
+      "선정 이유·사람/AI 역할·100%·협업 사례·기존 에셋·출시 목표·수익 미검증 및 전체 미시청 범위 대조",
+      "신규 본문·제목·접힌 영상 설명의 자연스러움과 수치·날짜·고유명사/인과/부정/인용/주장·불확실성/말투를 검토",
+      "기존 HTML 본문은 추가 블록과 고지·캐시 버전만 제거해 이전 HTML과 바이트 대조, 9개 Markdown과 6개 HTML 복사용 내용의 기존 테스트 통과 확인",
+      "채널 목록과 하네스·운영 계약·Windows/macOS 예약 지침, 기존 해외 최근 30일 우선·90일 확대 정책 대조"
+    ],
+    "verification": "55개 Node테스트,4개화면폭의기존회귀및신규12썸네일/최소14px/넘침없음/원본비율,클릭nocookie플레이어와원문대안,한국어독립검수",
+    "limitations": [
+      "전체 영상 시청, 게임 직접 실행, 수익이나 100% AI 제작에 대한 독립 검증은 하지 않음",
+      "브라우저 반응형 화면과 영상 클릭은 이 검수자가 직접 확인하지 않았으며 별도 화면 검사가 필요함",
+      "이전 본문과 Markdown은 내용 재조사 대신 이전 산출물과 보존 여부를 대조함",
+      "매주 12채널 실제 조사 이행은 문서 계약이며 현재 자동 형식 검사는 이를 강제하지 않음"
     ]
   }
 }

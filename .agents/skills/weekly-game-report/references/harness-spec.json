@@ -143,7 +143,7 @@
       "required": true
     },
     {
-      "completion": "ego-browser 원문·날짜·관심도·선정 이유·AI와 사람의 역할·7일/해외 30일/90일·미확인을 기록한다. 이전 호 사실을 재사용하지 않는다. 스타트업·소규모 게임사 채용(startups), 취업 행사(events), 부트캠프(bootcamps), 대학 입시(admissions), 진로 뉴스(news)를 매주 모두 조사하고 research.careerCoverage에 범주별 searchedAt(한국 날짜), searchScope, status(updated/no_material_change/unverified), sourceUrls, finding과 미확인 limitation을 기록한다. 출처는 research.sources에도 연결하며 결과가 없는 범주도 검색 범위와 한계를 남긴다. 게임 제작 오픈소스는 Trending 밖의 공식 저장소·데모·제작자 글까지 매주 탐색하고 research.openSourceToolSearch에 실제 확인일·범위·상태·출처·결과·미확인 한계를 남긴다. pixelfx·Sprite Fusion 같은 코드 기반 픽셀 VFX/스프라이트 도구도 포함하며 초기 추적 목록을 고정 추천으로 복사하지 않는다.",
+      "completion": "ego-browser 원문·날짜·관심도·선정 이유·AI와 사람의 역할·7일/해외 30일/90일·미확인을 기록한다. 이전 호 사실을 재사용하지 않는다. 스타트업·소규모 게임사 채용(startups), 취업 행사(events), 부트캠프(bootcamps), 대학 입시(admissions), 진로 뉴스(news)를 매주 모두 조사하고 research.careerCoverage에 범주별 searchedAt(한국 날짜), searchScope, status(updated/no_material_change/unverified), sourceUrls, finding과 미확인 limitation을 기록한다. 출처는 research.sources에도 연결하며 결과가 없는 범주도 검색 범위와 한계를 남긴다. 게임 제작 오픈소스는 Trending 밖의 공식 저장소·데모·제작자 글까지 매주 탐색하고 research.openSourceToolSearch에 실제 확인일·범위·상태·출처·결과·미확인 한계를 남긴다. pixelfx·Sprite Fusion 같은 코드 기반 픽셀 VFX/스프라이트 도구도 포함하며 초기 추적 목록을 고정 추천으로 복사하지 않는다. 한국어 AI 1인 게임 제작 채널은 instructions/AI-SOLO-CREATOR-WATCHLIST.json 전체의 최신 업로드를 매주 확인하고 최근 7일 우선, 필요 시 30일·90일 확대를 명시한다. 채널별 출처·확인 범위·변동 없음·접근 실패를 research에 기록하고 적합한 영상만 선별한다. 영상별 100%·1인·출시 여부와 AI의 코드·이미지·음악 사용 및 사람의 역할을 원문에 근거해 구분하며 미확인은 단정하지 않는다. 국내 사례는 해외 사례와 별도로 다룬다.",
       "depends_on": [
         "preflight"
       ],

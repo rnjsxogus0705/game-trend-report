@@ -35,6 +35,7 @@ try {
   const directHashOpen=!hasClosedParent(document.getElementById('tool-meshy'));
   const careers={visible:!hasClosedParent(document.querySelector('.career-guide')),paths:document.querySelectorAll('.career-paths a').length,categories:document.querySelectorAll('[data-career-category]').length,headerPreviews:document.querySelectorAll('#careers .chapter-head .reading-media-previews').length};
   const vfx=document.querySelector('.open-source-supplement'),openSourceVfx={visible:!hasClosedParent(vfx),tools:vfx.querySelectorAll('[data-open-source-tool]').length,prompts:vfx.querySelectorAll('.practice-prompt').length,links:[...vfx.querySelectorAll('.vfx-jump a')].every(a=>document.querySelector(a.getAttribute('href'))),videoPreload:vfx.querySelector('video').preload,autoplay:vfx.querySelector('video').autoplay};
+  const creatorRoot=document.getElementById('ai-solo-creators'),creators={visible:!hasClosedParent(creatorRoot),channels:creatorRoot.querySelectorAll('[data-creator-handle]').length,groups:creatorRoot.querySelectorAll('.creator-group').length,openGroups:creatorRoot.querySelectorAll('.creator-group[open]').length,previews:creatorRoot.querySelectorAll('[data-youtube-play]').length,iframes:creatorRoot.querySelectorAll('iframe').length};
   document.getElementById('tool-meshy').closest('.reading-detail').open=false;
   const link=document.querySelector('.reading-tool-previews a[href="#tool-spritegen"]');
   link.click();
@@ -44,7 +45,7 @@ try {
   buttons[1].click();const allClosed=groups.every(group=>!group.open);
   dispatchEvent(new Event('beforeprint'));const printOpen=[...document.querySelectorAll('main details:not(.mobile-nav)')].every(detail=>detail.open);
   dispatchEvent(new Event('afterprint'));const restored=groups.every(group=>!group.open);
-  return {openSourceVfx,careers,labDataVisible:!hasClosedParent(document.querySelector('#lab .grid2 .table-scroll')),skillEvidence,ideaImages,international,readerGuide,visuals,media,visualsLabeled,detailLabel,summaryPresent,highlights,count:groups.length,directHashOpen,linkedToolOpen,allOpen,allClosed,printOpen,restored,
+  return {creators,openSourceVfx,careers,labDataVisible:!hasClosedParent(document.querySelector('#lab .grid2 .table-scroll')),skillEvidence,ideaImages,international,readerGuide,visuals,media,visualsLabeled,detailLabel,summaryPresent,highlights,count:groups.length,directHashOpen,linkedToolOpen,allOpen,allClosed,printOpen,restored,
    previews:document.querySelectorAll('.reading-tool-previews img').length,
    benchmarkVisible:!hasClosedParent(document.getElementById('benchmark-chart')),
    simulationVisible:!hasClosedParent(document.getElementById('simulation-chart'))};
@@ -103,6 +104,7 @@ try{
   const line=output.split('\n').find(line=>line.startsWith('RESULT '));
   assert.ok(line,JSON.stringify(output));
   const result=JSON.parse(line.slice(7));
+  assert.deepEqual(result.creators,{visible:true,channels:12,groups:3,openGroups:1,previews:12,iframes:0});
   assert.deepEqual(result.careers,{visible:true,paths:4,categories:5,headerPreviews:0});
   assert.deepEqual(result.openSourceVfx,{visible:true,tools:2,prompts:2,links:true,videoPreload:'none',autoplay:false});
   assert.match(result.detailLabel,/인기 GitHub 저장소 중 게임 개발에 참고할 자료/);

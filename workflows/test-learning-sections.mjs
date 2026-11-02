@@ -36,3 +36,14 @@ test('해외 사례는 10월 최신3개로 교체하고 AI 범위·관심지표�
  const max=data.resources.find(i=>i.creator==='Max Blade');assert.match(max.aiScope,/98%/);assert.match(max.aiScope,/100% AI 제작을 뜻하는 수치는 아니에요/);
  assert.ok(!JSON.stringify(data).includes('4RlpMhBKNr0'));
 });
+test('한국어 AI 제작 채널 12곳은 영상·날짜·선정 이유·역할과 한계를 연결',async()=>{
+ const watch=JSON.parse(await fs.readFile(new URL('../instructions/AI-SOLO-CREATOR-WATCHLIST.json',import.meta.url),'utf8'));
+ const data=JSON.parse(await fs.readFile(new URL('../assets/report/research/ai-solo-creators-2026-10-31.json',import.meta.url),'utf8'));
+ const handles=['PatrickGamesKR','yeonseDev','durigungri','zenonkim5126','hero_inc-l6u','만들다-보니','jsmgames2026','BamonStudio','kwakamole_official','nunchigames','딸깍아닙니다','김뽑희AI'];
+ assert.equal(data.channels.length,12);assert.deepEqual(watch.channels.map(c=>c.handle).sort(),handles.sort());
+ for(const c of data.channels){assert.ok(handles.includes(c.handle));assert.match(c.videoId,/^[\w-]{11}$/);assert.ok(html.includes('data-creator-handle="'+c.handle+'"'));assert.ok(html.includes('data-youtube-play="'+c.videoId+'"'));assert.ok(c.selectionReason&&c.aiAndHumanScope&&c.viewingQuestion);assert.match(c.reviewScope,/全|전체 시청/);assert.equal(new Date(c.publishedAt).toLocaleDateString('sv-SE',{timeZone:'Asia/Seoul'}),c.publishedDateKst);assert.ok(c.publishedDateKst>='2026-10-03'&&c.publishedDateKst<='2026-11-02');}
+ assert.match(data.channels.find(c=>c.handle==='durigungri').aiAndHumanScope,/1인 제작 사례로 분류하지/);
+ assert.match(data.channels.find(c=>c.handle==='딸깍아닙니다').aiAndHumanScope,/유료 에셋/);
+ assert.equal(data.channels.find(c=>c.handle==='hero_inc-l6u').publishedDateKst,'2026-11-02');
+ const reading=await fs.readFile(new URL('../assets/report/reading-experience.js',import.meta.url),'utf8');assert.ok(reading.includes('.practice-prompts,.creator-supplement'));
+});

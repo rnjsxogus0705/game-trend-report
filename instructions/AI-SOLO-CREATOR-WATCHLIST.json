@@ -1,0 +1,67 @@
+{
+  "purpose": "한국어 AI 1인 게임 개발 도전 콘텐츠의 주간 조사 시작 목록. 협업·혼합 제작도 구분해 참고하며 100% AI 또는 1인 제작 인증 목록이 아님.",
+  "addedAt": "2026-11-02",
+  "policy": "매주 12개 채널의 최신 업로드를 확인하고 게임 제작 관련 영상만 선별. 7일 우선, 필요 시 30일/90일 확대를 표시. 변동 없음·접근 실패도 원장에 기록. 100%의 범위와 사람 역할·출시 상태는 영상별 근거로 구분.",
+  "channels": [
+    {
+      "handle": "PatrickGamesKR",
+      "channelUrl": "https://www.youtube.com/@PatrickGamesKR",
+      "name": "1인 개발 | 출시까지 갑니다"
+    },
+    {
+      "handle": "김뽑희AI",
+      "channelUrl": "https://www.youtube.com/@%EA%B9%80%EB%BD%91%ED%9D%ACAI",
+      "name": "궁금한 김뽑희"
+    },
+    {
+      "handle": "BamonStudio",
+      "channelUrl": "https://www.youtube.com/@BamonStudio",
+      "name": "BaMon_Studio"
+    },
+    {
+      "handle": "yeonseDev",
+      "channelUrl": "https://www.youtube.com/@yeonseDev",
+      "name": "연세의 게임개발"
+    },
+    {
+      "handle": "hero_inc-l6u",
+      "channelUrl": "https://www.youtube.com/@hero_inc-l6u",
+      "name": "용사주식회사"
+    },
+    {
+      "handle": "kwakamole_official",
+      "channelUrl": "https://www.youtube.com/@kwakamole_official",
+      "name": "곽카몰리"
+    },
+    {
+      "handle": "nunchigames",
+      "channelUrl": "https://www.youtube.com/@nunchigames",
+      "name": "평범한 30대 | 게임으로 1억벌자"
+    },
+    {
+      "handle": "만들다-보니",
+      "channelUrl": "https://www.youtube.com/@%EB%A7%8C%EB%93%A4%EB%8B%A4-%EB%B3%B4%EB%8B%88",
+      "name": "만들다 보니"
+    },
+    {
+      "handle": "딸깍아닙니다",
+      "channelUrl": "https://www.youtube.com/@%EB%94%B8%EA%B9%8D%EC%95%84%EB%8B%99%EB%8B%88%EB%8B%A4",
+      "name": "딸깍 아닙니다"
+    },
+    {
+      "handle": "durigungri",
+      "channelUrl": "https://www.youtube.com/@durigungri",
+      "name": "둘이궁리"
+    },
+    {
+      "handle": "zenonkim5126",
+      "channelUrl": "https://www.youtube.com/@zenonkim5126",
+      "name": "제논의 잡학제작소"
+    },
+    {
+      "handle": "jsmgames2026",
+      "channelUrl": "https://www.youtube.com/@jsmgames2026",
+      "name": "JSM games"
+    }
+  ]
+}

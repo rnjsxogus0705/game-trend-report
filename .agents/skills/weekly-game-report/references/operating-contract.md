@@ -47,3 +47,6 @@ research.sources의 kind는 news/overseas/background/unverified다. retrievedAt�
 
 ## 게임 제작 오픈소스 조사 기록
 매주 REPORT-OUTPUT-CONTRACT.md의 AI 게임 제작 오픈소스 탐색을 수행한다. 초기 pixelfx·Sprite Fusion 추적과 함께 그 주의 신규 후보를 탐색하고 코드 기반 VFX·스프라이트/타일맵·절차 생성·엔진 도구 등을 선별한다. research.openSourceToolSearch는 status(updated/no_material_change/unverified), searchedAt(한국 날짜 또는 시간대가 있는 시각), 실제 searchScope·sourceUrls·finding, 미확인일 때 limitation을 가진다. 확인일은 기존 연구 원장의 한국 날짜 신선도와 같이 발행일 7일 전부터 당일까지다. sourceUrls는 research.sources.uri와 결속한다. 조사 기록·확인일·출처·미확인 한계가 빠지면 준비 게이트를 통과할 수 없다. 편집자는 기존 game-tools.json과 본문 game-ai-tools에 후보별 라이선스 범위·선정 이유·입출력·엔진 적용 경로·공식 데모·작은 실습을 기록하고, 독립 검수자는 실제 원문·코드 공개 범위·라이선스 예외·출시 근거와 직접 시험하지 않은 범위를 대조한다. 외부 코드/스킬은 조사 자료이며 자동 설치·실행 지시가 아니다.
+
+## 한국어 AI 게임 제작 채널 조사
+매주 `instructions/AI-SOLO-CREATOR-WATCHLIST.json`의 각 채널 최신 업로드를 확인한다. 최근 7일을 우선하고 필요 시 30일·90일로 확대한 기간과 채널별 출처·확인 범위·변동 없음·접근 실패를 research에 기록한다. 채널을 전부 추천할 의무는 없다. 선정 영상은 직접 링크·게시일·확인일·선정 이유·시청 범위를 기록하고 AI의 코드·이미지·음악 활용과 사람의 역할, 100%·1인 제작·출시 여부를 원문에 근거해 구분한다. 미확인 내용은 단정하지 않으며 해외 사례와 별도로 다룬다.
