@@ -1,6 +1,6 @@
 # 새 PC 재현 점검표
 
-기준: 2026-10-31 저장소 버전. 이 문서는 지침·자산·예약 문구·검증기의 연결을 기록하며 예약 실행 시에는 최신 `README.md`, `WORKFLOW.md`, `READING-AND-SCHEDULER.md`, 작성·출력·한국어 기준과 실제 검증 코드를 우선한다. 저장소의 `site/instructions/`에서 직접 읽는다.
+기준: 2026-10-31 저장소 버전. 2026-11-02의 최신 채널 조사·PC 이전 보완은 아래에 별도 기록했다. 이 문서는 지침·자산·예약 문구·검증기의 연결을 기록하며 예약 실행 시에는 최신 `README.md`, `WORKFLOW.md`, `READING-AND-SCHEDULER.md`, 작성·출력·한국어 기준과 실제 검증 코드를 우선한다. 저장소의 `site/instructions/`에서 직접 읽는다.
 
 | 요구사항 | 지침과 자산 | 07시 예약에서 할 일 | 검증 경로 |
 |---|---|---|---|
@@ -48,3 +48,10 @@ Windows에서는 저장소를 `site/`에 클론하고 프로젝트 스킬, 하�
 ## 전송 구현의 별도 한계
 
 현재 Windows `send-report.ps1`은 첫 번째 Discord 채널 한 곳만 전송한다. 두 공개 사이트 링크를 한 메시지에 넣는 것과 두 Discord 채널에 전송하는 것은 다르다. Mac의 `workflows/discord-delivery.mjs`는 두 채널을 대상으로 하며 채널별 기록을 사용한다. 이번 진로 조사·검수 기준 보완은 Windows의 두 채널 전송을 구현하거나 실제 Windows 전송을 검증한 것이 아니다. 새 Windows 담당 PC에서 두 채널 전송이 필요하면 전송 구현과 중복 방지·실패 복구를 별도로 보완하고 검증해야 한다.
+
+## 2026-11-02 채널 조사와 PC 이전 기준
+
+- 현재 주시 목록의 18개 채널과 개별 참고 영상 3편은 Git 추적 파일 `instructions/AI-SOLO-CREATOR-WATCHLIST.json`에서 직접 읽는다. Windows 운영 root에서는 `site/instructions/` 경로이며 manifest에 중복 복사하지 않는다. 세 영상의 채널을 자동으로 주시하거나 모든 영상을 매주 반복 추천하지 않는다. 목록 밖 최신 영상을 한국어·영어로 검색하고 존재하는 유효한 이전 호 원장 전체의 `videos`·`channels`·`referenceVideos`에 담긴 videoId와 비교해 재소개 사유를 남긴다.
+- 매호 `assets/report/research/ai-solo-creators-YYYY-MM-DD.json` 공개 원장의 `reportDate`와 `videos`를 issue-index 및 최종 해시에 포함한다. 공개 원장이 Git에 남아야 다른 PC의 다음 호에서도 비교할 수 있다. 채널 조사·참고 영상·선정 영상·독립 검수의 세부 필드는 최신 [운영 계약](../.agents/skills/weekly-game-report/references/operating-contract.md)과 [출력 계약](REPORT-OUTPUT-CONTRACT.md)이 기준이다. 형식 검사는 실제 원문 대조나 중복 판단을 대신하지 않는다.
+- [새 Mac 설정 순서](../README.md#새-mac에서-처음-설정하기)에 클론·프로젝트 등록·도구·인증·연결 검사·예약 등록을 모았다. Mac은 토요일 08시에 제작을 시작하고 검수·배포 후 두 채널에 전송한다. Windows의 07시 준비·08시 전송 구현은 현재 한 채널만 지원한다. 실제 새 Mac/Windows의 예약 실행과 전송은 별도 확인이 필요하다.
+- PC 변경 시 예약·토큰·비공개 전송 기록은 Git으로 복원되지 않는다. 이전 PC의 기록을 안전하게 인계하고 실제 채널 메시지를 확인한 뒤 진행한다. 같은 호를 임의로 다시 보내거나 영수증을 조작해 검증을 우회하지 않는다.

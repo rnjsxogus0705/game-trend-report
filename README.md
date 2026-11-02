@@ -2,7 +2,7 @@
 
 게임마이스터고 학생을 위한 게임·AI·취업 리서치 아카이브.
 
-주간 동향과 심층 분석 통합: 매주 토요일 08:00 (Asia/Seoul). 07:00 조사·교정·배포 준비, 08:00 링크 전송. 매월 1일 별도 발행은 하지 않습니다.
+주간 동향과 심층 분석을 통합합니다. 현재 Mac 예약은 매주 토요일 08:00(Asia/Seoul)에 제작을 시작하고 검수·배포 후 두 Discord 채널로 전송합니다. Windows의 별도 구성은 07:00 준비·08:00 전송이며 현재 전송 채널 한 곳만 지원합니다. 매월 1일 별도 발행은 하지 않습니다.
 
 이 저장소의 main 브랜치 루트를 GitHub Pages로 배포합니다. 새 HTML 리포트와 index.html을 main에 푸시하면 사이트가 갱신됩니다. 조사·리포트 작성은 별도로 설정된 Codex 정기 작업이 수행합니다.
 
@@ -12,7 +12,7 @@
 
 현재 구성 참고본은 [2026-10-31 주간호](reports/weekly-2026-10-31.html)이며, 다음 호의 기사·가격·순위·게임 데이터를 복사할 템플릿은 아닙니다. 다른 PC에서도 최신 지침을 동기화하고 [품질 검수 6단계와 예약 전문](instructions/READING-AND-SCHEDULER.md), [출력 계약의 qualityReview](instructions/REPORT-OUTPUT-CONTRACT.md)를 따릅니다.
 
-7영역의 실습 프롬프트(현재 참고본9개), 최근 해외 AI 제작 사례의30일/90일 기준과 AI 범위 구분, 전체 제목·도입문 및 본문 독립 한국어 검수, 생성 그림·공식 미디어·도표, 4범주·상단 요약·하이라이트·최소 글자·반응형/복사 검사를 함께 적용합니다. 2026-11-07 이후에는 적용 지침 커밋, 서로 다른 편집자·검수자, 9개 기준별 실제 근거·한계와 미해결 문제를 content-review에 남겨야 발행·전송 검증을 통과합니다. 자동 검사는 형식과 파일 일치를 확인하므로 실제 원문 조사·문맥 검수·화면 검사를 대신하지 않습니다.
+7영역의 실습 프롬프트(현재 참고본 11개), 최근 해외 AI 제작 사례의30일/90일 기준과 AI 범위 구분, 전체 제목·도입문 및 본문 독립 한국어 검수, 생성 그림·공식 미디어·도표, 4범주·상단 요약·하이라이트·최소 글자·반응형/복사 검사를 함께 적용합니다. 2026-11-07 이후에는 적용 지침 커밋, 서로 다른 편집자·검수자, 9개 기준별 실제 근거·한계와 미해결 문제를 content-review에 남겨야 발행·전송 검증을 통과합니다. 자동 검사는 형식과 파일 일치를 확인하므로 실제 원문 조사·문맥 검수·화면 검사를 대신하지 않습니다.
 
 새 PC는 스킬 설치뿐 아니라 image_gen 사용 가능 여부도 확인합니다. 한국어 생성 그림은 실제로 열어 읽고 오류를 보정합니다. 사용할 수 없으면 정확한 HTML 설명과 누락 범위를 기록하며, 별도 유료 API를 자동 결제하는 방식으로 대체하지 않습니다. Codex 예약은 저장소에 포함되지 않으므로 아래 초기 설정 후 최신 전문으로 다시 등록합니다. 이번 점검은 기존 예약을 새로 만들거나 메시지를 전송하지 않습니다.
 
@@ -22,11 +22,11 @@
 
 작성자와 다른 네이티브 검수자가 전체 한국어·내용·최종 파일을 검토하고, 수정은 최대2회입니다. 지침·파일·upstream hash가 바뀌면 하위 검수는 다시 수행합니다. 저장소에서 `node workflows/check-report-harness.mjs --run 실제-run-id`로 준비 묶음을 검사합니다. `_workspace/`의 실행 기록과 검수 영수증은 Git에 넣지 않습니다.
 
-새 PC에서는 프로젝트 스킬과 검사기가 clone으로 함께 내려옵니다. Codex를 저장소 site에서 열고 스킬 인식을 확인하세요. 예약 전문은 [최신 예약 지침](instructions/READING-AND-SCHEDULER.md)을 사용합니다. 실제 리포트 작성·배포·메시지 전송은 하네스 설치와 별개이며, 기존07시 제작/08시 전송 검증을 유지합니다. 자동 부분 재개 엔진과 별도 모델 서버는 포함하지 않습니다.
+새 PC에서는 프로젝트 스킬과 검사기가 clone으로 함께 내려옵니다. Codex에서 실제 저장소를 열고 스킬 인식을 확인하세요. Windows는 저장소 `site/`에서 실행합니다. OS별 예약 전문은 [최신 예약 지침](instructions/READING-AND-SCHEDULER.md)을 사용합니다. 실제 리포트 작성·배포·전송은 하네스 설치와 별개입니다. 자동 부분 재개 엔진과 별도 모델 서버는 포함하지 않습니다.
 
 ## 다른 컴퓨터에서 처음 설정하기
 
-현재 운영 스크립트는 **Windows용이며, 아래의 동일 경로와 기존 GitHub·Vercel·Discord 대상**을 사용합니다. 저장소를 클론하는 것만으로 AI 조사·배포·봇 인증·예약 작업이 설치되지는 않습니다. 같은 계정 또는 해당 저장소·프로젝트·서버에 권한이 있는 계정으로 설정하세요.
+아래 1~10단계는 **Windows 운영 폴더와 PowerShell 설정**입니다. 다른 Mac은 [새 Mac 설정](#새-mac에서-처음-설정하기)을 따르세요. 저장소를 클론하는 것만으로 조사 도구·배포·봇 인증·예약 작업이 설치되지는 않습니다. 같은 계정 또는 해당 저장소·프로젝트·서버에 권한이 있는 계정으로 설정하세요. Windows 전송 스크립트는 현재 Discord 채널 한 곳만 지원합니다.
 
 ### 1. 필요한 프로그램과 접근 권한
 
@@ -267,7 +267,7 @@ YYYY-MM-DD는 실제 발행일로 바꿉니다. publish-report는 검수 → 원
 
 각 예약에 복사할 전체 실행 문구와 UI·출력 검수 기준은 [읽기 경험과 예약 작업 재현 지침](instructions/READING-AND-SCHEDULER.md)에 있습니다. 재현 항목과 검증 범위는 [새 PC 재현 점검표](instructions/PORTABILITY-AUDIT.md)에서 확인합니다.
 
-담당 PC를 옮기면 이전 PC의 조사·전송 예약을 중지하고 새 PC만 활성화하세요. 이 예약은 클라우드 실행이 아니므로 PC와 Codex가 실행 중이어야 합니다. 로그인·수면 상태·네트워크로 실제 실행 시각이 달라질 수 있습니다. 예약 문구에는 이 README와 instructions/WORKFLOW.md를 먼저 읽고 실패 시 과거 호로 대체하지 않는 조건도 넣습니다.
+담당 PC를 옮기면 이전 PC의 조사·전송 예약을 중지하고 새 PC만 활성화하세요. 같은 날 교체한다면 이전 PC의 비공개 전송 기록을 안전하게 인계하고 각 채널의 실제 메시지를 확인하세요. 기록은 Git으로 복원되지 않으므로 이미 보낸 호를 임의로 재전송하거나 영수증을 조작해 검증을 우회하지 않습니다. 이 예약은 클라우드 실행이 아니므로 PC와 Codex가 실행 중이어야 합니다. 로그인·수면 상태·네트워크로 실제 실행 시각이 달라질 수 있습니다. 예약 문구에는 이 README와 instructions/WORKFLOW.md를 먼저 읽고 실패 시 과거 호로 대체하지 않는 조건도 넣습니다.
 
 ### 10. 문제 해결과 다른 배포 대상으로 옮기기
 
@@ -304,6 +304,29 @@ node workflows/build-site.mjs
 
 사이트 생성기는 저장소 안에서는 현재 `reports/`로 메인을 다시 만들고, Windows 운영 폴더에 동기화한 사본은 기존 `reports/`에서 `site/reports/`로 복사합니다. 두 환경 모두 과거 발행물을 보존합니다. 전체 발행 검수는 별도의 실제 조사·교정 영수증과 `validate-issue.mjs`를 계속 사용합니다.
 
+## 새 Mac에서 처음 설정하기
+
+1. Git·GitHub CLI·Node.js 18 이상·Codex 데스크톱 앱을 준비합니다. 접근 권한이 있는 계정으로 아래처럼 이 저장소를 클론하고 최신 main을 확인한 뒤, **클론한 저장소 폴더 자체**를 Codex 프로젝트로 엽니다. 프로젝트의 `.agents/skills/weekly-game-report/`와 `workflows/check-report-harness.mjs`, 채널 목록과 공개 원장은 Git으로 함께 내려옵니다. 전역 harness 생성기와 Python은 주간 실행에 필요하지 않습니다.
+
+   ```sh
+   git clone https://github.com/rnjsxogus0705/game-trend-report.git
+   cd game-trend-report
+   ```
+
+2. 새 Mac에 ego lite/`ego-browser`, humanizer·grammar-checker·style-guide, k-skill의 지정 두 스킬과 Impeccable을 준비합니다. `ego-browser skill`의 전체 안내와 실제 설치된 각 SKILL.md를 읽을 수 있는지, image_gen을 사용할 수 있는지 확인합니다. 설치·검수 기준은 [한국어 편집 기준](instructions/KOREAN-EDITORIAL-POLICY.md)과 [디자인 자료 안내](instructions/DESIGN-REFERENCE-GUIDE.md)를 따릅니다.
+3. 기존 GitHub 저장소에 접근할 수 있도록 이 Mac의 `gh` 인증과 Git 작성자를 설정합니다. `GH_TOKEN`을 쓴다면 예약 실행 환경에서 값을 읽을 수 있게 로컬에 준비합니다. 저장소 루트의 Git에서 제외된 `.env`에 기존 봇 토큰을 `DISCORD_BOT_TOKEN`으로 등록하고 파일 접근 권한을 제한합니다. 기존 `.env`는 덮어쓰지 말고 확인합니다. 토큰과 인증 값은 채팅·Git·예약 프롬프트·검수 기록에 넣거나 출력하지 않습니다. 이미 설정된 `DISCORD_BOT_TOKEN` 환경변수는 `.env`보다 먼저 사용됩니다.
+4. 저장소 루트에서 파일 접근 권한과 Git 제외 상태를 확인하고 지정 봇과 두 서버·채널 연결을 검사합니다. 마지막 명령은 메시지를 보내지 않습니다. 실패하면 인증이나 권한을 해결한 뒤 계속합니다.
+
+   ```sh
+   chmod 600 .env
+   git check-ignore .env
+   node workflows/discord-delivery.mjs --check
+   ```
+
+5. 이전 담당 PC의 예약을 중지하고, 새 Mac의 Codex 앱에서 이 저장소 프로젝트를 대상으로 [macOS 예약 전문](instructions/READING-AND-SCHEDULER.md#macos-새-pc의-토요일-08시-단일-예약)을 로컬 실행·매주 토요일 08:00·Asia/Seoul로 별도 등록합니다. 08시는 제작 시작 시각이며 실제 두 채널 전송은 독립 검수와 배포 확인 후입니다. 예약 객체와 로컬 인증은 Git으로 복원되지 않습니다.
+
+같은 발행일에 담당 PC를 바꾼다면 이전 PC의 비공개 전송 기록을 안전하게 인계하고 두 채널의 실제 메시지를 확인합니다. 이미 보낸 호는 임의로 재전송하지 않으며, 기록 삭제·조작이나 검증 우회로 중복 방지를 무력화하지 않습니다.
+
 ## 이 Mac의 두 Discord 채널 전송
 로컬 `.env`의 `DISCORD_BOT_TOKEN`에 기존 Game Trend Report 봇 토큰을 보관합니다. 파일은 Git에서 제외하며 빈 항목만으로 인증이 구성되었다고 표시하지 않습니다. 토큰 재발급은 기존 Windows 인증에도 영향을 주므로 임의로 하지 않습니다.
 
@@ -318,3 +341,9 @@ node workflows/build-site.mjs
 새 PC는 최신 main을 받아 저장소에서 스킬을 실행합니다. 프로젝트의 `.agents/skills/weekly-game-report`, `workflows/check-report-harness.mjs`와 지침은 Git으로 함께 내려오며 전역 harness 생성기/Python은 매주 실행에 필요하지 않습니다. Windows 운영 root의 24개 동기화 목록과 site 저장소 내부 파일의 역할을 혼동하지 마세요. Windows의 07시 준비/08시 전송 전문과 macOS의 08시 단일 예약 전문은 [예약 재현 지침](instructions/READING-AND-SCHEDULER.md)에 각각 있습니다. 예약 객체·토큰·스킬 도구 설치는 Git만으로 복원되지 않으므로 해당 PC에 준비하고 기존 전송 PC와 동시에 활성화하지 않습니다.
 
 AI 게임 제작 오픈소스도 매주 조사합니다. pixelfx·Sprite Fusion의 코드 기반 픽셀 VFX처럼 대형 서비스나 Trending 밖의 실제 제작 도구를 [출력 계약의 탐색 기준과 초기 추적 예시](instructions/REPORT-OUTPUT-CONTRACT.md)에 포함했습니다. 스킬·하네스·OS별 예약 전문이 research.openSourceToolSearch로 연결되며, 새 PC도 최신 main과 예약 전문을 사용합니다. 소개만을 위해 외부 스킬을 자동 설치하거나 코드를 실행하지 않습니다.
+
+## AI 게임 제작 채널과 다음 호 중복 확인
+
+[주시 목록](instructions/AI-SOLO-CREATOR-WATCHLIST.json)은 저장소 `instructions/`에서 직접 읽는 현재 18개 채널과 개별 참고 영상 3편의 기준입니다. Windows에서는 `site/instructions/` 경로입니다. 세 영상의 채널 전체를 자동 주시 목록에 넣거나 매주 모든 영상을 반복 추천하지 않습니다. 목록 밖의 최신 제작 영상도 한국어와 영어로 검색하고, 존재하는 유효한 이전 호 원장 전체의 `videos`·`channels`·`referenceVideos`에 담긴 videoId와 비교해 재소개 사유를 기록합니다.
+
+매호 `assets/report/research/ai-solo-creators-YYYY-MM-DD.json` 공개 원장에 해당 호의 `reportDate`와 선정 `videos`를 남겨 issue-index의 공개 파일과 최종 해시 검수에 포함합니다. Git에 이 원장이 함께 전달되어야 다음 PC와 다음 호에서 이전 영상을 비교할 수 있습니다. 실제 조사 기록·개별 참고 영상·선정 영상·독립 검수 필드와 실패 기준은 [하네스 운영 계약](.agents/skills/weekly-game-report/references/operating-contract.md)과 [출력 계약](instructions/REPORT-OUTPUT-CONTRACT.md)을 따릅니다. 자동 형식 검사는 실제 원문 조사와 독립 검수를 대신하지 않습니다.

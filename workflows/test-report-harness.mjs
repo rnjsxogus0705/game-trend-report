@@ -18,16 +18,17 @@ async function fixture(t){
  const evidence={path:'_workspace/harness/weekly-game-report/'+runId+'/evidence/fixture.txt',sha256:hash('synthetic evidence')};await write(evidence.path,'synthetic evidence');
  const careerCoverage=careerCategories.map(category=>({category,status:'unverified',searchedAt:'2026-11-07',searchScope:'Synthetic search scope',finding:'No actual search in fixture',sourceUrls:['https://example.test/fixture'],limitation:'Synthetic fixture only'}));
  const contentPath=file+'.content-review.json',content=JSON.stringify({careerCoverage});await write(contentPath,content);
- const files=[{path:file,sha256:hash('synthetic HTML, no real report'),publish:true},{path:contentPath,sha256:hash(content),publish:false}],reviewedFiles=Object.fromEntries(files.map(f=>[f.path,f.sha256]));
+ const ledgerPath='assets/report/research/ai-solo-creators-2026-11-07.json',ledger=JSON.stringify({reportDate:'2026-11-07',videos:[]});await write(ledgerPath,ledger);
+ const files=[{path:file,sha256:hash('synthetic HTML, no real report'),publish:true},{path:contentPath,sha256:hash(content),publish:false},{path:ledgerPath,sha256:hash(ledger),publish:true}],reviewedFiles=Object.fromEntries(files.map(f=>[f.path,f.sha256]));
  const paths=Object.fromEntries(spec.outputs.map(o=>[o.id,o.path.replace('{run_id}',runId)]));
  for(const task of spec.tasks)for(const id of task.outputs){
   const record={runId,issueDate:'2026-11-07',instructionRevision:revision,inputs:Object.fromEntries(task.inputs.filter(i=>Object.hasOwn(digests,i)).map(i=>[i,digests[i]]))};
   if(id==='context')Object.assign(record,{authorization:{generate:true,publish:false,send:false},instructionFiles});
-  if(id==='research'){record.sources=[{uri:'https://example.test/fixture',publisher:'fixture',retrievedAt:'2026-11-07',kind:'background',scope:'Synthetic, no actual research'}];record.careerCoverage=careerCoverage;record.creatorContentSearch={channels:watchlist.channels.map(({handle})=>({handle,status:'unverified',searchedAt:'2026-11-07',sourceUrls:['https://example.test/fixture'],finding:'Synthetic fixture only',limitation:'Synthetic fixture only'})),discovery:{searchedAt:'2026-11-07',queries:['AI 게임 개발','AI game development'],sourceUrls:[],finding:'Synthetic search; no actual discovery'},duplicateReview:{searchedAt:'2026-11-07',priorIssuePaths:[],finding:'Synthetic first issue; no prior ledger'}};record.openSourceToolSearch={status:'unverified',searchedAt:'2026-11-07',searchScope:'Synthetic open-source tools search',finding:'No actual search',sourceUrls:['https://example.test/fixture'],limitation:'Synthetic fixture only'};}
+  if(id==='research'){record.sources=[{uri:'https://example.test/fixture',publisher:'fixture',retrievedAt:'2026-11-07',kind:'background',scope:'Synthetic, no actual research'},...watchlist.referenceVideos.map(v=>({uri:v.videoUrl,publisher:'fixture',retrievedAt:'2026-11-07',kind:'background',scope:'Synthetic reference'}))];record.careerCoverage=careerCoverage;record.creatorContentSearch={channels:watchlist.channels.map(({handle})=>({handle,status:'unverified',searchedAt:'2026-11-07',sourceUrls:['https://example.test/fixture'],finding:'Synthetic fixture only',limitation:'Synthetic fixture only'})),referenceVideos:watchlist.referenceVideos.map(v=>({videoId:v.videoId,status:'unverified',searchedAt:'2026-11-07',sourceUrls:[v.videoUrl],finding:'Synthetic fixture only',limitation:'Synthetic fixture only'})),selectedVideos:[],discovery:{searchedAt:'2026-11-07',queries:['AI 게임 개발','AI game development'],sourceUrls:[],finding:'Synthetic search; no actual discovery'},duplicateReview:{searchedAt:'2026-11-07',priorIssuePaths:[],finding:'Synthetic first issue; no prior ledger'}};record.openSourceToolSearch={status:'unverified',searchedAt:'2026-11-07',searchScope:'Synthetic open-source tools search',finding:'No actual search',sourceUrls:['https://example.test/fixture'],limitation:'Synthetic fixture only'};}
   if(id==='issue')Object.assign(record,{editor:'fixture-writer',editorSessionId:'fixture-writer-session',files});
-  if(id.endsWith('review'))Object.assign(record,{reviewer:'fixture-reviewer',method:'native-subagent',sessionId:'fixture-review-session',verdict:'approved',blockers:[],reviewedFiles,careerCategoriesReviewed:[...careerCategories]});
+  if(id.endsWith('review'))Object.assign(record,{reviewer:'fixture-reviewer',method:'native-subagent',sessionId:'fixture-review-session',verdict:'approved',blockers:[],reviewedFiles,careerCategoriesReviewed:[...careerCategories],referenceVideoIdsReviewed:watchlist.referenceVideos.map(v=>v.videoId)});
   if(id==='verification')Object.assign(record,{passed:true,commands:['build-site.mjs','validate-issue.mjs'].map(name=>({argv:['node',name],exitCode:0,evidence})),ui:{widths:[320,390,768,1440],checks:['navigation','disclosure','filter','copy','share','media','downloads','print','typography','tables'],evidence:[evidence]}});
-  if(id==='ready')Object.assign(record,{status:'ready',files,handoff:files.map(f=>({source:f.path,destination:f.path}))});
+  if(id==='ready')Object.assign(record,{status:'ready',files,handoff:files.filter(f=>f.path.startsWith('reports/')).map(f=>({source:f.path,destination:f.path}))});
   const bytes=JSON.stringify(record);await write(paths[id],bytes);records[id]=record;digests[id]=hash(bytes);
  }
  const rebind=async()=>{const hashes={};for(const task of spec.tasks)for(const id of task.outputs){for(const input of task.inputs)if(hashes[input])records[id].inputs[input]=hashes[input];const bytes=JSON.stringify(records[id]);await write(paths[id],bytes);hashes[id]=hash(bytes);}};
@@ -126,10 +127,41 @@ test('제작 채널과 신규 콘텐츠 조사 누락·신선도·출처·한계
  ]){const f=await fixture(t);change(f.records.research);await f.rebind();await assert.rejects(f.check,pattern);}
  const prior=await fixture(t),old='assets/report/research/ai-solo-creators-2026-10-24.json',latest='assets/report/research/ai-solo-creators-2026-10-31.json';
  await prior.write(old,'{}');await prior.write(latest,'{}');
- await assert.rejects(prior.check,/Creator duplicate review latest prior issue missing/);
+ await assert.rejects(prior.check,/Creator duplicate review prior issue coverage missing or duplicate/);
  for(const bad of [old,'assets/report/research/ai-solo-creators-2026-11-07.json','assets/report/research/ai-solo-creators-2026-11-08.json','assets/report/research/prior.json','assets/report/research/ai-solo-creators-2026-02-31.json']){
-  if(bad!==old)await prior.write(bad,'{}');prior.records.research.creatorContentSearch.duplicateReview.priorIssuePaths=[bad];await prior.rebind();await assert.rejects(prior.check,/Creator duplicate review (latest prior issue missing|prior issue path invalid)/);
+  if(bad!==old&&!bad.endsWith('2026-11-07.json'))await prior.write(bad,'{}');prior.records.research.creatorContentSearch.duplicateReview.priorIssuePaths=[bad];await prior.rebind();await assert.rejects(prior.check,/Creator duplicate review (prior issue coverage missing or duplicate|prior issue path invalid)/);
  }
- prior.records.research.creatorContentSearch.duplicateReview.priorIssuePaths=[latest];await prior.rebind();assert.equal((await prior.check()).status,'ready');
+ prior.records.research.creatorContentSearch.duplicateReview.priorIssuePaths=[latest,latest];await prior.rebind();await assert.rejects(prior.check,/Creator duplicate review prior issue coverage/);
+ prior.records.research.creatorContentSearch.duplicateReview.priorIssuePaths=[old,latest];await prior.rebind();assert.equal((await prior.check()).status,'ready');
  const f=await fixture(t);await f.write(watchlistPath,JSON.stringify({...watchlist,purpose:'changed'}));await assert.rejects(f.check,/Stale instruction file/);
+});
+
+test('개별 참고 영상 조사·독립 검수의 누락과 출처를 차단',async t=>{
+ for(const [change,pattern] of [
+  [r=>delete r.creatorContentSearch.referenceVideos,/Creator reference coverage/],
+  [r=>r.creatorContentSearch.referenceVideos.pop(),/Creator reference coverage/],
+  [r=>r.creatorContentSearch.referenceVideos[1].videoId=r.creatorContentSearch.referenceVideos[0].videoId,/Creator reference coverage/],
+  [r=>r.creatorContentSearch.referenceVideos[0].sourceUrls=['https://example.test/fixture'],/Creator reference sources/],
+  [r=>delete r.creatorContentSearch.referenceVideos[0].limitation,/Creator reference limitation/]
+ ]){const f=await fixture(t);change(f.records.research);await f.rebind();await assert.rejects(f.check,pattern);}
+ for(const id of ['editorial-review','final-review']){const f=await fixture(t);f.records[id].referenceVideoIdsReviewed.pop();await f.rebind();await assert.rejects(f.check,/Independent creator reference review/);}
+});
+
+test('선정 영상과 공개 원장의 일치·재소개 사유 검사',async t=>{
+ const ledgerPath='assets/report/research/ai-solo-creators-2026-11-07.json';
+ const good={videoId:'m5EE54v3QGI',sourceUrl:'https://www.youtube.com/watch?v=m5EE54v3QGI',selectionReason:'Synthetic reason'};
+ async function setLedger(f,data){const bytes=JSON.stringify(data);await f.write(ledgerPath,bytes);f.records.issue.files.find(x=>x.path===ledgerPath).sha256=hash(bytes);for(const id of ['editorial-review','final-review'])f.records[id].reviewedFiles[ledgerPath]=hash(bytes);}
+ async function select(f,item){f.records.research.creatorContentSearch.selectedVideos=[item];f.records.research.sources.push({uri:item.sourceUrl,publisher:'fixture',retrievedAt:'2026-11-07',kind:'background',scope:'Synthetic selection'});await setLedger(f,{reportDate:'2026-11-07',videos:[item]});await f.rebind();}
+ for(const change of [v=>v.videoId='bad',v=>v.sourceUrl='https://example.test/not-read',v=>v.selectionReason='']){const f=await fixture(t),v={...good};change(v);f.records.research.creatorContentSearch.selectedVideos=[v];await f.rebind();await assert.rejects(f.check,/Creator selected videos invalid/);}
+ const absent=await fixture(t);absent.records.issue.files.splice(2,1);await absent.rebind();await assert.rejects(absent.check,/Creator public ledger missing/);
+ const hidden=await fixture(t);hidden.records.issue.files[2].publish=false;await hidden.rebind();await assert.rejects(hidden.check,/Private evidence outside|Creator public ledger/);
+ for(const data of [{reportDate:'2026-11-06',videos:[]},{reportDate:'2026-11-07',videos:[good]}]){const f=await fixture(t);await setLedger(f,data);await f.rebind();await assert.rejects(f.check,/Creator public ledger date or selected videos differ/);}
+ const tamper=await fixture(t);await tamper.write(ledgerPath,'{}');await assert.rejects(tamper.check,/Issue file hash mismatch/);
+ const f=await fixture(t),prior='assets/report/research/ai-solo-creators-2026-10-31.json';await f.write(prior,JSON.stringify({channels:[{videoId:good.videoId}]}));f.records.research.creatorContentSearch.duplicateReview.priorIssuePaths=[prior];await select(f,{...good});await assert.rejects(f.check,/Creator repeated video reason missing/);
+ await select(f,{...good,repeatReason:'New development since previous coverage'});assert.equal((await f.check()).status,'ready');
+ const older='assets/report/research/ai-solo-creators-2026-10-24.json';await f.write(older,JSON.stringify({videos:[{videoId:good.videoId}]}));await f.write(prior,JSON.stringify({channels:[]}));f.records.research.creatorContentSearch.duplicateReview.priorIssuePaths=[older,prior];await select(f,{...good});await assert.rejects(f.check,/Creator repeated video reason missing/);
+ await select(f,{...good,repeatReason:'New development since older coverage'});assert.equal((await f.check()).status,'ready');
+ const fresh=await fixture(t);await select(fresh,{...good});assert.equal((await fresh.check()).status,'ready');
+ const reference=await fixture(t),referenceVideo=watchlist.referenceVideos[0],referenceSelection={videoId:referenceVideo.videoId,sourceUrl:referenceVideo.videoUrl,selectionReason:'Synthetic reference selection'};await reference.write(prior,JSON.stringify({referenceVideos:[{videoId:referenceVideo.videoId}]}));reference.records.research.creatorContentSearch.duplicateReview.priorIssuePaths=[prior];await select(reference,referenceSelection);await assert.rejects(reference.check,/Creator repeated video reason missing/);
+ await select(reference,{...referenceSelection,repeatReason:'New context for previously introduced reference'});assert.equal((await reference.check()).status,'ready');
 });

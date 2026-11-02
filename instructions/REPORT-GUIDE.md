@@ -207,3 +207,6 @@ TOP 10은 실측 순위가 아닌 편집 우선순위다. 각 항목에 이번 �
 
 ## AI 게임 제작 오픈소스
 매주 대형 AI 서비스·Trending 외에도 코드 기반 픽셀 VFX·스프라이트·타일맵·절차 생성·엔진 도구를 탐색한다. pixelfx·Sprite Fusion은 REPORT-OUTPUT-CONTRACT.md의 초기 추적 예시이며 실제 그 주의 출시·변경·라이선스·사용 경로를 다시 확인한다. 조사 기록은 하네스 research.openSourceToolSearch로 남기고 후보별 근거·공식 미디어·작은 실습을 기존 game-tools.json과 game-ai-tools에 정리한다. 코드 라이브러리와 노하우 글, 유료 제품을 구분하며 무료 데모를 오픈소스나 상업 이용 허용으로 추정하지 않는다.
+
+## AI 게임 제작 채널과 영상 조사
+현재 주시 채널 18곳과 개별 참고 영상 3편의 기준은 저장소의 `instructions/AI-SOLO-CREATOR-WATCHLIST.json`이다. 개별 영상의 채널을 자동으로 주시하거나 모든 영상을 매주 반복 추천하지 않는다. 목록 밖 최신 콘텐츠도 한국어·영어로 검색하고, 존재하는 유효한 이전 호 원장 전체의 `videos`·`channels`·`referenceVideos`에 담긴 videoId와 비교해 재소개라면 이유를 밝힌다. 해당 호 `assets/report/research/ai-solo-creators-YYYY-MM-DD.json`의 `reportDate`와 `videos`를 공개 파일 목록·최종 파일 해시에 포함해 다른 PC에서도 다음 호의 비교 근거로 사용한다. 상세 기록·독립 검수·차단 기준은 [출력 계약](REPORT-OUTPUT-CONTRACT.md)과 [하네스 운영 계약](../.agents/skills/weekly-game-report/references/operating-contract.md)을 따른다.

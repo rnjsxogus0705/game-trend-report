@@ -1,19 +1,22 @@
 # 제작·배포·전송 워크플로우
 
-## 지침 갱신
+## Windows 지침 갱신
 1. 다른 환경에서 instructions/와 workflows/를 편집하고 main에 커밋·푸시합니다.
 2. 이 PC의 `sync-instructions.ps1`이 원격 main을 fetch하고 fast-forward로 갱신합니다. 매시간 확인하고, 토요일 제작·전송 시작 직전에도 확인합니다.
 3. 허용된 파일만 로컬에 복사하고 적용 커밋·파일 해시·시각을 비공개 상태 파일에 기록합니다. 양쪽에서 수정한 파일은 덮어쓰지 않고 충돌을 알립니다. 강제 초기화나 강제 푸시는 하지 않습니다.
 4. 동기화 후 변경된 지침을 다시 읽고 작업합니다. 지침 변경이 기존 호를 자동 재작성하거나 재전송하지는 않습니다. 새 호부터 적용하며 과거 호 변경은 별도 작업으로 처리합니다.
 
-## 토요일 07:00 한국 시간: 조사·작성·배포
+## Windows 토요일 07:00 한국 시간: 조사·작성·배포
 동기화 → 최신 지침 읽기 → 최근 7일 원문 조사와 최근 해외 AI 제작 사례 조사 → 출처·주장·출시 상태 기록 → HTML·호별 자료와 섹션별 실습 프롬프트 작성 → 한국어 교정 → 독립 내용·제목·문맥 검수 → 지적 수정과 해당 부분 재검수 → build-site.mjs로 로컬 site/reports에 복사 → site를 루트로 한 HTTP 미리보기에서 실제 화면·링크·복사·다운로드 검사 → validate-issue.mjs → publish-report.ps1 → Pages와 Vercel 본문 일치 확인 → 요약 저장. 이 단계에서는 전송하지 않습니다.
 
-## 토요일 08:00 한국 시간: 전송
+## Windows 토요일 08:00 한국 시간: 전송
 동기화 → dispatch-report.ps1에서 당일 호 validate-issue.mjs 실행 → 검수·배포 기록 확인 → 두 공개 사이트 본문 비교 → Game Trend Report 봇으로 두 링크 전송 → 응답 확인·중복 방지 기록. 실패하거나 미완성인 호를 이전 호로 대체하지 않습니다.
 
+## macOS 토요일 08:00 한국 시간: 제작 시작
+저장소를 Codex 프로젝트로 열고 최신 main·지침을 확인한 뒤 `$weekly-game-report`로 조사·작성·독립 검수와 배포를 진행한다. Pages와 Vercel의 최종 파일을 확인한 후 Node 전송기로 지정한 두 Discord 채널에 보낸다. 08시는 제작 시작 시각이다. 설정과 예약 전문은 [README의 새 Mac 설정](../README.md#새-mac에서-처음-설정하기)과 [macOS 예약 지침](READING-AND-SCHEDULER.md#macos-새-pc의-토요일-08시-단일-예약)을 따른다. Windows PowerShell 전송기는 현재 한 채널만 지원한다.
+
 ## 다른 컴퓨터에서 실행하려면
-공개 소스만으로 봇 인증이 복원되지는 않습니다. 로컬 작업 폴더 아래 site/에 이 저장소를 체크아웃하고 workflows/의 파일을 작업 폴더에 배치합니다. GH_TOKEN·Git 작성자 설정·VERCEL_TOKEN과 배포 대상 설정, Windows 사용자별 봇 DPAPI 인증, 한국어 스킬, ego-browser, Node.js·PowerShell·gh CLI·예약 작업을 그 환경에서 별도로 준비해야 합니다. 비밀 값은 Git에 커밋하지 않습니다.
+공개 소스만으로 봇 인증이 복원되지는 않습니다. Windows에서는 로컬 작업 폴더 아래 site/에 이 저장소를 체크아웃하고 workflows/의 파일을 작업 폴더에 배치합니다. GH_TOKEN·Git 작성자 설정·VERCEL_TOKEN과 배포 대상 설정, Windows 사용자별 봇 DPAPI 인증, 한국어 스킬, ego-browser, Node.js·PowerShell·gh CLI·예약 작업을 그 환경에서 별도로 준비해야 합니다. Mac의 준비 순서는 위 macOS 안내를 따릅니다. 비밀 값은 Git에 커밋하거나 채팅에 노출하지 않습니다.
 
 현재 예약 실행과 동기화는 이 PC와 Codex가 켜져 있을 때 동작합니다. GitHub 푸시 웹훅이나 클라우드 실행은 구성하지 않았습니다. PC가 꺼져 있으면 다음 실제 실행 때 최신 main을 확인합니다. 예약 시각을 바꾸려면 지침 문구뿐 아니라 Codex 예약 설정도 변경해야 합니다.
 
@@ -49,3 +52,8 @@ READING-AND-SCHEDULER.md의 품질 검수 6단계와 실습 DOM 계약을 따른
 
 ## 코드 기반 게임 제작 오픈소스 조사
 research 단계에서 REPORT-OUTPUT-CONTRACT.md의 오픈소스 탐색을 수행하고 openSourceToolSearch와 출처 원장을 결속한다. pixelfx·Sprite Fusion 유형의 작은 제작 도구도 탐색하며 그 주의 새 변경과 기존 참고를 구분한다. 후보의 공개 코드·라이선스 예외·엔진 경로·선정 이유·공식 미디어·실습을 작성하고 독립 검수한다. 준비 게이트는 이 탐색 기록·확인일·출처·미확인 사유 누락을 차단한다.
+
+## AI 게임 제작 채널의 조사와 공개 원장
+매주 저장소의 `instructions/AI-SOLO-CREATOR-WATCHLIST.json`에서 현재 주시 채널 18곳과 개별 참고 영상 3편을 확인한다. 개별 영상의 채널을 자동으로 주시하지 않고 매주 모든 영상을 반복 추천하지 않는다. 목록 밖에서도 한국어·영어로 최신 콘텐츠를 검색하고 존재하는 유효한 이전 호 공개 원장 전체의 `videos`·`channels`·`referenceVideos`에 담긴 videoId와 대조해 재소개 사유를 기록한다. 해당 호의 `assets/report/research/ai-solo-creators-YYYY-MM-DD.json`은 `reportDate`·`videos`를 담아 공개 파일 목록과 최종 해시 검수에 포함한다. `research.creatorContentSearch.referenceVideos`·`selectedVideos`와 독립 검수의 `referenceVideoIdsReviewed`를 운영 계약에 맞게 기록한다. 조사·선정·참고 영상과 독립 검수의 세부 필드 및 차단 기준은 [운영 계약](../.agents/skills/weekly-game-report/references/operating-contract.md)과 [출력 계약](REPORT-OUTPUT-CONTRACT.md)을 따른다.
+
+PC 교체 시 예약은 한 PC만 활성화하고, 같은 발행일의 비공개 전송 기록을 안전하게 인계해 실제 채널 메시지와 대조한다. 이미 보낸 호는 임의로 재전송하거나 영수증을 조작하지 않는다. 예약·토큰·비공개 기록은 Git으로 복원되지 않는다.

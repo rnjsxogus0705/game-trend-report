@@ -78,6 +78,19 @@ export async function checkReportHarness({root,runId,revision}){
   insist(item.sourceUrls?.length>0&&linked(item.sourceUrls),'Creator channel sources are not linked to research.sources: '+item.handle);
   if(item.status==='unverified')insist(typeof item.limitation==='string'&&item.limitation.trim(),'Creator channel limitation missing: '+item.handle);
  }
+ const referenceVideos=watchlist.referenceVideos;
+ insist(Array.isArray(referenceVideos)&&new Set(referenceVideos.map(v=>v.videoId)).size===referenceVideos.length&&referenceVideos.every(v=>/^[A-Za-z0-9_-]{11}$/.test(v.videoId)&&v.videoUrl==='https://www.youtube.com/watch?v='+v.videoId),'Creator reference watchlist invalid');
+ const refs=creatorSearch.referenceVideos;
+ insist(Array.isArray(refs)&&refs.length===referenceVideos.length&&new Set(refs.map(v=>v?.videoId)).size===referenceVideos.length&&referenceVideos.every(v=>refs.some(item=>item?.videoId===v.videoId)),'Creator reference coverage missing or duplicate');
+ for(const ref of refs){
+  const original=referenceVideos.find(v=>v.videoId===ref.videoId);
+  insist(['updated','no_material_change','unverified'].includes(ref.status)&&typeof ref.finding==='string'&&ref.finding.trim(),'Creator reference record incomplete: '+ref.videoId);
+  insist(fresh(ref.searchedAt),'Creator reference search date is stale or invalid: '+ref.videoId);
+  insist(linked(ref.sourceUrls)&&ref.sourceUrls.includes(original.videoUrl),'Creator reference sources missing or not linked: '+ref.videoId);
+  if(ref.status==='unverified')insist(typeof ref.limitation==='string'&&ref.limitation.trim(),'Creator reference limitation missing: '+ref.videoId);
+ }
+ const selected=creatorSearch.selectedVideos;
+ insist(Array.isArray(selected)&&new Set(selected.map(v=>v?.videoId)).size===selected.length&&selected.every(v=>v&&typeof v.videoId==='string'&&/^[A-Za-z0-9_-]{11}$/.test(v.videoId)&&v.sourceUrl==='https://www.youtube.com/watch?v='+v.videoId&&typeof v.selectionReason==='string'&&v.selectionReason.trim()&&linked([v.sourceUrl])),'Creator selected videos invalid or source not linked');
  const discovery=creatorSearch.discovery;
  insist(discovery&&typeof discovery.finding==='string'&&discovery.finding.trim()&&Array.isArray(discovery.queries)&&discovery.queries.every(q=>typeof q==='string'&&q.trim())&&discovery.queries.some(q=>/[가-힣]/.test(q))&&discovery.queries.some(q=>/[a-z]/i.test(q)&&!/[가-힣]/.test(q)),'Creator discovery queries or finding missing');
  insist(fresh(discovery.searchedAt),'Creator discovery date is stale or invalid');
@@ -95,8 +108,13 @@ export async function checkReportHarness({root,runId,revision}){
   }).map(entry=>'assets/report/research/'+entry.name).sort();
  }catch(error){if(error.code!=='ENOENT')throw error;}
  insist(duplicateReview.priorIssuePaths.every(p=>typeof p==='string'&&previous.includes(p)),'Creator duplicate review prior issue path invalid');
- if(previous.length)insist(duplicateReview.priorIssuePaths.includes(previous.at(-1)),'Creator duplicate review latest prior issue missing');
- for(const prior of duplicateReview.priorIssuePaths)await read(prior);
+ insist(duplicateReview.priorIssuePaths.length===previous.length&&new Set(duplicateReview.priorIssuePaths).size===previous.length&&previous.every(p=>duplicateReview.priorIssuePaths.includes(p)),'Creator duplicate review prior issue coverage missing or duplicate');
+ const priorVideoIds=new Set();
+ for(const prior of duplicateReview.priorIssuePaths){
+  const ledger=JSON.parse(await read(prior));
+  for(const key of ['videos','channels','referenceVideos'])if(Array.isArray(ledger[key]))for(const entry of ledger[key])if(typeof entry?.videoId==='string')priorVideoIds.add(entry.videoId);
+ }
+ for(const video of selected)if(priorVideoIds.has(video.videoId))insist(typeof video.repeatReason==='string'&&video.repeatReason.trim(),'Creator repeated video reason missing: '+video.videoId);
 
  const issue=records.issue;
  insist(Array.isArray(issue.files)&&issue.files.length>0,'Issue file list missing');
@@ -108,6 +126,10 @@ export async function checkReportHarness({root,runId,revision}){
   insist(hash(await read(file.path))===file.sha256,'Issue file hash mismatch: '+file.path);reviewed[file.path]=file.sha256;
   if(file.publish&&file.path==='reports/weekly-'+records.context.issueDate+'.html')htmlPath=file.path;
  }
+ const creatorLedgerPath='assets/report/research/ai-solo-creators-'+context.issueDate+'.json';
+ insist(issue.files.some(file=>file.path===creatorLedgerPath&&file.publish===true),'Creator public ledger missing or private');
+ const creatorLedger=JSON.parse(await read(creatorLedgerPath));
+ insist(creatorLedger.reportDate===context.issueDate&&isDeepStrictEqual(creatorLedger.videos,selected),'Creator public ledger date or selected videos differ');
  insist(htmlPath,'Canonical weekly HTML missing');
  const html=(await read(htmlPath)).toString('utf8');
  const contentPath=htmlPath+'.content-review.json';
@@ -124,6 +146,7 @@ export async function checkReportHarness({root,runId,revision}){
  }
  for(const id of ['editorial-review','final-review']){
   const review=records[id];insist(review.verdict==='approved'&&Array.isArray(review.blockers)&&review.blockers.length===0,'Review gate not approved: '+id);
+  insist(Array.isArray(review.referenceVideoIdsReviewed)&&review.referenceVideoIdsReviewed.length===referenceVideos.length&&new Set(review.referenceVideoIdsReviewed).size===referenceVideos.length&&referenceVideos.every(v=>review.referenceVideoIdsReviewed.includes(v.videoId)),'Independent creator reference review missing: '+id);
   insist(Array.isArray(review.careerCategoriesReviewed)&&review.careerCategoriesReviewed.length===careerCategories.length&&careerCategories.every(category=>review.careerCategoriesReviewed.includes(category)),'Independent career category review missing: '+id);
   insist(review.method==='native-subagent'&&typeof review.sessionId==='string'&&review.sessionId&&typeof issue.editorSessionId==='string'&&issue.editorSessionId&&review.sessionId!==issue.editorSessionId,'Independent review execution record missing');
   insist(typeof review.reviewer==='string'&&review.reviewer.trim()&&typeof issue.editor==='string'&&issue.editor.trim()&&review.reviewer.trim()!==issue.editor.trim(),'Independent reviewer required');
