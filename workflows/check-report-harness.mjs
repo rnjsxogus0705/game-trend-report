@@ -42,6 +42,9 @@ export async function checkReportHarness({root,runId,revision}){
  insist(context.authorization?.generate===true&&context.authorization?.publish===false&&context.authorization?.send===false,'Harness scope must be local generation only');
  const instructions=['README.md','instructions/WORKFLOW.md','instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/READING-AND-SCHEDULER.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md','instructions/AI-SOLO-CREATOR-WATCHLIST.json','.agents/skills/weekly-game-report/SKILL.md','.agents/skills/weekly-game-report/references/operating-contract.md','.agents/skills/weekly-game-report/references/harness-spec.json'];
  for(const file of instructions)insist(context.instructionFiles?.[file]===hash(await read(file)),'Stale instruction file: '+file);
+ const issueBrief='instructions/ISSUE-BRIEF-'+context.issueDate+'.md';let hasIssueBrief=false;
+ try{await fs.lstat(path.join(root,issueBrief));hasIssueBrief=true;}catch(error){if(error.code!=='ENOENT')throw error;}
+ if(hasIssueBrief||Object.hasOwn(context.instructionFiles||{},issueBrief))insist(context.instructionFiles?.[issueBrief]===hash(await read(issueBrief)),'Missing or stale issue brief: '+issueBrief);
  insist(Array.isArray(records.research.sources)&&records.research.sources.length>0&&records.research.sources.every(source=>/^https:\/\//.test(source.uri||'')&&source.publisher&&source.retrievedAt&&source.scope),'Research evidence metadata missing');
  const issueDay=Date.parse(context.issueDate+'T00:00:00Z'),day=86400000;
  for(const source of records.research.sources){

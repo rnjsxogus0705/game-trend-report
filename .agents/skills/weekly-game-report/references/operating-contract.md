@@ -65,3 +65,5 @@ research.creatorContentSearch.selectedVideos는 선정 영상이 없으면 빈 �
 공개 3D 자산·데이터셋도 openSourceToolSearch에서 코드/가중치 공개와 구분해 탐색한다. Scenario 3D Collection 같은 자료의 예제·출력 파일·용량, 원본 입력/프롬프트/설정의 누락, 형식과 엔진 적용 경로, 항목별 라이선스와 별도 컬렉션의 예외를 실제 원문으로 확인한다. 구조 검사나 모델 식별자 목록을 품질·성능·엔진 검증 결과로 쓰지 않는다.
 
 매주 공개 자산·데이터셋 탐색은 research.openSourceToolSearch.publicAssets에 별도로 status(updated/no_material_change/unverified), searchedAt, searchScope, sourceUrls, finding과 미확인 시 limitation을 기록한다. 확인일은 발행일 7일 전부터 당일까지이며 sourceUrls는 research.sources.uri에 연결한다. 오픈소스 도구 조사와 같은 출처를 사용할 수 있고 변동 없음·접근 불가를 정직하게 기록한다. editorial-review와 final-review 각각은 실제 조사 범위, 라이선스 예외, 메타데이터 누락, 파일 수와 예제 수, 엔진 검증·품질 주장 및 주시 목록의 channel.scope와 선정 영상 적합성을 대조한 후 publicAssetsReviewed:true를 기록한다. 자동 필드 검사는 실제 조사·검수 이행과 내용의 진실성을 증명하지 않는다.
+
+발행일별 `instructions/ISSUE-BRIEF-YYYY-MM-DD.md`가 있으면 기존 issue-request 입력으로 읽고 context.instructionFiles에 해당 경로와 실제 SHA256을 추가한다. 지정 항목은 해당 호에만 적용하며 작성자와 독립 검수자가 포함 여부·원문·조건·한계를 항목별로 대조한다. 새로운 예약이나 별도 생성 엔진을 만들지 않는다.

@@ -59,3 +59,7 @@ research 단계에서 REPORT-OUTPUT-CONTRACT.md의 오픈소스 탐색을 수행
 매주 저장소의 `instructions/AI-SOLO-CREATOR-WATCHLIST.json`에서 현재 주시 채널 19곳과 개별 참고 영상 3편을 확인한다. 개별 영상의 채널을 자동으로 주시하지 않고 매주 모든 영상을 반복 추천하지 않는다. 목록 밖에서도 한국어·영어로 최신 콘텐츠를 검색하고 존재하는 유효한 이전 호 공개 원장 전체의 `videos`·`channels`·`referenceVideos`에 담긴 videoId와 대조해 재소개 사유를 기록한다. 해당 호의 `assets/report/research/ai-solo-creators-YYYY-MM-DD.json`은 `reportDate`·`videos`를 담아 공개 파일 목록과 최종 해시 검수에 포함한다. `research.creatorContentSearch.referenceVideos`·`selectedVideos`와 독립 검수의 `referenceVideoIdsReviewed`를 운영 계약에 맞게 기록한다. 조사·선정·참고 영상과 독립 검수의 세부 필드 및 차단 기준은 [운영 계약](../.agents/skills/weekly-game-report/references/operating-contract.md)과 [출력 계약](REPORT-OUTPUT-CONTRACT.md)을 따른다.
 
 PC 교체 시 예약은 한 PC만 활성화하고, 같은 발행일의 비공개 전송 기록을 안전하게 인계해 실제 채널 메시지와 대조한다. 이미 보낸 호는 임의로 재전송하거나 영수증을 조작하지 않는다. 예약·토큰·비공개 기록은 Git으로 복원되지 않는다.
+
+## 발행일별 사용자 요청
+
+해당 발행일의 `instructions/ISSUE-BRIEF-YYYY-MM-DD.md`가 있으면 기존 하네스의 issue-request 입력으로 읽고 context에 파일 경로·SHA256을 기록한다. 작성자는 지정 항목을 본문·출처와 연결하고 독립 검수자는 누락·조건·한계를 항목별로 대조한다. [2026-11-07호 추가 요청](ISSUE-BRIEF-2026-11-07.md)은 루키스 국비 과정과 게임 제작 저장소 10개다. 이 지정 목록은 해당 호에만 적용하며 새로운 상시 예약이나 고정 순위를 만들지 않는다.

@@ -180,3 +180,10 @@ test('공개 자산·데이터셋 조사와 독립 검수 누락 차단',async t
  for(const id of ['editorial-review','final-review']){const f=await fixture(t);delete f.records[id].publicAssetsReviewed;await f.rebind();await assert.rejects(f.check,/Independent public assets review/);}
  for(const status of ['updated','no_material_change','unverified']){const f=await fixture(t);f.records.research.openSourceToolSearch.publicAssets.status=status;await f.rebind();assert.equal((await f.check()).status,'ready');}
 });
+
+test('발행일별 사용자 요청 메모의 누락 해시·변경·삭제를 차단',async t=>{
+ const f=await fixture(t),brief='instructions/ISSUE-BRIEF-2026-11-07.md';await f.write(brief,'Required additions');await assert.rejects(f.check,/issue brief/);
+ f.records.context.instructionFiles[brief]=hash('Required additions');await f.rebind();assert.equal((await f.check()).status,'ready');
+ await f.write(brief,'Changed additions');await assert.rejects(f.check,/issue brief/);await fs.unlink(path.join(f.root,brief));await assert.rejects(f.check,/ENOENT/);
+ const other=await fixture(t);await other.write('instructions/ISSUE-BRIEF-2026-11-14.md','Different issue');assert.equal((await other.check()).status,'ready');
+});
