@@ -1,0 +1,15 @@
+{
+  "reportDate": "2026-11-07",
+  "generator": "built-in image_gen",
+  "disclosure": "설명을 위한 생성 그림. 실제 게임 화면이나 측정 결과가 아님.",
+  "prompt": "Editorial conceptual illustration for a Korean game development learning report; restrained navy, blue and warm accent palette, clear game-art style, landscape, no text/logos/numbers/performance claims.",
+  "files": [
+    "production-flow.png",
+    "idea-01.png",
+    "idea-02.png",
+    "idea-03.png",
+    "idea-04.png",
+    "idea-05.png",
+    "idea-06.png"
+  ]
+}

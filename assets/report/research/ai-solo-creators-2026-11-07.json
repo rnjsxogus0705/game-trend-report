@@ -1,0 +1,20 @@
+{
+  "reportDate": "2026-11-07",
+  "videos": [
+    {
+      "videoId": "XHMY9Gfd-Lk",
+      "sourceUrl": "https://www.youtube.com/watch?v=XHMY9Gfd-Lk",
+      "selectionReason": "Claude·Firebase 제작과 비용에 관한 제작자 주장을 살펴봄."
+    },
+    {
+      "videoId": "lWWQ-ywHnGA",
+      "sourceUrl": "https://www.youtube.com/watch?v=lWWQ-ywHnGA",
+      "selectionReason": "AI 스프라이트와 사람의 보정 과정을 살펴봄."
+    },
+    {
+      "videoId": "LQa86YoKsM4",
+      "sourceUrl": "https://www.youtube.com/watch?v=LQa86YoKsM4",
+      "selectionReason": "디펜스 프로토타입 비교와 사람의 플레이를 살펴봄."
+    }
+  ]
+}

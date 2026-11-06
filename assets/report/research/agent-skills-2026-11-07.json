@@ -1,0 +1,20 @@
+{
+  "reportDate": "2026-11-07",
+  "observedAt": "2026-11-07",
+  "repositories": [
+    {
+      "repo": "gamedev-skills/awesome-gamedev-agent-skills",
+      "url": "https://github.com/gamedev-skills/awesome-gamedev-agent-skills",
+      "observedAt": "2026-11-07",
+      "stars": 7200,
+      "weeklyStarGrowth": null,
+      "status": "기존 자료 재관찰",
+      "license": "Apache-2.0",
+      "skillUrls": [
+        "https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/main/skills/godot/godot-2d-movement/SKILL.md"
+      ],
+      "compatibilityEvidence": "README가 Codex와 Godot 4.7 지원을 안내",
+      "limitation": "별 수는 GitHub 화면의 반올림 표시; 직접 설치·실행하지 않음."
+    }
+  ]
+}
