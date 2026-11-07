@@ -38,3 +38,13 @@ function filterTools() {
 }
 document.getElementById('tool-goal').addEventListener('change', filterTools);
 
+document.getElementById('print-button').addEventListener('click', () => window.print());
+function updateReadingProgress() {
+  const distance = document.documentElement.scrollHeight - innerHeight;
+  const percent = distance > 0 ? Math.min(100, Math.round(scrollY / distance * 100)) : 100;
+  document.getElementById('read-percent').textContent = percent + '%';
+  document.getElementById('read-bar').style.width = percent + '%';
+}
+addEventListener('scroll', updateReadingProgress, {passive: true});
+addEventListener('resize', updateReadingProgress);
+updateReadingProgress();
