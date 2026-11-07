@@ -1,0 +1,106 @@
+{
+  "referenceIssues": [
+    {
+      "path": "reports/weekly-2026-10-31.html",
+      "sha256": "e98c29b3f1cacebcd705b02f55457aee18f9ba1778769fa28129a4b8c56dc93c",
+      "capabilities": {
+        "shellAndNavigation": true,
+        "top10ThreePlusSeven": true,
+        "fullIndividualMarkdownCopy": true
+      },
+      "useFor": "형식 참고만. 사실·순위·날짜·영상 재사용 근거가 아님."
+    },
+    {
+      "path": "reports/weekly-2026-11-07.html",
+      "gitRevision": "a9e84e4",
+      "sha256": "7810a4453da1cb9c041a8e49d829ae937b7743cf4b19aee7fb29cf234136ace7",
+      "capabilities": {
+        "shellAndNavigation": true,
+        "top10ThreePlusSeven": true,
+        "fullIndividualMarkdownCopy": false
+      },
+      "useFor": "형식 참고만. 사실·순위·날짜·영상 재사용 근거가 아님."
+    }
+  ],
+  "presentationFiles": {
+    "assets/report/report.css": "faf32e70649c0e1bb86e2e98b14d57c14d7a9effff6eccee7109466765783ec8",
+    "assets/report/weekly-editorial.css": "3427051f4d779fc89507c31ddaa097ed54412d948da4aac04a1119d1193cd945",
+    "assets/report/reading-experience.css": "1ff55d621b6691b02b5c742b498778c2dfc7aa3e7ab509ea0da78aeaed247aaa",
+    "assets/report/share.css": "53d47360b764630ff60ef95519e621d858f95f09fb93d0a152fb4f0b17dea677",
+    "assets/report/rich-media.css": "6913b1ee8fdfc6ed0a4269eb83d5e9fca62ea957a7be2b55c5ccea579ef6ac26",
+    "assets/report/reading.css": "834fb450316d99df14a6136aaffc6448c989d9da75693019376e904ef0e3cd5f",
+    "assets/report/share.js": "a0c4095b21313b4fd418f950021a16e4be2ff5d6ead9043c25b93555c5d3ef3f",
+    "assets/report/reading-experience.js": "8c3eb3b34c0fe93fc2451d82d8090d0477c778fb191b5f7bc10b1ff35a3e4409"
+  },
+  "shell": [
+    ".issue-cover",
+    "main.content",
+    "#side-nav .toc-group[data-toc-group]",
+    "#issue-summary",
+    "#top10"
+  ],
+  "navigationGroups": [
+    "overview",
+    "tools",
+    "making",
+    "resources"
+  ],
+  "top10": {
+    "selector": ".top-ten-item",
+    "children": [
+      ".top-rank",
+      "div"
+    ],
+    "visible": 3,
+    "expandable": 7
+  },
+  "components": [
+    ".chapter-head",
+    ".job-card",
+    ".detail-list",
+    ".event-list",
+    ".sources-list",
+    ".youtube-preview",
+    ".idea-card"
+  ],
+  "requiredPerSection": [
+    "source attribution",
+    "checked date or explicit limitation",
+    "applicable media provenance",
+    "reviewed content and UI"
+  ],
+  "readingKinds": [
+    "article",
+    "video",
+    "post"
+  ],
+  "ideaMarkdown": {
+    "targetContract": "각 기본 기획/AI 제작 계획의 개별 Markdown 전체를 pre > code.language-markdown으로 안전 표시하고 동일 원문 복사·개별 파일·합본을 제공",
+    "preferredReference": "reports/weekly-2026-10-31.html",
+    "notClaimedForPinnedNov7": true
+  },
+  "verification": {
+    "viewportWidths": [
+      320,
+      390,
+      768,
+      1440
+    ],
+    "check": [
+      "layout",
+      "navigation",
+      "typography",
+      "minimum font size",
+      "focus",
+      "controls",
+      "media fallback",
+      "print"
+    ],
+    "baseline": "inspect actual rendered view; do not infer from fields"
+  },
+  "issueDateMetadata": {
+    "preferredSelector": ".cover-meta time[datetime]",
+    "allowedReferenceAlternative": ".issue-cover > p",
+    "rule": "대안은 날짜 텍스트를 실제 issueDate와 대조. 선택자 존재만으로 날짜 검증 성공으로 표시하지 않음."
+  }
+}

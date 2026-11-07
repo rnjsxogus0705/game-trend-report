@@ -9,3 +9,6 @@ _workspace/
 *.published.json
 *.vercel-published.json
 *.summary.txt
+*.pipeline.json
+__pycache__/
+*.pyc

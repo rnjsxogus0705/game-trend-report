@@ -30,8 +30,9 @@
     const trailers=section.id==='games'?[...detail.querySelectorAll('.report-video')].filter(video=>video.querySelector('video[data-hls]')&&video.querySelector('[data-hls-play]')&&video.querySelector('a[href^="http"]')):[];
     const candidates=trailers.length&&images.length?[images[0],trailers[0],...images.slice(1)]:videos.length&&images.length?[images[0],videos[0],...images.slice(1),...videos.slice(1)]:[...images,...videos];
     const gallery=document.createElement('div');gallery.className='reading-media-previews';
+    const remaining=Math.max(0,2-head.querySelectorAll('.reading-media-previews>figure').length);
     for(const original of candidates){
-      if(gallery.children.length===2)break;
+      if(gallery.children.length===remaining)break;
       const isTrailer=original.classList.contains('report-video');
       const isVideo=original.classList.contains('youtube-preview');
       const sourceNode=isTrailer?original.querySelector('video'):isVideo?original.querySelector('[data-youtube-play]'):original.querySelector('img');
@@ -85,6 +86,7 @@
     if(gallery.children.length)head.querySelector('h2')?.after(gallery);
   }
   main.querySelectorAll('section.chapter').forEach(section=>{
+    if(section.id==='top10')return;
     if(section.id==='careers'&&section.querySelector('[data-career-expansion]'))return;
     if(section.id==='game-ai-tools'){
       const skills=section.querySelector(':scope > #agent-skills');
@@ -109,6 +111,9 @@
         gallery.after(caption);
       }
       if(first){const nodes=[];for(let node=first;node;node=node.nextElementSibling)nodes.push(node);fold(nodes,'도구별 사례와 출처 자세히 보기');}
+      const reviewed=section.querySelector(':scope > [data-reviewed-packet]');
+      if(reviewed)fold([reviewed],'작업별 해설과 공식 자료 자세히 보기');
+      showMedia(section,section.querySelector(':scope > .chapter-head'));
       return;
     }
     const head=section.querySelector(':scope > .chapter-head');
@@ -116,7 +121,7 @@
     const nodes=[];
     for(let node=head.nextElementSibling;node;node=node.nextElementSibling)nodes.push(node);
     if(nodes.length>1 && nodes[0].textContent.trim().length<1500)nodes.shift();
-    if(section.id==='techniques' || section.id==='lab')nodes.shift();
+    if((section.id==='techniques' || section.id==='lab') && nodes[0]?.matches('.flow,.chapter-visual,.learning-section-guide,.lab-explanation'))nodes.shift();
     const title=head.querySelector('h2')?.innerText.trim().replace(/\s+/g,' ')||'이 장';
     fold(nodes.filter(node=>!(section.id==='lab'&&node.matches('.grid2'))&&!node.querySelector('canvas,.flow,.github-selection')&&!node.matches('.flow,.chapter-visual,.learning-section-guide,.lab-explanation,.practice-prompts,.creator-supplement')),title+' · 자세히 보기');
     showMedia(section,head);

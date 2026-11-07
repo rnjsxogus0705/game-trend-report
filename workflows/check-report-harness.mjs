@@ -40,8 +40,19 @@ export async function checkReportHarness({root,runId,revision}){
  }
  const context=records.context;
  insist(context.authorization?.generate===true&&context.authorization?.publish===false&&context.authorization?.send===false,'Harness scope must be local generation only');
- const instructions=['README.md','instructions/WORKFLOW.md','instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/READING-AND-SCHEDULER.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md','instructions/AI-SOLO-CREATOR-WATCHLIST.json','.agents/skills/weekly-game-report/SKILL.md','.agents/skills/weekly-game-report/references/operating-contract.md','.agents/skills/weekly-game-report/references/harness-spec.json'];
+ const instructions=['README.md','instructions/WORKFLOW.md','instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/READING-AND-SCHEDULER.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md','instructions/QUALITY-PIPELINE.md','instructions/FORMAT-REFERENCE.md','.agents/skills/weekly-game-report/references/report-format-reference.json','.codex/agents/report-content-reviewer.toml','.codex/agents/report-ui-reviewer.toml','.codex/agents/report-orchestrator.toml','.codex/agents/report-section-writer.toml','instructions/AI-SOLO-CREATOR-WATCHLIST.json','.agents/skills/weekly-game-report/SKILL.md','.agents/skills/weekly-game-report/references/operating-contract.md','.agents/skills/weekly-game-report/references/harness-spec.json'];
  for(const file of instructions)insist(context.instructionFiles?.[file]===hash(await read(file)),'Stale instruction file: '+file);
+ const requestInputs=context.requestInputs;
+ if(requestInputs!==undefined){
+  insist(Array.isArray(requestInputs),'User request inputs must be an array');
+  const inputPaths=new Set();
+  for(const input of requestInputs){
+   insist(input&&input.kind==='user_material'&&typeof input.path==='string'&&!inputPaths.has(input.path)&&/^[a-f0-9]{64}$/i.test(input.sha256||''),'Invalid or duplicate user request input');
+   inputPaths.add(input.path);insist(hash(await read(input.path))===input.sha256,'User request input hash mismatch: '+input.path);
+  }
+ }
+ if(requestInputs?.length)insist(records.research.userRequestedContent,'User requested content research missing');
+
  const issueBrief='instructions/ISSUE-BRIEF-'+context.issueDate+'.md';let hasIssueBrief=false;
  try{await fs.lstat(path.join(root,issueBrief));hasIssueBrief=true;}catch(error){if(error.code!=='ENOENT')throw error;}
  if(hasIssueBrief||Object.hasOwn(context.instructionFiles||{},issueBrief))insist(context.instructionFiles?.[issueBrief]===hash(await read(issueBrief)),'Missing or stale issue brief: '+issueBrief);
@@ -131,7 +142,7 @@ export async function checkReportHarness({root,runId,revision}){
  for(const file of issue.files){
   insist(typeof file.publish==='boolean'&&!Object.hasOwn(reviewed,file.path),'Duplicate file or missing publication scope');
   if(file.publish)insist(/^(reports\/|assets\/report\/)/.test(file.path),'Public file outside report assets');
-  else insist(file.path.startsWith('_workspace/harness/weekly-game-report/'+runId+'/')||/^reports\/weekly-.*\.(?:content-review|language-review)\.json$/.test(file.path),'Private evidence outside this run');
+  else insist(file.path.startsWith('_workspace/harness/weekly-game-report/'+runId+'/')||/^reports\/weekly-.*\.(?:(?:content-review|language-review|pipeline)\.json|summary\.txt)$/.test(file.path),'Private evidence outside this run');
   insist(hash(await read(file.path))===file.sha256,'Issue file hash mismatch: '+file.path);reviewed[file.path]=file.sha256;
   if(file.publish&&file.path==='reports/weekly-'+records.context.issueDate+'.html')htmlPath=file.path;
  }
@@ -140,12 +151,38 @@ export async function checkReportHarness({root,runId,revision}){
  const creatorLedger=JSON.parse(await read(creatorLedgerPath));
  insist(creatorLedger.reportDate===context.issueDate&&isDeepStrictEqual(creatorLedger.videos,selected),'Creator public ledger date or selected videos differ');
  insist(htmlPath,'Canonical weekly HTML missing');
+ for(const suffix of ['.pipeline.json','.summary.txt'])insist(issue.files.some(file=>file.path===htmlPath+suffix&&file.publish===false),'Private reviewed report artifact missing: '+suffix);
+ const pipeline=JSON.parse((await read(htmlPath+'.pipeline.json')).toString('utf8').replace(/^\uFEFF/,''));
+ insist(pipeline.summarySha256===reviewed[htmlPath+'.summary.txt'],'Pipeline summary hash differs from reviewed summary');
  const html=(await read(htmlPath)).toString('utf8');
  const contentPath=htmlPath+'.content-review.json';
  insist(Object.hasOwn(reviewed,contentPath),'Career content review missing from issue index');
  const contentReview=JSON.parse(await read(contentPath));
  insist(isDeepStrictEqual(contentReview.careerCoverage,records.research.careerCoverage),'Career coverage differs between research and content review');
  const {elements}=reportElements(html);
+ const requested=records.research.userRequestedContent;
+ if(requested!==undefined){
+  insist(requested&&typeof requested==='object'&&!Array.isArray(requested),'Invalid user requested content');
+  insist(Array.isArray(requestInputs)&&requestInputs.some(input=>input.sha256===requested.inputSha256),'Requested content input not in context');
+  const ids=requested.requiredItemIds,items=requested.items;
+  insist(Array.isArray(ids)&&ids.length>0&&ids.every(id=>typeof id==='string'&&id.trim()===id&&id.length>0)&&new Set(ids).size===ids.length,'Invalid requested item IDs');
+  insist(Array.isArray(items)&&items.length===ids.length&&new Set(items.map(item=>item?.id)).size===ids.length&&ids.every(id=>items.some(item=>item?.id===id)),'Requested items differ from required IDs');
+  for(const item of items){
+   insist(typeof item.sourceUrl==='string'&&records.research.sources.some(source=>source.uri===item.sourceUrl),'Requested item source not in research: '+item.id);
+   insist(typeof item.repeatReason==='string'&&item.repeatReason.trim(),'Requested item repeat reason missing: '+item.id);
+  }
+  const marked=elements.map(node=>node.attrs['data-requested-item']).filter(value=>value!==undefined);
+  insist(ids.every(id=>marked.includes(id))&&marked.every(id=>ids.includes(id)),'Requested items missing or unexpected in HTML');
+  for(const name of ['editorial-review','final-review']){
+   const reviewedIds=records[name].requestedItemsReviewed;
+   insist(Array.isArray(reviewedIds)&&reviewedIds.length===ids.length&&new Set(reviewedIds).size===ids.length&&ids.every(id=>reviewedIds.includes(id)),'Requested independent review coverage missing: '+name);
+  }
+  const ledgerPath=requested.publicLedgerPath;
+  insist(typeof ledgerPath==='string'&&ledgerPath.startsWith('assets/report/research/')&&ledgerPath.endsWith('.json')&&issue.files.some(file=>file.path===ledgerPath&&file.publish===true),'Requested public ledger missing or private');
+  const ledger=JSON.parse(await read(ledgerPath));
+  insist(ledger.reportDate===context.issueDate&&isDeepStrictEqual(ledger.items,items),'Requested public ledger differs from research');
+ }
+
  const urls=elements.flatMap(node=>[node.attrs.href,node.attrs.src,...(node.attrs.srcset||'').split(',').map(part=>part.trim().split(/\s+/)[0])].filter(Boolean));
  for(const url of urls){
   if(/^(?:[a-z]+:|#|\/\/)/i.test(url))continue;

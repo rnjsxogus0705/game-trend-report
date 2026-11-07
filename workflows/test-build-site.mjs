@@ -55,3 +55,7 @@ test('삭제한 월간호는 이전 PC의 원본·출력에 남아 있어도 복
  await buildSite({source,site});await assert.rejects(fs.access(path.join(site,'reports',name)),{code:'ENOENT'});
  assert.ok(!(await fs.readFile(path.join(site,'index.html'),'utf8')).includes(name));assert.ok(!renderIndex([issue(name)]).includes(name));
 });
+
+test('일정은 제작 시작 시각과 검수 후 전송을 구분한다',()=>{
+ const html=renderIndex([]);assert.match(html,/매주 토요일 오전 8시 제작 시작 · 한국 시간/);assert.match(html,/토요일 08:00 제작 시작 · 검수 및 배포 완료 후 전송/);assert.doesNotMatch(html,/07:00|08:00 링크 전송/);
+});

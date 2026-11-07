@@ -32,16 +32,16 @@
 ## 최종 품질 점검 보완
 
 - 07시 예약 전문에 ego-browser 원문 조사, 실습 DOM 계약과 6단계 검수, 지적 수정 후 재검수, qualityReview 기록을 명시했다. 기존 단일 본문 순서와 특정 PC 사용자 스킬 경로 지시를 정리했다.
-- 기존 manifest24개와 동기화 허용 목록에 있는 문서·validate-issue.mjs·화면/언어 검사기를 재사용한다. 새 모듈이나 비공개 설정 파일을 추가하지 않았다. WORKFLOW와 이 점검표는 site/instructions에서 직접 읽는다.
+- 기존 manifest 28개와 동기화 허용 목록에 있는 문서·validate-issue.mjs·화면/언어 검사기를 재사용한다. 품질 파이프라인 지침과 세 실행 모듈을 목록에 추가했다. 비공개 설정은 복사하지 않는다. WORKFLOW와 이 점검표는 site/instructions에서 직접 읽는다.
 - 임시 새 PC 배치에서 다음 호 검증이 독립 검수자·9개 기준별 근거·한계·미해결 문제를 검사하는 것을 확인한다. 가상 fixture로 품질 기록 누락, 동일 편집/검수자, 미해결 문제, 누락된 근거·한계, 중복 기준이 거부되는지 테스트한다.
 - 최신 해외 사례는 전체 AI 제작 주장과98% 커밋 공동작성 같은 보조 비교를 분리한다. 전체 시청·실제 제작·흥행을 확인하지 않았다면 주장하지 않는다. 품질 검수 기록은 사실의 진위를 자동 보증하지 않는다.
 - 초기 테스트는 README의 Node 검사를 저장소에서 실행한다. test-learning-sections는 기존2026-10-31호 참고본 검사용이며 다음 호의 실제 조사·브라우저 검수를 대신하지 않는다. 실제 Windows 초기 배치·예약 실행·인증·발행·전송은 해당 PC에서 따로 확인해야 한다.
 
 ## 프로젝트 하네스 연결
 
-`.agents/skills/weekly-game-report`의 생성된 SKILL·JSON 명세·운영 계약과 `site/workflows/check-report-harness.mjs`를 Git으로 배포한다. 전역 harness 스킬과 Python 생성기는 구축 시에만 사용했고 매주 실행의 필수 의존성이 아니다. 새 PC 실행은 기존 Node·Codex·ego-browser·이미지/한국어 스킬을 사용한다. 생성기는 macOS에서 실행·검증했으며 Windows에서 재생성할 필요가 없다. 실행 기록은 `_workspace`에 보존하되 공개하지 않는다. 새 하네스 준비 게이트와 기존 validate-issue 및 08시 dispatch를 모두 통과해야 인계·전송할 수 있다. 실제 새 주간호의 무인 생성·Windows 예약 실행·배포/전송은 구축 검사와 구분해 확인한다.
+`.agents/skills/weekly-game-report`의 생성된 SKILL·JSON 명세·운영 계약과 `site/workflows/check-report-harness.mjs`를 Git으로 배포한다. 전역 harness 스킬과 기존 Python 생성기는 구축 시에만 사용했고 매주 재생성할 필요는 없다. 주간 SQLite 원장에는 Python 3.9 이상의 표준 sqlite3 모듈이 필수다. 새 PC 실행은 Node·Python 3.9 이상·Codex·ego-browser·이미지/한국어 스킬을 사용한다. 생성기는 macOS에서 실행·검증했으며 Windows에서 재생성할 필요가 없다. 실행 기록은 `_workspace`에 보존하되 공개하지 않는다. 새 하네스 준비 게이트와 기존 validate-issue 및 08시 dispatch를 모두 통과해야 인계·전송할 수 있다. 실제 새 주간호의 무인 생성·Windows 예약 실행·배포/전송은 구축 검사와 구분해 확인한다.
 
-Windows에서는 저장소를 `site/`에 클론하고 프로젝트 스킬, 하네스 검사기와 `site/instructions/WORKFLOW.md` 등 저장소 지침을 그 위치에서 직접 읽는다. 별도 운영 root의 24개 manifest는 작성 지침과 PowerShell/Node 실행 모듈을 복사하는 목록이며, 저장소 안 `.agents/skills/weekly-game-report/`와 `site/workflows/check-report-harness.mjs`를 운영 root로 중복 복사하는 목록이 아니다. `context.instructionFiles`에는 실제 읽은 프로젝트 스킬과 운영 계약, 명세 및 출력 지침의 SHA-256을 결속한다. Windows 07시 준비·08시 전송 예약과 Mac 토요일 08시 제작 시작 예약은 각 환경에 맞게 `READING-AND-SCHEDULER.md`의 전문을 등록하며 동시에 켜지 않는다. Git 클론만으로 예약과 환경별 인증이 생성되지는 않는다.
+Windows에서는 저장소를 `site/`에 클론하고 프로젝트 스킬, 하네스 검사기와 `site/instructions/WORKFLOW.md` 등 저장소 지침을 그 위치에서 직접 읽는다. 별도 운영 root의 28개 manifest는 작성 지침과 PowerShell/Node 실행 모듈을 복사하는 목록이며, 저장소 안 `.agents/skills/weekly-game-report/`와 `site/workflows/check-report-harness.mjs`를 운영 root로 중복 복사하는 목록이 아니다. `context.instructionFiles`에는 실제 읽은 프로젝트 스킬과 운영 계약, 명세 및 출력 지침의 SHA-256을 결속한다. Windows 07시 준비·08시 전송 예약과 Mac 토요일 08시 제작 시작 예약은 각 환경에 맞게 `READING-AND-SCHEDULER.md`의 전문을 등록하며 동시에 켜지 않는다. Git 클론만으로 예약과 환경별 인증이 생성되지는 않는다.
 
 새 PC fixture 검사는 가상의 조사·영수증으로 필수 범주와 근거 누락, 조사일·한계·독립 검수·지침 해시 불일치를 차단하는지 검증한다. 이 검사는 실제 Windows 초기 설정이나 예약 실행, 새 주간호의 원문 조사와 화면 검수를 대신하지 않는다.
 
@@ -57,3 +57,5 @@ Windows에서는 저장소를 `site/`에 클론하고 프로젝트 스킬, 하�
 - PC 변경 시 예약·토큰·비공개 전송 기록은 Git으로 복원되지 않는다. 이전 PC의 기록을 안전하게 인계하고 실제 채널 메시지를 확인한 뒤 진행한다. 같은 호를 임의로 다시 보내거나 영수증을 조작해 검증을 우회하지 않는다.
 
 공개 자산·데이터셋은 `openSourceToolSearch.publicAssets`의 별도 조사 기록·신선도·출처·미확인 한계를 검사하고, 양 독립 검수의 `publicAssetsReviewed`를 요구한다. Scenario는 초기 관찰 자료이며 다음 호의 수치·권리 조건은 원문에서 다시 확인한다. AI놀이터를 포함한 채널은 주시 목록의 `scope`에 맞는 게임 제작 콘텐츠만 선별한다. 이 지침과 검사기는 Git으로 함께 내려오며 실제 예약 객체는 최신 전문으로 별도 등록한다.
+
+주간 원장 `_workspace/weekly-game-report.sqlite3`은 비공개 작업 데이터이며 공개 배포나 Git으로 복사하지 않는다. 원장 스크립트는 저장소에서 관리한다. 사전 점검은 macOS에서 `python3 -c "import sqlite3; print(sqlite3.sqlite_version)"`, Windows에서 `py -3 -c "import sqlite3; print(sqlite3.sqlite_version)"`을 실행한다. 절차는 [품질 파이프라인](QUALITY-PIPELINE.md)을 따른다. Windows 설치와 예약 실행은 별도로 실제 검증해야 한다.

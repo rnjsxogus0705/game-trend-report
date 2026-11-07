@@ -1,6 +1,7 @@
 // These artifacts are synthetic gate fixtures, never research or publication receipts.
 import {test} from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs/promises';import os from 'node:os';import path from 'node:path';import crypto from 'node:crypto';
 import {checkReportHarness} from './check-report-harness.mjs';
+import {verifyDeliveryHarness} from './discord-delivery.mjs';
 import {careerCategories} from './validate-weekly-presentation.mjs';
 const specPath='.agents/skills/weekly-game-report/references/harness-spec.json';
 const spec=JSON.parse(await fs.readFile(new URL('../'+specPath,import.meta.url),'utf8'));
@@ -12,14 +13,15 @@ async function fixture(t){
  const runId='2026-11-07-test',revision='a'.repeat(40),digests={},records={};
  const write=async(p,bytes)=>{const target=path.join(root,p);await fs.mkdir(path.dirname(target),{recursive:true});await fs.writeFile(target,bytes);};
  await write(specPath,JSON.stringify(spec));const file='reports/weekly-2026-11-07.html';await write(file,'synthetic HTML, no real report');
- const instructionPaths=['README.md','instructions/WORKFLOW.md','instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/READING-AND-SCHEDULER.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md','.agents/skills/weekly-game-report/SKILL.md','.agents/skills/weekly-game-report/references/operating-contract.md'];
+ const instructionPaths=['README.md','instructions/WORKFLOW.md','instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/READING-AND-SCHEDULER.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md','instructions/QUALITY-PIPELINE.md','instructions/FORMAT-REFERENCE.md','.agents/skills/weekly-game-report/references/report-format-reference.json','.codex/agents/report-content-reviewer.toml','.codex/agents/report-ui-reviewer.toml','.codex/agents/report-orchestrator.toml','.codex/agents/report-section-writer.toml','.agents/skills/weekly-game-report/SKILL.md','.agents/skills/weekly-game-report/references/operating-contract.md'];
  for(const file of instructionPaths)await write(file,'synthetic instruction');await write(watchlistPath,JSON.stringify(watchlist));
  const instructionFiles={};for(const file of [...instructionPaths,specPath,watchlistPath])instructionFiles[file]=hash(await fs.readFile(path.join(root,file)));
  const evidence={path:'_workspace/harness/weekly-game-report/'+runId+'/evidence/fixture.txt',sha256:hash('synthetic evidence')};await write(evidence.path,'synthetic evidence');
  const careerCoverage=careerCategories.map(category=>({category,status:'unverified',searchedAt:'2026-11-07',searchScope:'Synthetic search scope',finding:'No actual search in fixture',sourceUrls:['https://example.test/fixture'],limitation:'Synthetic fixture only'}));
  const contentPath=file+'.content-review.json',content=JSON.stringify({careerCoverage});await write(contentPath,content);
  const ledgerPath='assets/report/research/ai-solo-creators-2026-11-07.json',ledger=JSON.stringify({reportDate:'2026-11-07',videos:[]});await write(ledgerPath,ledger);
- const files=[{path:file,sha256:hash('synthetic HTML, no real report'),publish:true},{path:contentPath,sha256:hash(content),publish:false},{path:ledgerPath,sha256:hash(ledger),publish:true}],reviewedFiles=Object.fromEntries(files.map(f=>[f.path,f.sha256]));
+ const pipelinePath=file+'.pipeline.json',summaryPath=file+'.summary.txt',pipeline=JSON.stringify({runId,summarySha256:hash('synthetic summary')});await write(pipelinePath,pipeline);await write(summaryPath,'synthetic summary');
+ const files=[{path:file,sha256:hash('synthetic HTML, no real report'),publish:true},{path:contentPath,sha256:hash(content),publish:false},{path:ledgerPath,sha256:hash(ledger),publish:true},{path:pipelinePath,sha256:hash(pipeline),publish:false},{path:summaryPath,sha256:hash('synthetic summary'),publish:false}],reviewedFiles=Object.fromEntries(files.map(f=>[f.path,f.sha256]));
  const paths=Object.fromEntries(spec.outputs.map(o=>[o.id,o.path.replace('{run_id}',runId)]));
  for(const task of spec.tasks)for(const id of task.outputs){
   const record={runId,issueDate:'2026-11-07',instructionRevision:revision,inputs:Object.fromEntries(task.inputs.filter(i=>Object.hasOwn(digests,i)).map(i=>[i,digests[i]]))};
@@ -186,4 +188,71 @@ test('발행일별 사용자 요청 메모의 누락 해시·변경·삭제를 �
  f.records.context.instructionFiles[brief]=hash('Required additions');await f.rebind();assert.equal((await f.check()).status,'ready');
  await f.write(brief,'Changed additions');await assert.rejects(f.check,/issue brief/);await fs.unlink(path.join(f.root,brief));await assert.rejects(f.check,/ENOENT/);
  const other=await fixture(t);await other.write('instructions/ISSUE-BRIEF-2026-11-14.md','Different issue');assert.equal((await other.check()).status,'ready');
+});
+
+test('SQLite 품질 파이프라인 지침의 변경도 이전 승인을 무효화한다',async t=>{
+ const f=await fixture(t);await f.write('instructions/QUALITY-PIPELINE.md','changed');await assert.rejects(f.check,/Stale instruction file/);
+});
+test('전송 요약과 파이프라인 영수증은 비공개 파일 목록과 독립 검수에 포함해야 한다',async t=>{
+ for(const suffix of ['.pipeline.json','.summary.txt']){
+  const f=await fixture(t);f.records.issue.files=f.records.issue.files.filter(file=>!file.path.endsWith(suffix));await f.rebind();
+  await assert.rejects(f.check,/Private reviewed report artifact missing/);
+ }
+ const f=await fixture(t);f.records.issue.files.find(file=>file.path.endsWith('.summary.txt')).publish=true;await f.rebind();
+ await assert.rejects(f.check,/Private reviewed report artifact missing/);
+ const mismatch=await fixture(t);const pipelinePath='reports/weekly-2026-11-07.html.pipeline.json',bytes=JSON.stringify({summarySha256:'a'.repeat(64)});await mismatch.write(pipelinePath,bytes);mismatch.records.issue.files.find(file=>file.path===pipelinePath).sha256=hash(bytes);await mismatch.rebind();
+ await assert.rejects(mismatch.check,/Pipeline summary hash differs/);
+});
+test('Windows UTF-8 BOM 파이프라인 영수증을 해시 그대로 검수한다',async t=>{
+ const f=await fixture(t),p='reports/weekly-2026-11-07.html.pipeline.json';
+ const bytes='\uFEFF'+JSON.stringify({runId:f.runId,summarySha256:hash('synthetic summary')});
+ await f.write(p,bytes);f.records.issue.files.find(file=>file.path===p).sha256=hash(bytes);
+ for(const id of ['editorial-review','final-review'])f.records[id].reviewedFiles[p]=hash(bytes);
+ await f.rebind();assert.equal((await f.check()).status,'ready');
+});
+
+test('전송 전 최종 독립 검수에 요약과 영수증이 결속되어야 한다',async t=>{
+ const f=await fixture(t);assert.equal((await verifyDeliveryHarness({root:f.root,issueDate:'2026-11-07'})).status,'ready');
+ const summary='reports/weekly-2026-11-07.html.summary.txt',pipeline='reports/weekly-2026-11-07.html.pipeline.json';
+ await f.write(summary,'changed summary');await f.write(pipeline,JSON.stringify({runId:f.runId,summarySha256:hash('changed summary')}));
+ await assert.rejects(verifyDeliveryHarness({root:f.root,issueDate:'2026-11-07'}),/Issue file hash mismatch/);
+ const missing=await fixture(t);await fs.unlink(path.join(missing.root,missing.paths['final-review']));
+ await assert.rejects(verifyDeliveryHarness({root:missing.root,issueDate:'2026-11-07'}),/ENOENT/);
+});
+test('독립 검수 에이전트 지침의 누락·변경을 차단한다',async t=>{
+ for(const file of ['.codex/agents/report-content-reviewer.toml','.codex/agents/report-ui-reviewer.toml','.codex/agents/report-orchestrator.toml','.codex/agents/report-section-writer.toml']){
+  const absent=await fixture(t);delete absent.records.context.instructionFiles[file];await absent.rebind();await assert.rejects(absent.check,/Stale instruction file/);
+  const modified=await fixture(t);await modified.write(file,'tampered agent instruction');await assert.rejects(modified.check,/Stale instruction file/);
+ }
+});
+async function requestedFixture(t){
+ const f=await fixture(t),input='_workspace/harness/'+f.runId+'/user-material.md',source='https://example.test/fixture';
+ await f.write(input,'사용자가 제공한 필수 자료');f.records.context.requestInputs=[{path:input,sha256:hash('사용자가 제공한 필수 자료'),kind:'user_material'}];
+ const items=[{id:'item-a',sourceUrl:source,repeatReason:'사용자가 이 호에 재확인을 명시함'},{id:'item-b',sourceUrl:source,repeatReason:'같은 출처의 다른 필수 항목'}];
+ const ledgerPath='assets/report/research/requested-2026-11-07.json';f.records.research.userRequestedContent={inputSha256:hash('사용자가 제공한 필수 자료'),requiredItemIds:items.map(item=>item.id),items,publicLedgerPath:ledgerPath};
+ const ledger=JSON.stringify({reportDate:'2026-11-07',items});await f.write(ledgerPath,ledger);
+ f.records.issue.files.push({path:ledgerPath,sha256:hash(ledger),publish:true});
+ for(const id of ['editorial-review','final-review']){f.records[id].reviewedFiles[ledgerPath]=hash(ledger);f.records[id].requestedItemsReviewed=['item-a','item-b'];}
+ const html='synthetic HTML <p data-requested-item="item-a">A</p><p data-requested-item="item-b">B</p>',htmlPath='reports/weekly-2026-11-07.html';await f.write(htmlPath,html);f.records.issue.files.find(file=>file.path===htmlPath).sha256=hash(html);
+ for(const id of ['editorial-review','final-review'])f.records[id].reviewedFiles[htmlPath]=hash(html);
+ await f.rebind();return {...f,input,ledgerPath,htmlPath};
+}
+test('사용자 필수 자료·항목·공개 원장·독립 검수를 해시와 출처로 결속한다',async t=>{
+ const f=await requestedFixture(t);assert.equal((await f.check()).status,'ready');
+ const altered=await requestedFixture(t);await altered.write(altered.input,'수정된 자료');await assert.rejects(altered.check,/User request input hash mismatch/);
+ const absent=await requestedFixture(t);delete absent.records.research.userRequestedContent;await absent.rebind();await assert.rejects(absent.check,/User requested content research missing/);
+ const badInput=await requestedFixture(t);badInput.records.context.requestInputs[0].path='../outside';await badInput.rebind();await assert.rejects(badInput.check,/Unsafe artifact path/);
+ const missingId=await requestedFixture(t);missingId.records.research.userRequestedContent.items.pop();await missingId.rebind();await assert.rejects(missingId.check,/Requested items differ/);
+ const duplicate=await requestedFixture(t);duplicate.records.research.userRequestedContent.requiredItemIds=['item-a','item-a'];await duplicate.rebind();await assert.rejects(duplicate.check,/Invalid requested item IDs/);
+ const source=await requestedFixture(t);source.records.research.userRequestedContent.items[0].sourceUrl='https://unlinked.example/';await source.rebind();await assert.rejects(source.check,/source not in research/);
+ const repeat=await requestedFixture(t);repeat.records.research.userRequestedContent.items[0].repeatReason='';await repeat.rebind();await assert.rejects(repeat.check,/repeat reason missing/);
+ const coverage=await requestedFixture(t);coverage.records['final-review'].requestedItemsReviewed=['item-a'];await coverage.rebind();await assert.rejects(coverage.check,/independent review coverage/);
+ const marker=await requestedFixture(t),html='<p data-requested-item="item-a">A</p>';await marker.write(marker.htmlPath,html);marker.records.issue.files.find(file=>file.path===marker.htmlPath).sha256=hash(html);for(const id of ['editorial-review','final-review'])marker.records[id].reviewedFiles[marker.htmlPath]=hash(html);await marker.rebind();await assert.rejects(marker.check,/Requested items missing/);
+ const ledger=await requestedFixture(t),bytes=JSON.stringify({reportDate:'2026-11-07',items:[]});await ledger.write(ledger.ledgerPath,bytes);ledger.records.issue.files.find(file=>file.path===ledger.ledgerPath).sha256=hash(bytes);for(const id of ['editorial-review','final-review'])ledger.records[id].reviewedFiles[ledger.ledgerPath]=hash(bytes);await ledger.rebind();await assert.rejects(ledger.check,/Requested public ledger differs/);
+});
+test('포맷 참조 파일 해시 누락과 변경을 차단한다',async t=>{
+ for(const file of ['instructions/FORMAT-REFERENCE.md','.agents/skills/weekly-game-report/references/report-format-reference.json']){
+  const absent=await fixture(t);delete absent.records.context.instructionFiles[file];await absent.rebind();await assert.rejects(absent.check,/Stale instruction file/);
+  const modified=await fixture(t);await modified.write(file,'modified format');await assert.rejects(modified.check,/Stale instruction file/);
+ }
 });

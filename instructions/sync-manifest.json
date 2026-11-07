@@ -96,6 +96,22 @@
     {
       "repo": "instructions/DESIGN-ASSETS.json",
       "local": "redesign/references/DESIGN-ASSETS.json"
+    },
+    {
+      "repo": "instructions/QUALITY-PIPELINE.md",
+      "local": "QUALITY-PIPELINE.md"
+    },
+    {
+      "repo": "workflows/validate-quality-pipeline.mjs",
+      "local": "validate-quality-pipeline.mjs"
+    },
+    {
+      "repo": "workflows/audit-report-quality.mjs",
+      "local": "audit-report-quality.mjs"
+    },
+    {
+      "repo": "workflows/report-ledger.py",
+      "local": "report-ledger.py"
     }
   ]
 }

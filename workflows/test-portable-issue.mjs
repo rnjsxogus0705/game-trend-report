@@ -18,6 +18,7 @@ async function fixture(t){
   if(url.endsWith('/')){await fs.mkdir(target,{recursive:true});continue;}
   await fs.mkdir(path.dirname(target),{recursive:true});await fs.writeFile(target,'synthetic fixture asset');
  }
+ await fs.cp(path.join(root,'site/assets'),path.join(root,'assets'),{recursive:true});
  const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
  const categories=['ai-only-lab','games','ai-trends','ai-planning','game-ai','ai-releases','techniques','github-trending','game-ai-tools','careers','opportunities','agent-skills'];
  const checks=Object.fromEntries(['sourcesVerified','releaseStatesChecked','aiScopeSeparated','hotnessEvidenceChecked','jobsSampleDisclosed','previousIssueCompared','techniqueReproducibilityReviewed','mobileChecked','shareChecked'].map(key=>[key,true]));
@@ -27,8 +28,15 @@ async function fixture(t){
  const files=(await fs.readdir(reports)).filter(name=>name.endsWith('.md')||name.endsWith('.html'));
  const naturalnessReview={editor:'fixture-editor',reviewer:'fixture-reviewer',coverage:['body','headings','tables','captions','collapsed','copy','downloads','terms'],sectionIdsReviewed:ids,changes:[],fileHashes:Object.fromEntries(await Promise.all(files.map(async name=>[name,digest(await fs.readFile(path.join(reports,name)))]))),externalVerified:false,method:'Synthetic fixture, not an actual language review'};
  await fs.writeFile(htmlPath+'.content-review.json','\uFEFF'+JSON.stringify(content));await fs.writeFile(htmlPath+'.language-review.json','\uFEFF'+JSON.stringify({naturalnessReview}));
+ const seed=async()=>{
+  await fs.mkdir(path.join(root,'workflows'),{recursive:true});
+  await fs.writeFile(path.join(root,'.synthetic-report-test'),'test-only');
+  await fs.copyFile(path.join(repo,'workflows/report-ledger.py'),path.join(root,'workflows/report-ledger.py'));
+  execFileSync(process.platform==='win32'?'py':'python3',[...(process.platform==='win32'?['-3']:[]),path.join(repo,'workflows/fixtures/report-ledger-fixture.py'),root,htmlPath],{cwd:root,stdio:'pipe'});
+ };
+ await seed();
  const run=()=>execFileSync(process.execPath,[path.join(root,'validate-issue.mjs'),htmlPath],{encoding:'utf8',stdio:'pipe'});
- return {root,htmlPath,html,naturalnessReview,run};
+ return {root,htmlPath,html,naturalnessReview,run,seed};
 }
 test('새 PC manifest 배치와 UTF-8 BOM 영수증으로 전체 검증 실행',async t=>{
  const f=await fixture(t);assert.match(f.run(),/Content contract/);
@@ -93,7 +101,7 @@ test('첫 호 비교 불가 기록은 근거·본문·이전호 부재를 모두
  const f=await fixture(t);let html=f.html.replace('</body>','<p>전주 비교 자료가 없어 수치 변화를 비교하지 않습니다.</p></body>');await fs.writeFile(f.htmlPath,html);
  const reviewPath=f.htmlPath+'.content-review.json';const review=JSON.parse((await fs.readFile(reviewPath,'utf8')).replace(/^\uFEFF/,''));review.sha256=digest(html);review.checks.previousIssueCompared=false;review.previousIssueComparison={status:'not_comparable',scope:'first_issue',priorIssue:null,reason:'Synthetic first-issue inventory',evidence:'Synthetic directory inventory only'};
  await fs.writeFile(reviewPath,JSON.stringify(review));const language=f.naturalnessReview;language.fileHashes[path.basename(f.htmlPath)]=digest(html);await fs.writeFile(f.htmlPath+'.language-review.json',JSON.stringify({naturalnessReview:language}));
- assert.match(f.run(),/Content contract/);
+ await f.seed();assert.match(f.run(),/Content contract/);
  const original=structuredClone(review);delete review.previousIssueComparison.priorIssue;await fs.writeFile(reviewPath,JSON.stringify(review));assert.throws(f.run,error=>String(error.stderr).includes('comparison evidence'));
  await fs.writeFile(reviewPath,JSON.stringify(original));await fs.writeFile(path.join(f.root,'site/reports/weekly-2026-10-24.html'),'prior');assert.throws(f.run,error=>String(error.stderr).includes('Earlier weekly issue'));
 });

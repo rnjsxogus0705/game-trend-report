@@ -13,7 +13,7 @@
       "skillUrls": [
         "https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/main/skills/godot/godot-2d-movement/SKILL.md"
       ],
-      "compatibilityEvidence": "README가 Codex와 Godot 4.7 지원을 안내",
+      "compatibilityEvidence": "실제 SKILL.md가 Godot 4.7을 대상 버전으로 명시하며 Codex 설치·실행과 엔진 호환성은 확인하지 않음",
       "limitation": "별 수는 GitHub 화면의 반올림 표시; 직접 설치·실행하지 않음."
     }
   ]

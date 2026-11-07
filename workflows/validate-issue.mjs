@@ -1,4 +1,5 @@
-import {validateWeeklyPresentation,validateCareerCoverage} from './validate-weekly-presentation.mjs';
+import {validateQualityPipeline} from './validate-quality-pipeline.mjs';
+import {validateWeeklyPresentation,validateCareerCoverage,validateReadingResources} from './validate-weekly-presentation.mjs';
 import {validateLanguageReview} from './validate-language-review.mjs';
 import fs from 'node:fs/promises';import path from 'node:path';import crypto from 'node:crypto';
 const file=path.resolve(process.argv[2]||''),html=await fs.readFile(file,'utf8'),review=JSON.parse((await fs.readFile(file+'.content-review.json','utf8')).replace(/^\uFEFF/,''));
@@ -24,7 +25,8 @@ if(review.reportDate>='2026-11-07'){
  }
 
 }
-for(const kind of ['article','video','post'])if(!html.includes('data-kind="'+kind+'"'))throw Error('Missing resource category: '+kind);
+if(review.reportDate>='2026-11-07')validateReadingResources(html,{review,issueDate:review.reportDate});
+else for(const kind of ['article','video','post'])if(!html.includes('data-kind="'+kind+'"'))throw Error('Missing resource category: '+kind);
 if(review.schemaVersion!==2||review.sha256!==crypto.createHash('sha256').update(html).digest('hex'))throw Error('Content review does not match this report');
 if(review.reportDate>='2026-10-31'){
  const skill=review.coverage?.find(c=>c.category==='agent-skills');
@@ -60,3 +62,5 @@ if(!html.includes('data-ai-case=')||!html.includes('data-ai-resource="video"')||
 if(html.includes('class="game-dossier tool-research-card"')){const cards=(html.match(/class="game-dossier tool-research-card"/g)||[]).length;if(!html.includes('id="tool-choice"')||!html.includes('id="tool-goal"')||(html.match(/class="tool-media"/g)||[]).length!==cards||(html.match(/data-compare-goals="/g)||[]).length!==cards)throw Error('Tool cards require matching previews, comparison rows and a choice filter');}
 
 if(!html.includes('id="ai-production"')||(html.match(/data-copy-ai-plan="/g)||[]).length!==3)throw Error('Missing separate AI production ideas and workflows');
+
+await validateQualityPipeline({root:path.resolve(path.dirname(file),'..'),htmlPath:file,html,issueDate:review.reportDate});

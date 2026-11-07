@@ -11,5 +11,67 @@
     "idea-04.png",
     "idea-05.png",
     "idea-06.png"
+  ],
+  "derivatives": [
+    {
+      "file": "idea-01.webp",
+      "derivedFrom": "idea-01.png",
+      "kind": "format-conversion",
+      "originalSha256": "b47cde7d342baecbec006ffe1fc52a28b77e167e4570a6f88757313ea838ef64",
+      "sha256": "b5766e395862106e560e90ee4ca2ec7686a1edd355ffb20295ff8f299b75cddb",
+      "width": 1672,
+      "height": 941,
+      "disclosure": "원본 생성 일러스트를 WebP로 변환했어요. 새 게임 화면이나 실제 성능 측정 결과가 아니에요."
+    },
+    {
+      "file": "idea-02.webp",
+      "derivedFrom": "idea-02.png",
+      "kind": "format-conversion",
+      "originalSha256": "246cd76d2d108e863166bf033f5febfe530e8599d375df2c95a7ab43e8577c0f",
+      "sha256": "3a95926659562b8d787376e1e0baec6de0211ae7fee8f64db8588b27a340bd3a",
+      "width": 1672,
+      "height": 941,
+      "disclosure": "원본 생성 일러스트를 WebP로 변환했어요. 새 게임 화면이나 실제 성능 측정 결과가 아니에요."
+    },
+    {
+      "file": "idea-03.webp",
+      "derivedFrom": "idea-03.png",
+      "kind": "format-conversion",
+      "originalSha256": "544238b0bf650ad2c4b2aac1f35fa137cf0faec1977889e13704453f147e1a26",
+      "sha256": "4c61f0431fdc2ddc1cafb6aa37e9b355f8f8c2afe26e99169df31a49f7d24286",
+      "width": 1672,
+      "height": 941,
+      "disclosure": "원본 생성 일러스트를 WebP로 변환했어요. 새 게임 화면이나 실제 성능 측정 결과가 아니에요."
+    },
+    {
+      "file": "idea-04.webp",
+      "derivedFrom": "idea-04.png",
+      "kind": "format-conversion",
+      "originalSha256": "ff12141e412202550584d4306956fb88a4281216aeb13207b39ad6c5c4a6f349",
+      "sha256": "c3cb23c93ba43d97c5ae204c2d735657f138404af1533e265604936e3829a109",
+      "width": 1672,
+      "height": 941,
+      "disclosure": "원본 생성 일러스트를 WebP로 변환했어요. 새 게임 화면이나 실제 성능 측정 결과가 아니에요."
+    },
+    {
+      "file": "idea-05.webp",
+      "derivedFrom": "idea-05.png",
+      "kind": "format-conversion",
+      "originalSha256": "bf06d4d4ef8a691bb7c511fd3b806aa3df623702a9f7a5c00ec4a139cfe99b5b",
+      "sha256": "e3256dba2ed7b7037d70634965e3e9e5d2555ce5c7dfe492099ac7bd0fed8ec9",
+      "width": 1672,
+      "height": 941,
+      "disclosure": "원본 생성 일러스트를 WebP로 변환했어요. 새 게임 화면이나 실제 성능 측정 결과가 아니에요."
+    },
+    {
+      "file": "idea-06.webp",
+      "derivedFrom": "idea-06.png",
+      "kind": "format-conversion",
+      "originalSha256": "93975b7b0436848b5da24b08c53d0f26eed10ea632dcdce46c29a951a7871e5c",
+      "sha256": "c682c896b7321e9bb804096c5af56a03b24d7627271493e58150da4d29e5b6b1",
+      "width": 1672,
+      "height": 941,
+      "disclosure": "원본 생성 일러스트를 WebP로 변환했어요. 새 게임 화면이나 실제 성능 측정 결과가 아니에요."
+    }
   ]
 }

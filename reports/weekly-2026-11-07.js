@@ -3,7 +3,7 @@ document.addEventListener('click', async event => {
   if (play) {
     const frame = document.createElement('iframe');
     frame.src = 'https://www.youtube-nocookie.com/embed/' + play.dataset.playVideo;
-    frame.title = '스프라이트 제작 영상';
+    frame.title = play.dataset.videoTitle || play.querySelector('img')?.alt || '게임 제작 영상';
     frame.allowFullscreen = true;
     play.parentElement.querySelector('.video-slot').replaceChildren(frame);
     play.remove();
@@ -47,4 +47,5 @@ function updateReadingProgress() {
 }
 addEventListener('scroll', updateReadingProgress, {passive: true});
 addEventListener('resize', updateReadingProgress);
+document.addEventListener('toggle', updateReadingProgress, true);
 updateReadingProgress();

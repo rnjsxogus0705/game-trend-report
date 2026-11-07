@@ -34,6 +34,55 @@ export function validateCareerCoverage(coverage,{issueDate}={}){
   if(item.status==='unverified'&&!nonempty(item.limitation))throw Error('Career research limitation missing: '+category);
  }
 }
+export function validateSectionPractices(html,{sectionIds}={}){
+ const required=new Map([['reverse',1],['ai-planning',1],['prototype',1],['lab',2],['game-ai-tools',1],['agent-skills',1],['ai-production',1]]);
+ const {elements,source}=reportElements(html);
+ const text=n=>source.slice(n.start,n.end).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+ const descendants=(n,predicate)=>elements.filter(child=>within(child,n)&&predicate(child));
+ for(const [id,count] of required){
+  if(sectionIds&&!sectionIds.includes(id))continue;
+  const section=elements.find(n=>n.attrs.id===id);
+  const blocks=section?descendants(section,n=>hasClass(n,'practice-prompt')):[];
+  const own=(block,predicate)=>descendants(block,n=>predicate(n)&&!blocks.some(other=>other!==block&&within(other,block)&&within(n,other)));
+  const widgets=blocks.filter(block=>own(block,n=>n.tag==='pre'||n.tag==='button').length);
+  if(widgets.length<count)throw Error('Missing practice prompts in section: '+id);
+  for(const block of widgets){
+   const buttons=own(block,n=>n.tag==='button'),pres=own(block,n=>n.tag==='pre');
+   const copy=buttons.length===1&&buttons[0].attrs['data-copy-workflow'];
+   const pre=pres.length===1&&pres[0],code=copy&&elements.find(n=>n.attrs.id===copy);
+   if(!copy||!pre||!code||!(code===pre||within(code,pre))||elements.filter(n=>n.attrs.id===copy).length!==1||!/\[[^\]]+\]/.test(text(code)))throw Error('Practice prompt needs a copy target and editable input: '+id);
+   if(!['받을 결과','직접 확인','이어서 물어보기'].every(label=>text(block).includes(label)))throw Error('Practice prompt needs output, verification and follow-up: '+id);
+  }
+ }
+}
+export function validateReadingResources(html,{review,issueDate}={}){
+ const {elements,source}=reportElements(html),section=elements.find(n=>n.attrs.id==='reading');
+ if(!section)throw Error('Reading section missing');
+ const kinds=['article','video','post'],resources=elements.filter(n=>within(n,section)&&Object.hasOwn(n.attrs,'data-kind'));
+ const counts=Object.fromEntries(kinds.map(k=>[k,0]));
+ for(const node of resources){
+  const kind=node.attrs['data-kind'];if(!kinds.includes(kind))throw Error('Invalid reading resource kind');
+  const links=elements.filter(n=>n.tag==='a'&&within(n,node)&&/^https:\/\//.test(n.attrs.href||'')&&!resources.some(other=>other!==node&&within(other,node)&&within(n,other)));
+  const primary=links[0],text=source.slice(node.start,node.end).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+  if(!primary||!text)throw Error('Reading resource needs a title and primary source');
+  let parsed;try{parsed=new URL(primary.attrs.href);}catch{throw Error('Invalid reading source');}
+  const host=parsed.hostname.toLowerCase().replace(/^www\./,'');
+  const youtube=(host==='youtu.be'&&parsed.pathname.length>1)||(host==='youtube.com'&&(parsed.pathname==='/watch'||parsed.pathname.startsWith('/shorts/')));
+  if(youtube&&kind!=='video')throw Error('YouTube video must use video kind');
+  counts[kind]++;
+ }
+ const coverage=review?.readingCoverage??[];
+ if(!Array.isArray(coverage)||new Set(coverage.map(c=>c?.kind)).size!==coverage.length||coverage.some(c=>!kinds.includes(c?.kind)))throw Error('Invalid reading coverage');
+ for(const kind of kinds){
+  const item=coverage.find(c=>c.kind===kind);
+  if(item&&item.count!==counts[kind])throw Error('Reading coverage count mismatch: '+kind);
+  if(counts[kind])continue;
+  const date=value=>{if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(value))return NaN;const n=Date.parse(value+'T00:00:00Z');return Number.isFinite(n)&&new Date(n).toISOString().slice(0,10)===value?n:NaN;};
+  const issue=date(issueDate),searched=date(item?.searchedAt);
+  if(!item||!['unverified','no_material_change'].includes(item.status)||!Number.isFinite(issue)||!Number.isFinite(searched)||searched>issue||searched<issue-7*86400000||!['searchScope','finding','limitation'].every(k=>typeof item[k]==='string'&&item[k].trim())||!Array.isArray(item.sourceUrls))throw Error('Missing reading search coverage: '+kind);
+ }
+ return counts;
+}
 export function validateWeeklyPresentation(html,{reportDate}={}){
  const {elements,source}=reportElements(html);
  const oneId=id=>elements.find(node=>node.attrs.id===id);
@@ -74,16 +123,7 @@ export function validateWeeklyPresentation(html,{reportDate}={}){
    assert(descendants(block,node=>['listed','open','planned','closed','unknown'].includes(node.attrs['data-career-status'])).length>0,'Career status missing: '+category);
    assert(/확인일/.test(text(block)),'Career retrieval date missing: '+category);
   }
-  for(const [id,count] of [['reverse',1],['ai-planning',1],['prototype',1],['lab',2],['game-ai-tools',1],['agent-skills',1],['ai-production',1]]){
-   const prompts=descendants(oneId(id),node=>hasClass(node,'practice-prompt'));
-   assert(prompts.length>=count,'Missing practice prompts in section: '+id);
-   for(const prompt of prompts){
-    const copy=descendants(prompt,node=>node.tag==='button'&&node.attrs['data-copy-workflow'])[0];
-    const code=copy&&oneId(copy.attrs['data-copy-workflow']);
-    assert(code&&within(code,prompt)&&/\[[^\]]+\]/.test(text(code)),'Practice prompt needs a copy target and editable input: '+id);
-    assert(['받을 결과','직접 확인','이어서 물어보기'].every(label=>text(prompt).includes(label)),'Practice prompt needs output, verification and follow-up: '+id);
-   }
-  }
+  validateSectionPractices(html);
  }
  const summary=oneId('issue-summary'),top=oneId('top10');
  assert(summary&&hasClass(summary,'issue-summary')&&cover.start<summary.start&&summary.start<top.start,'Summary must follow cover and precede TOP 10');

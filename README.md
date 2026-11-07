@@ -30,7 +30,7 @@
 
 ### 1. 필요한 프로그램과 접근 권한
 
-- Git, GitHub CLI(`gh`), Node.js 18 이상(지원 중인 LTS 권장), PowerShell. 명령 예시는 PowerShell에서 실행합니다.
+- Git, GitHub CLI(`gh`), Node.js 18 이상(지원 중인 LTS 권장), SQLite 표준 모듈이 포함된 Python 3.9 이상, PowerShell. 명령 예시는 PowerShell에서 실행합니다.
 - Codex 데스크톱 앱과 AI 조사·작성에 사용할 로그인/이용 권한. 이 저장소에는 별도 자동 리포트 생성 모델 서버가 없습니다.
 - ego lite와 `ego-browser` CLI. 브라우저 로그인과 CLI 등록은 새 컴퓨터에서 다시 준비합니다.
 - GitHub 저장소 main에 푸시할 권한, Vercel의 기존 프로젝트를 배포할 권한, 지정 Discord 서버·채널에 봇을 설치하고 메시지를 보낼 권한.
@@ -39,6 +39,7 @@
 git --version
 gh --version
 node --version
+py -3 -c "import sqlite3; print(sqlite3.sqlite_version)"
 $PSVersionTable.PSVersion
 ego-browser skill
 ```
@@ -291,22 +292,21 @@ YYYY-MM-DD는 실제 발행일로 바꿉니다. publish-report는 검수 → 원
 
 ## 화면 변경 검증
 
-저장소 루트에서 실행합니다. 브라우저 상호작용 검사를 제외한 검사는 Node.js만 사용하고, 읽기 상호작용 검사는 설치·연결된 ego-browser가 필요합니다.
+저장소 루트에서 실행합니다. 기존 Node 검사는 Node.js를 사용하고, SQLite 원장 관련 검사는 Python 3.9 이상 표준 sqlite3 모듈이 필요합니다. 읽기 상호작용 검사는 설치·연결된 ego-browser가 필요합니다.
 
 ```sh
-node --test workflows/test-build-site.mjs workflows/test-language-review.mjs workflows/test-weekly-presentation.mjs workflows/test-portable-issue.mjs workflows/test-learning-sections.mjs workflows/test-report-harness.mjs
-node workflows/test-weekly-editorial.mjs
-node workflows/test-public-assets.mjs
-node workflows/test-tool-visuals.mjs
-node workflows/test-reading-experience.mjs
+node --test workflows/test-build-site.mjs workflows/test-discord-delivery.mjs workflows/test-language-review.mjs workflows/test-learning-sections.mjs workflows/test-portable-issue.mjs workflows/test-public-assets.mjs workflows/test-quality-pipeline.mjs workflows/test-reading-experience.mjs workflows/test-render-report-section.mjs workflows/test-report-harness.mjs workflows/test-report-quality.mjs workflows/test-tool-visuals.mjs workflows/test-weekly-editorial.mjs workflows/test-weekly-presentation.mjs workflows/test-assemble-report-sections.mjs
+python3 workflows/test-report-ledger.py
 node workflows/build-site.mjs
 ```
 
 사이트 생성기는 저장소 안에서는 현재 `reports/`로 메인을 다시 만들고, Windows 운영 폴더에 동기화한 사본은 기존 `reports/`에서 `site/reports/`로 복사합니다. 두 환경 모두 과거 발행물을 보존합니다. 전체 발행 검수는 별도의 실제 조사·교정 영수증과 `validate-issue.mjs`를 계속 사용합니다.
 
+전체 Node 검사에는 `test-quality-pipeline.mjs`, `test-render-report-section.mjs`, `test-report-quality.mjs`, `test-discord-delivery.mjs`와 기존 화면·이식성 검사가 포함됩니다. Python 검사는 SQLite 선적재·중복·버전·독립 승인·순서·해시 및 조회/영수증 이력을 검증합니다. Windows에서는 `python3` 대신 `py -3`을 사용합니다. 코드 변경 없는 호별 제작은 실제 원문·섹션 검수와 build/validate/harness 검사를 생략하지 않습니다.
+
 ## 새 Mac에서 처음 설정하기
 
-1. Git·GitHub CLI·Node.js 18 이상·Codex 데스크톱 앱을 준비합니다. 접근 권한이 있는 계정으로 아래처럼 이 저장소를 클론하고 최신 main을 확인한 뒤, **클론한 저장소 폴더 자체**를 Codex 프로젝트로 엽니다. 프로젝트의 `.agents/skills/weekly-game-report/`와 `workflows/check-report-harness.mjs`, 채널 목록과 공개 원장은 Git으로 함께 내려옵니다. 전역 harness 생성기와 Python은 주간 실행에 필요하지 않습니다.
+1. Git·GitHub CLI·Node.js 18 이상·Codex 데스크톱 앱을 준비합니다. 접근 권한이 있는 계정으로 아래처럼 이 저장소를 클론하고 최신 main을 확인한 뒤, **클론한 저장소 폴더 자체**를 Codex 프로젝트로 엽니다. 프로젝트의 `.agents/skills/weekly-game-report/`와 `workflows/check-report-harness.mjs`, 채널 목록과 공개 원장은 Git으로 함께 내려옵니다. 전역 harness 생성기는 주간 실행에 필요하지 않으며, SQLite 원장을 위해 Python 3.9 이상 표준 sqlite3 모듈이 필요합니다.
 
    ```sh
    git clone https://github.com/rnjsxogus0705/game-trend-report.git
@@ -338,7 +338,7 @@ node workflows/build-site.mjs
 
 매주 스타트업·소규모 게임사 채용, 취업 행사, 게임 제작 부트캠프, 대학 입시, 진로 뉴스를 빠짐없이 조사합니다. 모집이 없거나 원문을 확인하지 못한 범주도 검색 범위와 확인일·한계를 남깁니다. [출력 계약](instructions/REPORT-OUTPUT-CONTRACT.md)의 다섯 범주와 [프로젝트 스킬 명세](.agents/skills/weekly-game-report/references/harness-spec.json)의 조사→작성→독립 검수→준비 게이트가 연결됩니다. 조사 기록 누락·오래된 확인일·출처 미결속·본문 검수 기록 불일치·범주별 독립 검수 누락은 준비/발행 검사에서 차단합니다.
 
-새 PC는 최신 main을 받아 저장소에서 스킬을 실행합니다. 프로젝트의 `.agents/skills/weekly-game-report`, `workflows/check-report-harness.mjs`와 지침은 Git으로 함께 내려오며 전역 harness 생성기/Python은 매주 실행에 필요하지 않습니다. Windows 운영 root의 24개 동기화 목록과 site 저장소 내부 파일의 역할을 혼동하지 마세요. Windows의 07시 준비/08시 전송 전문과 macOS의 08시 단일 예약 전문은 [예약 재현 지침](instructions/READING-AND-SCHEDULER.md)에 각각 있습니다. 예약 객체·토큰·스킬 도구 설치는 Git만으로 복원되지 않으므로 해당 PC에 준비하고 기존 전송 PC와 동시에 활성화하지 않습니다.
+새 PC는 최신 main을 받아 저장소에서 스킬을 실행합니다. 프로젝트의 `.agents/skills/weekly-game-report`, `workflows/check-report-harness.mjs`와 지침은 Git으로 함께 내려오며 전역 harness 생성기는 매주 실행에 필요하지 않으며, SQLite 원장을 위해 Python 3.9 이상 표준 sqlite3 모듈이 필요합니다. Windows 운영 root의 28개 동기화 목록과 site 저장소 내부 파일의 역할을 혼동하지 마세요. Windows의 07시 준비/08시 전송 전문과 macOS의 08시 단일 예약 전문은 [예약 재현 지침](instructions/READING-AND-SCHEDULER.md)에 각각 있습니다. 예약 객체·토큰·스킬 도구 설치는 Git만으로 복원되지 않으므로 해당 PC에 준비하고 기존 전송 PC와 동시에 활성화하지 않습니다.
 
 AI 게임 제작 오픈소스도 매주 조사합니다. pixelfx·Sprite Fusion의 코드 기반 픽셀 VFX처럼 대형 서비스나 Trending 밖의 실제 제작 도구를 [출력 계약의 탐색 기준과 초기 추적 예시](instructions/REPORT-OUTPUT-CONTRACT.md)에 포함했습니다. 스킬·하네스·OS별 예약 전문이 research.openSourceToolSearch로 연결되며, 새 PC도 최신 main과 예약 전문을 사용합니다. 소개만을 위해 외부 스킬을 자동 설치하거나 코드를 실행하지 않습니다.
 
@@ -349,3 +349,7 @@ AI 게임 제작 오픈소스도 매주 조사합니다. pixelfx·Sprite Fusion�
 [주시 목록](instructions/AI-SOLO-CREATOR-WATCHLIST.json)은 저장소 `instructions/`에서 직접 읽는 현재 19개 채널과 개별 참고 영상 3편의 기준입니다. Windows에서는 `site/instructions/` 경로입니다. 세 영상의 채널 전체를 자동 주시 목록에 넣거나 매주 모든 영상을 반복 추천하지 않습니다. 목록 밖의 최신 제작 영상도 한국어와 영어로 검색하고, 존재하는 유효한 이전 호 원장 전체의 `videos`·`channels`·`referenceVideos`에 담긴 videoId와 비교해 재소개 사유를 기록합니다.
 
 매호 `assets/report/research/ai-solo-creators-YYYY-MM-DD.json` 공개 원장에 해당 호의 `reportDate`와 선정 `videos`를 남겨 issue-index의 공개 파일과 최종 해시 검수에 포함합니다. Git에 이 원장이 함께 전달되어야 다음 PC와 다음 호에서 이전 영상을 비교할 수 있습니다. 실제 조사 기록·개별 참고 영상·선정 영상·독립 검수 필드와 실패 기준은 [하네스 운영 계약](.agents/skills/weekly-game-report/references/operating-contract.md)과 [출력 계약](instructions/REPORT-OUTPUT-CONTRACT.md)을 따릅니다. 자동 형식 검사는 실제 원문 조사와 독립 검수를 대신하지 않습니다.
+
+공통 조사와 사전 교정 뒤 독립 섹션은 격리 경로에서 병렬 제작·검수합니다. 한 섹션의 내용·한국어 승인 후에 그 섹션의 UI를 검수하며, 조정자가 승인된 조각을 합쳐 최종 전체 검수와 해시 대조를 마칩니다. 상태는 `python3 workflows/report-ledger.py queue --run 실제-run-id`로 간결히 확인합니다. [섹션 구조 참고](instructions/FORMAT-REFERENCE.md)는 형식만 사용하고 과거 호의 사실은 새 조사로 확인합니다.
+
+주간 조사와 검수 원장은 `_workspace/weekly-game-report.sqlite3`에 보관하며 공개 파일로 복사하거나 Git에 넣지 않습니다. 원장 스크립트는 저장소의 `workflows/`에서 관리합니다. 수집과 검수 순서는 [품질 파이프라인](instructions/QUALITY-PIPELINE.md)을 따릅니다. macOS에서는 `python3 -c "import sqlite3; print(sqlite3.sqlite_version)"`, Windows에서는 위의 `py -3` 명령으로 실행 전 표준 모듈을 확인합니다.

@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import {validateLanguageReview} from './validate-language-review.mjs';
+import {checkReportHarness} from './check-report-harness.mjs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {execFileSync} from 'node:child_process';
@@ -11,6 +12,18 @@ export async function loadBotToken(root){
  const token=match?.[1]?.replace(/^(['"])(.*)\1$/,'$2').trim();
  if(!token||!/^[-\w.]+$/.test(token))throw Error('로컬 .env의 DISCORD_BOT_TOKEN에 기존 봇 토큰을 등록해야 합니다.');
  return token;
+}
+export async function verifyDeliveryHarness({root,issueDate,checker=checkReportHarness}){
+ if(issueDate<'2026-11-07')return;
+ const file=path.join(root,'reports','weekly-'+issueDate+'.html');
+ const pipeline=JSON.parse((await fs.readFile(file+'.pipeline.json','utf8')).replace(/^\uFEFF/,''));
+ const runId=pipeline.runId;if(!/^[a-z0-9][a-z0-9-]{0,63}$/.test(runId||''))throw Error('전송 검수 실행 ID가 유효하지 않습니다.');
+ const contextPath=path.join(root,'_workspace','harness','weekly-game-report',runId,'context.json');
+ const context=JSON.parse((await fs.readFile(contextPath,'utf8')).replace(/^\uFEFF/,''));
+ if(!/^[a-f0-9]{40}$/i.test(context.instructionRevision||''))throw Error('전송 검수 지침 리비전이 없습니다.');
+ const result=await checker({root,runId,revision:context.instructionRevision});
+ if(result.status!=='ready'||result.issueDate!==issueDate||result.htmlPath!=='reports/weekly-'+issueDate+'.html')throw Error('전송 검수 결과가 이번호와 일치하지 않습니다.');
+ return result;
 }
 export async function deliver({token,root,issueDate,summary,checkOnly=false,fetcher=fetch}){
  const api=async(route,options={})=>{
@@ -43,6 +56,7 @@ if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.ur
   if(!checkOnly){
    const file=path.join(root,'reports','weekly-'+issueDate+'.html');
    execFileSync(process.execPath,[path.join(root,'workflows/validate-issue.mjs'),file],{stdio:'inherit'});
+   await verifyDeliveryHarness({root,issueDate});
    const languageReview=JSON.parse((await fs.readFile(file+'.language-review.json','utf8')).replace(/^\uFEFF/,''));
    await validateLanguageReview({htmlPath:file,html:await fs.readFile(file,'utf8'),reportDate:issueDate,review:languageReview});
    const local=await fs.readFile(file,'utf8'),urls=['https://rnjsxogus0705.github.io/game-trend-report/reports/weekly-'+issueDate+'.html','https://game-trend-report.vercel.app/reports/weekly-'+issueDate+'.html'];

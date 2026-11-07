@@ -28,3 +28,38 @@ test('취업·진로 다섯 범주의 근거와 모집 상태 누락 차단',()=
  }
  assert.throws(()=>check(future.replaceAll('data-career-status="planned"','data-missing-status="planned"')),/Career status missing/);
 });
+test('수동 안내는 위젯 개수에 포함하지 않고 불완전한 위젯은 거부한다',async()=>{
+ const {validateSectionPractices}=await import('./validate-weekly-presentation.mjs');
+ const guide='<div class="practice-prompt practice-note"><p>수동 안내</p></div>';
+ const valid='<div class="practice-prompt"><pre id="target">[입력]을 정리</pre><button data-copy-workflow="target">복사</button><p>받을 결과 직접 확인 이어서 물어보기</p></div>';
+ const wrap=s=>`<section id="reverse">${s}</section>`;
+ assert.doesNotThrow(()=>validateSectionPractices(wrap(guide+valid),{sectionIds:['reverse']}));
+ assert.throws(()=>validateSectionPractices(wrap(guide),{sectionIds:['reverse']}),/Missing practice/);
+ for(const bad of [valid.replace(/<button[^>]*>.*?<\/button>/,''),valid.replace(/<pre[^>]*>.*?<\/pre>/,''),valid.replace('data-copy-workflow="target"','data-copy-workflow="wrong"'),valid.replace('[입력]','입력'),valid.replace('이어서 물어보기','후속 질문')])assert.throws(()=>validateSectionPractices(wrap(guide+bad),{sectionIds:['reverse']}),/Practice prompt/);
+ assert.throws(()=>validateSectionPractices(wrap(valid+'<div class="practice-prompt"><button>가짜</button></div>'),{sectionIds:['reverse']}),/Practice prompt/);
+});
+test('읽을거리 실제 분류와 빈 범주의 조사 한계를 검증한다',async()=>{
+ const {validateReadingResources}=await import('./validate-weekly-presentation.mjs');
+ const resource=(kind,url)=>`<article data-kind="${kind}"><p><a href="${url}">자료 제목</a></p></article>`;
+ const article=resource('article','https://example.com/article'),video=resource('video','https://www.youtube.com/watch?v=abcdefghijk'),post=resource('post','https://example.com/post');const wrap=s=>`<section id="reading">${s}</section>`;const issueDate='2026-11-07';
+ assert.deepEqual(validateReadingResources(wrap(article+video+post),{review:{},issueDate}),{article:1,video:1,post:1});
+ assert.throws(()=>validateReadingResources(wrap(article+video+resource('post','https://youtu.be/abcdefghijk')),{review:{},issueDate}),/video kind/);
+ assert.throws(()=>validateReadingResources(wrap(article+video),{review:{},issueDate}),/Missing reading search coverage: post/);
+ const missing={kind:'post',count:0,status:'unverified',searchedAt:'2026-11-07',searchScope:'운영기관 공지',finding:'확인하지 못함',limitation:'접근 불가',sourceUrls:[]};
+ assert.equal(validateReadingResources(wrap(article+video),{review:{readingCoverage:[missing]},issueDate}).post,0);
+ assert.throws(()=>validateReadingResources(wrap(article+video),{review:{readingCoverage:[{...missing,searchedAt:'2026-10-01'}]},issueDate}),/Missing reading search coverage/);
+ assert.throws(()=>validateReadingResources(wrap(article+video),{review:{readingCoverage:[{...missing,count:1}]},issueDate}),/count mismatch/);
+ assert.throws(()=>validateReadingResources(wrap(article+video)+'<div data-kind="post"><a href="https://example.com">범위 밖</a></div>',{review:{},issueDate}),/Missing reading search coverage: post/);
+ assert.throws(()=>validateReadingResources(wrap(article+video+'<div data-kind="post"></div>'),{review:{},issueDate}),/primary source/);
+ const withReference='<article data-kind="article"><a href="https://example.com/article">기사</a><a href="https://youtube.com/watch?v=abcdefghijk">참고 영상</a></article>';assert.doesNotThrow(()=>validateReadingResources(wrap(withReference+video+post),{review:{},issueDate}));
+});
+
+test('아이디어 원문을 펼치고 접으면 스크롤 없이 읽기 진행률을 다시 계산한다',async()=>{
+ const vm=await import('node:vm');const source=await fs.readFile(new URL('../reports/weekly-2026-11-07.js',import.meta.url),'utf8');
+ const listeners={},nodes={'tool-goal':{addEventListener(){}},'print-button':{addEventListener(){}},'read-percent':{textContent:''},'read-bar':{style:{width:''}}};
+ const document={documentElement:{scrollHeight:11000},addEventListener:(type,callback,options)=>{listeners[type]={callback,options};},getElementById:id=>nodes[id]};
+ vm.runInNewContext(source,{document,window:{print(){}},addEventListener(){},innerHeight:1000,scrollY:1000,navigator:{clipboard:{writeText(){}}}});
+ assert.equal(nodes['read-percent'].textContent,'10%');assert.equal(listeners.toggle.options,true);
+ document.documentElement.scrollHeight=21000;listeners.toggle.callback({});assert.equal(nodes['read-percent'].textContent,'5%');assert.equal(nodes['read-bar'].style.width,'5%');
+ document.documentElement.scrollHeight=11000;listeners.toggle.callback({});assert.equal(nodes['read-percent'].textContent,'10%');
+});
