@@ -1,8 +1,10 @@
 import {validateQualityPipeline} from './validate-quality-pipeline.mjs';
+import {validateReaderCopy} from './audit-report-quality.mjs';
 import {validateWeeklyPresentation,validateCareerCoverage,validateReadingResources,validateAiCaseAndVideoResources} from './validate-weekly-presentation.mjs';
 import {validateLanguageReview} from './validate-language-review.mjs';
 import fs from 'node:fs/promises';import path from 'node:path';import crypto from 'node:crypto';
 const file=path.resolve(process.argv[2]||''),html=await fs.readFile(file,'utf8'),review=JSON.parse((await fs.readFile(file+'.content-review.json','utf8')).replace(/^\uFEFF/,''));
+if(review.reportDate>='2026-11-14')validateReaderCopy(html);
 const sections=['brief','ai-only-lab','games','ai-trends','ai-planning','game-ai','ai-releases','techniques','github-trending','game-ai-tools','careers','reverse','prototype','opportunities','sources'];
 if((html.match(/class="top-ten-item"/g)||[]).length!==10||!html.includes('id="top10"'))throw Error('Expected exactly ten prioritized items at the top');
 if(!html.includes('id="reading"'))throw Error('Missing Korean reading and video section');

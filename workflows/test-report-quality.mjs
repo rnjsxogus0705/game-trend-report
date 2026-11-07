@@ -1,6 +1,30 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {sectionMetrics,compareQuality,validateLayoutContract} from './audit-report-quality.mjs';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import {spawnSync} from 'node:child_process';
+import {sectionMetrics,compareQuality,validateLayoutContract,productionCommentary,validateReaderCopy} from './audit-report-quality.mjs';
+test('독자용 본문의 내부 제작 안내를 찾고 필수 한계와 인용은 보존한다',()=>{
+ const prose='<p>사용자가 지정한 자료를 게임 제작 관점에서 정리했어요.</p><p>추가 유행으로 중복 집계하지 않아요.</p><p>각 도구의 README와 문서를 확인했어요.</p>';
+ assert.deepEqual(productionCommentary(prose).map(f=>f.rule),['requested_material','internal_deduplication','review_workflow']);
+ assert.throws(()=>validateReaderCopy(prose),/internal production commentary/);
+ assert.doesNotThrow(()=>validateReaderCopy('<p>무료 코드는 MIT이며 폰트 라이선스는 별도예요. 전체 영상은 미시청이며 엔진 실행은 미검증이에요.</p><pre><code>'+prose+'</code></pre><blockquote>'+prose+'</blockquote><p>README의 엔진 연결 방법을 참고하세요.</p>'));
+});
+test('다음 호 발행 진입점에서 내부 과정 문구를 차단하며 과거 호에는 소급하지 않는다',()=>{
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'gtr-reader-copy-'));
+ try{
+  const file=path.join(dir,'weekly.html');
+  fs.writeFileSync(file,'<p>사용자가 지정한 자료를 정리했어요.</p>');
+  for(const reportDate of ['2026-11-07','2026-11-14']){
+   fs.writeFileSync(file+'.content-review.json',JSON.stringify({reportDate}));
+   const result=spawnSync(process.execPath,['workflows/validate-issue.mjs',file],{encoding:'utf8'});
+   assert.notEqual(result.status,0);
+   if(reportDate==='2026-11-14')assert.match(result.stderr,/internal production commentary/);
+   else assert.doesNotMatch(result.stderr,/internal production commentary/);
+  }
+ }finally{fs.rmSync(dir,{recursive:true,force:true});}
+});
 test('섹션 실제 미디어와 축약·반복 후보를 비교한다',()=>{
  const prior=sectionMetrics('<script src="../assets/report/rich-media.js"></script><section id="games"><p>'+('이전 사례 설명 '.repeat(40))+'</p><img src="a.png" alt="게임 화면"><div class="youtube-preview"><button data-youtube-play="abcdefghijk">영상</button></div><a href="https://www.youtube.com/watch?v=abcdefghijk">제작자 영상</a></section>');
  const sentence='같은 설명을 단순 반복하면 독자가 새로 배울 정보가 없어지므로 검수 후보로 표시한다.';

@@ -269,11 +269,13 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
         a = sub.add_parser(cmd)
         a.add_argument('--run', required=True)
         a.add_argument('--section', required=True)
-    for cmd in ('history', 'check', 'snapshot', 'queue'):
+    for cmd in ('history', 'check', 'snapshot', 'queue', 'overview'):
         a = sub.add_parser(cmd)
         a.add_argument('--run', required=True)
     sub.choices['snapshot'].add_argument('--output', required=True)
     sub.choices['history'].add_argument('--summary',action='store_true')
+    sub.choices['overview'].add_argument('--section')
+    sub.choices['overview'].add_argument('--limit',type=int,default=50)
     sub.choices['check'].add_argument('--html', required=True)
     sub.choices['check'].add_argument('--json', action='store_true')
     sub.choices['check'].add_argument('--snapshot')
@@ -301,6 +303,7 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
     if 'stage' not in {row['name'] for row in db.execute('PRAGMA table_info(sections)')}:
         with db: db.execute("ALTER TABLE sections ADD COLUMN stage TEXT NOT NULL DEFAULT 'prepared'")
     db.execute('CREATE UNIQUE INDEX IF NOT EXISTS sections_run_position_unique ON sections(run,position)')
+    db.execute('CREATE INDEX IF NOT EXISTS events_run_section_kind ON events(run,section,kind)')
 
     def validate_ui_evidence(proof):
         design=Path.cwd()/'DESIGN.md'
@@ -697,10 +700,31 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
             result={'sectionId':s['id'],'issueDate':r['issue_date'],'candidate':candidate,'reviewApproval':{'source':'passed','korean':'passed','packetSha256':s['packet_hash'],'eventIds':approvals}}
         elif a.command == 'approved-section':
             result=approved_section(section())
+        elif a.command == 'overview':
+            r=run()
+            if not 1 <= a.limit <= 500: raise ValueError('limit must be between 1 and 500')
+            sections=db.execute('''SELECT s.id,s.stage,s.packet_hash,
+                json_extract(p.document,'$.candidate.title') AS title,
+                substr(COALESCE(json_extract(p.document,'$.candidate.lead'),json_extract(p.document,'$.text'),json_extract(p.document,'$.body')),1,200) AS excerpt,
+                (SELECT COUNT(*) FROM events e WHERE e.run=s.run AND e.section=s.id) AS eventCount
+                FROM sections s LEFT JOIN packet_versions p ON p.run=s.run AND p.section=s.id AND p.hash=s.packet_hash
+                WHERE s.run=? AND s.imported=0 AND (? IS NULL OR s.id=?) ORDER BY s.position LIMIT ?''',(a.run,a.section,a.section,a.limit)).fetchall()
+            sources=db.execute('''SELECT ordinal, COALESCE(json_extract(data,'$.title'),json_extract(data,'$.name')) AS title,
+                COALESCE(json_extract(data,'$.uri'),json_extract(data,'$.url')) AS url,
+                json_extract(data,'$.publisher') AS publisher, substr(json_extract(data,'$.scope'),1,160) AS scope,
+                json_extract(data,'$.retrievedAt') AS retrievedAt,
+                CASE WHEN json_type(data,'$.media') IS NOT NULL OR json_type(data,'$.mediaUrl') IS NOT NULL THEN 1 ELSE 0 END AS hasMedia,
+                CASE WHEN json_extract(data,'$.limitation') IS NOT NULL THEN 1 ELSE 0 END AS hasLimitation
+                FROM materials WHERE run=? AND research_hash=? ORDER BY ordinal LIMIT ?''',(a.run,r['research_hash'],a.limit)).fetchall()
+            counts=db.execute('SELECT kind,COUNT(*) AS count,MIN(created) AS firstRecorded,MAX(created) AS lastRecorded FROM events WHERE run=? AND (? IS NULL OR section=?) GROUP BY kind ORDER BY kind',(a.run,a.section,a.section)).fetchall()
+            section_total=db.execute('SELECT COUNT(*) FROM sections WHERE run=? AND imported=0 AND (? IS NULL OR id=?)',(a.run,a.section,a.section)).fetchone()[0]
+            source_total=db.execute('SELECT COUNT(*) FROM materials WHERE run=? AND research_hash=?',(a.run,r['research_hash'])).fetchone()[0]
+            result={'run':a.run,'researchHash':r['research_hash'],'sections':[dict(x) for x in sections],'sources':[dict(x) for x in sources],'totalCounts':{'sections':section_total,'sources':source_total},'eventCounts':[dict(x) for x in counts],'limit':a.limit,'note':'Stored stages and counts are not approval; use queue and independent evidence. Sources are run-wide, including when filtering sections. Event timestamps are recording bounds, not elapsed work time.'}
         elif a.command == 'queue':
             r=run()
-            try: global_ready=not issues(r)
-            except (OSError,ValueError): global_ready=False
+            try: global_errors=issues(r)
+            except (OSError,ValueError) as exc: global_errors=[str(exc)]
+            global_ready=not global_errors
             items=[]
             for item in db.execute('SELECT * FROM sections WHERE run=? ORDER BY position',(a.run,)):
                 try: fresh=not item['imported'] and bool(item['packet']) and digest(item['packet'])==item['packet_hash']
@@ -709,7 +733,8 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
                 valid_pre={kind:bool(global_ready and fresh and valid_review(item['id'],'pre-'+kind,item['packet_hash'],item['author'])) for kind in ('source','korean')}
                 ready=all(valid.values()); stage='historical' if item['imported'] else ('complete' if ready else item['stage'])
                 items.append({'sectionId':item['id'],'state':stage,'packetKey':item['packet_hash'],'preReview':valid_pre,'review':valid,'needsRepair':not ready})
-            result={'run':a.run,'sections':items}
+            active=[item for item in items if item['state']!='historical']
+            result={'run':a.run,'globalBlockers':global_errors,'summary':{'active':len(active),'complete':sum(item['state']=='complete' for item in active),'needsRepair':sum(item['needsRepair'] for item in active),'missingReviews':{kind:sum(not item['review'][kind] for item in active) for kind in ('content','korean','ui')}},'sections':items}
         elif a.command == 'duplicates':
             result={'matches':duplicate_matches(section()),'limitation':'Exact normalized matches only; review semantic duplicates independently.'}
         elif a.command in ('advance','check','snapshot','history'):

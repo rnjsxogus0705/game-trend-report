@@ -5,6 +5,24 @@ import {fileURLToPath} from 'node:url';
 import {reportElements} from './validate-weekly-presentation.mjs';
 const text=html=>html.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
 const has=(node,name)=>(node.attrs.class||'').split(/\s+/).includes(name);
+// Narrow reader-copy checks; quoted source text and runnable examples are not editorial copy.
+export function productionCommentary(html){
+ const {elements,source}=reportElements(html);
+ const rules=[
+  ['requested_material',/사용자(?:가|의)\s*(?:별도(?:로)?\s*)?지정한\s*(?:자료|영상|목록|콘텐츠|링크)/],
+  ['internal_deduplication',/(?:추가\s*유행으로|독립\s*유행\s*근거로)\s*중복\s*집계|이전\s*(?:호\s*)?(?:공개\s*)?원장(?:과|을)\s*대조/],
+  ['review_workflow',/(?:이번\s*리포트|이\s*리포트|본문)(?:는|를|에)?[^.!?]{0,60}(?:스킬|에이전트|하네스)(?:로|를|의|와|과)[^.!?]{0,40}(?:검수|제작)|각\s*도구의\s*README와\s*문서를\s*확인했/]
+ ];
+ return elements.filter(n=>/^(?:p|li|h[1-6]|figcaption|td|dd)$/.test(n.tag)).flatMap(n=>{
+  for(let parent=n.parent;parent;parent=parent.parent)if(['pre','code','blockquote','script','style'].includes(parent.tag))return [];
+  const copy=text(source.slice(n.start,n.end));
+  return rules.filter(([,rule])=>rule.test(copy)).map(([rule])=>({rule,text:copy.slice(0,240)}));
+ });
+}
+export function validateReaderCopy(html){
+ const findings=productionCommentary(html);
+ if(findings.length)throw Error('Remove internal production commentary from reader copy: '+findings.map(f=>f.rule+': '+f.text).join('; '));
+}
 const youtubeId=value=>{
  try{
   const url=new URL(value.replaceAll('&amp;','&')),host=url.hostname.toLowerCase();
@@ -68,6 +86,7 @@ export function compareQuality(current,prior){
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
  try{const [current,prior]=process.argv.slice(2);if(!current||!prior)throw Error('Usage: node workflows/audit-report-quality.mjs CURRENT.html PRIOR.html');
- console.log(JSON.stringify({current,prior,notice:'Metrics identify review candidates, not factual or editorial approval.',sections:compareQuality(sectionMetrics(await fs.readFile(current,'utf8')),sectionMetrics(await fs.readFile(prior,'utf8')))},null,2));
+ const html=await fs.readFile(current,'utf8');
+ console.log(JSON.stringify({current,prior,notice:'Metrics identify review candidates, not factual or editorial approval.',productionCommentary:productionCommentary(html),sections:compareQuality(sectionMetrics(html),sectionMetrics(await fs.readFile(prior,'utf8')))},null,2));
  }catch(e){console.error(e.message);process.exitCode=1;}
 }

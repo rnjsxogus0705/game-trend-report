@@ -11,3 +11,5 @@
 `gitRevision`이 있는 기준은 working tree가 아니라 `git show <gitRevision>:<path>`의 실제 바이트로 SHA256을 확인한다. 기준별 capabilities가 지원 범위를 표시한다. Oct31은 개별 Markdown 전체 복사 기준이고, 고정 Nov7 a9e84e4는 셸·목차 참고이며 전체 원문 복사가 구현된 예시가 아니다. JSON의 targetContract는 새 결과의 필수 조건이다. 날짜는 가능한 `.cover-meta time[datetime]`을 쓰고, 과거 `.issue-cover > p` 대안은 실제 날짜 텍스트와 발행일을 대조한다.
 
 공통 셸과 상태 목록은 `references/report-format-reference.json`의 `coreUi`와 루트 `DESIGN.md`를 따른다. 가장 최근 실제 검수본의 컴포넌트 형식을 우선하고, 고정된 부실 과거본을 폼·미디어 완성 예시로 복제하지 않는다. 공유 버튼은 정적 셸에도 포함하고 긴 본문 중간에서도 찾을 수 있어야 한다. 새 디자인 기준은 UI 증거의 `designContractSha256`으로 결속하며 존재하는 버튼과 실제 동작을 각각 확인한다.
+
+다음 호의 우선 고정 예시는 `4a4b675891efa60044cdf03dfd81e6cae41bb2f7`의 2026-11-07호다. JSON의 해당 SHA256과 git 객체를 대조하고 개선된 카드·공유·미디어·전체 Markdown 복사·독자용 문장 구조를 참고한다. 이전 a9e84e4는 실패 비교용으로만 둔다. 공통 디자인·셀렉터·동작을 착수 전에 고정해 제작 막바지의 전역 수정과 전체 UI 재검수를 줄인다.

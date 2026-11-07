@@ -20,6 +20,19 @@
         "fullIndividualMarkdownCopy": false
       },
       "useFor": "과거 셸·목차와 실패 비교용 고정본. 폼·미디어·카드의 완성 예시로 복제하지 않음."
+    },
+    {
+      "path": "reports/weekly-2026-11-07.html",
+      "gitRevision": "4a4b675891efa60044cdf03dfd81e6cae41bb2f7",
+      "sha256": "52ea8778056cf7773a9a8b6883547f0d7e4929551acd2778885ef8aecf31a159",
+      "capabilities": {
+        "shellAndNavigation": true,
+        "top10ThreePlusSeven": true,
+        "fullIndividualMarkdownCopy": true,
+        "shareAndReadingControls": true,
+        "officialMediaAndConceptImages": true
+      },
+      "useFor": "다음 호의 우선 형식 기준: 개선된 카드·미디어·공유·읽기·전체 Markdown 복사 및 독자용 본문. 사실·날짜의 재사용 근거는 아님."
     }
   ],
   "shell": [

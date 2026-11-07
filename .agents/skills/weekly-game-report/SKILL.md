@@ -20,8 +20,9 @@ description: Generate or renew a complete Korean weekly Game Trend Report with s
 3. 공통 shell/CSS/JS와 기준 파일을 고정하고 [형식 참조](../../../instructions/FORMAT-REFERENCE.md)와 [선택자·필드 참조](references/report-format-reference.json)의 해당 카드 유형만 writer에게 전달한다. [미디어·화면 검수](../../../instructions/QUALITY-PIPELINE.md#미디어-계획과-실제-화면-검수)에서 섹션별 공식 미디어·생성 그림의 계획과 근거를 관리한다. 전호는 형식 참고이며 날짜·사실·순위·영상을 복제하지 않는다.
 4. 사용 가능한 슬롯 안에서 독립 섹션을 병렬로 할당한다. writer는 `report-section-writer` 또는 실제 native executor로 자기 섹션의 `_workspace` 후보/자산 초안만 쓴다. 공용 스타일·canonical HTML·다른 섹션은 수정하지 않는다. `render-report-section.mjs --parallel`의 승인 packet/기준/스타일 해시 manifest를 사용한다. 중첩된 game-ai-tools/agent-skills는 같은 lane에서 처리하거나 충돌을 먼저 해결한다.
 5. `report-content-reviewer`와 별도 `report-ui-reviewer`가 자기 섹션을 독립 병렬 검수한다. 미발견이면 실제 native verifier/designer에 TOML 지침을 전달한 대안으로 실행한다. 원고·원문과 DaleSeo 3종 및 별도 k-skill 지침, Impeccable와 실제 4폭 화면을 검토한다. UI 승인은 같은 섹션의 content/Korean 승인 후에만 기록한다. 다른 섹션의 완료를 기다리지 않는다.
-6. 감독자는 차단 원인·소유자·다음 수정·증거를 기록하고 바뀐 섹션만 재작업시킨다. 실제 agent 상태를 확인해 종료·대기 작업자는 followup_task로 재개하고, send_message만 보내고 실행됐다고 가정하지 않는다. source/candidate/관련 내용 계약/section/style/evidence가 동일한 실제 승인만 재사용한다. cache hit는 새 검수를 했다는 뜻이 아니다. 전체 history를 반복 읽지 않고 `queue`, `history --summary`, 필요한 hash/경로만 조회한다.
-7. root 단일 작성자가 `assemble-report-sections.mjs`로 승인 후보를 병합한다. 미완료·stale·중복 ID·중첩 충돌·공통 스타일 변경은 차단한다. 병합 후 전체 흐름·중복·한국어·4폭 UI·복사·첨부·공유·인쇄와 실제 source/배포 해시를 최종 검수한다. 부분 통과를 전체 완료로 보고하지 않는다.
+6. 감독자는 차단 원인·소유자·다음 수정·증거를 기록하고 바뀐 섹션만 재작업시킨다. 실제 agent 상태를 확인해 종료·대기 작업자는 followup_task로 재개하고, send_message만 보내고 실행됐다고 가정하지 않는다. source/candidate/관련 내용 계약/section/style/evidence가 동일한 실제 승인만 재사용한다. cache hit는 새 검수를 했다는 뜻이 아니다. 전체 history를 반복 읽지 않고 `overview`, `queue`, `history --summary`, 필요한 hash/경로만 조회한다.
+   재검수 범위는 QUALITY-PIPELINE의 변경 영향 기준을 따른다. 공통 변경과 범위 불명은 영향을 받는 모든 곳을 확인한다. 조사·검수 과정의 내부 설명은 독자용 본문에서 제거하고 판단에 필요한 출처·선정 이유·한계는 남긴다.
+7. root 단일 작성자가 `assemble-report-sections.mjs`로 승인 후보를 병합한다. 미완료·stale·중복 ID·중첩 충돌·공통 스타일 변경은 차단한다. 병합 후 유효한 섹션 검수 근거를 승계하고 전체 흐름·섹션 간 중복·한국어 연결·4폭 공통 UI·복사·첨부·공유·인쇄 및 실제 source/배포 해시를 최종 확인한다. 국소 수정의 재검수 범위는 QUALITY-PIPELINE을 따르며 불변 섹션의 원문 정독과 전 화면 촬영을 반복하지 않는다. 부분 통과를 전체 완료로 보고하지 않는다.
 
 ## 완료 증거
 
