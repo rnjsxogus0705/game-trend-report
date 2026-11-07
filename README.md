@@ -353,3 +353,5 @@ AI 게임 제작 오픈소스도 매주 조사합니다. pixelfx·Sprite Fusion�
 공통 조사와 사전 교정 뒤 독립 섹션은 격리 경로에서 병렬 제작·검수합니다. 한 섹션의 내용·한국어 승인 후에 그 섹션의 UI를 검수하며, 조정자가 승인된 조각을 합쳐 최종 전체 검수와 해시 대조를 마칩니다. 상태는 `python3 workflows/report-ledger.py queue --run 실제-run-id`로 간결히 확인합니다. [섹션 구조 참고](instructions/FORMAT-REFERENCE.md)는 형식만 사용하고 과거 호의 사실은 새 조사로 확인합니다.
 
 주간 조사와 검수 원장은 `_workspace/weekly-game-report.sqlite3`에 보관하며 공개 파일로 복사하거나 Git에 넣지 않습니다. 원장 스크립트는 저장소의 `workflows/`에서 관리합니다. 수집과 검수 순서는 [품질 파이프라인](instructions/QUALITY-PIPELINE.md)을 따릅니다. macOS에서는 `python3 -c "import sqlite3; print(sqlite3.sqlite_version)"`, Windows에서는 위의 `py -3` 명령으로 실행 전 표준 모듈을 확인합니다.
+
+디자인의 단일 기준은 루트 [DESIGN.md](DESIGN.md)이며 Impeccable이 실제로 읽습니다. [형식 참조](instructions/FORMAT-REFERENCE.md)의 공통 요소 목록과 상태를 매호 대조하고, 정적 공유·인쇄·출처·푸터 누락 검사 및 실제 공유·복사·미디어 동작 검수를 함께 통과해야 합니다.

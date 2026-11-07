@@ -73,5 +73,68 @@
       "height": 941,
       "disclosure": "원본 생성 일러스트를 WebP로 변환했어요. 새 게임 화면이나 실제 성능 측정 결과가 아니에요."
     }
-  ]
+  ],
+  "chapterIllustrations": [
+    {
+      "id": "tools",
+      "mode": "built-in image_gen",
+      "prompt": "Use case: scientific-educational\nAsset type: Korean weekly game development research report, wide chapter introduction illustration.\nPrimary request: Make a polished editorial cutaway illustration explaining how separate game-engine systems cooperate in one tiny playable scene: rigid-body crates rolling on a heightmap slope, a visibly separate excavatable voxel tunnel, node-based stone material samples, and a restrained particle trail. These are conceptual learning examples, not screenshots or logos.\nStyle/medium: carefully composed isometric 3D editorial illustration, clean warm white backdrop, navy and muted blue framing with warm orange focal accents, tactile but crisp materials, visually legible at article width. Wide 16:9 composition.\nText (verbatim): only four small, clearly readable Korean labels: \"충돌\", \"높이맵\", \"복셀\", \"재질\". Place each next to its matching distinct area.\nConstraints: show the heightmap as a continuous upper surface and voxel cave as separately editable block volume; no claimed performance figures, no fake product UI, no branding, no extra text, no decorative charts. Preserve ample negative space and clear distinction of systems.",
+      "sourcePath": "assets/report/visuals-2026-11-07/tools-chapter-v2.png",
+      "sourceSha256": "e843dea4f89a798e5c9b14cd9bd21533d3b55a42ea9174774aee07a477e3cba7",
+      "outputPath": "assets/report/visuals-2026-11-07/tools-chapter-v2.webp",
+      "outputSha256": "b907cc938a31093c621a4e9774848a0ccd0ddcac4776327030a8359f64bdc0bc",
+      "width": 1672,
+      "height": 941,
+      "disclosure": "설명을 위한 생성 개념 그림. 실제 게임 화면이나 실행·측정 결과가 아님."
+    },
+    {
+      "id": "planning",
+      "mode": "built-in image_gen",
+      "prompt": "Use case: scientific-educational\nAsset type: wide editorial illustration for a Korean game development weekly's AI planning section.\nPrimary request: explain the human-led process from a written game idea to a deliberately tiny graybox test, then human comparison and correction. A left-to-right workbench composition with three distinct visible states: a paper gameplay-loop sketch, a laptop showing a small top-down puzzle graybox with a lever and door, and a human hand comparing a playback strip with the sketch, marking one failed interaction for revision.\nStyle/medium: premium isometric editorial 3D illustration on warm white background, navy/muted blue and gentle warm orange accents, clear editorial framing, wide16:9. No product logos, no fake code or performance figures.\nText (verbatim): exactly three Korean labels \"기획\", \"작은 구현\", \"사람의 검토\".\nConstraints: Conceptual educational scene, not proof of actual game execution; all text legible, no additional text, avoid tiny fake UI text. Human judgment must remain visibly central.",
+      "sourcePath": "assets/report/visuals-2026-11-07/planning-chapter-v2.png",
+      "sourceSha256": "93cd0ff805d6ca96688ac1ae253933d3564c3538f2efdc58ac44f1f645187b04",
+      "outputPath": "assets/report/visuals-2026-11-07/planning-chapter-v2.webp",
+      "outputSha256": "1c3cb7b0a00886e56f7b4768fe462679f16567edbde85c32735c4b14ed0d0ee1",
+      "width": 1672,
+      "height": 941,
+      "disclosure": "설명을 위한 생성 개념 그림. 실제 게임 화면이나 실행·측정 결과가 아님."
+    },
+    {
+      "id": "reverse",
+      "mode": "built-in image_gen",
+      "prompt": "Use case: scientific-educational\nAsset type: wide Korean educational game-design analysis illustration.\nPrimary request: a deliberately fictional top-down co-op cargo puzzle game viewed in three coherent snapshots showing a shared push-cart with two small players, a narrow doorway requiring coordination, and the team's delivered cargo at the exit. Under the main scene use a clean zoomed strip showing only one variable changing: wide door vs narrow door. This illustrates observing a game rule and proposing a test, not an actual commercial game screenshot.\nStyle/medium: polished isometric 3D editorial teaching illustration, warm white background, navy and muted blue with restrained warm orange accents. Wide16:9, strong scene readability.\nText (verbatim): three short labels \"관찰\", \"가설\", \"비교\".\nConstraints: No invented statistics or charts, no branding, no extra text, no claim of verified design outcomes. Show both actors and the cart as distinct forms; convey clear interaction and cause.",
+      "sourcePath": "assets/report/visuals-2026-11-07/reverse-chapter-v2.png",
+      "sourceSha256": "533f32e8a09f5425c118be1a10604630145a978f0531c218b4e550c6a34a4455",
+      "outputPath": "assets/report/visuals-2026-11-07/reverse-chapter-v2.webp",
+      "outputSha256": "31a49da1cfe7dddeec72acced89ded38a01cf6948b0d497cc466d3f31f22807e",
+      "width": 1672,
+      "height": 941,
+      "disclosure": "설명을 위한 생성 개념 그림. 실제 게임 화면이나 실행·측정 결과가 아님."
+    },
+    {
+      "id": "lab-data",
+      "mode": "built-in image_gen",
+      "prompt": "Use case: scientific-educational\nAsset type: Korean weekly game report's data validation and probability lab, wide chapter illustration.\nPrimary request: a careful editorial illustration of a student planning two tiny unexecuted game-data checks. On the left, a clear grid of game character data represented by six colored rows of icon cells: one visibly empty ID cell, one pair of matching identifier shapes, and one health icon outside a marked safe band. On the right, four branching two-step coin/token outcomes arranged as clean physical tokens, illustrating enumerating possibilities rather than measured chance. A human hand annotates a notebook to compare assumptions with observations.\nStyle/medium: polished editorial isometric 3D teaching illustration, navy/muted blue with warm orange accents on a warm white surface, wide16:9, legible large simple objects.\nText (verbatim): exactly three Korean labels \"입력 규칙\", \"가능한 순서\", \"관찰 기록\".\nConstraints: fictional educational proposal, not real game data or executed results. No numbers, no fake source code, no charts of measured rates, no branding, no additional text. Avoid check marks implying tests were already run; mark questions in the notebook rather than success badges.",
+      "sourcePath": "assets/report/visuals-2026-11-07/lab-data-chapter-v3.png",
+      "sourceSha256": "992252dd4180ab24a478e3f936dfb831b45f80d8f1b4984d009368f366293949",
+      "outputPath": "assets/report/visuals-2026-11-07/lab-data-chapter-v3.webp",
+      "outputSha256": "cb1929be0a1f1d06136288dc32bd504a6456a336aefe284ac6323f62786d5c99",
+      "width": 1672,
+      "height": 941,
+      "disclosure": "설명을 위한 생성 개념 그림. 실제 게임 화면이나 실행·측정 결과가 아님."
+    }
+  ],
+  "promptRecordScope": "상단 prompt는 기존 자산의 공통 스타일 설명이에요. idea-01~06의 장면별 전체 호출 프롬프트 원본은 이 원장에 보존되지 않았어요. 해당 여섯 장은 기존 생성 자산으로 재사용하며 이번 실행에서 새로 생성했다고 기록하지 않아요.",
+  "legacyConceptAssets": {
+    "files": [
+      "idea-01.png",
+      "idea-02.png",
+      "idea-03.png",
+      "idea-04.png",
+      "idea-05.png",
+      "idea-06.png"
+    ],
+    "individualFullPrompts": "not-retained",
+    "verificationScope": "기존 생성 출처 기록·원본/변환 hash와 실제 그림·캡션을 대조. 개별 전체 프롬프트나 생성 호출을 새로 검증했다는 뜻이 아님."
+  }
 }

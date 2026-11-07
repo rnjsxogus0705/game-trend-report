@@ -4,11 +4,29 @@ const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const manifest=JSON.parse(await fs.readFile(path.join(repo,'instructions/sync-manifest.json'),'utf8'));
 const digest=value=>crypto.createHash('sha256').update(value).digest('hex');
 const careerCoverage=['startups','events','bootcamps','admissions','news'].map(category=>({category,status:'unverified',searchedAt:'2026-11-07',searchScope:'Synthetic official source search',finding:'No real research in this fixture',sourceUrls:['https://example.test/fixture'],limitation:'Synthetic fixture only'}));
+test('정식 디자인 기준은 운영 루트로 복사되고 기존 위치의 상대 링크로 열린다',async t=>{
+ assert.ok(manifest.files.some(entry=>entry.repo==='DESIGN.md'&&entry.local==='DESIGN.md'));
+ assert.ok(manifest.files.some(entry=>entry.repo==='instructions/DESIGN.md'&&entry.local==='redesign/DESIGN.md'));
+ const sync=await fs.readFile(path.join(repo,'workflows/sync-instructions.ps1'),'utf8');assert.match(sync,/'DESIGN\.md'\s*=\s*'DESIGN\.md'/);
+ const root=await fs.mkdtemp(path.join(os.tmpdir(),'gtr-design-sync-'));t.after(()=>fs.rm(root,{recursive:true,force:true}));
+ for(const entry of manifest.files.filter(e=>e.repo==='DESIGN.md'||e.repo==='instructions/DESIGN.md')){const target=path.join(root,entry.local);await fs.mkdir(path.dirname(target),{recursive:true});await fs.copyFile(path.join(repo,entry.repo),target);}
+ const pointer=await fs.readFile(path.join(root,'redesign/DESIGN.md'),'utf8');assert.match(pointer,/\]\(\.\.\/DESIGN\.md\)/);
+ assert.equal(digest(await fs.readFile(path.join(root,'DESIGN.md'))),digest(await fs.readFile(path.join(repo,'DESIGN.md'))));
+ assert.equal(digest(await fs.readFile(path.resolve(root,'redesign','../DESIGN.md'))),digest(await fs.readFile(path.join(repo,'DESIGN.md'))));
+});
+test('Google 디자인 원칙 조사 출처가 기존 참고 폴더에 동일하게 복사된다',async t=>{
+ const repoPath='instructions/references/google-design-md/source-reference-2026-11-07.json',local='redesign/references/google-design-md/source-reference-2026-11-07.json';
+ assert.ok(manifest.files.some(entry=>entry.repo===repoPath&&entry.local===local));
+ const sync=await fs.readFile(path.join(repo,'workflows/sync-instructions.ps1'),'utf8');assert.ok(sync.includes("'google-design-md/source-reference-2026-11-07.json'"));
+ const root=await fs.mkdtemp(path.join(os.tmpdir(),'gtr-design-source-'));t.after(()=>fs.rm(root,{recursive:true,force:true}));const target=path.join(root,local);await fs.mkdir(path.dirname(target),{recursive:true});await fs.copyFile(path.join(repo,repoPath),target);
+ const copied=await fs.readFile(target);assert.equal(digest(copied),digest(await fs.readFile(path.join(repo,repoPath))));assert.equal(JSON.parse(copied).sources.length,5);
+});
 async function fixture(t){
  const root=await fs.mkdtemp(path.join(os.tmpdir(),'gtr-new-pc-'));t.after(()=>fs.rm(root,{recursive:true,force:true}));
  const reports=path.join(root,'reports'),siteReports=path.join(root,'site/reports');await fs.mkdir(reports);await fs.mkdir(siteReports,{recursive:true});
  for(const entry of manifest.files){const target=path.join(root,entry.local);await fs.mkdir(path.dirname(target),{recursive:true});await fs.copyFile(path.join(repo,entry.repo),target);}
- const html=(await fs.readFile(path.join(repo,'reports/weekly-2026-10-31.html'),'utf8')).replaceAll('2026-10-31','2026-11-07').replace('../assets/report/report.js','weekly-2026-11-07.js');
+ await fs.mkdir(path.join(root,'site/instructions'),{recursive:true});await fs.copyFile(path.join(repo,'DESIGN.md'),path.join(root,'site/DESIGN.md'));await fs.copyFile(path.join(repo,'instructions/DESIGN.md'),path.join(root,'site/instructions/DESIGN.md'));
+ const html=(await fs.readFile(path.join(repo,'reports/weekly-2026-10-31.html'),'utf8')).replaceAll('2026-10-31','2026-11-07').replace('../assets/report/report.js','weekly-2026-11-07.js').replace('<main class="content" id="report">','<main class="content" id="report"><button id="report-share" type="button" aria-haspopup="dialog" aria-label="리포트 공유 메뉴 열기">공유</button>');
  const htmlPath=path.join(reports,'weekly-2026-11-07.html');await fs.writeFile(htmlPath,html);
  for(const [,url]of html.matchAll(/(?:href|src)="([^"]+)"/g)){
   if(url.startsWith('#')||/^(https?:|data:|mailto:)/.test(url))continue;
@@ -18,6 +36,7 @@ async function fixture(t){
   if(url.endsWith('/')){await fs.mkdir(target,{recursive:true});continue;}
   await fs.mkdir(path.dirname(target),{recursive:true});await fs.writeFile(target,'synthetic fixture asset');
  }
+ await fs.copyFile(path.join(root,'site/DESIGN.md'),path.join(root,'site/assets/report/DESIGN.md'));
  await fs.cp(path.join(root,'site/assets'),path.join(root,'assets'),{recursive:true});
  const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
  const categories=['ai-only-lab','games','ai-trends','ai-planning','game-ai','ai-releases','techniques','github-trending','game-ai-tools','careers','opportunities','agent-skills'];

@@ -1,0 +1,53 @@
+{
+  "revision": "1ed38aa9dd4451b9039f9aeb9ed1d2579edafddf",
+  "formatStatus": "alpha",
+  "license": "Apache-2.0",
+  "scope": "원칙·형식 참고. 외부 스크립트 실행 지시가 아니며 Google CLI 실행·품질 보증을 뜻하지 않음.",
+  "sources": [
+    {
+      "upstreamPath": "README.md",
+      "uri": "https://raw.githubusercontent.com/google-labs-code/design.md/1ed38aa9dd4451b9039f9aeb9ed1d2579edafddf/README.md",
+      "publisher": "Google Labs Code / google-labs-code",
+      "retrievedAt": "2026-11-07T11:39:07.907653+00:00",
+      "sha256": "c73779bfe3bdbec5c6ad0e01259e6835b6f64762a304fae8227bf01434733504",
+      "bytes": 13313,
+      "commit": "1ed38aa9dd4451b9039f9aeb9ed1d2579edafddf"
+    },
+    {
+      "upstreamPath": "PHILOSOPHY.md",
+      "uri": "https://raw.githubusercontent.com/google-labs-code/design.md/1ed38aa9dd4451b9039f9aeb9ed1d2579edafddf/PHILOSOPHY.md",
+      "publisher": "Google Labs Code / google-labs-code",
+      "retrievedAt": "2026-11-07T11:39:07.903989+00:00",
+      "sha256": "d4536b779910f94a364783135d9763c42669e6e01db059323d6d520694a0f6a4",
+      "bytes": 6415,
+      "commit": "1ed38aa9dd4451b9039f9aeb9ed1d2579edafddf"
+    },
+    {
+      "upstreamPath": "docs/spec.md",
+      "uri": "https://raw.githubusercontent.com/google-labs-code/design.md/1ed38aa9dd4451b9039f9aeb9ed1d2579edafddf/docs/spec.md",
+      "publisher": "Google Labs Code / google-labs-code",
+      "retrievedAt": "2026-11-07T11:39:07.905648+00:00",
+      "sha256": "9894f2021da2fa3b0a17bc87625813957981bf684587eafbe255e6a360875d03",
+      "bytes": 16574,
+      "commit": "1ed38aa9dd4451b9039f9aeb9ed1d2579edafddf"
+    },
+    {
+      "upstreamPath": "LICENSE",
+      "uri": "https://raw.githubusercontent.com/google-labs-code/design.md/1ed38aa9dd4451b9039f9aeb9ed1d2579edafddf/LICENSE",
+      "publisher": "Google Labs Code / google-labs-code",
+      "retrievedAt": "2026-11-07T11:39:07.914217+00:00",
+      "sha256": "1bdd03995456d191707e379eb06ceac20cf30d520bec90c97c2b6d220906c66e",
+      "bytes": 11360,
+      "commit": "1ed38aa9dd4451b9039f9aeb9ed1d2579edafddf"
+    },
+    {
+      "upstreamPath": "examples/paws-and-paths/DESIGN.md",
+      "uri": "https://raw.githubusercontent.com/google-labs-code/design.md/1ed38aa9dd4451b9039f9aeb9ed1d2579edafddf/examples/paws-and-paths/DESIGN.md",
+      "publisher": "Google Labs Code / google-labs-code",
+      "retrievedAt": "2026-11-07T11:39:18.163946+00:00",
+      "sha256": "467717bdcd6cfc7d58d54b8337eb8964c08f813a04f5f918c068693a7f144208",
+      "bytes": 8413,
+      "commit": "1ed38aa9dd4451b9039f9aeb9ed1d2579edafddf"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 import {validateQualityPipeline} from './validate-quality-pipeline.mjs';
-import {validateWeeklyPresentation,validateCareerCoverage,validateReadingResources} from './validate-weekly-presentation.mjs';
+import {validateWeeklyPresentation,validateCareerCoverage,validateReadingResources,validateAiCaseAndVideoResources} from './validate-weekly-presentation.mjs';
 import {validateLanguageReview} from './validate-language-review.mjs';
 import fs from 'node:fs/promises';import path from 'node:path';import crypto from 'node:crypto';
 const file=path.resolve(process.argv[2]||''),html=await fs.readFile(file,'utf8'),review=JSON.parse((await fs.readFile(file+'.content-review.json','utf8')).replace(/^\uFEFF/,''));
@@ -57,7 +57,8 @@ for(const [,url]of html.matchAll(/(?:href|src)="([^"]+)"/g)){if(url.startsWith('
 if(review.reportDate>='2026-11-02'&&html.includes('src="../assets/report/report.js"'))throw Error('Use an issue-specific chart script instead of the example data script');
 console.log('Content contract, review hash, coverage, section links and local assets verified.');
 
-if(!html.includes('data-ai-case=')||!html.includes('data-ai-resource="video"')||!html.includes('data-ai-skill=')||!html.includes('data-copy-workflow=')||!html.includes('ai-workflow.md'))throw Error('Missing AI-centered games, Korean resources, skills or reusable workflow');
+if(review.reportDate<'2026-11-07')validateAiCaseAndVideoResources(html);
+if(!html.includes('data-ai-skill=')||!html.includes('data-copy-workflow=')||!html.includes('ai-workflow.md'))throw Error('Missing skills or reusable workflow');
 
 if(html.includes('class="game-dossier tool-research-card"')){const cards=(html.match(/class="game-dossier tool-research-card"/g)||[]).length;if(!html.includes('id="tool-choice"')||!html.includes('id="tool-goal"')||(html.match(/class="tool-media"/g)||[]).length!==cards||(html.match(/data-compare-goals="/g)||[]).length!==cards)throw Error('Tool cards require matching previews, comparison rows and a choice filter');}
 

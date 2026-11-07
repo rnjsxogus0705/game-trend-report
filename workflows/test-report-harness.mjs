@@ -8,20 +8,23 @@ const spec=JSON.parse(await fs.readFile(new URL('../'+specPath,import.meta.url),
 const watchlistPath='instructions/AI-SOLO-CREATOR-WATCHLIST.json';
 const watchlist=JSON.parse(await fs.readFile(new URL('../'+watchlistPath,import.meta.url),'utf8'));
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
+const ledgerLink='<a href="../assets/report/research/ai-solo-creators-2026-11-07.json">영상 원장</a>';
+const syntheticHtml='<html><body><main id="report">synthetic HTML, no real report'+ledgerLink+'</main></body></html>';
 async function fixture(t){
  const root=await fs.mkdtemp(path.join(os.tmpdir(),'gtr-harness-'));t.after(()=>fs.rm(root,{recursive:true,force:true}));
  const runId='2026-11-07-test',revision='a'.repeat(40),digests={},records={};
  const write=async(p,bytes)=>{const target=path.join(root,p);await fs.mkdir(path.dirname(target),{recursive:true});await fs.writeFile(target,bytes);};
- await write(specPath,JSON.stringify(spec));const file='reports/weekly-2026-11-07.html';await write(file,'synthetic HTML, no real report');
- const instructionPaths=['README.md','instructions/WORKFLOW.md','instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/READING-AND-SCHEDULER.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md','instructions/QUALITY-PIPELINE.md','instructions/FORMAT-REFERENCE.md','.agents/skills/weekly-game-report/references/report-format-reference.json','.codex/agents/report-content-reviewer.toml','.codex/agents/report-ui-reviewer.toml','.codex/agents/report-orchestrator.toml','.codex/agents/report-section-writer.toml','.agents/skills/weekly-game-report/SKILL.md','.agents/skills/weekly-game-report/references/operating-contract.md'];
+ await write(specPath,JSON.stringify(spec));const file='reports/weekly-2026-11-07.html';await write(file,syntheticHtml);
+ const instructionPaths=['README.md','DESIGN.md','instructions/WORKFLOW.md','instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/READING-AND-SCHEDULER.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md','instructions/QUALITY-PIPELINE.md','instructions/FORMAT-REFERENCE.md','.agents/skills/weekly-game-report/references/report-format-reference.json','.codex/agents/report-content-reviewer.toml','.codex/agents/report-ui-reviewer.toml','.codex/agents/report-orchestrator.toml','.codex/agents/report-section-writer.toml','.agents/skills/weekly-game-report/SKILL.md','.agents/skills/weekly-game-report/references/operating-contract.md'];
  for(const file of instructionPaths)await write(file,'synthetic instruction');await write(watchlistPath,JSON.stringify(watchlist));
+ await write('assets/report/DESIGN.md','synthetic instruction');
  const instructionFiles={};for(const file of [...instructionPaths,specPath,watchlistPath])instructionFiles[file]=hash(await fs.readFile(path.join(root,file)));
  const evidence={path:'_workspace/harness/weekly-game-report/'+runId+'/evidence/fixture.txt',sha256:hash('synthetic evidence')};await write(evidence.path,'synthetic evidence');
  const careerCoverage=careerCategories.map(category=>({category,status:'unverified',searchedAt:'2026-11-07',searchScope:'Synthetic search scope',finding:'No actual search in fixture',sourceUrls:['https://example.test/fixture'],limitation:'Synthetic fixture only'}));
  const contentPath=file+'.content-review.json',content=JSON.stringify({careerCoverage});await write(contentPath,content);
  const ledgerPath='assets/report/research/ai-solo-creators-2026-11-07.json',ledger=JSON.stringify({reportDate:'2026-11-07',videos:[]});await write(ledgerPath,ledger);
  const pipelinePath=file+'.pipeline.json',summaryPath=file+'.summary.txt',pipeline=JSON.stringify({runId,summarySha256:hash('synthetic summary')});await write(pipelinePath,pipeline);await write(summaryPath,'synthetic summary');
- const files=[{path:file,sha256:hash('synthetic HTML, no real report'),publish:true},{path:contentPath,sha256:hash(content),publish:false},{path:ledgerPath,sha256:hash(ledger),publish:true},{path:pipelinePath,sha256:hash(pipeline),publish:false},{path:summaryPath,sha256:hash('synthetic summary'),publish:false}],reviewedFiles=Object.fromEntries(files.map(f=>[f.path,f.sha256]));
+ const files=[{path:file,sha256:hash(syntheticHtml),publish:true},{path:contentPath,sha256:hash(content),publish:false},{path:ledgerPath,sha256:hash(ledger),publish:true},{path:pipelinePath,sha256:hash(pipeline),publish:false},{path:summaryPath,sha256:hash('synthetic summary'),publish:false}],reviewedFiles=Object.fromEntries(files.map(f=>[f.path,f.sha256]));
  const paths=Object.fromEntries(spec.outputs.map(o=>[o.id,o.path.replace('{run_id}',runId)]));
  for(const task of spec.tasks)for(const id of task.outputs){
   const record={runId,issueDate:'2026-11-07',instructionRevision:revision,inputs:Object.fromEntries(task.inputs.filter(i=>Object.hasOwn(digests,i)).map(i=>[i,digests[i]]))};
@@ -37,6 +40,12 @@ async function fixture(t){
  return {root,runId,revision,paths,records,write,rebind,check:()=>checkReportHarness({root,runId,revision})};
 }
 test('검수·파일·upstream 해시가 맞는 로컬 준비 묶음',async t=>{const f=await fixture(t);assert.equal((await f.check()).status,'ready');});
+test('본문의 실제 영상 공개 원장 링크가 누락되거나 위조되면 차단한다',async t=>{
+ for(const replacement of ['',ledgerLink.replaceAll('<','&lt;').replaceAll('>','&gt;'),ledgerLink.replace('2026-11-07','2026-10-31'),`<pre><code>${ledgerLink}</code></pre>`]){
+  const f=await fixture(t),html=syntheticHtml.replace(ledgerLink,replacement),file='reports/weekly-2026-11-07.html';await f.write(file,html);f.records.issue.files.find(x=>x.path===file).sha256=hash(html);for(const id of ['editorial-review','final-review'])f.records[id].reviewedFiles[file]=hash(html);await f.rebind();await assert.rejects(f.check,/Creator public ledger link missing/);
+ }
+ const f=await fixture(t),html=syntheticHtml.replace('../assets/','/assets/'),file='reports/weekly-2026-11-07.html';await f.write(file,html);f.records.issue.files.find(x=>x.path===file).sha256=hash(html);for(const id of ['editorial-review','final-review'])f.records[id].reviewedFiles[file]=hash(html);await f.rebind();assert.equal((await f.check()).status,'ready');
+});
 test('필수 upstream 누락, 파일 변조와 오래된 지침 차단',async t=>{
  const f=await fixture(t);await f.write('reports/weekly-2026-11-07.html','tampered');await assert.rejects(f.check,/file hash mismatch/);
  await assert.rejects(checkReportHarness({...f,revision:'b'.repeat(40)}),/instruction revision/);
@@ -66,6 +75,14 @@ test('지침 바이트 변경·필수 명령/UI 증거 누락 차단',async t=>{
   await assert.rejects(f.check,pattern);
  }
 });
+test('루트 DESIGN.md 지침의 누락과 변경을 차단한다',async t=>{
+ const f=await fixture(t);delete f.records.context.instructionFiles['DESIGN.md'];await f.rebind();await assert.rejects(f.check,/Stale instruction file: DESIGN.md/);
+ const changed=await fixture(t);await changed.write('DESIGN.md','modified');await assert.rejects(changed.check,/Stale instruction file: DESIGN.md/);
+});
+test('디자인 호환 사본 누락이나 변조는 하네스를 차단한다',async t=>{
+ const f=await fixture(t);await f.write('assets/report/DESIGN.md','different');await assert.rejects(f.check,/Design compatibility mirror/);
+ await fs.unlink(path.join(f.root,'assets/report/DESIGN.md'));await assert.rejects(f.check,/Design compatibility mirror/);
+});
 
 test('조사 신선도·해외 기간 표시·작은따옴표 링크 누락 차단',async t=>{
  for(const [fields,pattern] of [[{retrievedAt:'2026-02-31'},/Stale source/],[{kind:'news',publishedAt:'2026-11-08'},/publication window/],[{kind:'news',publishedAt:'2026-02-31'},/publication window/],[{retrievedAt:'2025-01-01'},/Stale source/],[{kind:'overseas',publishedAt:'2026-01-01'},/publication window/],[{kind:'overseas',publishedAt:'2026-09-15'},/extension/]]){
@@ -74,7 +91,7 @@ test('조사 신선도·해외 기간 표시·작은따옴표 링크 누락 차�
   const digests={};for(const task of spec.tasks)for(const id of task.outputs){const record=f.records[id];for(const input of task.inputs)if(digests[input])record.inputs[input]=digests[input];const bytes=JSON.stringify(record);await f.write(f.paths[id],bytes);digests[id]=hash(bytes);}
   await assert.rejects(f.check,pattern);
  }
- const f=await fixture(t),file='reports/weekly-2026-11-07.html',html="<html><body><img src='/assets/report/missing.png'></body></html>";
+ const f=await fixture(t),file='reports/weekly-2026-11-07.html',html=syntheticHtml.replace('</main>',"<img src='/assets/report/missing.png'></main>");
  await f.write(file,html);for(const record of Object.values(f.records)){if(record.files)record.files[0].sha256=hash(html);if(record.reviewedFiles)record.reviewedFiles[file]=hash(html);}
  const digests={};for(const task of spec.tasks)for(const id of task.outputs){for(const input of task.inputs)if(digests[input])f.records[id].inputs[input]=digests[input];const bytes=JSON.stringify(f.records[id]);await f.write(f.paths[id],bytes);digests[id]=hash(bytes);}
  await assert.rejects(f.check,/Linked issue file missing/);
@@ -233,7 +250,7 @@ async function requestedFixture(t){
  const ledger=JSON.stringify({reportDate:'2026-11-07',items});await f.write(ledgerPath,ledger);
  f.records.issue.files.push({path:ledgerPath,sha256:hash(ledger),publish:true});
  for(const id of ['editorial-review','final-review']){f.records[id].reviewedFiles[ledgerPath]=hash(ledger);f.records[id].requestedItemsReviewed=['item-a','item-b'];}
- const html='synthetic HTML <p data-requested-item="item-a">A</p><p data-requested-item="item-b">B</p>',htmlPath='reports/weekly-2026-11-07.html';await f.write(htmlPath,html);f.records.issue.files.find(file=>file.path===htmlPath).sha256=hash(html);
+ const html=syntheticHtml.replace('</main>','<p data-requested-item="item-a">A</p><p data-requested-item="item-b">B</p></main>'),htmlPath='reports/weekly-2026-11-07.html';await f.write(htmlPath,html);f.records.issue.files.find(file=>file.path===htmlPath).sha256=hash(html);
  for(const id of ['editorial-review','final-review'])f.records[id].reviewedFiles[htmlPath]=hash(html);
  await f.rebind();return {...f,input,ledgerPath,htmlPath};
 }
@@ -247,7 +264,7 @@ test('사용자 필수 자료·항목·공개 원장·독립 검수를 해시와
  const source=await requestedFixture(t);source.records.research.userRequestedContent.items[0].sourceUrl='https://unlinked.example/';await source.rebind();await assert.rejects(source.check,/source not in research/);
  const repeat=await requestedFixture(t);repeat.records.research.userRequestedContent.items[0].repeatReason='';await repeat.rebind();await assert.rejects(repeat.check,/repeat reason missing/);
  const coverage=await requestedFixture(t);coverage.records['final-review'].requestedItemsReviewed=['item-a'];await coverage.rebind();await assert.rejects(coverage.check,/independent review coverage/);
- const marker=await requestedFixture(t),html='<p data-requested-item="item-a">A</p>';await marker.write(marker.htmlPath,html);marker.records.issue.files.find(file=>file.path===marker.htmlPath).sha256=hash(html);for(const id of ['editorial-review','final-review'])marker.records[id].reviewedFiles[marker.htmlPath]=hash(html);await marker.rebind();await assert.rejects(marker.check,/Requested items missing/);
+ const marker=await requestedFixture(t),html=syntheticHtml.replace('</main>','<p data-requested-item="item-a">A</p></main>');await marker.write(marker.htmlPath,html);marker.records.issue.files.find(file=>file.path===marker.htmlPath).sha256=hash(html);for(const id of ['editorial-review','final-review'])marker.records[id].reviewedFiles[marker.htmlPath]=hash(html);await marker.rebind();await assert.rejects(marker.check,/Requested items missing/);
  const ledger=await requestedFixture(t),bytes=JSON.stringify({reportDate:'2026-11-07',items:[]});await ledger.write(ledger.ledgerPath,bytes);ledger.records.issue.files.find(file=>file.path===ledger.ledgerPath).sha256=hash(bytes);for(const id of ['editorial-review','final-review'])ledger.records[id].reviewedFiles[ledger.ledgerPath]=hash(bytes);await ledger.rebind();await assert.rejects(ledger.check,/Requested public ledger differs/);
 });
 test('포맷 참조 파일 해시 누락과 변경을 차단한다',async t=>{

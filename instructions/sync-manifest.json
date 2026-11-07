@@ -2,6 +2,10 @@
   "version": 1,
   "files": [
     {
+      "repo": "DESIGN.md",
+      "local": "DESIGN.md"
+    },
+    {
       "repo": "instructions/REPORT-GUIDE.md",
       "local": "REPORT-GUIDE.md"
     },
@@ -88,6 +92,10 @@
     {
       "repo": "instructions/references/google-design-md/upstream-package.json",
       "local": "redesign/references/google-design-md/upstream-package.json"
+    },
+    {
+      "repo": "instructions/references/google-design-md/source-reference-2026-11-07.json",
+      "local": "redesign/references/google-design-md/source-reference-2026-11-07.json"
     },
     {
       "repo": "instructions/DESIGN-REFERENCE-GUIDE.md",

@@ -214,6 +214,7 @@ def main():
     noExternalClaimsReason을 남기면 빈 sources와 claimChecks를 허용합니다.
   UI evidence: 위 공통 항목과 mediaFinding, widths [320,390,768,1440], checks의
     layout/typography/responsive/accessibility/media, uiEvidence를 기록합니다.
+    루트 DESIGN.md가 있으면 designContractSha256에 해당 파일의 SHA-256을 기록합니다.
     폭마다 실제 PNG의 path, sha256, width, viewportHeight, devicePixelRatio를 남깁니다.
     JSON/TXT는 보조 증거이며 PNG의 크기·구조와 해시를 검사합니다.
   실패 evidence: observation과 findingReason. 재승인은 새 증거에 해당 실패의
@@ -302,6 +303,10 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
     db.execute('CREATE UNIQUE INDEX IF NOT EXISTS sections_run_position_unique ON sections(run,position)')
 
     def validate_ui_evidence(proof):
+        design=Path.cwd()/'DESIGN.md'
+        if design.is_file() and proof.get('designContractSha256') != digest(design): raise ValueError('UI design contract hash missing or stale')
+        mirror=Path.cwd()/'assets/report/DESIGN.md'
+        if design.is_file() and mirror.is_file() and digest(mirror) != digest(design): raise ValueError('UI design contract mirror mismatch')
         checks=proof.get('checks',[])
         if not all(w in proof.get('widths',[]) for w in (320,390,768,1440)) or not all(k in checks for k in ('layout','typography','responsive','accessibility','media')) or not proof.get('uiEvidence'): raise ValueError('UI evidence and width coverage missing')
         evidence_root=(Path.cwd()/'_workspace/harness/weekly-game-report'/a.run/'evidence').resolve()

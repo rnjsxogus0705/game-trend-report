@@ -37,6 +37,9 @@ for item in parser.sections:
     for width in (320,390,768,1440):
         image=evidence_dir/(name+'-'+str(width)+'.png'); image.write_bytes(synthetic_png(width)); images.append({'path':str(image),'sha256':hashlib.sha256(image.read_bytes()).hexdigest(),'width':width,'viewportHeight':240,'devicePixelRatio':1})
     proof=evidence_dir/(name+'-review.json'); proof.write_text(json.dumps({'section':name,'observation':'synthetic '+name,'sources':['https://example.com/fixture'],'mediaFinding':'synthetic only','reviewedPacketHash':hashlib.sha256(packet.read_bytes()).hexdigest(),'noChangeReason':'synthetic','claimChecks':[{'claim':'fixture '+name,'sourceUrl':'https://example.com/fixture','status':'verified'}],'duplicateFinding':'synthetic','repeatReason':'synthetic fixture reference','widths':[320,390,768,1440],'checks':['layout','typography','responsive','accessibility','media'],'uiEvidence':images}))
+    design=root/'DESIGN.md'
+    if design.is_file():
+        data=json.loads(proof.read_text()); data['designContractSha256']=hashlib.sha256(design.read_bytes()).hexdigest(); proof.write_text(json.dumps(data))
     args=['--run',run,'--section',name,'--packet',str(packet),'--author','fixture-author','--media-note','synthetic']
     invoke('prepare',*args)
     for kind in ('source','korean'): invoke('approve-packet','--run',run,'--section',name,'--kind',kind,'--reviewer','fixture-editor','--evidence',str(proof))

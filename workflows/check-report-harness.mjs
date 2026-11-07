@@ -40,8 +40,10 @@ export async function checkReportHarness({root,runId,revision}){
  }
  const context=records.context;
  insist(context.authorization?.generate===true&&context.authorization?.publish===false&&context.authorization?.send===false,'Harness scope must be local generation only');
- const instructions=['README.md','instructions/WORKFLOW.md','instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/READING-AND-SCHEDULER.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md','instructions/QUALITY-PIPELINE.md','instructions/FORMAT-REFERENCE.md','.agents/skills/weekly-game-report/references/report-format-reference.json','.codex/agents/report-content-reviewer.toml','.codex/agents/report-ui-reviewer.toml','.codex/agents/report-orchestrator.toml','.codex/agents/report-section-writer.toml','instructions/AI-SOLO-CREATOR-WATCHLIST.json','.agents/skills/weekly-game-report/SKILL.md','.agents/skills/weekly-game-report/references/operating-contract.md','.agents/skills/weekly-game-report/references/harness-spec.json'];
+ const instructions=['README.md','DESIGN.md','instructions/WORKFLOW.md','instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/READING-AND-SCHEDULER.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md','instructions/QUALITY-PIPELINE.md','instructions/FORMAT-REFERENCE.md','.agents/skills/weekly-game-report/references/report-format-reference.json','.codex/agents/report-content-reviewer.toml','.codex/agents/report-ui-reviewer.toml','.codex/agents/report-orchestrator.toml','.codex/agents/report-section-writer.toml','instructions/AI-SOLO-CREATOR-WATCHLIST.json','.agents/skills/weekly-game-report/SKILL.md','.agents/skills/weekly-game-report/references/operating-contract.md','.agents/skills/weekly-game-report/references/harness-spec.json'];
  for(const file of instructions)insist(context.instructionFiles?.[file]===hash(await read(file)),'Stale instruction file: '+file);
+ let mirror;try{mirror=await read('assets/report/DESIGN.md');}catch(error){if(error.code==='ENOENT')throw Error('Design compatibility mirror missing');throw error;}
+ insist(hash(mirror)===hash(await read('DESIGN.md')),'Design compatibility mirror differs from root DESIGN.md');
  const requestInputs=context.requestInputs;
  if(requestInputs!==undefined){
   insist(Array.isArray(requestInputs),'User request inputs must be an array');
@@ -160,6 +162,17 @@ export async function checkReportHarness({root,runId,revision}){
  const contentReview=JSON.parse(await read(contentPath));
  insist(isDeepStrictEqual(contentReview.careerCoverage,records.research.careerCoverage),'Career coverage differs between research and content review');
  const {elements}=reportElements(html);
+ if(context.issueDate>='2026-11-07'){
+  const report=elements.find(node=>node.attrs.id==='report');
+  const linked=report&&elements.some(node=>{
+   if(node.tag!=='a'||typeof node.attrs.href!=='string'||/^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(node.attrs.href))return false;
+   let withinReport=false,withinBody=false;
+   for(let parent=node.parent;parent;parent=parent.parent){if(['pre','code','template','script','style'].includes(parent.tag))return false;if(parent===report)withinReport=true;if(parent.tag==='body')withinBody=true;}
+   if(!withinReport||!withinBody)return false;
+   try{const url=new URL(node.attrs.href,'https://report.local/'+htmlPath);return url.origin==='https://report.local'&&url.pathname==='/'+creatorLedgerPath;}catch{return false;}
+  });
+  insist(linked,'Creator public ledger link missing from report');
+ }
  const requested=records.research.userRequestedContent;
  if(requested!==undefined){
   insist(requested&&typeof requested==='object'&&!Array.isArray(requested),'Invalid user requested content');

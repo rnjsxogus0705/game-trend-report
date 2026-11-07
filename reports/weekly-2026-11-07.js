@@ -1,11 +1,17 @@
 document.addEventListener('click', async event => {
   const play = event.target.closest('[data-play-video]');
   if (play) {
+    if (!/^[\w-]{11}$/.test(play.dataset.playVideo)) return;
+    const slot = play.parentElement.querySelector('.video-slot');
+    if (!slot) return;
     const frame = document.createElement('iframe');
     frame.src = 'https://www.youtube-nocookie.com/embed/' + play.dataset.playVideo;
     frame.title = play.dataset.videoTitle || play.querySelector('img')?.alt || '게임 제작 영상';
     frame.allowFullscreen = true;
-    play.parentElement.querySelector('.video-slot').replaceChildren(frame);
+    frame.allow = 'fullscreen; picture-in-picture';
+    frame.loading = 'lazy';
+    frame.referrerPolicy = 'strict-origin-when-cross-origin';
+    slot.replaceChildren(frame);
     play.remove();
     return;
   }

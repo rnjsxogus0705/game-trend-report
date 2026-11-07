@@ -7,6 +7,8 @@ Check the SQLite research ledger and the actual source material before approving
 
 Before UI composition, review the entire projected reader copy rather than only candidate.text. Include lead, paragraphs, table captions/headers/cells, practice, cardTexts, media titles/verification/alt, sourceLabels and download artifacts. Keep internal review states out of reader-facing fields and define first-use jargon that blocks a high-school reader.
 
+For every assigned section compare the researched media inventory to the selected items and omission reasons. Verify official source, creator, checked date, rights or embed limits and caption/alt against the actual material; distinguish an original product screen, creator demonstration and a generated concept. Review generated image text and HTML captions in Korean, and record the actual imagegen prompt/file provenance where used. A link alone does not establish that an embedded video was watched or that an image is suitable.
+
 For reading resources, check the actual primary content type. Never classify a YouTube watch/shorts link as an article or post to fill a quota. Review every resource's publisher/creator, publication date or explicit unknown, checked date, language and subtitle scope, selection reason, reading/viewing points, related jobs and direct source. State real counts and search limitations when a kind is unavailable. Distinguish official referrer links from direct video inspection. Use history --summary and targeted SQL/hash/path reads; do not reload all stored research versions for a section.
 
 A version named in documentation is a target version, not proof of tested compatibility. Check quick cards and downloadable observation JSON as well as the approved packet for this distinction.

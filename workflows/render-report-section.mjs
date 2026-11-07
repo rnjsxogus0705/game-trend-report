@@ -71,9 +71,16 @@ export async function preparePreview(root,output,issueDate){
  }
  await mirror(path.join(root,'assets'),path.join(site,'assets'),'dir');
  const reportDir=path.join(root,'reports');
- for(const name of await fs.readdir(reportDir)){
-  if(name===`weekly-${issueDate}.js`||new RegExp(`^weekly-${issueDate}(?:-[A-Za-z0-9_-]+)?\\.md$`).test(name))await mirror(path.join(reportDir,name),path.join(reports,name),'file');
+ const names=await fs.readdir(reportDir),archived=names.filter(name=>/^weekly-\d{4}-\d{2}-\d{2}\.html$/.test(name)&&name!==`weekly-${issueDate}.html`),downloads=new Set();
+ for(const name of archived){
+  const real=await fs.realpath(path.join(reportDir,name));if(!real.startsWith(root+path.sep))throw Error('Preview target escapes repository');
+  const html=await fs.readFile(real,'utf8');
+  for(const [,asset] of html.matchAll(/href=["'](weekly-\d{4}-\d{2}-\d{2}(?:-[A-Za-z0-9_-]+)?\.md)["']/g))downloads.add(asset);
  }
+ for(const name of names){
+  if(name===`weekly-${issueDate}.js`||new RegExp(`^weekly-${issueDate}(?:-[A-Za-z0-9_-]+)?\\.md$`).test(name)||archived.includes(name)||(/^weekly-\d{4}-\d{2}-\d{2}\.js$/.test(name)&&archived.includes(name.replace(/\.js$/,'.html')))||downloads.has(name))await mirror(path.join(reportDir,name),path.join(reports,name),'file');
+ }
+ try{await fs.access(path.join(root,'standards'));await mirror(path.join(root,'standards'),path.join(site,'standards'),'dir');}catch(e){if(e.code!=='ENOENT')throw e;}
  try{await fs.access(path.join(root,'index.html'));await mirror(path.join(root,'index.html'),path.join(site,'index.html'),'file');}catch(e){if(e.code!=='ENOENT')throw e;}
  return {site,reports};
 }

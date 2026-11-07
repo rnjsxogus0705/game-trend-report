@@ -1,11 +1,16 @@
 {
   "schemaVersion": 1,
-  "capturedAt": "2026-10-31T10:38:18.374Z",
+  "capturedAt": "2026-11-07T12:22:25.892747+00:00",
   "googleDesignMd": {
     "source": "https://github.com/google-labs-code/design.md",
     "package": "@google/design.md",
     "version": "0.4.0",
-    "note": "현재 제작에 사용한 설치 패키지의 규격 스냅샷. 최신 upstream 버전이라고 주장하지 않음."
+    "note": "2026-10-31에 보존한 0.4.0 설치 패키지 규격 스냅샷. 최신 upstream 또는 이번 Google CLI 실행이라고 주장하지 않음.",
+    "upstreamPrinciplesReference": {
+      "revision": "1ed38aa9dd4451b9039f9aeb9ed1d2579edafddf",
+      "sourceRecord": "instructions/references/google-design-md/source-reference-2026-11-07.json",
+      "note": "문서 원칙 대조. 기존 version 0.4.0은 보존된 설치본 스냅샷이며 이번 Google CLI 실행을 뜻하지 않음."
+    }
   },
   "pretendard": {
     "version": "1.3.9",
@@ -16,119 +21,29 @@
   },
   "files": [
     {
-      "path": "instructions/references/toss.md",
-      "bytes": 61956,
-      "sha256": "8309334ea7bfe50ba70be300669c6b69fd53fa09e60ca8bf1f930eaf9d069e87"
+      "path": "DESIGN.md",
+      "bytes": 16220,
+      "sha256": "6830d72b1075bab2b3ed32827da0daa9d66f77614a2cdda90b889ae2f9f1621c"
     },
     {
-      "path": "instructions/references/google-design-md/README.md",
-      "bytes": 10001,
-      "sha256": "d4d502768a7d5b5104f1ee076da756ca846e73f8635f950e1df6d0bec01fc5a9"
+      "path": "assets/report/DESIGN.md",
+      "bytes": 16220,
+      "sha256": "6830d72b1075bab2b3ed32827da0daa9d66f77614a2cdda90b889ae2f9f1621c"
     },
     {
-      "path": "instructions/references/google-design-md/LICENSE",
-      "bytes": 11360,
-      "sha256": "1bdd03995456d191707e379eb06ceac20cf30d520bec90c97c2b6d220906c66e"
+      "path": "assets/report/ai100.css",
+      "bytes": 2464,
+      "sha256": "1d1b861a4ad145b987980b3b9e67ebfe521f7ea9e95c6817a143175fc83993b7"
     },
     {
-      "path": "instructions/references/google-design-md/spec.md",
-      "bytes": 15313,
-      "sha256": "8f297a7bd38cf08bde06c96f5eea2ebfcd9930a8bc1dfe964f8e8dec894e691a"
+      "path": "assets/report/ai100.js",
+      "bytes": 921,
+      "sha256": "d6c7abca087b643a8acdde5dc5be7a5e73260efb69915fc688e5a4162496e238"
     },
     {
-      "path": "instructions/references/google-design-md/spec-config.yaml",
-      "bytes": 4569,
-      "sha256": "6244e829849e63b55316258f32e1110833d193b79943ec79f245b33ebeec2ef8"
-    },
-    {
-      "path": "instructions/references/google-design-md/upstream-package.json",
-      "bytes": 2006,
-      "sha256": "9cd26dae8342295b88dad6df3432f732f38c215f401f49af61068211cf2015b9"
-    },
-    {
-      "path": "assets/report/fonts/original-otf/Pretendard-Thin.otf",
-      "bytes": 1487484,
-      "sha256": "635354dcdcc133318be74f9a83cb59d29652c56d463bcd34e20a8cd6e01f3af9"
-    },
-    {
-      "path": "assets/report/fonts/Pretendard-Thin.woff2",
-      "bytes": 694804,
-      "sha256": "1539755224a64719d5b18406762c476db74fcc299b9e4641ca1e9812fbc7a09b"
-    },
-    {
-      "path": "assets/report/fonts/original-otf/Pretendard-ExtraLight.otf",
-      "bytes": 1544180,
-      "sha256": "e2837078f57079de2742e83c394a70b8a80b9662bc8ff4e96e7b791d6bd7cdbb"
-    },
-    {
-      "path": "assets/report/fonts/Pretendard-ExtraLight.woff2",
-      "bytes": 734392,
-      "sha256": "df43dc9165dff4542114674bcd8b79b7daae6dec004004586d5d076fec6fe2aa"
-    },
-    {
-      "path": "assets/report/fonts/original-otf/Pretendard-Light.otf",
-      "bytes": 1599968,
-      "sha256": "51418ee96ef96e9059db88d7da82f24fada1f4aca70d5157c878ea6b460dd343"
-    },
-    {
-      "path": "assets/report/fonts/Pretendard-Light.woff2",
-      "bytes": 757000,
-      "sha256": "b7426635cce2ea2b95c9c802e43fba1c620e0dafaf25f737c069b8b4e09fa841"
-    },
-    {
-      "path": "assets/report/fonts/original-otf/Pretendard-Regular.otf",
-      "bytes": 1574352,
-      "sha256": "3ffbacde6ab8411f1d2db54bb9b1f0b3ee2a738932033722cf0388c06aed1c93"
-    },
-    {
-      "path": "assets/report/fonts/Pretendard-Regular.woff2",
-      "bytes": 765892,
-      "sha256": "fad853f7f47c6c8b103171e7193fa095708cdcd70850a71d93aa5379e8a61d63"
-    },
-    {
-      "path": "assets/report/fonts/original-otf/Pretendard-Medium.otf",
-      "bytes": 1584068,
-      "sha256": "d39e50e4bb52b4993b6a4eeb821a171254745bd824446af01e1f616b89fface0"
-    },
-    {
-      "path": "assets/report/fonts/Pretendard-Medium.woff2",
-      "bytes": 778432,
-      "sha256": "d03481330eeba0659ab5b87f25ceb504a35de377dd90a0d0aba2982eb2d05e2c"
-    },
-    {
-      "path": "assets/report/fonts/original-otf/Pretendard-SemiBold.otf",
-      "bytes": 1583704,
-      "sha256": "c89bc43027dc7cde5726e96223376f8eec09302b2fc1f8147fd5b57cfc376118"
-    },
-    {
-      "path": "assets/report/fonts/Pretendard-SemiBold.woff2",
-      "bytes": 785856,
-      "sha256": "c863f76a7de5c1ddc1ed8b2fa794964530774592c4f31407a84e2a2ae93f17f0"
-    },
-    {
-      "path": "assets/report/fonts/original-otf/Pretendard-Bold.otf",
-      "bytes": 1576660,
-      "sha256": "2e91915fab54df71cc9598ebf608b2bdb54c6fe3c066ac61dff0bc44fca71cc7"
-    },
-    {
-      "path": "assets/report/fonts/Pretendard-Bold.woff2",
-      "bytes": 791156,
-      "sha256": "4609c3356e536fafe38f4add0daeceb3d8595d3057bce13c428c33ddbd43d362"
-    },
-    {
-      "path": "assets/report/fonts/original-otf/Pretendard-ExtraBold.otf",
-      "bytes": 1568512,
-      "sha256": "c35fe941b7568d52a96010561540e47f9d3948dfde66ba25bc1908233e0a40cd"
-    },
-    {
-      "path": "assets/report/fonts/Pretendard-ExtraBold.woff2",
-      "bytes": 793540,
-      "sha256": "dd7c1e156f508eb962acc7a33a7a1896d1e0b71e11156fad96e731689ceb6dc3"
-    },
-    {
-      "path": "assets/report/fonts/original-otf/Pretendard-Black.otf",
-      "bytes": 1559552,
-      "sha256": "94628b0bcea8936b6e5c30d98d685eb9bbaffb0fe2ed255542ecc656c248e021"
+      "path": "assets/report/fonts/LICENSE.txt",
+      "bytes": 4419,
+      "sha256": "b04538c9abec39a3db75108cf0af0fd9c77032fe8aa2cf38345b4d250e98e38e"
     },
     {
       "path": "assets/report/fonts/Pretendard-Black.woff2",
@@ -136,19 +51,209 @@
       "sha256": "c5fd0c3568fc1368a3edc0d0fbb36df029935954276e3573451b3bae09e27296"
     },
     {
+      "path": "assets/report/fonts/Pretendard-Bold.woff2",
+      "bytes": 791156,
+      "sha256": "4609c3356e536fafe38f4add0daeceb3d8595d3057bce13c428c33ddbd43d362"
+    },
+    {
+      "path": "assets/report/fonts/Pretendard-ExtraBold.woff2",
+      "bytes": 793540,
+      "sha256": "dd7c1e156f508eb962acc7a33a7a1896d1e0b71e11156fad96e731689ceb6dc3"
+    },
+    {
+      "path": "assets/report/fonts/Pretendard-ExtraLight.woff2",
+      "bytes": 734392,
+      "sha256": "df43dc9165dff4542114674bcd8b79b7daae6dec004004586d5d076fec6fe2aa"
+    },
+    {
+      "path": "assets/report/fonts/Pretendard-Light.woff2",
+      "bytes": 757000,
+      "sha256": "b7426635cce2ea2b95c9c802e43fba1c620e0dafaf25f737c069b8b4e09fa841"
+    },
+    {
+      "path": "assets/report/fonts/Pretendard-Medium.woff2",
+      "bytes": 778432,
+      "sha256": "d03481330eeba0659ab5b87f25ceb504a35de377dd90a0d0aba2982eb2d05e2c"
+    },
+    {
+      "path": "assets/report/fonts/Pretendard-Regular.woff2",
+      "bytes": 765892,
+      "sha256": "fad853f7f47c6c8b103171e7193fa095708cdcd70850a71d93aa5379e8a61d63"
+    },
+    {
+      "path": "assets/report/fonts/Pretendard-SemiBold.woff2",
+      "bytes": 785856,
+      "sha256": "c863f76a7de5c1ddc1ed8b2fa794964530774592c4f31407a84e2a2ae93f17f0"
+    },
+    {
+      "path": "assets/report/fonts/Pretendard-Thin.woff2",
+      "bytes": 694804,
+      "sha256": "1539755224a64719d5b18406762c476db74fcc299b9e4641ca1e9812fbc7a09b"
+    },
+    {
       "path": "assets/report/fonts/original-otf/LICENSE.txt",
       "bytes": 4419,
       "sha256": "b04538c9abec39a3db75108cf0af0fd9c77032fe8aa2cf38345b4d250e98e38e"
     },
     {
-      "path": "instructions/DESIGN.md",
-      "bytes": 4668,
-      "sha256": "bf8ca75ddbf64e4a3e6f1913a4bae48ba08c18bb56b6f2e68b7a7437aa5542af"
+      "path": "assets/report/fonts/original-otf/Pretendard-Black.otf",
+      "bytes": 1559552,
+      "sha256": "94628b0bcea8936b6e5c30d98d685eb9bbaffb0fe2ed255542ecc656c248e021"
     },
     {
-      "path": "assets/report/fonts/LICENSE.txt",
-      "bytes": 4419,
-      "sha256": "b04538c9abec39a3db75108cf0af0fd9c77032fe8aa2cf38345b4d250e98e38e"
+      "path": "assets/report/fonts/original-otf/Pretendard-Bold.otf",
+      "bytes": 1576660,
+      "sha256": "2e91915fab54df71cc9598ebf608b2bdb54c6fe3c066ac61dff0bc44fca71cc7"
+    },
+    {
+      "path": "assets/report/fonts/original-otf/Pretendard-ExtraBold.otf",
+      "bytes": 1568512,
+      "sha256": "c35fe941b7568d52a96010561540e47f9d3948dfde66ba25bc1908233e0a40cd"
+    },
+    {
+      "path": "assets/report/fonts/original-otf/Pretendard-ExtraLight.otf",
+      "bytes": 1544180,
+      "sha256": "e2837078f57079de2742e83c394a70b8a80b9662bc8ff4e96e7b791d6bd7cdbb"
+    },
+    {
+      "path": "assets/report/fonts/original-otf/Pretendard-Light.otf",
+      "bytes": 1599968,
+      "sha256": "51418ee96ef96e9059db88d7da82f24fada1f4aca70d5157c878ea6b460dd343"
+    },
+    {
+      "path": "assets/report/fonts/original-otf/Pretendard-Medium.otf",
+      "bytes": 1584068,
+      "sha256": "d39e50e4bb52b4993b6a4eeb821a171254745bd824446af01e1f616b89fface0"
+    },
+    {
+      "path": "assets/report/fonts/original-otf/Pretendard-Regular.otf",
+      "bytes": 1574352,
+      "sha256": "3ffbacde6ab8411f1d2db54bb9b1f0b3ee2a738932033722cf0388c06aed1c93"
+    },
+    {
+      "path": "assets/report/fonts/original-otf/Pretendard-SemiBold.otf",
+      "bytes": 1583704,
+      "sha256": "c89bc43027dc7cde5726e96223376f8eec09302b2fc1f8147fd5b57cfc376118"
+    },
+    {
+      "path": "assets/report/fonts/original-otf/Pretendard-Thin.otf",
+      "bytes": 1487484,
+      "sha256": "635354dcdcc133318be74f9a83cb59d29652c56d463bcd34e20a8cd6e01f3af9"
+    },
+    {
+      "path": "assets/report/icons/Lucide-LICENSE",
+      "bytes": 3208,
+      "sha256": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57"
+    },
+    {
+      "path": "assets/report/icons/SOURCES.md",
+      "bytes": 1398,
+      "sha256": "36a182dea83eb5dcc9e56baf42eee7ad730701376740597d24540050caf1afcc"
+    },
+    {
+      "path": "assets/report/icons/lucide.svg",
+      "bytes": 2558,
+      "sha256": "0ddfebaf1e5bf6da665362259c77f068337a2a3aa755922ad845ebd15b4d6894"
+    },
+    {
+      "path": "assets/report/icons/share-mark.png",
+      "bytes": 353362,
+      "sha256": "589052643d34e2f9ff2dc3ef78f1ef3e5a0c7fc86f1f110c429d55a0ee7cc6a6"
+    },
+    {
+      "path": "assets/report/media/2026-11-07/SOURCES.json",
+      "bytes": 36922,
+      "sha256": "5f9e904128d38c9bed2a12dbe6f08d9ea3b9244ec1529ed961d29d9211d6ffa1"
+    },
+    {
+      "path": "assets/report/media/2026-11-07/godot-voxel-LICENSE.txt",
+      "bytes": 1076,
+      "sha256": "8e7fd22d3e36576419280a8993796239c2069c8398a0ea1037240aaf12c2a3d7"
+    },
+    {
+      "path": "assets/report/media/2026-11-07/material-maker-LICENSE.txt",
+      "bytes": 1101,
+      "sha256": "e15667b893ad61b8d03fd49eccdabd613b18a6d4a6188122bda4bec7e58c2378"
+    },
+    {
+      "path": "assets/report/media/2026-11-07/material-maker-official.png",
+      "bytes": 1246803,
+      "sha256": "82914343db0a3af22f5b96f7b42e362f58f93f9c499b3fad48d182d9059e4f7c"
+    },
+    {
+      "path": "assets/report/media/2026-11-07/ozz-animation-LICENSE.txt",
+      "bytes": 1183,
+      "sha256": "3ddd93e9888fe70b9d61675ceb1c4278a579dc67171678f015de114efe815852"
+    },
+    {
+      "path": "assets/report/media/2026-11-07/ozz-blend-official.png",
+      "bytes": 74239,
+      "sha256": "47dc4c4b4d902e4f924a28c20f2ccd48923059b5ed50e35b1a490bda44e148d6"
+    },
+    {
+      "path": "assets/report/media/2026-11-07/pixelfx-LICENSE.txt",
+      "bytes": 1093,
+      "sha256": "0a77565a50c3462831244452f129c38d2adc4fd07897cbeba8adc943f958604e"
+    },
+    {
+      "path": "assets/report/media/2026-11-07/pixelfx-NOTICE.md",
+      "bytes": 620,
+      "sha256": "d12932473f98b1a3f0b5820ae23d568b52e39294ba7c2d60c0649a93a808af3b"
+    },
+    {
+      "path": "assets/report/media/2026-11-07/pixelfx-official-poster.png",
+      "bytes": 105459,
+      "sha256": "42359e7f3afba3ae14fa64543037c3d37794a38eba90adf0626accfa0bbd3b2f"
+    },
+    {
+      "path": "assets/report/media/2026-11-07/recast-LICENSE.txt",
+      "bytes": 860,
+      "sha256": "ac4addf1bfcb505f3c1dd9cba55a24d0c6ceeec83fad51c4bf43831971f87cd1"
+    },
+    {
+      "path": "assets/report/media/2026-11-07/recast-official.png",
+      "bytes": 461310,
+      "sha256": "7f0f64b26d7a14122a743ab85d6a4ead65ce3b1939a2f518a990b905181ea53c"
+    },
+    {
+      "path": "assets/report/media/2026-11-07/scenario-preview-official.jpg",
+      "bytes": 18924,
+      "sha256": "75ba805fc709cc7d0367c9501eae9c3c5248e1fd971b7e4dc027d10130999e08"
+    },
+    {
+      "path": "assets/report/media/2026-11-07/terrain3d-LICENSE.txt",
+      "bytes": 1113,
+      "sha256": "65907d7d8d1bc110a437580778470b36489d93871c46a5f9739f4b2972e820e6"
+    },
+    {
+      "path": "assets/report/media/2026-11-07/terrain3d-official.jpg",
+      "bytes": 110313,
+      "sha256": "1d76af5f504571a86fbf73f641d687ad5d89ac4d2adabae9604a2f2df3708b06"
+    },
+    {
+      "path": "assets/report/media/2026-11-07/voxel-blocky-official.webp",
+      "bytes": 456958,
+      "sha256": "80f7ec24a78ea185aafa527a7a7bc9d3a838aa7489864b9c7303465e275d0d2f"
+    },
+    {
+      "path": "assets/report/media/2026-11-07/voxel-smooth-official.webp",
+      "bytes": 155974,
+      "sha256": "622b4626be46725cdd7aa955f0849c85ff4006e324e1238ade47c3b8f49caf2a"
+    },
+    {
+      "path": "assets/report/reading-experience.css",
+      "bytes": 3400,
+      "sha256": "1ff55d621b6691b02b5c742b498778c2dfc7aa3e7ab509ea0da78aeaed247aaa"
+    },
+    {
+      "path": "assets/report/reading-experience.js",
+      "bytes": 11239,
+      "sha256": "cef7e47a6ca59103316091beadbd5f07bd091c5134727a95f26afa7fc7d05297"
+    },
+    {
+      "path": "assets/report/reading.css",
+      "bytes": 1384,
+      "sha256": "834fb450316d99df14a6136aaffc6448c989d9da75693019376e904ef0e3cd5f"
     },
     {
       "path": "assets/report/report.css",
@@ -157,13 +262,13 @@
     },
     {
       "path": "assets/report/report.js",
-      "bytes": 7052,
-      "sha256": "58c24448a9c8d442eabc9f3c4ffd5c321a9227e86309ea30cf1e5306f2a7d204"
+      "bytes": 7978,
+      "sha256": "e335decf1a45c889c3374b0c9da8fdfc1331baeedb4cbfffe3eeb34c93b53867"
     },
     {
-      "path": "assets/report/reading.css",
-      "bytes": 1384,
-      "sha256": "834fb450316d99df14a6136aaffc6448c989d9da75693019376e904ef0e3cd5f"
+      "path": "assets/report/research/agent-skills-2026-10-31.json",
+      "bytes": 21640,
+      "sha256": "13d16d639ce6ab39840f55ae1d8f55e3b494f43ecefd8cb488712545984697c1"
     },
     {
       "path": "assets/report/rich-media.css",
@@ -177,43 +282,28 @@
     },
     {
       "path": "assets/report/share.css",
-      "bytes": 2232,
-      "sha256": "86549b8bd0d25b15a3f3610096d2176fc685bb87c75c4c30f40dcc21f070fd51"
+      "bytes": 3145,
+      "sha256": "84a565932414d95b0cdc08bff4b36c45448e84d476ba58d5de4df6a4cc012768"
     },
     {
       "path": "assets/report/share.js",
-      "bytes": 4977,
-      "sha256": "a18fc9f5a04698b0bbfcdbf3ad7baf095b9cf643c3d54d36847f51d9ae89077d"
-    },
-    {
-      "path": "assets/report/ai100.css",
-      "bytes": 2464,
-      "sha256": "1d1b861a4ad145b987980b3b9e67ebfe521f7ea9e95c6817a143175fc83993b7"
-    },
-    {
-      "path": "assets/report/ai100.js",
-      "bytes": 921,
-      "sha256": "d6c7abca087b643a8acdde5dc5be7a5e73260efb69915fc688e5a4162496e238"
-    },
-    {
-      "path": "assets/report/vendor/chart.umd.js",
-      "bytes": 210078,
-      "sha256": "338399fb5bafe598d21cfc471b0590b61ceb321a985fade4f68499b151f67fbf"
-    },
-    {
-      "path": "assets/report/vendor/hls.min.js",
-      "bytes": 623915,
-      "sha256": "cfc70cc9e9fc63d071919e087670abc760c8fd1bc889b88588026e4d22193bbe"
+      "bytes": 7800,
+      "sha256": "ea307429a4c49a50604682833730ee1128a003cacf52a1179bf5d5738b51d566"
     },
     {
       "path": "assets/report/tool-choice.css",
-      "bytes": 2638,
-      "sha256": "d26214020e37329d6a5dc6322fed2738580e2233419a52f23e6b1c0175ca2c18"
+      "bytes": 7738,
+      "sha256": "c0a6cf48f09af5028b1a2809e8bf028aabe056d1543994e43e6a8b8bec9a721e"
     },
     {
       "path": "assets/report/tool-choice.js",
-      "bytes": 1425,
-      "sha256": "9839df651176a2d52b683791d4f410e99656dde135bab7c3a537a684ac303758"
+      "bytes": 12831,
+      "sha256": "7f07eded8a09ff7301705f865e066f9fd7601b1f274d6a38bb277b2ad25564cd"
+    },
+    {
+      "path": "assets/report/tool-previews/SOURCES.md",
+      "bytes": 1381,
+      "sha256": "bac47ea6086594c5807dcd37ffc06f4c141b6b3a124a421b410124821098e2a1"
     },
     {
       "path": "assets/report/tool-previews/audio2face.png",
@@ -271,11 +361,6 @@
       "sha256": "aae6ce78444c3b000777cc35d030b6f7bf0e9c22f8c52b722405a3443ae1661b"
     },
     {
-      "path": "assets/report/tool-previews/SOURCES.md",
-      "bytes": 1381,
-      "sha256": "bac47ea6086594c5807dcd37ffc06f4c141b6b3a124a421b410124821098e2a1"
-    },
-    {
       "path": "assets/report/tool-previews/spritegen.png",
       "bytes": 227845,
       "sha256": "78a3693e2de3748d644da86d864528e4e79ee1496ec1d009e6e143a515dfbdb9"
@@ -296,10 +381,172 @@
       "sha256": "3e45479b98b764c2ef4149b49c64ca76ecbf7e3bbdfce5940cc50f34e2227ec3"
     },
     {
-      "path": "assets/report/research/agent-skills-2026-10-31.json",
-      "bytes": 21640,
-      "sha256": "13d16d639ce6ab39840f55ae1d8f55e3b494f43ecefd8cb488712545984697c1"
+      "path": "assets/report/vendor/chart.umd.js",
+      "bytes": 210078,
+      "sha256": "338399fb5bafe598d21cfc471b0590b61ceb321a985fade4f68499b151f67fbf"
+    },
+    {
+      "path": "assets/report/vendor/hls.min.js",
+      "bytes": 623915,
+      "sha256": "cfc70cc9e9fc63d071919e087670abc760c8fd1bc889b88588026e4d22193bbe"
+    },
+    {
+      "path": "assets/report/visuals-2026-11-07/SOURCES.json",
+      "bytes": 11154,
+      "sha256": "6a5b5508aebdb604d06b9b986285b61272626c015042d21b4b46854137b607af"
+    },
+    {
+      "path": "assets/report/visuals-2026-11-07/idea-01.png",
+      "bytes": 2347550,
+      "sha256": "b47cde7d342baecbec006ffe1fc52a28b77e167e4570a6f88757313ea838ef64"
+    },
+    {
+      "path": "assets/report/visuals-2026-11-07/idea-01.webp",
+      "bytes": 194994,
+      "sha256": "b5766e395862106e560e90ee4ca2ec7686a1edd355ffb20295ff8f299b75cddb"
+    },
+    {
+      "path": "assets/report/visuals-2026-11-07/idea-02.png",
+      "bytes": 1912850,
+      "sha256": "246cd76d2d108e863166bf033f5febfe530e8599d375df2c95a7ab43e8577c0f"
+    },
+    {
+      "path": "assets/report/visuals-2026-11-07/idea-02.webp",
+      "bytes": 118954,
+      "sha256": "3a95926659562b8d787376e1e0baec6de0211ae7fee8f64db8588b27a340bd3a"
+    },
+    {
+      "path": "assets/report/visuals-2026-11-07/idea-03.png",
+      "bytes": 1647865,
+      "sha256": "544238b0bf650ad2c4b2aac1f35fa137cf0faec1977889e13704453f147e1a26"
+    },
+    {
+      "path": "assets/report/visuals-2026-11-07/idea-03.webp",
+      "bytes": 93716,
+      "sha256": "4c61f0431fdc2ddc1cafb6aa37e9b355f8f8c2afe26e99169df31a49f7d24286"
+    },
+    {
+      "path": "assets/report/visuals-2026-11-07/idea-04.png",
+      "bytes": 2092349,
+      "sha256": "ff12141e412202550584d4306956fb88a4281216aeb13207b39ad6c5c4a6f349"
+    },
+    {
+      "path": "assets/report/visuals-2026-11-07/idea-04.webp",
+      "bytes": 115730,
+      "sha256": "c3cb23c93ba43d97c5ae204c2d735657f138404af1533e265604936e3829a109"
+    },
+    {
+      "path": "assets/report/visuals-2026-11-07/idea-05.png",
+      "bytes": 1640651,
+      "sha256": "bf06d4d4ef8a691bb7c511fd3b806aa3df623702a9f7a5c00ec4a139cfe99b5b"
+    },
+    {
+      "path": "assets/report/visuals-2026-11-07/idea-05.webp",
+      "bytes": 67996,
+      "sha256": "e3256dba2ed7b7037d70634965e3e9e5d2555ce5c7dfe492099ac7bd0fed8ec9"
+    },
+    {
+      "path": "assets/report/visuals-2026-11-07/idea-06.png",
+      "bytes": 2066820,
+      "sha256": "93975b7b0436848b5da24b08c53d0f26eed10ea632dcdce46c29a951a7871e5c"
+    },
+    {
+      "path": "assets/report/visuals-2026-11-07/idea-06.webp",
+      "bytes": 158700,
+      "sha256": "c682c896b7321e9bb804096c5af56a03b24d7627271493e58150da4d29e5b6b1"
+    },
+    {
+      "path": "assets/report/visuals-2026-11-07/lab-data-chapter-v3.png",
+      "bytes": 2100991,
+      "sha256": "992252dd4180ab24a478e3f936dfb831b45f80d8f1b4984d009368f366293949"
+    },
+    {
+      "path": "assets/report/visuals-2026-11-07/lab-data-chapter-v3.webp",
+      "bytes": 215816,
+      "sha256": "cb1929be0a1f1d06136288dc32bd504a6456a336aefe284ac6323f62786d5c99"
+    },
+    {
+      "path": "assets/report/visuals-2026-11-07/planning-chapter-v2.png",
+      "bytes": 2032944,
+      "sha256": "93cd0ff805d6ca96688ac1ae253933d3564c3538f2efdc58ac44f1f645187b04"
+    },
+    {
+      "path": "assets/report/visuals-2026-11-07/planning-chapter-v2.webp",
+      "bytes": 178612,
+      "sha256": "1c3cb7b0a00886e56f7b4768fe462679f16567edbde85c32735c4b14ed0d0ee1"
+    },
+    {
+      "path": "assets/report/visuals-2026-11-07/production-flow.png",
+      "bytes": 1508394,
+      "sha256": "a55a87027800b9df0f016f4aa25b5f3e6bb5fc5217baa2405e544189cb5d12ed"
+    },
+    {
+      "path": "assets/report/visuals-2026-11-07/reverse-chapter-v2.png",
+      "bytes": 2037481,
+      "sha256": "533f32e8a09f5425c118be1a10604630145a978f0531c218b4e550c6a34a4455"
+    },
+    {
+      "path": "assets/report/visuals-2026-11-07/reverse-chapter-v2.webp",
+      "bytes": 169564,
+      "sha256": "31a49da1cfe7dddeec72acced89ded38a01cf6948b0d497cc466d3f31f22807e"
+    },
+    {
+      "path": "assets/report/visuals-2026-11-07/tools-chapter-v2.png",
+      "bytes": 2363019,
+      "sha256": "e843dea4f89a798e5c9b14cd9bd21533d3b55a42ea9174774aee07a477e3cba7"
+    },
+    {
+      "path": "assets/report/visuals-2026-11-07/tools-chapter-v2.webp",
+      "bytes": 241982,
+      "sha256": "b907cc938a31093c621a4e9774848a0ccd0ddcac4776327030a8359f64bdc0bc"
+    },
+    {
+      "path": "assets/report/weekly-editorial.css",
+      "bytes": 49172,
+      "sha256": "635138a9d5173b9fca924734c9afa125462c2d92bc637b1d4c6f4a374f87ffdf"
+    },
+    {
+      "path": "instructions/DESIGN.md",
+      "bytes": 733,
+      "sha256": "b791dffff8b8c23368d397d0ddc4a2432d83f5753ef1a2f2af1e6932d04312a8"
+    },
+    {
+      "path": "instructions/references/google-design-md/LICENSE",
+      "bytes": 11360,
+      "sha256": "1bdd03995456d191707e379eb06ceac20cf30d520bec90c97c2b6d220906c66e"
+    },
+    {
+      "path": "instructions/references/google-design-md/README.md",
+      "bytes": 10001,
+      "sha256": "d4d502768a7d5b5104f1ee076da756ca846e73f8635f950e1df6d0bec01fc5a9"
+    },
+    {
+      "path": "instructions/references/google-design-md/source-reference-2026-11-07.json",
+      "bytes": 2608,
+      "sha256": "faebf30138f1b84c96cb483f21c4644d5802b6425029db92a49e3d99b90f120b"
+    },
+    {
+      "path": "instructions/references/google-design-md/spec-config.yaml",
+      "bytes": 4569,
+      "sha256": "6244e829849e63b55316258f32e1110833d193b79943ec79f245b33ebeec2ef8"
+    },
+    {
+      "path": "instructions/references/google-design-md/spec.md",
+      "bytes": 15313,
+      "sha256": "8f297a7bd38cf08bde06c96f5eea2ebfcd9930a8bc1dfe964f8e8dec894e691a"
+    },
+    {
+      "path": "instructions/references/google-design-md/upstream-package.json",
+      "bytes": 2006,
+      "sha256": "9cd26dae8342295b88dad6df3432f732f38c215f401f49af61068211cf2015b9"
+    },
+    {
+      "path": "instructions/references/toss.md",
+      "bytes": 61956,
+      "sha256": "8309334ea7bfe50ba70be300669c6b69fd53fa09e60ca8bf1f930eaf9d069e87"
     }
   ],
-  "updatedAt": "2026-10-31T10:26:24.566Z"
+  "updatedAt": "2026-11-07T13:47:36.519189+00:00",
+  "canonicalDesign": "DESIGN.md",
+  "originalCapturedAt": "2026-10-31T10:38:18.374Z"
 }

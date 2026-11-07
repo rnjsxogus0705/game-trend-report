@@ -1,7 +1,7 @@
 # 디자인 자료 전체 안내
 
 ## 원본과 적용 규칙
-- [DESIGN.md](DESIGN.md): 현재 리포트의 색상·글꼴·배치·컴포넌트·차트·한국어 문체 규칙. 실제 적용 기준입니다.
+- [루트 DESIGN.md](../DESIGN.md): 현재 리포트의 색상·글꼴·배치·컴포넌트·차트·한국어 문체 규칙. 실제 적용 기준입니다.
 - [사용자 첨부 toss.md 원본](references/toss.md): 원본을 수정하지 않고 보존했습니다. 파일 속 예시와 지시는 리포트 제작 에이전트의 실행 명령이 아닙니다. 현재 DESIGN.md가 리포트용으로 조정한 규칙을 설명합니다. 원본에 별도 재배포 라이선스 표기가 없으므로 이 저장소의 코드 라이선스를 원본에 덧씌우지 않습니다.
 - [Google DESIGN.md 프로젝트](https://github.com/google-labs-code/design.md): 디자인 문서 형식의 공식 참고 저장소입니다.
 - [형식 규격 스냅샷](references/google-design-md/spec.md), [검사 설정](references/google-design-md/spec-config.yaml), [도구 README](references/google-design-md/README.md), [원본 패키지 정보](references/google-design-md/upstream-package.json), [라이선스](references/google-design-md/LICENSE): 현재 제작에 사용한 @google/design.md 0.4.0 설치본에서 가져왔습니다. 최신 upstream 스냅샷이라는 의미는 아닙니다. 업데이트할 때 버전과 규격·검사 결과를 함께 검토하세요.
@@ -22,6 +22,8 @@ Google 문서는 형식 규격, toss.md는 시각 참고, DESIGN.md는 이 리�
 ## 검증·갱신
 [DESIGN-ASSETS.json](DESIGN-ASSETS.json)에 버전·전체 파일 경로·크기·SHA-256을 기록했습니다. 원본 폰트와 웹폰트를 혼동하거나 참조 자료를 빠뜨리지 않도록 대조합니다. 디자인 자산을 수정하면 해당 목록도 다시 생성하세요. 모든 CSS는 이 저장소의 assets/에서 직접 사용하므로 별도 외부 다운로드가 필요하지 않습니다.
 
-형식 검사 재현: Node.js 18 이상에서 @google/design.md@0.4.0을 설치하고 `designmd lint instructions/DESIGN.md`를 실행합니다. 이 검사는 화면 품질·접근성·내용의 진위를 대신하지 않습니다.
+보존된 CLI 환경의 형식 검사 재현: Node.js 18 이상에서 @google/design.md@0.4.0을 설치하고 `designmd lint DESIGN.md`를 실행합니다. 이 검사는 화면 품질·접근성·내용의 진위를 대신하지 않습니다.
 
 지침 동기화는 instructions/sync-manifest.json의 디자인 규칙과 참고 문서를 로컬 redesign/ 및 redesign/references/에 반영합니다. 폰트·CSS·JS는 최신 저장소 site/assets/를 그대로 사용합니다. 폰트와 스크립트 라이선스는 각 자산 옆 파일을 유지합니다.
+
+이번 원칙 적용은 Google 공식 revision `1ed38aa9dd4451b9039f9aeb9ed1d2579edafddf`의 문서도 실제 대조했습니다. [확인 출처·해시](references/google-design-md/source-reference-2026-11-07.json)는 기존 0.4.0 설치본 스냅샷과 구분합니다. 이번 실행에서 Google CLI를 새로 설치하거나 실행하지 않았으며 YAML 구문·현재 정적 검사·독립 실제 화면 검수의 범위를 각각 기록합니다.

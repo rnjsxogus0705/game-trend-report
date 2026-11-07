@@ -83,6 +83,29 @@ export function validateReadingResources(html,{review,issueDate}={}){
  }
  return counts;
 }
+export function validateAiCaseAndVideoResources(html){
+ const {elements,source}=reportElements(html),lab=elements.find(n=>n.attrs.id==='ai-only-lab'),reading=elements.find(n=>n.attrs.id==='reading');
+ const children=(node,predicate)=>elements.filter(n=>within(n,node)&&predicate(n));
+ const text=node=>source.slice(node.start,node.end).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+ const links=node=>children(node,n=>n.tag==='a'&&/^https:\/\//.test(n.attrs.href||''));
+ const titled=node=>children(node,n=>/^h[34]$/.test(n.tag)&&text(n).length>0).length>0;
+ const legacy=lab?children(lab,n=>Object.hasOwn(n.attrs,'data-ai-case')&&links(n).length>0):[];
+ const selected=lab?children(lab,n=>n.tag==='article'&&Object.hasOwn(n.attrs,'data-selected-video')):[];
+ for(const card of selected){
+  const id=card.attrs['data-selected-video'],paragraphs=children(card,n=>n.tag==='p').map(text);
+  const ai=paragraphs.some(p=>p.match(/AI\s*역할\s*[:：]\s*(.*?)(?=사람\s*역할\s*[:：]|$)/)?.[1].trim());
+  const person=paragraphs.some(p=>p.match(/사람\s*역할\s*[:：]\s*(.+)$/)?.[1].trim());
+  if(!/^[\w-]{11}$/.test(id)||!titled(card)||!links(card).some(n=>n.attrs.href===`https://www.youtube.com/watch?v=${id}`)||!ai||!person)throw Error('Invalid AI case: title, matching source and AI/person roles required');
+ }
+ if(!legacy.length&&!selected.length)throw Error('Missing AI case with source in ai-only-lab');
+ const videoLink=node=>{
+  try{const u=new URL(links(node)[0]?.attrs.href),host=u.hostname.toLowerCase().replace(/^www\./,'');return (host==='youtube.com'&&u.pathname==='/watch'&&/^[\w-]{11}$/.test(u.searchParams.get('v')||''))||(host==='youtu.be'&&/^\/[\w-]{11}\/?$/.test(u.pathname))||(host==='vimeo.com'&&/^\/\d+\/?$/.test(u.pathname));}catch{return false;}
+ };
+ const legacyVideos=lab?children(lab,n=>n.attrs['data-ai-resource']==='video'&&titled(n)&&videoLink(n)):[];
+ const readingVideos=reading?children(reading,n=>n.tag==='article'&&n.attrs['data-kind']==='video'):[];
+ if(readingVideos.some(node=>!titled(node)||!videoLink(node)))throw Error('Invalid video resource: title and primary video source required');
+ if(!legacyVideos.length&&!readingVideos.length)throw Error('Missing video resource with title and direct source');
+}
 export function validateWeeklyPresentation(html,{reportDate}={}){
  const {elements,source}=reportElements(html);
  const oneId=id=>elements.find(node=>node.attrs.id===id);
@@ -115,6 +138,14 @@ export function validateWeeklyPresentation(html,{reportDate}={}){
   assert(JSON.stringify(descendants(groups[index],node=>node.tag==='a').map(node=>node.attrs.href))===JSON.stringify(ids.map(id=>'#'+id)),'Navigation links differ from the category: '+key);
  });
  if(reportDate>='2026-11-07'){
+  validateAiCaseAndVideoResources(html);
+  const main=elements.find(n=>n.tag==='main'&&hasClass(n,'content'));
+  const share=elements.filter(n=>n.attrs.id==='report-share');
+  assert(main&&share.length===1&&share[0].tag==='button'&&within(share[0],main)&&share[0].attrs.type==='button'&&share[0].attrs['aria-haspopup']==='dialog'&&((share[0].attrs['aria-label']||'').trim()||text(share[0])),'Missing or invalid static share button');
+  const print=elements.filter(n=>n.attrs.id==='print-button');assert(print.length===1&&print[0].tag==='button'&&print[0].attrs.type==='button'&&((print[0].attrs['aria-label']||'').trim()||text(print[0])),'Missing or invalid print button');
+  const footers=elements.filter(n=>n.tag==='footer'&&within(n,main));assert(footers.length===1,'Missing report footer');
+  assert(descendants(footers[0],n=>n.tag==='a'&&['../','../index.html'].includes(n.attrs.href)&&((n.attrs['aria-label']||'').trim()||text(n))).length>0,'Missing archive link in footer');
+  const sources=elements.filter(n=>n.attrs.id==='sources');assert(sources.length===1&&sources[0].tag==='section'&&within(sources[0],main),'Missing source section in report');
   const careers=oneId('careers');
   for(const category of careerCategories){
    const block=descendants(careers,node=>node.attrs['data-career-category']===category)[0];

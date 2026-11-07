@@ -133,7 +133,7 @@
   for(const [label,open] of [['상세 내용 모두 펼치기',true],['상세 내용 모두 접기',false]]){
     const button=document.createElement('button');button.type='button';button.textContent=label;
     globalThis.ReportIcons?.add(button,open?'chevron-down':'chevron-up');
-    button.addEventListener('click',()=>groups.forEach(group=>{group.open=open;}));
+    button.addEventListener('click',()=>main.querySelectorAll('#report details').forEach(group=>{group.open=open;}));
     controls.append(button);
   }
   main.querySelector('#top10')?.after(controls);

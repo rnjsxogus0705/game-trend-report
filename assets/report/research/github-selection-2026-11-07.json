@@ -1,0 +1,200 @@
+{
+  "reportDate": "2026-11-07",
+  "observedAtKst": "2026-11-07 20:04:54 +09:00",
+  "language": "Any",
+  "spokenLanguage": "Any",
+  "dateRange": "This week",
+  "rows": [
+    {
+      "position": 1,
+      "repository": "thedotmack/claude-mem",
+      "totalStarsDisplayed": "114,210",
+      "weeklyStarsDisplayed": "8,726 stars this week"
+    },
+    {
+      "position": 2,
+      "repository": "max-sixty/worktrunk",
+      "totalStarsDisplayed": "11,864",
+      "weeklyStarsDisplayed": "2,184 stars this week"
+    },
+    {
+      "position": 3,
+      "repository": "Donchitos/Claude-Code-Game-Studios",
+      "totalStarsDisplayed": "36,290",
+      "weeklyStarsDisplayed": "6,018 stars this week"
+    },
+    {
+      "position": 4,
+      "repository": "Renhuai123/ziwei-doushu",
+      "totalStarsDisplayed": "16,617",
+      "weeklyStarsDisplayed": "5,476 stars this week"
+    },
+    {
+      "position": 5,
+      "repository": "pingdotgg/t3code",
+      "totalStarsDisplayed": "50,411",
+      "weeklyStarsDisplayed": "16,782 stars this week"
+    }
+  ],
+  "selectionScope": "20:04:54 KST 공식 주간 Trending 관측 상위5 중 앞3개를 실제 README·LICENSE·공개API로 추가 확인. 성능 순위나 검증된 추천 순위가 아니며 이번 호 학습 후보로 검수할 원고.",
+  "items": [
+    {
+      "repository": "thedotmack/claude-mem",
+      "sourceUrl": "https://github.com/thedotmack/claude-mem",
+      "readmeUrl": "https://github.com/thedotmack/claude-mem",
+      "licenseUrl": "https://github.com/thedotmack/claude-mem/blob/main/LICENSE",
+      "trending": {
+        "position": 1,
+        "repository": "thedotmack/claude-mem",
+        "totalStarsDisplayed": "114,210",
+        "weeklyStarsDisplayed": "8,726 stars this week"
+      },
+      "trendingObservedAtKst": "2026-11-07 20:04:54 +09:00",
+      "checkedAt": "2026-11-07T11:06:51.975085+00:00",
+      "language": "TypeScript",
+      "archived": false,
+      "apiLicenseClassification": {
+        "key": "apache-2.0",
+        "name": "Apache License 2.0",
+        "spdx_id": "Apache-2.0",
+        "url": "https://api.github.com/licenses/apache-2.0",
+        "node_id": "MDc6TGljZW5zZTI="
+      },
+      "latestRelease": {
+        "status": "confirmed-via-official-api",
+        "tag": "v15.11.1",
+        "publishedAt": "2026-11-07T09:51:54Z",
+        "url": "https://github.com/thedotmack/claude-mem/releases/tag/v15.11.1",
+        "apiUrl": "https://api.github.com/repos/thedotmack/claude-mem/releases/latest"
+      },
+      "execution": "설치·코드 실행·빌드·게임 엔진 실습을 하지 않았어요.",
+      "name": "Claude-Mem",
+      "category": "범용 코딩 에이전트 작업 기억",
+      "summary": "여러 코딩 에이전트의 세션 기록을 관찰·요약하고 다음 세션에서 필요한 맥락을 찾아 주는 도구예요.",
+      "selectionReason": "게임 프로젝트에서 수정한 버그와 설계 결정을 다음 작업에도 이어서 찾는 방법을 살펴볼 후보예요. 게임을 직접 생성하는 전용 엔진은 아니에요.",
+      "gameUse": "버그 재현 조건·수정 이유·플레이 테스트 메모를 어떤 범위까지 저장할지 먼저 설계하는 데 참고할 수 있어요.",
+      "practice": "미실행 연습 제안: 가상의 버그 기록 3개에서 재현 조건·수정 파일·남은 질문만 뽑아 한 장의 작업 기억 표를 작성해 보세요. 비밀키·개인정보·비공개 게임 자산은 넣지 않아요.",
+      "license": "Apache-2.0",
+      "licenseScope": "LICENSE의 Apache-2.0 조건을 확인했어요. 재배포 시 라이선스 사본, 변경 표시와 해당 저작권·NOTICE 고지를 유지해야 해요. 호스팅 서비스·외부 모델·제3자 자료의 권리가 함께 무료로 제공된다는 뜻은 아니에요.",
+      "cost": "README는 계정 연결 시 관찰 서비스의 30일 무료 체험과 이후 구독 또는 Anthropic 플랜으로의 전환을 설명해요. OpenRouter·Gemini 키 또는 Anthropic 플랜을 선택하는 경로도 있어요. 현재 요금표와 실제 청구 금액은 확인하지 않았어요.",
+      "conditions": "README는 로컬 기억 저장과 선택적인 클라우드 동기화를 설명하지만 익명 사용 분석은 기본 켜짐이라고 안내해요. 기록 범위와 모델 제공자·원격 전송 설정을 확인해야 해요.",
+      "limitations": [
+        "README의 사용량 증가·토큰 절감 수치는 제작자 주장으로, 직접 재현하지 않았어요.",
+        "세션 기록 지원과 검색만 지원하는 에이전트를 구분해야 해요.",
+        "오픈 코드와 상용 서비스 경계의 추가 문서 전체를 검수하지 않았어요."
+      ]
+    },
+    {
+      "repository": "max-sixty/worktrunk",
+      "sourceUrl": "https://github.com/max-sixty/worktrunk",
+      "readmeUrl": "https://github.com/max-sixty/worktrunk",
+      "licenseUrl": "https://github.com/max-sixty/worktrunk/blob/main/LICENSE",
+      "trending": {
+        "position": 2,
+        "repository": "max-sixty/worktrunk",
+        "totalStarsDisplayed": "11,864",
+        "weeklyStarsDisplayed": "2,184 stars this week"
+      },
+      "trendingObservedAtKst": "2026-11-07 20:04:54 +09:00",
+      "checkedAt": "2026-11-07T11:06:52.030117+00:00",
+      "language": "Rust",
+      "archived": false,
+      "apiLicenseClassification": {
+        "key": "other",
+        "name": "Other",
+        "spdx_id": "NOASSERTION",
+        "url": null,
+        "node_id": "MDc6TGljZW5zZTA="
+      },
+      "latestRelease": {
+        "status": "confirmed-via-official-api",
+        "tag": "v0.81.0",
+        "publishedAt": "2026-10-20T21:28:34Z",
+        "url": "https://github.com/max-sixty/worktrunk/releases/tag/v0.81.0",
+        "apiUrl": "https://api.github.com/repos/max-sixty/worktrunk/releases/latest"
+      },
+      "execution": "설치·코드 실행·빌드·게임 엔진 실습을 하지 않았어요.",
+      "name": "Worktrunk",
+      "category": "범용 Git worktree 관리",
+      "summary": "여러 Git worktree를 만들고 전환·정리하는 작업을 돕는 CLI예요. 병렬 에이전트가 서로 다른 작업 폴더에서 일하는 흐름을 지원해요.",
+      "selectionReason": "게임의 UI 수정과 버그 수정을 별도 작업 폴더로 나누고, 합치기 전에 각각 검증하는 절차를 익힐 후보예요.",
+      "gameUse": "프로젝트 복사본에서 변경별 폴더·브랜치·검수 결과의 관계를 설계하는 데 참고할 수 있어요. Unity·Godot·Unreal 전용 기능을 제공하는 게임 도구로 단정하지 않아요.",
+      "practice": "미실행 연습 제안: UI 수정과 버그 수정 두 작업에 각자 맡을 파일, 검수 기준, 병합 순서를 표로 작성해 보세요. 자동 병합·정리 명령을 실행하기 전에 충돌 시 되돌아갈 지점을 정해요.",
+      "license": "MIT OR Apache-2.0 (택일)",
+      "licenseScope": "LICENSE 첫머리는 MIT와 Apache-2.0 중 하나를 선택할 수 있다고 명시해요. GitHub API의 라이선스 자동분류는 NOASSERTION이므로 실제 LICENSE 원문을 우선했어요. 선택한 라이선스의 저작권·허가·NOTICE·변경 고지 조건을 따라요.",
+      "cost": "기본 Git 작업과 선택적인 LLM 커밋 메시지·브랜치 요약 기능을 구분해야 해요. 연결할 AI 도구의 계정·모델 비용이 코드 라이선스에 포함되는 것은 아니며 요금·실사용 비용은 확인하지 않았어요.",
+      "conditions": "자동 훅·병합·브랜치 정리는 저장소 상태를 바꾸므로 작업 폴더와 설정을 확인해야 해요. 빌드 캐시 공유는 README가 명시한 APFS·btrfs·XFS 등 파일시스템 조건을 확인해요.",
+      "limitations": [
+        "README의 인기·개발 속도 설명을 독립 측정 결과로 보지 않아요.",
+        "AI 에이전트 병렬 실행이나 캐시 절감 효과를 직접 시험하지 않았어요."
+      ]
+    },
+    {
+      "repository": "Donchitos/Claude-Code-Game-Studios",
+      "sourceUrl": "https://github.com/Donchitos/Claude-Code-Game-Studios",
+      "readmeUrl": "https://github.com/Donchitos/Claude-Code-Game-Studios",
+      "licenseUrl": "https://github.com/Donchitos/Claude-Code-Game-Studios/blob/main/LICENSE",
+      "trending": {
+        "position": 3,
+        "repository": "Donchitos/Claude-Code-Game-Studios",
+        "totalStarsDisplayed": "36,290",
+        "weeklyStarsDisplayed": "6,018 stars this week"
+      },
+      "trendingObservedAtKst": "2026-11-07 20:04:54 +09:00",
+      "checkedAt": "2026-11-07T11:06:52.035998+00:00",
+      "language": "Shell",
+      "archived": false,
+      "apiLicenseClassification": {
+        "key": "mit",
+        "name": "MIT License",
+        "spdx_id": "MIT",
+        "url": "https://api.github.com/licenses/mit",
+        "node_id": "MDc6TGljZW5zZTEz"
+      },
+      "latestRelease": {
+        "status": "confirmed-via-official-api",
+        "tag": "v1.2.0",
+        "publishedAt": "2026-10-19T02:44:23Z",
+        "url": "https://github.com/Donchitos/Claude-Code-Game-Studios/releases/tag/v1.2.0",
+        "apiUrl": "https://api.github.com/repos/Donchitos/Claude-Code-Game-Studios/releases/latest"
+      },
+      "execution": "설치·코드 실행·빌드·게임 엔진 실습을 하지 않았어요.",
+      "name": "Claude Code Game Studios",
+      "category": "게임 제작용 에이전트·워크플로 템플릿",
+      "summary": "게임 기획·프로그래밍·미술·음향·QA 등 역할과 검수 단계를 Claude Code 프로젝트에 구성하는 템플릿이에요.",
+      "selectionReason": "게임 제작 역할과 검수 책임을 어떻게 나누는지 비교할 수 있어요. 소규모 과제에서는 문서·에이전트 수보다 플레이 가능한 결과와 검수 증거를 먼저 정하는 자료로 읽어요.",
+      "gameUse": "Godot 4·Unity·Unreal Engine 5용 역할 지침과 제작·QA 절차를 참고할 수 있어요. 해당 엔진을 자동 설치하거나 완성 게임을 보장하는 패키지는 아니에요.",
+      "practice": "미실행 연습 제안: 작은 게임 장면 하나에 작성자·내용 검수자·화면 검수자의 역할을 정하고, 실제 플레이 화면과 완료 조건을 어떤 파일로 남길지 설계해 보세요.",
+      "license": "MIT",
+      "licenseScope": "템플릿의 소프트웨어·관련 문서는 MIT로 안내하며 저작권·허가 고지를 보존해야 해요. Claude Code·모델 서비스·게임 엔진·외부 게임 자산의 이용 조건은 별도예요.",
+      "cost": "README는 Claude Code와 Git·Python 3·Bash를 요구하고, 일부 역할에 Opus·Sonnet 모델을 지정한다고 설명해요. 템플릿의 MIT 공개와 모델 사용료·계정 조건은 별개이며 실제 요금을 확인하지 않았어요.",
+      "conditions": "README의 현재 본문은 에이전트 49개·스킬 74개를 쓰지만 GitHub 소개 문구는 스킬 72개로 표시돼요. 이번 조사에서 파일을 전수 집계하지 않았으므로 확정 개수로 강조하지 않아요.",
+      "limitations": [
+        "실행 가능한 게임 제작·눈가림 검수 결과는 README의 자체 보고이며 독립 재현하지 않았어요.",
+        "README는 문서를 많이 쓰는 설정이 더 나은 게임을 보장하지 않는 자체 실험을 설명해요. 이를 일반적인 시간·품질 보장으로 쓰지 않아요.",
+        "템플릿 설치·훅 실행·게임 제작·엔진별 호환성 테스트는 하지 않았어요."
+      ]
+    }
+  ],
+  "sourceUrls": [
+    "https://github.com/thedotmack/claude-mem",
+    "https://github.com/thedotmack/claude-mem/blob/main/LICENSE",
+    "https://api.github.com/repos/thedotmack/claude-mem",
+    "https://api.github.com/repos/thedotmack/claude-mem/releases/latest",
+    "https://github.com/max-sixty/worktrunk",
+    "https://github.com/max-sixty/worktrunk/blob/main/LICENSE",
+    "https://api.github.com/repos/max-sixty/worktrunk",
+    "https://api.github.com/repos/max-sixty/worktrunk/releases/latest",
+    "https://github.com/Donchitos/Claude-Code-Game-Studios",
+    "https://github.com/Donchitos/Claude-Code-Game-Studios/blob/main/LICENSE",
+    "https://api.github.com/repos/Donchitos/Claude-Code-Game-Studios",
+    "https://api.github.com/repos/Donchitos/Claude-Code-Game-Studios/releases/latest"
+  ],
+  "limits": [
+    "추가 비용·모델 조건은 README 설명 범위이며 외부 요금표 조사 미실시",
+    "라이선스는 실제 파일을 확인했으며 전체 의존성과 외부 서비스의 권리 전수감사 아님",
+    "기존 08:37 원본부재 관측 수치를 이 자료로 확인한 것처럼 재사용하지 않음",
+    "모든 새 한국어 문장은 독립 검수 전 후보",
+    "이전 08:37 숫자의 원본은 확인하지 못해 새 관측과의 증감 비교를 하지 않아요."
+  ]
+}

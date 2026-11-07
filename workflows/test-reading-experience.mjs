@@ -6,6 +6,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+const browserSpace=Number(process.env.GAME_REPORT_EGO_SPACE_ID);
+assert.ok(Number.isSafeInteger(browserSpace)&&browserSpace>0,'Set GAME_REPORT_EGO_SPACE_ID to the observed Agent-owned goal space and run with exclusive browser capture ownership');
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript','.css':'text/css','.png':'image/png','.svg':'image/svg+xml','.woff2':'font/woff2'};
 const server=createServer(async(req,res)=>{
   const file=path.resolve(root,'.'+decodeURIComponent(new URL(req.url,'http://localhost').pathname));
@@ -16,7 +18,9 @@ const server=createServer(async(req,res)=>{
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const url=`http://127.0.0.1:${server.address().port}/reports/weekly-2026-10-31.html`;
 const script=`
-const task=await taskSpace(${JSON.stringify('reading-regression-'+Date.now())});
+const task=await taskSpace(${browserSpace});
+if(task.ownership!=='agent')throw Error('The regression test must not claim a user-owned space');
+const originalPage=task.page('p1'),originalUrl=await originalPage.url();
 try {
  const page=task.page('p1');
  await page.goto(${JSON.stringify(url+'#tool-meshy')});
@@ -95,7 +99,7 @@ try {
  await page.press('.share-close','Escape');
  result.share.closed=await page.evaluate(()=>!document.querySelector('.share-dialog').open);
  console.log('RESULT '+JSON.stringify(result));
-} finally {await task.finish({keep:[]});}
+} finally {if(originalUrl&&originalUrl!=='about:blank')await originalPage.goto(originalUrl);}
 `;
 try{
   const output=await new Promise((resolve,reject)=>{

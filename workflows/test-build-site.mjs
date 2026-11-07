@@ -25,6 +25,7 @@ test('동기화 환경의 과거 호 보존과 콘텐츠 검증',async()=>{
  try {
   const source=path.join(base,'reports'),site=path.join(base,'site');
   await fs.mkdir(source);await fs.mkdir(path.join(site,'reports'),{recursive:true});
+  await fs.writeFile(path.join(site,'DESIGN.md'),'synthetic design');
   const content='<html lang="ko"><title>검증된 보고서</title><meta name="description" content="확인한 근거"><body>'+ '<h2>분석</h2>'.repeat(5)+'<a href="https://example.com">원문</a>'.repeat(5)+'확인일 '+'조사 결과 '.repeat(1000)+'</body></html>';
   await fs.writeFile(path.join(source,'weekly-2026-10-31.html'),content);
   await fs.writeFile(path.join(site,'reports','monthly-2026-09.html'),content);
@@ -38,7 +39,7 @@ test('동기화 환경의 과거 호 보존과 콘텐츠 검증',async()=>{
 test('추가 Markdown은 명시한 첨부만 게시하고 미연결 문서는 중단',async()=>{
  const base=await fs.mkdtemp(path.join(os.tmpdir(),'gtr-attachments-'));
  try{
-  const source=path.join(base,'reports'),site=path.join(base,'site');await fs.mkdir(source);
+  const source=path.join(base,'reports'),site=path.join(base,'site');await fs.mkdir(source);await fs.mkdir(site);await fs.writeFile(path.join(site,'DESIGN.md'),'synthetic design');
   const name='weekly-2026-11-07-tool-comparison.md',body='첨부 비교 내용 '.repeat(100);
   const html='<h2>분석</h2>'.repeat(5)+'<a href="https://example.com">출처</a>'.repeat(5)+'확인일 '+'조사 '.repeat(1500)+`<a href="${name}" download>비교표</a>`;
   await fs.writeFile(path.join(source,'weekly-2026-11-07.html'),html);await fs.writeFile(path.join(source,name),body);
@@ -51,6 +52,7 @@ test('추가 Markdown은 명시한 첨부만 게시하고 미연결 문서는 �
 test('삭제한 월간호는 이전 PC의 원본·출력에 남아 있어도 복원하지 않음',async t=>{
  const base=await fs.mkdtemp(path.join(os.tmpdir(),'gtr-withdrawn-'));t.after(()=>fs.rm(base,{recursive:true,force:true}));
  const source=path.join(base,'source'),site=path.join(base,'site');await fs.mkdir(source);await fs.mkdir(path.join(site,'reports'),{recursive:true});
+ await fs.writeFile(path.join(site,'DESIGN.md'),'synthetic design');
  const name='monthly-2026-10.html';await fs.writeFile(path.join(source,name),'withdrawn');await fs.writeFile(path.join(site,'reports',name),'withdrawn');
  await buildSite({source,site});await assert.rejects(fs.access(path.join(site,'reports',name)),{code:'ENOENT'});
  assert.ok(!(await fs.readFile(path.join(site,'index.html'),'utf8')).includes(name));assert.ok(!renderIndex([issue(name)]).includes(name));
@@ -58,4 +60,10 @@ test('삭제한 월간호는 이전 PC의 원본·출력에 남아 있어도 복
 
 test('일정은 제작 시작 시각과 검수 후 전송을 구분한다',()=>{
  const html=renderIndex([]);assert.match(html,/매주 토요일 오전 8시 제작 시작 · 한국 시간/);assert.match(html,/토요일 08:00 제작 시작 · 검수 및 배포 완료 후 전송/);assert.doesNotMatch(html,/07:00|08:00 링크 전송/);
+});
+test('빌드가 루트 디자인의 호환 사본을 갱신하고 기존 호를 보존한다',async t=>{
+ const site=await fs.mkdtemp(path.join(os.tmpdir(),'gtr-design-build-'));t.after(()=>fs.rm(site,{recursive:true,force:true}));const reports=path.join(site,'reports');await fs.mkdir(reports);
+ const old='<h2>기존 호</h2>'.repeat(5)+'<a href="https://example.com">출처</a>'.repeat(5)+'확인일 '+'자료 '.repeat(1600),file=path.join(reports,'weekly-2026-10-31.html');await fs.writeFile(file,old);
+ await fs.writeFile(path.join(site,'DESIGN.md'),'원본 디자인 1');await buildSite({site,source:reports});assert.equal(await fs.readFile(path.join(site,'assets/report/DESIGN.md'),'utf8'),'원본 디자인 1');
+ await fs.writeFile(path.join(site,'DESIGN.md'),'원본 디자인 2');await buildSite({site,source:reports});assert.equal(await fs.readFile(path.join(site,'assets/report/DESIGN.md'),'utf8'),'원본 디자인 2');assert.equal(await fs.readFile(file,'utf8'),old);
 });

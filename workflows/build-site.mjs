@@ -57,6 +57,9 @@ export async function buildSite({site, source}) {
   const html=await fs.readFile(path.join(out,name),'utf8');
   issues.push({name,type:name.startsWith('weekly')?'weekly':'monthly',date:name.replace(/^(weekly|monthly)-|\.html$/g,''),title:html.match(/<title[^>]*>([^<]+)<\/title>/i)?.[1]||name,description:html.match(/<meta name="description" content="([^"]+)"/i)?.[1]||'게임·AI·제작의 발견을 읽어보세요.'});
  }
+ const design=await fs.readFile(path.join(site,'DESIGN.md')),designDir=path.join(site,'assets','report');
+ await fs.mkdir(designDir,{recursive:true});const temp=await fs.mkdtemp(path.join(designDir,'.design-'));
+ try{await fs.writeFile(path.join(temp,'DESIGN.md'),design);await fs.rename(path.join(temp,'DESIGN.md'),path.join(designDir,'DESIGN.md'));}finally{await fs.rm(temp,{recursive:true,force:true});}
  await fs.writeFile(path.join(site,'index.html'),renderIndex(issues),'utf8');
  console.log('Site built: '+issues.length+' published reports.');
 }

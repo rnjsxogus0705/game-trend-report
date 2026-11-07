@@ -99,7 +99,7 @@ body.weekly-editorial {
 .weekly-editorial :is(.tool-choice,.tool-visual) {background:#f0f3f8;border:0;border-radius:8px;padding:28px;margin:32px 0}
 .weekly-editorial .tool-visual h4 {font-size:23px}
 .weekly-editorial .tool-visual h5 {font-size:19px;margin-top:32px}
-.weekly-editorial :is(.tool-visual,.tool-choice) p {font-size:15px;line-height:1.85;color:#43556d}
+.weekly-editorial :is(.tool-visual,.tool-choice) p {font-size:15px;line-height:1.85;color:#43556c}
 .weekly-editorial .tool-workflow ol {gap:8px}
 .weekly-editorial .tool-workflow li {border-radius:6px;border:1px solid var(--line);padding:14px;font-size:14px}
 .weekly-editorial .tool-price-chart {border-bottom:1px solid #c6d0df;padding-bottom:24px}
@@ -309,7 +309,7 @@ html:has(body.weekly-editorial){scroll-padding-top:0}
 .weekly-editorial #side-nav{max-height:calc(100dvh - 300px)}
 /* Evidence sits with the recommendation, rather than behind an anonymous source link. */
 .weekly-editorial .top-evidence{margin:16px 0;padding:16px 20px;background:#f3f6fc;border-radius:8px}
-.weekly-editorial .top-evidence p{font-size:15px;line-height:1.85;margin:8px 0;color:#394d69}
+.weekly-editorial .top-evidence p{font-size:15px;line-height:1.85;margin:8px 0;color:#394a60}
 .weekly-editorial .top-evidence p:first-child{margin-top:0}
 .weekly-editorial .top-evidence strong{color:#193e96;font-size:13px;display:block;margin-bottom:3px}
 .weekly-editorial .top-evidence .top-why{font-weight:600;color:#223046}
@@ -378,9 +378,22 @@ html:has(body.weekly-editorial){scroll-padding-top:0}
 .weekly-editorial .skill-selection-map table{min-width:780px}.weekly-editorial #agent-skills [data-agent-skill]>h4{font-size:22px;overflow-wrap:anywhere}
 
 /* Compact summaries fit their container; wide comparison matrices retain their own minimum widths. */
-.weekly-editorial .table-scroll table:not(:has(tr > :nth-child(4))){min-width:0;width:100%;table-layout:fixed}
-.weekly-editorial .table-scroll table:not(:has(tr > :nth-child(4))) :is(th,td){overflow-wrap:anywhere}
-.weekly-editorial .table-scroll table:not(:has(tr > :nth-child(3))) :is(th,td):first-child{width:32%}
+/* Compact summaries fit their panel; comparison tables keep readable columns. */
+.weekly-editorial .table-scroll table:not(:has(tr > :nth-child(4))){min-width:0;width:100%;table-layout:auto}
+.weekly-editorial .table-scroll table:not(:has(tr > :nth-child(4))) :is(th,td){word-break:keep-all;overflow-wrap:break-word}
+@media screen{
+ .weekly-editorial .table-scroll table:has(tr>:nth-child(2)):not(:has(tr>:nth-child(3))) :is(th,td){padding:12px 8px}
+ .weekly-editorial .table-scroll table:has(tr>:nth-child(2)):not(:has(tr>:nth-child(3))) :is(th,td):first-child{width:32%;min-width:72px}
+ .weekly-editorial .table-scroll table:has(tr>:nth-child(2)):not(:has(tr>:nth-child(3))) :is(th,td):nth-child(2){width:auto}
+ .weekly-editorial .table-scroll table:has(tr>:nth-child(3)):not(:has(tr>:nth-child(4))) :is(th,td){min-width:64px;padding:10px 4px}
+ .weekly-editorial .table-scroll table:has(tr>:nth-child(4)){min-width:960px;table-layout:auto}
+ .weekly-editorial .table-scroll table:has(tr>:nth-child(4)) :is(th,td){min-width:120px;padding:12px;word-break:keep-all;overflow-wrap:anywhere}
+}
+@media screen and (max-width:600px){
+ .weekly-editorial .section-method{padding:20px 12px}
+ .weekly-editorial .table-scroll table:has(tr>:nth-child(3)):not(:has(tr>:nth-child(4))) :is(th,td){font-size:14px}
+ .weekly-editorial .table-scroll table:has(tr>:nth-child(2)):not(:has(tr>:nth-child(3))) :is(th,td){font-size:14px}
+}
 .weekly-editorial .table-scroll table:has(.error-count-cell) :is(th,td):first-child{width:72%}
 .weekly-editorial :is(.learning-section-guide,.lab-explanation,.github-selection-map){padding:22px 24px;background:#f0f4fc;border-radius:8px;margin:24px 0}
 .weekly-editorial :is(.learning-section-guide,.lab-explanation) :is(h3,h4){margin:0 0 14px;font-size:23px;line-height:1.5}
@@ -401,10 +414,10 @@ html:has(body.weekly-editorial){scroll-padding-top:0}
 .weekly-editorial .practice-prompts h3{margin:0 0 12px}
 .weekly-editorial .practice-prompt{margin:16px 0 0;border:1px solid #d8e0ec;border-radius:12px;padding:0 20px;background:#fff}
 .weekly-editorial .practice-prompt>summary{padding:18px 0;font-size:17px;font-weight:700;cursor:pointer;line-height:1.6}
-.weekly-editorial .practice-prompt pre{max-width:100%;padding:20px;background:#f0f4fa;color:#14243b;white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;line-height:1.8}
+.weekly-editorial .practice-prompt pre{word-break:keep-all;max-width:100%;padding:20px;background:#f0f4fa;color:#14243b;white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;line-height:1.8}
 .weekly-editorial .practice-prompt code{font-family:inherit;font-size:inherit;white-space:inherit}
 .weekly-editorial .practice-prompt .source-links{align-items:center}
-.weekly-editorial .practice-prompt button{font:inherit;min-height:44px;padding:9px 14px;border:1px solid #2455cb;border-radius:8px;color:#1c45a6;background:#fff;cursor:pointer}
+.weekly-editorial .practice-prompt button{font:inherit;min-height:44px;padding:9px 14px;border:1px solid #2455cb;border-radius:8px;color:#1c439e;background:#fff;cursor:pointer}
 .weekly-editorial .practice-prompt button:focus-visible,.weekly-editorial .practice-prompt summary:focus-visible{outline:3px solid #2455cb;outline-offset:3px}
 @media(max-width:600px){.weekly-editorial .practice-prompt{padding:0 14px}.weekly-editorial .practice-prompt pre{padding:14px}}
 
@@ -433,3 +446,64 @@ html:has(body.weekly-editorial){scroll-padding-top:0}
 .weekly-editorial .collection-bars li>div:first-child {display:flex;justify-content:space-between;gap:16px;font-size:16px}
 .weekly-editorial .collection-track {height:12px;background:var(--surface);margin-top:6px}
 .weekly-editorial .collection-track span {display:block;height:100%;background:var(--brand)}
+
+/* Purpose filters and tool dossiers share the report's reading surface. */
+.weekly-editorial .tool-filter{display:flex;align-items:center;flex-wrap:wrap;gap:12px 16px;margin:28px 0;padding:22px 24px;background:var(--weak);border-radius:12px}
+.weekly-editorial .tool-filter label{font-size:16px;font-weight:700;color:var(--ink)}
+.weekly-editorial .tool-filter select{min-height:48px;max-width:100%;padding:10px 36px 10px 14px;border:1px solid #a8b8d0;border-radius:8px;background:#fff;color:var(--ink);font:inherit;font-size:16px;cursor:pointer}
+.weekly-editorial .tool-filter button{min-height:48px;padding:10px 16px;border:1px solid #a8b8d0;border-radius:8px;background:#fff;color:#1c439e;font:inherit;font-size:15px;font-weight:600;line-height:1.5;cursor:pointer}
+.weekly-editorial .tool-filter button:hover{background:#e1e9fa}
+.weekly-editorial .tool-filter [role=status]{font-size:15px;font-weight:600;color:#25436b;font-variant-numeric:tabular-nums}
+.weekly-editorial .tool-filter>p{flex-basis:100%;margin:0;font-size:14px;line-height:1.7}
+.weekly-editorial .tool-reference-table{margin:32px 0}
+.weekly-editorial .tool-reference-table>summary{min-height:48px;padding:12px 0;color:#25436b;font-size:16px;font-weight:700;cursor:pointer}
+.weekly-editorial .tool-reference-table .table-scroll{margin-top:12px}
+.weekly-editorial .tool-reference-table table{min-width:920px;table-layout:auto}
+.weekly-editorial .tool-reference-table :is(th,td){min-width:110px;word-break:keep-all;overflow-wrap:normal}
+.weekly-editorial .tool-reference-table :is(th,td):first-child{min-width:180px}
+.weekly-editorial .tool-reference-table :is(th,td):last-child{min-width:190px}
+.weekly-editorial .table-scroll:focus-visible{outline:3px solid var(--action);outline-offset:4px}
+.weekly-editorial .tool-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 28px;margin:32px 0}
+.weekly-editorial .tool-feature{min-width:0;align-self:start;border-top:2px solid #aebccd;padding-top:20px;scroll-margin-top:140px}
+.weekly-editorial .tool-feature[hidden],.weekly-editorial [data-tool-row][hidden]{display:none!important}
+.weekly-editorial .tool-feature h3{margin:0 0 12px;font-size:23px}
+.weekly-editorial .tool-feature .tool-use{font-size:16px;line-height:1.8;margin:0 0 18px}
+.weekly-editorial .tool-feature figure{margin:20px 0}
+.weekly-editorial .official-media img{display:block;width:100%;height:auto;max-height:440px;object-fit:contain;background:#edf1f6;border-radius:8px}
+.weekly-editorial .tool-feature .official-media img{aspect-ratio:16/9}
+.weekly-editorial .official-media figcaption{margin-top:10px;font-size:13px;line-height:1.75}
+.weekly-editorial .tool-feature .tool-facts{display:grid;grid-template-columns:56px minmax(0,1fr);gap:8px 12px;margin:20px 0;font-size:15px;line-height:1.8}
+.weekly-editorial .tool-facts dt{font-weight:700;color:var(--ink)}
+.weekly-editorial .tool-facts dd{margin:0;min-width:0;color:var(--secondary)}
+.weekly-editorial .tool-feature .reading-detail{margin:16px 0 0;padding:0 16px}
+.weekly-editorial .tool-feature .reading-detail>summary{font-size:15px;padding:14px 0;min-height:48px}
+.weekly-editorial .tool-feature .reading-detail p{font-size:15px;line-height:1.85}
+.weekly-editorial .tool-feature .source-links{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:14px;margin:12px 0 0}
+.weekly-editorial .tool-feature .source-links a{min-height:44px;align-content:center}
+.weekly-editorial .chapter-concept{margin:28px 0 36px}
+.weekly-editorial .chapter-concept img{display:block;width:100%;height:auto;aspect-ratio:1672/941;border-radius:10px}
+.weekly-editorial .chapter-concept figcaption{margin-top:10px;font-size:14px;line-height:1.8}
+.weekly-editorial .section-method{margin:28px 0;padding:24px;background:var(--surface);border-radius:10px}
+.weekly-editorial .section-method h3{margin:0 0 14px;font-size:21px}
+.weekly-editorial .section-method p{font-size:17px}
+.weekly-editorial .media-resource{padding:28px 0;border-top:1px solid var(--line)}
+.weekly-editorial .media-resource>h3{margin:0 0 14px}
+.weekly-editorial .media-resource .media-reading-note{font-size:15px;line-height:1.85}
+.weekly-editorial .youtube-preview button:focus-visible{outline-offset:-4px;outline-color:#fff}
+.weekly-editorial .youtube-preview .video-slot:has(iframe){height:100%}
+.weekly-editorial .youtube-preview iframe{display:block;width:100%;height:100%;aspect-ratio:16/9;border:0}
+@media(max-width:1179px){.weekly-editorial .tool-detail-grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:500px){.weekly-editorial .tool-filter{padding:18px 16px;gap:12px}.weekly-editorial .tool-filter label{flex-basis:100%}.weekly-editorial .tool-filter select{flex:1;min-width:0}.weekly-editorial .tool-filter [role=status]{order:4;flex-basis:100%}.weekly-editorial .tool-filter>p{order:5}.weekly-editorial .section-method{padding:20px 12px}}
+@media print{.weekly-editorial .tool-filter{display:none}.weekly-editorial .tool-detail-grid{display:block}.weekly-editorial .tool-feature{break-inside:avoid}.weekly-editorial .tool-reference-table table{min-width:0}.weekly-editorial .tool-reference-table :is(th,td){min-width:0}}
+/* Full-plan actions use the same control language as the report toolbar. */
+.weekly-editorial .idea-card>button[data-copy-workflow]{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:10px 16px;margin:12px 0;border:1px solid #b7c3d5;border-radius:8px;background:var(--weak);color:var(--action);font:inherit;font-size:15px;font-weight:600;line-height:1.5;cursor:pointer}
+.weekly-editorial .idea-card>button[data-copy-workflow]:hover{background:#e1e9fa}
+.weekly-editorial #agent-skills pre{white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere;padding:16px}
+.weekly-editorial #ai-trends table:has(tr>:nth-child(5)){min-width:960px;table-layout:auto}
+.weekly-editorial #ai-trends table:has(tr>:nth-child(5)) :is(th,td){min-width:120px;word-break:keep-all;overflow-wrap:normal}
+@media print{.weekly-editorial #ai-trends table:has(tr>:nth-child(5)){min-width:0}.weekly-editorial #ai-trends table:has(tr>:nth-child(5)) :is(th,td){min-width:0}}
+.weekly-editorial .footer-links a{display:inline-flex;align-items:center;min-height:44px;padding:6px 0;font-size:14px}
+/* Preserve the full Markdown source while wrapping its reading view. */
+.weekly-editorial .idea-card details[data-reviewed-copy] pre{max-width:100%;max-height:560px;padding:20px;white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere;overflow:auto;tab-size:2}
+.weekly-editorial .idea-card details[data-reviewed-copy] code{white-space:inherit;word-break:inherit;overflow-wrap:inherit}
+@media print{.weekly-editorial .idea-card details[data-reviewed-copy] pre{max-height:none;overflow:visible}}

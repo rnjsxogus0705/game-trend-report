@@ -4,7 +4,9 @@
 게임마이스터고 학생이 게임·AI 동향을 읽고 제작 실험과 포트폴리오로 연결하는 한국어 리서치 아카이브다. 이 내용은 저장소 README와 사용자가 이번 작업에서 명시한 요청을 근거로 기록했다.
 
 ## Platform
-web. 빌드 도구가 필요 없는 정적 HTML·CSS·JavaScript 사이트이며 GitHub Pages와 Vercel에 배포한다.
+web
+
+빌드 도구가 필요 없는 정적 HTML·CSS·JavaScript 사이트이며 GitHub Pages와 Vercel에 배포한다.
 
 ## 이번 화면의 성공 기준
 주간 리포트는 Read 모드다. 독자는 상단 요약에서 핵심 판단과 할 일을 파악하고 주제 링크와 목차로 관심 내용을 고른다. 긴 본문은 섹션 구분·읽기 좋은 문장 폭·선택적 펼침으로 읽는다. 사실·출처·조건과 접근성은 유지하며 숫자로 검증하지 않은 성능을 순위화하지 않는다.
@@ -14,4 +16,4 @@ web. 빌드 도구가 필요 없는 정적 HTML·CSS·JavaScript 사이트이며
 
 본문·제목·표·캡션·접힌 자료·복사용 기획과 개별/합본 문서까지 한국어를 검수한다. 실제 수행한 검수만 기록한다. 제품·모델 이름과 수치·날짜·원문 링크·직접 인용·불확실성은 보존한다. 편집자와 최종 검수자는 구분한다.
 
-디자인 원본은 instructions/DESIGN.md, 주간 적용 스타일은 assets/report/weekly-editorial.css다. 새 호는 instructions/READING-AND-SCHEDULER.md와 REPORT-OUTPUT-CONTRACT.md를 함께 따른다. 생성 이미지는 설명/장식에만 사용하고 사실을 나타내는 차트와 공식 제품 화면을 대체하지 않는다.
+디자인 원본은 루트 DESIGN.md, 주간 적용 스타일은 assets/report/weekly-editorial.css다. 새 호는 instructions/READING-AND-SCHEDULER.md와 REPORT-OUTPUT-CONTRACT.md를 함께 따른다. 생성 이미지는 설명/장식에만 사용하고 사실을 나타내는 차트와 공식 제품 화면을 대체하지 않는다.
