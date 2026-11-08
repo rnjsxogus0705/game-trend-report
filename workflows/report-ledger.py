@@ -225,6 +225,15 @@ store-receipt는 실제 최종 검수·배포·전송 JSON의 바이트와 hash�
 history는 연구·패킷·검수·영수증 이력과 과거 공개 HTML/텍스트 첨부를 조회합니다.
 history --summary는 본문을 제외하고 경로·해시·이벤트 메타데이터만 조회합니다.
 queue --run은 현재 섹션별 실제 검수 상태만 간결히 조회합니다.
+record-impact는 변경 파일과 검수 재사용·무효화 결정을 원장에 보존합니다.
+impact-history는 해당 이력을 조회하며 재사용 기록은 승인 검증을 대체하지 않습니다.
+  manifest: {"changes":[{"path":"...","beforeSha256":"...","afterSha256":"..."}],
+    "reviews":[{"section":"...","kind":"ui","state":"invalidated",
+    "reviewEventId":123,"reason":"..."}]} (추가/삭제는 해당 전/후 hash에 null).
+  변경 파일 hash는 기록자의 선언이며, 원장에 보존한 manifest 자체의 hash와 구별합니다.
+  무효화는 지정한 현재 검수 이벤트를 차단하고 이후 새 검수 이벤트가 필요합니다.
+  무효화 후 재검수 evidence에는 최신 무효화 impactId를 resolvesImpactId로,
+  수행한 correction과 recheck를 남깁니다. 원래 검수 증거를 그대로 재사용할 수 없습니다.
 import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL·영상 ID·정확한
 본문 일치 후보를 표시합니다. 의미 중복과 실제 조사·검수 수행은 독립 확인합니다.
 명령별 옵션은 각 하위 명령의 --help를 확인하세요.
@@ -265,6 +274,12 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
     skill = sub.add_parser('record-skill')
     for key in ('run', 'actor', 'phase', 'skill-path', 'action', 'evidence'):
         skill.add_argument('--'+key, required=True)
+    impact = sub.add_parser('record-impact')
+    for key in ('run', 'actor', 'manifest'):
+        impact.add_argument('--'+key, required=True)
+    impact_history = sub.add_parser('impact-history')
+    impact_history.add_argument('--run', required=True)
+    impact_history.add_argument('--section')
     for cmd in ('advance', 'duplicates', 'packet', 'approved-section'):
         a = sub.add_parser(cmd)
         a.add_argument('--run', required=True)
@@ -298,12 +313,16 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
     CREATE TABLE IF NOT EXISTS receipt_records(run TEXT NOT NULL REFERENCES runs(id), kind TEXT NOT NULL, path TEXT NOT NULL, sha256 TEXT NOT NULL, document TEXT NOT NULL, actor TEXT NOT NULL, capturedAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY(run,kind,path,sha256));
     CREATE TABLE IF NOT EXISTS packet_versions(run TEXT NOT NULL, section TEXT NOT NULL, hash TEXT NOT NULL, document TEXT NOT NULL, PRIMARY KEY(run,section,hash));
     CREATE TABLE IF NOT EXISTS events(id INTEGER PRIMARY KEY, run TEXT NOT NULL REFERENCES runs(id), section TEXT, kind TEXT NOT NULL, actor TEXT NOT NULL, metadata TEXT NOT NULL DEFAULT '{}', subject TEXT NOT NULL, hash TEXT NOT NULL, evidence TEXT NOT NULL, evidence_hash TEXT NOT NULL, created TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
+    CREATE TABLE IF NOT EXISTS impact_records(id INTEGER PRIMARY KEY, run TEXT NOT NULL REFERENCES runs(id), actor TEXT NOT NULL, manifest_path TEXT NOT NULL, manifest_hash TEXT NOT NULL, document TEXT NOT NULL, created TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
+    CREATE TABLE IF NOT EXISTS impact_reviews(impact_id INTEGER NOT NULL REFERENCES impact_records(id), section TEXT NOT NULL, kind TEXT NOT NULL, state TEXT NOT NULL CHECK(state IN ('reused','invalidated')), review_event_id INTEGER NOT NULL REFERENCES events(id), reason TEXT NOT NULL, PRIMARY KEY(impact_id,section,kind));
     ''')
 
     if 'stage' not in {row['name'] for row in db.execute('PRAGMA table_info(sections)')}:
         with db: db.execute("ALTER TABLE sections ADD COLUMN stage TEXT NOT NULL DEFAULT 'prepared'")
     db.execute('CREATE UNIQUE INDEX IF NOT EXISTS sections_run_position_unique ON sections(run,position)')
     db.execute('CREATE INDEX IF NOT EXISTS events_run_section_kind ON events(run,section,kind)')
+    db.execute('CREATE INDEX IF NOT EXISTS impact_reviews_event_state ON impact_reviews(review_event_id,state)')
+    db.execute('CREATE INDEX IF NOT EXISTS impact_records_run_id ON impact_records(run,id)')
 
     def validate_ui_evidence(proof):
         design=Path.cwd()/'DESIGN.md'
@@ -356,6 +375,12 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
                 if proof.get('resolvesFailureEventId') != latest['id'] or not isinstance(proof.get('correction'),str) or not proof['correction'].strip() or not isinstance(proof.get('recheck'),str) or not proof['recheck'].strip(): raise ValueError('Failure requires correction and recheck tied to failure event')
                 prior=db.execute('SELECT evidence_hash FROM events WHERE run=? AND section IS ? AND kind=? AND id<? ORDER BY id DESC LIMIT 1',(a.run,section,kind,latest['id'])).fetchone()
                 if prior and prior['evidence_hash']==digest(evidence): raise ValueError('Prior successful evidence cannot clear failure')
+            prior=db.execute('SELECT * FROM events WHERE run=? AND section IS ? AND kind=? ORDER BY id DESC LIMIT 1',(a.run,section,kind)).fetchone()
+            if prior:
+                impact=db.execute("SELECT impact_id FROM impact_reviews WHERE review_event_id=? AND state='invalidated' ORDER BY impact_id DESC LIMIT 1",(prior['id'],)).fetchone()
+                if impact:
+                    if type(proof.get('resolvesImpactId')) is not int or proof['resolvesImpactId'] != impact['impact_id'] or not isinstance(proof.get('correction'),str) or not proof['correction'].strip() or not isinstance(proof.get('recheck'),str) or not proof['recheck'].strip(): raise ValueError('Impact invalidation requires correction and recheck tied to latest impact')
+                    if prior['evidence_hash']==digest(evidence): raise ValueError('Invalidated review evidence cannot clear impact')
         editorial_without_claims=False
         if kind in ('pre-source','pre-korean','content','korean','ui'):
             packet_record=db.execute('SELECT document FROM packet_versions WHERE run=? AND section=? AND hash=?',(a.run,section,hash_)).fetchone()
@@ -444,6 +469,7 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
         rows = db.execute('SELECT * FROM events WHERE run=? AND section IS ? AND kind IN (?,?) ORDER BY id DESC', (a.run, section_id, kind, failure_kind)).fetchall()
         for row in rows[:1]:
             if row['kind'] != kind: return False
+            if db.execute("SELECT 1 FROM impact_reviews WHERE review_event_id=? AND state='invalidated' LIMIT 1",(row['id'],)).fetchone(): return False
             try:
                 if kind == 'ui': validate_ui_evidence(json.loads(Path(row['evidence']).read_text(encoding='utf8')))
                 if row['hash'] == hash_ and row['actor'] != author and digest(row['evidence']) == row['evidence_hash'] and (kind == 'research' or (kind in ('pre-source','pre-korean') and dependency_valid(json.loads(row['metadata']),section_id,hash_) and json.loads(row['metadata']).get('skills_hash') == skills_digest()) or (Path(row['subject']).is_file() and ((kind in ('content','korean') and 'reader_hash' in json.loads(row['metadata']) and reader_hash(row['subject'],section_id) == json.loads(row['metadata'])['reader_hash']) or (not (kind in ('content','korean') and 'reader_hash' in json.loads(row['metadata'])) and section_hash(row['subject'],section_id) == json.loads(row['metadata'])['html_hash'])) and (kind != 'ui' or presentation_hash(row['subject']) == json.loads(row['metadata'])['presentation_hash']) and dependency_valid(json.loads(row['metadata']),section_id,hash_) and skills_digest() == json.loads(row['metadata'])['skills_hash'])):
@@ -578,7 +604,7 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
         return {'sectionId':item['id'],'packetSha':item['packet_hash'],'sectionSha':section_hash(ui['subject'],item['id']),'readerSha':reader,'presentationSha':presentation_hash(ui['subject']),'subjectFileSha':digest(ui['subject']),'currentPath':ui['subject'],'reviewIds':{k:v['id'] for k,v in reviews.items()},'evidenceHashes':{k:v['evidence_hash'] for k,v in reviews.items()}}
 
     with db:
-        if a.command in ('prepare','draft'): db.execute('BEGIN IMMEDIATE')
+        if a.command in ('prepare','draft','record-impact','record-failure','approve-packet','approve-section'): db.execute('BEGIN IMMEDIATE')
         if a.command == 'init':
             result = {'status': 'initialized'}
         elif a.command in ('ingest', 'import-html'):
@@ -685,6 +711,48 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
             header=skillpath.read_text(encoding='utf8').split('---',2)
             if len(header)<3 or not re.search(r'^name:\s*[\"\']?'+re.escape(skillpath.parent.name)+r'[\"\']?\s*$',header[1],re.M): raise ValueError('Skill identity mismatch')
             event(None,'skill',a.actor,str(Path(a.skill_path).resolve()),digest(a.skill_path),a.evidence,{'phase':a.phase,'action':a.action}); result = {'status':'recorded','action':a.action}
+        elif a.command == 'record-impact':
+            run()
+            manifest=Path(a.manifest).resolve(); raw=manifest.read_bytes()
+            if len(raw)>4*1024*1024: raise ValueError('Impact manifest exceeds size limit')
+            doc=json.loads(raw.decode('utf8'))
+            if not isinstance(doc,dict) or not isinstance(doc.get('changes'),list) or not doc['changes'] or not isinstance(doc.get('reviews'),list) or not doc['reviews']:
+                raise ValueError('Impact manifest requires nonempty changes and reviews arrays')
+            for change in doc['changes']:
+                if not isinstance(change,dict): raise ValueError('Invalid changed file')
+                nonempty(change.get('path'))
+                if 'beforeSha256' not in change or 'afterSha256' not in change: raise ValueError('Changed file requires before and after hashes')
+                for key in ('beforeSha256','afterSha256'):
+                    if change[key] is not None and (not isinstance(change[key],str) or not re.fullmatch(r'[0-9a-f]{64}',change[key])): raise ValueError('Invalid change hash')
+                if change['beforeSha256']==change['afterSha256']: raise ValueError('Changed file hashes must differ')
+            seen=set(); review_rows=[]
+            for review in doc['reviews']:
+                if not isinstance(review,dict): raise ValueError('Invalid impact review')
+                section_id=nonempty(review.get('section')); kind=review.get('kind'); state=review.get('state'); review_id=review.get('reviewEventId'); reason=nonempty(review.get('reason'))
+                if kind not in ('pre-source','pre-korean','content','korean','ui') or state not in ('reused','invalidated') or type(review_id) is not int or review_id<=0: raise ValueError('Invalid impact review fields')
+                if (section_id,kind) in seen: raise ValueError('Duplicate section review in impact')
+                seen.add((section_id,kind))
+                item=db.execute('SELECT * FROM sections WHERE run=? AND id=?',(a.run,section_id)).fetchone()
+                prior=db.execute('SELECT * FROM events WHERE id=? AND run=? AND section=? AND kind=?',(review_id,a.run,section_id,kind)).fetchone()
+                latest=db.execute('SELECT id FROM events WHERE run=? AND section=? AND kind IN (?,?) ORDER BY id DESC LIMIT 1',(a.run,section_id,kind,kind.removeprefix('pre-')+'-blocked')).fetchone()
+                if not item or item['imported'] or not prior or not latest or latest['id']!=review_id: raise ValueError('Impact must reference latest matching review in this run')
+                if state=='reused' and (not item['packet'] or not Path(item['packet']).is_file() or digest(item['packet'])!=item['packet_hash'] or not valid_review(section_id,kind,item['packet_hash'],item['author'])):
+                    raise ValueError('Cannot reuse stale, invalidated, or missing review')
+                review_rows.append((section_id,kind,state,review_id,reason))
+            checksum=hashlib.sha256(raw).hexdigest()
+            cursor=db.execute('INSERT INTO impact_records(run,actor,manifest_path,manifest_hash,document) VALUES(?,?,?,?,?)',(a.run,identity(a.actor),str(manifest),checksum,raw.decode('utf8')))
+            db.executemany('INSERT INTO impact_reviews(impact_id,section,kind,state,review_event_id,reason) VALUES(?,?,?,?,?,?)',[(cursor.lastrowid,*row) for row in review_rows])
+            result={'run':a.run,'impactId':cursor.lastrowid,'manifestSha256':checksum,'status':'recorded'}
+        elif a.command == 'impact-history':
+            run()
+            records=db.execute('''SELECT i.* FROM impact_records i WHERE i.run=? AND (? IS NULL OR EXISTS
+                (SELECT 1 FROM impact_reviews r WHERE r.impact_id=i.id AND r.section=?)) ORDER BY i.id''',(a.run,a.section,a.section)).fetchall()
+            impacts=[]
+            for record in records:
+                document=json.loads(record['document'])
+                reviews=[{'section':r['section'],'kind':r['kind'],'state':r['state'],'reviewEventId':r['review_event_id'],'reason':r['reason']} for r in db.execute('SELECT * FROM impact_reviews WHERE impact_id=? ORDER BY rowid',(record['id'],))]
+                impacts.append({'id':record['id'],'actor':record['actor'],'manifestPath':record['manifest_path'],'manifestSha256':record['manifest_hash'],'recordedAt':record['created'],'changes':document['changes'],'reviews':reviews})
+            result={'run':a.run,'impacts':impacts,'note':'Impact decisions are recorded history; reuse does not replace current approval checks. Hashes in changes are reported, not independently verified file snapshots.'}
         elif a.command == 'packet':
             r=run(); s=section(); errors=issues(r)
             if s['imported'] or s['stage'] != 'drafted': errors.append('Section must be drafted')
@@ -731,7 +799,7 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
                 except OSError: fresh=False
                 valid={kind:bool(global_ready and fresh and item['stage']=='drafted' and valid_review(item['id'],kind,item['packet_hash'],item['author'])) for kind in ('content','korean','ui')}
                 valid_pre={kind:bool(global_ready and fresh and valid_review(item['id'],'pre-'+kind,item['packet_hash'],item['author'])) for kind in ('source','korean')}
-                ready=all(valid.values()); stage='historical' if item['imported'] else ('complete' if ready else item['stage'])
+                ready=all(valid.values()) and all(valid_pre.values()); stage='historical' if item['imported'] else ('complete' if ready else item['stage'])
                 items.append({'sectionId':item['id'],'state':stage,'packetKey':item['packet_hash'],'preReview':valid_pre,'review':valid,'needsRepair':not ready})
             active=[item for item in items if item['state']!='historical']
             result={'run':a.run,'globalBlockers':global_errors,'summary':{'active':len(active),'complete':sum(item['state']=='complete' for item in active),'needsRepair':sum(item['needsRepair'] for item in active),'missingReviews':{kind:sum(not item['review'][kind] for item in active) for kind in ('content','korean','ui')}},'sections':items}
@@ -757,7 +825,7 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
                     if repeated:
                         reviews=db.execute("SELECT evidence FROM events WHERE run=? AND section=? AND kind='content' AND hash=? ORDER BY id DESC LIMIT 1",(a.run,s['id'],current)).fetchone()
                         if not reviews or not valid_review(s['id'],'content',current,s['author']) or not str(json.loads(Path(reviews['evidence']).read_text(encoding='utf8')).get('repeatReason','')).strip(): errors.append(s['id']+': repeat reason missing')
-                for kind in ('content','korean','ui'):
+                for kind in ('pre-source','pre-korean','content','korean','ui'):
                     if not valid_review(s['id'],kind,current,s['author']): errors.append(s['id']+': missing '+kind+' review')
             if not rows: errors.append('No sections')
             if a.command == 'check':

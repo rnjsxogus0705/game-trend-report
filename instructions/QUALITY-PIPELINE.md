@@ -20,6 +20,14 @@
 
 수정 요청마다 비공개 작업 증거에 변경 파일과 전후 hash, 영향 섹션·기능, 무효화된 검수와 재검수 대상, 재사용한 승인과 원본 증거, 판단 이유를 간결히 기록한다. 해당 검수의 기존 SQLite evidence에 경로와 hash를 연결한다. 재사용은 새로 검수한 것으로 기록하지 않는다. 실제 시작·종료 시각이 있는 작업만 구간과 대기 시간을 구분해 측정하고, 후속 수정 소요시간을 주간호 전체 제작시간과 비교하지 않는다. 이 기록은 기존 승인 게이트를 우회하는 별도 승인 상태가 아니다.
 
+변경 영향 이력은 `record-impact --run RUN --actor ACTOR --manifest 경로`로 SQLite에 기록하고 `impact-history --run RUN [--section 섹션ID]`로 조회한다. 비공개 manifest는 다음 구조를 사용한다. 이벤트 ID는 해당 실행의 `history --summary`에서 실제로 확인한다.
+
+```json
+{"changes":[{"path":"변경된 파일 경로","beforeSha256":"변경 전 SHA256","afterSha256":"변경 후 SHA256"}],"reviews":[{"section":"섹션ID","kind":"ui","state":"invalidated","reviewEventId":123,"reason":"영향과 판단 이유"},{"section":"다른 섹션ID","kind":"content","state":"reused","reviewEventId":124,"reason":"입력과 증거가 유효한 이유"}]}
+```
+
+`kind`는 `pre-source`, `pre-korean`, `content`, `korean`, `ui` 중 하나다. 파일 생성·삭제 시 해당 이전·이후 해시는 `null`로 기록한다. `reused`는 동일 실행의 최신 검수와 현재 패킷·계약·증거가 유효할 때만 기록되며 새 검수가 아니다. `invalidated`는 지정한 검수 이벤트를 실제 승인 게이트에서 차단한다. 수정 후 독립 재검수 증거에 해당 `resolvesImpactId`와 `correction`, `recheck`를 남겨 새 이벤트를 만들어야 한다. 이전 증거를 그대로 재사용해 해제할 수 없다. 이력은 기록 당시의 결정이며 현재 상태는 `queue`와 승인 게이트에서 확인한다. manifest 자체는 원장에 보관되지만 전후 파일 해시는 입력된 값이므로 실제 바이트와 별도로 대조한다.
+
 독자용 본문에서는 사용자 지정 여부, 내부 조사·중복 집계·검수 절차와 작업자 이력 등 제작 과정을 설명하지 않는다. 출처와 실제 선정 이유는 유지하고, 사용자가 판단하는 데 필요한 미실행·미시청 등 한계는 관련 목록 앞이나 항목에 간결하게 표시한다. 상세 이력은 SQLite와 검수 원장에 둔다. 내용 검수자는 각 섹션에서 이 기준을 확인한다.
 
 ## 미디어 계획과 실제 화면 검수
