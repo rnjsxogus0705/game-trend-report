@@ -9,6 +9,7 @@ from pathlib import Path
 import re
 import sqlite3
 import sys
+import time
 import unicodedata
 import math
 import os
@@ -468,6 +469,9 @@ store-receipt는 실제 최종 검수·배포·전송 JSON의 바이트와 hash�
 승인이나 전송으로 해석하지 않으며 기존 snapshot 게이트를 변경하지 않습니다.
 history는 연구·패킷·검수·영수증 이력과 과거 공개 HTML/텍스트 첨부를 조회합니다.
 history --summary는 본문을 제외하고 경로·해시·이벤트 메타데이터만 조회합니다.
+timing-start/finish는 실제 기록 시각과 섹션·수행자·상태·결과 및 선택적 증거 hash를 저장합니다.
+timing-report는 미종료 구간, 병렬 구간 합계와 전체 벽시계 범위를 구분합니다.
+미분리 대기 시간은 구간에 포함되며 시간 기록은 실제 검수·안정성·승인의 증거가 아닙니다.
 queue --run은 현재 섹션별 실제 검수 상태만 간결히 조회합니다.
 capture-impact-baseline은 승인된 원본 트리와 목록·스냅샷을 대조해 기준을 고정합니다.
 analyze-impact 및 record-impact-auto는 기준과 현재 전체 트리의 바이트를 비교합니다.
@@ -552,6 +556,22 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
     sub.choices['check'].add_argument('--json', action='store_true')
     sub.choices['check'].add_argument('--snapshot')
     sub.choices['check'].add_argument('--prior-dir', default='reports')
+    timing_init=sub.add_parser('timing-init')
+    for key in ('run','issue-date'): timing_init.add_argument('--'+key,required=True)
+    timing_close=sub.add_parser('timing-close')
+    timing_close.add_argument('--run',required=True)
+    timing_close.add_argument('--html',required=True)
+    timing_start=sub.add_parser('timing-start')
+    for key in ('run','issue-date','section','actor'): timing_start.add_argument('--'+key,required=True)
+    timing_start.add_argument('--phase',required=True,choices=['research','image','production','review','change-review','correction'])
+    timing_start.add_argument('--related-id',type=int)
+    timing_finish=sub.add_parser('timing-finish')
+    for key in ('run','id','actor','finding'): timing_finish.add_argument('--'+key,required=True)
+    timing_finish.add_argument('--status',required=True,choices=['completed','failed','blocked'])
+    timing_finish.add_argument('--evidence')
+    timing_report=sub.add_parser('timing-report')
+    timing_report.add_argument('--run',required=True)
+    timing_report.add_argument('--section')
     a = p.parse_args()
     dbpath = Path(a.db)
     dbpath.parent.mkdir(parents=True, exist_ok=True)
@@ -574,14 +594,22 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
     CREATE TABLE IF NOT EXISTS impact_records(id INTEGER PRIMARY KEY, run TEXT NOT NULL REFERENCES runs(id), actor TEXT NOT NULL, manifest_path TEXT NOT NULL, manifest_hash TEXT NOT NULL, document TEXT NOT NULL, created TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
     CREATE TABLE IF NOT EXISTS impact_reviews(impact_id INTEGER NOT NULL REFERENCES impact_records(id), section TEXT NOT NULL, kind TEXT NOT NULL, state TEXT NOT NULL CHECK(state IN ('reused','invalidated')), review_event_id INTEGER NOT NULL REFERENCES events(id), reason TEXT NOT NULL, PRIMARY KEY(impact_id,section,kind));
     CREATE TABLE IF NOT EXISTS impact_baselines(id INTEGER PRIMARY KEY, run TEXT NOT NULL REFERENCES runs(id), snapshot_dir TEXT NOT NULL, inventory_hash TEXT NOT NULL, document TEXT NOT NULL, created TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
+    CREATE TABLE IF NOT EXISTS timing_intervals(id INTEGER PRIMARY KEY, run TEXT NOT NULL REFERENCES runs(id), section TEXT NOT NULL, phase TEXT NOT NULL, actor TEXT NOT NULL, started_ns INTEGER NOT NULL, finished_ns INTEGER, status TEXT NOT NULL DEFAULT 'running', finding TEXT, evidence_path TEXT, evidence_hash TEXT, related_id INTEGER REFERENCES timing_intervals(id));
+    CREATE TABLE IF NOT EXISTS timing_runs(run TEXT PRIMARY KEY REFERENCES runs(id), started_ns INTEGER NOT NULL, finished_ns INTEGER, html_path TEXT, html_hash TEXT);
     ''')
 
     if 'stage' not in {row['name'] for row in db.execute('PRAGMA table_info(sections)')}:
         with db: db.execute("ALTER TABLE sections ADD COLUMN stage TEXT NOT NULL DEFAULT 'prepared'")
+    if 'related_id' not in {row['name'] for row in db.execute('PRAGMA table_info(timing_intervals)')}:
+        with db: db.execute('ALTER TABLE timing_intervals ADD COLUMN related_id INTEGER REFERENCES timing_intervals(id)')
+    for column in ('html_path','html_hash'):
+        if column not in {row['name'] for row in db.execute('PRAGMA table_info(timing_runs)')}:
+            with db: db.execute('ALTER TABLE timing_runs ADD COLUMN '+column+' TEXT')
     db.execute('CREATE UNIQUE INDEX IF NOT EXISTS sections_run_position_unique ON sections(run,position)')
     db.execute('CREATE INDEX IF NOT EXISTS events_run_section_kind ON events(run,section,kind)')
     db.execute('CREATE INDEX IF NOT EXISTS impact_reviews_event_state ON impact_reviews(review_event_id,state)')
     db.execute('CREATE INDEX IF NOT EXISTS impact_records_run_id ON impact_records(run,id)')
+    db.execute('CREATE INDEX IF NOT EXISTS timing_run_section ON timing_intervals(run,section,id)')
 
     def validate_ui_evidence(proof):
         design=Path.cwd()/'DESIGN.md'
@@ -691,6 +719,23 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
         row = db.execute('SELECT * FROM sections WHERE run=? AND id=?', (a.run, a.section)).fetchone()
         if not row: raise ValueError('Unknown section')
         return row
+
+    def timing_coverage(intervals, section_ids):
+        required={'research','image','production','review'}
+        missing={sid:sorted(required-{x['phase'] for x in intervals if x['section']==sid and x['status']=='completed'}) for sid in section_ids}
+        missing={sid:phases for sid,phases in missing.items() if phases}
+        by_id={x['id']:x for x in intervals}
+        def has_recheck(failure):
+            for candidate in intervals:
+                if candidate['status']!='completed' or candidate['phase'] not in ('review','change-review'): continue
+                current=candidate; corrected=False; seen=set()
+                while current.get('related_id') in by_id and current['id'] not in seen:
+                    seen.add(current['id']); current=by_id[current['related_id']]
+                    if current['id']==failure['id'] and corrected: return True
+                    corrected |= current['status']=='completed' and current['phase']=='correction'
+            return False
+        unresolved=[x['id'] for x in intervals if x['status'] in ('failed','blocked') and not has_recheck(x)]
+        return missing,unresolved
 
     def skills_digest():
         rows=db.execute("SELECT subject, hash FROM events WHERE run=? AND kind='skill' ORDER BY subject,id",(a.run,)).fetchall()
@@ -981,9 +1026,78 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
         return {'sectionId':item['id'],'packetSha':item['packet_hash'],'sectionSha':section_hash(ui['subject'],item['id']),'readerSha':reader,'presentationSha':presentation_hash(ui['subject']),'subjectFileSha':digest(ui['subject']),'currentPath':ui['subject'],'reviewIds':{k:v['id'] for k,v in reviews.items()},'evidenceHashes':{k:v['evidence_hash'] for k,v in reviews.items()}}
 
     with db:
-        if a.command in ('migrate-correction-materials','prepare','draft','record-impact','capture-impact-baseline','record-impact-auto','record-failure','approve-packet','approve-section'): db.execute('BEGIN IMMEDIATE')
+        if a.command in ('migrate-correction-materials','prepare','draft','record-impact','capture-impact-baseline','record-impact-auto','record-failure','approve-packet','approve-section','timing-init','timing-close','timing-start','timing-finish'): db.execute('BEGIN IMMEDIATE')
         if a.command == 'init':
             result = {'status': 'initialized'}
+        elif a.command == 'timing-init':
+            datetime.date.fromisoformat(a.issue_date)
+            if not re.fullmatch(r'[a-z0-9][a-z0-9-]{0,63}',a.run): raise ValueError('Unsafe run ID')
+            existing=db.execute('SELECT issue_date FROM runs WHERE id=?',(a.run,)).fetchone()
+            if existing and existing['issue_date']!=a.issue_date: raise ValueError('Run date mismatch')
+            db.execute('INSERT OR IGNORE INTO runs(id,issue_date) VALUES(?,?)',(a.run,a.issue_date))
+            db.execute('INSERT OR IGNORE INTO timing_runs(run,started_ns) VALUES(?,?)',(a.run,time.time_ns()))
+            result={'run':a.run,'issueDate':a.issue_date,'status':'initialized-not-approved','startedNs':db.execute('SELECT started_ns FROM timing_runs WHERE run=?',(a.run,)).fetchone()['started_ns']}
+        elif a.command == 'timing-close':
+            run(); record=db.execute('SELECT * FROM timing_runs WHERE run=?',(a.run,)).fetchone()
+            if not record: raise ValueError('Timing run not initialized')
+            if record['finished_ns'] is not None: raise ValueError('Timing run already closed')
+            if db.execute("SELECT 1 FROM timing_intervals WHERE run=? AND status='running'",(a.run,)).fetchone(): raise ValueError('Timing intervals still running')
+            html=Path(a.html).resolve()
+            if html.name!='weekly-'+run()['issue_date']+'.html': raise ValueError('HTML filename and issue date differ')
+            parser=Sections(); parser.feed(html.read_text(encoding='utf8'))
+            expected=[item['id'] for item in parser.sections]
+            actual=[item['id'] for item in db.execute('SELECT id FROM sections WHERE run=? AND imported=0',(a.run,))]
+            if not expected or len(set(expected))!=len(expected) or set(expected)!=set(actual): raise ValueError('HTML section coverage differs from timing ledger')
+            intervals=[dict(x) for x in db.execute('SELECT * FROM timing_intervals WHERE run=?',(a.run,))]
+            missing,unresolved=timing_coverage(intervals,expected)
+            if missing or unresolved: raise ValueError('Timing coverage incomplete: '+json.dumps({'missingCompletedPhases':missing,'unresolvedFailureIds':unresolved},ensure_ascii=False))
+            finished=time.time_ns()
+            if finished<record['started_ns']: raise ValueError('System clock moved backwards; run remains open')
+            html_hash=digest(html)
+            db.execute('UPDATE timing_runs SET finished_ns=?,html_path=?,html_hash=? WHERE run=?',(finished,str(html),html_hash,a.run))
+            result={'run':a.run,'status':'closed-not-approved','elapsedSeconds':(finished-record['started_ns'])/1e9,'htmlSha256':html_hash}
+        elif a.command == 'timing-start':
+            datetime.date.fromisoformat(a.issue_date)
+            nonempty(a.run); nonempty(a.section); actor=identity(a.actor)
+            if run()['issue_date']!=a.issue_date: raise ValueError('Run date mismatch')
+            run_timer=db.execute('SELECT * FROM timing_runs WHERE run=?',(a.run,)).fetchone()
+            if not run_timer or run_timer['finished_ns'] is not None: raise ValueError('Timing run not initialized or already closed')
+            if a.related_id is not None:
+                related=db.execute('SELECT run,section FROM timing_intervals WHERE id=?',(a.related_id,)).fetchone()
+                if not related or related['run']!=a.run or related['section']!=a.section: raise ValueError('Related interval must belong to same run and section')
+            started=time.time_ns()
+            cursor=db.execute('INSERT INTO timing_intervals(run,section,phase,actor,started_ns,related_id) VALUES(?,?,?,?,?,?)',(a.run,a.section,a.phase,actor,started,a.related_id))
+            result={'id':cursor.lastrowid,'run':a.run,'section':a.section,'phase':a.phase,'actor':actor,'status':'running','startedNs':started,'relatedId':a.related_id}
+        elif a.command == 'timing-finish':
+            run(); actor=identity(a.actor); nonempty(a.finding)
+            row=db.execute('SELECT * FROM timing_intervals WHERE run=? AND id=?',(a.run,a.id)).fetchone()
+            if not row: raise ValueError('Unknown timing interval')
+            if row['actor']!=actor: raise ValueError('Timing interval actor mismatch')
+            if row['status']!='running': raise ValueError('Timing interval already finished')
+            finished=time.time_ns()
+            if finished<row['started_ns']: raise ValueError('System clock moved backwards; interval remains running')
+            evidence=str(Path(a.evidence).resolve()) if a.evidence else None
+            evidence_hash=digest(evidence) if evidence else None
+            db.execute('UPDATE timing_intervals SET finished_ns=?,status=?,finding=?,evidence_path=?,evidence_hash=? WHERE id=?',(finished,a.status,a.finding,evidence,evidence_hash,row['id']))
+            result={'id':row['id'],'status':a.status,'elapsedSeconds':(finished-row['started_ns'])/1e9,'evidenceSha256':evidence_hash}
+        elif a.command == 'timing-report':
+            run(); query='SELECT * FROM timing_intervals WHERE run=?'; params=[a.run]
+            if a.section: query+=' AND section=?'; params.append(a.section)
+            rows=db.execute(query+' ORDER BY id',params).fetchall()
+            intervals=[]
+            for row in rows:
+                item=dict(row)
+                item['elapsedSeconds']=None if row['finished_ns'] is None else (row['finished_ns']-row['started_ns'])/1e9
+                item['evidenceCurrent']=None if not row['evidence_path'] else Path(row['evidence_path']).is_file() and digest(row['evidence_path'])==row['evidence_hash']
+                intervals.append(item)
+            active=sum(item['status']=='running' for item in intervals)
+            elapsed=None if not intervals or active else (max(item['finished_ns'] for item in intervals)-min(item['started_ns'] for item in intervals))/1e9
+            timer=db.execute('SELECT * FROM timing_runs WHERE run=?',(a.run,)).fetchone()
+            section_ids=[x['id'] for x in db.execute('SELECT id FROM sections WHERE run=? AND imported=0 ORDER BY position',(a.run,)) if not a.section or x['id']==a.section]
+            missing,unresolved=timing_coverage(intervals,section_ids)
+            run_elapsed=None if not timer or timer['finished_ns'] is None else (timer['finished_ns']-timer['started_ns'])/1e9
+            html_current=None if not timer or not timer['html_path'] else Path(timer['html_path']).is_file() and digest(timer['html_path'])==timer['html_hash']
+            result={'run':a.run,'section':a.section,'intervals':intervals,'summary':{'count':len(intervals),'running':active,'completed':sum(x['status']=='completed' for x in intervals),'failed':sum(x['status']=='failed' for x in intervals),'blocked':sum(x['status']=='blocked' for x in intervals),'sumFinishedSeconds':sum(x['elapsedSeconds'] or 0 for x in intervals),'wallSpanSeconds':elapsed,'runElapsedSeconds':run_elapsed,'closedHtmlPath':timer['html_path'] if timer else None,'closedHtmlSha256':timer['html_hash'] if timer else None,'closedHtmlCurrent':html_current,'missingCompletedPhases':missing,'unresolvedFailureIds':unresolved},'note':'Recorded clock bounds include unseparated waiting; parallel interval sums can overlap. Missing phase coverage only includes prepared sections. Failure links indicate recorded corrections/rechecks, not independently verified resolution. A timing record is not evidence of work, stability, or approval.'}
         elif a.command == 'migrate-correction-materials':
             r=run()
             if not r['research'] or digest(r['research']) != r['research_hash']: raise ValueError('Current research missing or changed')

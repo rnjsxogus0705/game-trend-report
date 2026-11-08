@@ -12,6 +12,29 @@
 
 이력에는 단계, 대상 섹션, 수행자와 독립성, 스킬 경로·hash·적용 내용, 입력과 산출물 hash, 관찰·실패·수정·재검수, 증거 경로와 시각을 남긴다. 민감한 자료와 비공개 원장은 공개 웹 자산에 넣지 않는다. 세부 CLI 사용은 실제 구현의 도움말과 테스트를 기준으로 한다.
 
+### 병렬 작업 시간과 안정성 기록
+
+조사 전에 `timing-init --run RUN --issue-date YYYY-MM-DD`로 시간 기록용 실행을 등록한다. 각 섹션의 조사(`research`), 이미지 생성(`image`), 제작(`production`), 독립 검수(`review`), 변경분 검수(`change-review`), 수정(`correction`)은 실제 시작할 때 `timing-start`로 SQLite에 별도 구간을 열고, 끝나거나 실패·차단되면 `timing-finish`로 실제 결과와 원인·증거를 남긴다. 각 구간은 run·발행일·섹션·수행자에 연결한다. 재시도와 재검수는 이전 기록을 덮어쓰지 않고 새 구간으로 기록하며 발견 사항, 영향 범위, 수정 결과와 관련 검수 증거를 연결한다. 해당 단계가 아직 진행 중이거나 수행하지 않은 경우 완료로 기록하지 않는다. 자세한 옵션은 `python3 workflows/report-ledger.py timing-start --help`, `timing-finish --help`, `timing-report --help`를 따른다.
+
+기록 예시(모든 값은 해당 실행에서 실제 확인한 값으로 바꾼다):
+
+```sh
+python3 workflows/report-ledger.py timing-init --run RUN --issue-date YYYY-MM-DD
+python3 workflows/report-ledger.py timing-start --run RUN --issue-date YYYY-MM-DD --section 섹션ID --phase research --actor 수행자
+python3 workflows/report-ledger.py timing-finish --run RUN --id 반환된ID --actor 수행자 --status failed --finding 실제실패원인
+python3 workflows/report-ledger.py timing-start --run RUN --issue-date YYYY-MM-DD --section 섹션ID --phase correction --actor 수행자 --related-id 실패구간ID
+python3 workflows/report-ledger.py timing-finish --run RUN --id 수정구간ID --actor 수행자 --status completed --finding 실제수정결과 --evidence 실제증거경로
+python3 workflows/report-ledger.py timing-start --run RUN --issue-date YYYY-MM-DD --section 섹션ID --phase change-review --actor 독립검수자 --related-id 수정구간ID
+python3 workflows/report-ledger.py timing-finish --run RUN --id 재검수구간ID --actor 독립검수자 --status completed --finding 실제재검수결과 --evidence 실제검수증거경로
+python3 workflows/report-ledger.py timing-report --run RUN --section 섹션ID
+```
+
+조정자는 `timing-init`이 저장한 run 시작 시각을 보존하고 제작·필수 검수·승인 범위의 배포와 전송까지 실제 끝낸 뒤 `timing-close --run RUN --html reports/weekly-YYYY-MM-DD.html`으로 종료한다. 진행 중 구간이나 HTML과 등록 섹션 불일치, 필수 단계 기록 누락, 해결되지 않은 실패·차단이 있으면 종료할 수 없으므로 실제 상태를 확인해 수정·재검수한다. 종료 전 `timing-report --run RUN`의 `missingCompletedPhases`와 원장에 등록된 비과거 섹션 및 해당 호의 전체 섹션 목록을 별도로 대조한다. 이 조회는 미등록 섹션을 누락 목록에 포함하지 않으므로 목록 대조를 생략하지 않는다. `timing-close`는 전달한 실제 HTML의 섹션과 등록 목록 및 단계·실패 연결도 대조한다. 끝난 뒤 다시 조회한 `summary.runElapsedSeconds`는 `timing-init`부터 `timing-close`까지의 관측 경과시간이다. 초기 동기화 등 등록 전 시간이 있다면 포함되지 않으므로 전체 작업 시간이라고 단정하지 않는다. 종료 전에는 null이며 추정하지 않는다. 기존 승인·최종 검수 게이트는 시간 기록과 별도로 유지한다.
+
+실패·차단은 실제 상태와 원인을 기록한다. 수정·재검수 구간은 `timing-start ... --related-id 이전구간ID`로 같은 run·섹션의 직전 실패 또는 수정 구간에 연결하고, `finding`에 관련 영향 이벤트 ID와 조치·재검수 결과를 남긴다. 확인 가능한 증거는 `--evidence`로 연결한다. 대기 전 구간을 끝내고 실제 작업이 재개되면 새 구간을 연다. 구분하지 못한 대기는 해당 구간에 포함되며 자동 판별되지 않는다. 종료하지 않은 구간은 `running`이고 정확한 총 시간은 미확정이다.
+
+조정자는 `timing-report --run RUN`과 `queue`, `impact-history`를 사용해 섹션별 상태·실패·차단·재시도·수정·재검수를 살피고, 발견한 문제를 담당자에게 배정하여 영향 범위만 보완한 후 독립 재검수한다. 공통 변경이나 범위가 불확실한 경우 관련 범위를 확대한다. 최종 작업 이력에 실제 run 시작·종료가 확인된 경우 그 전체 경과시간과 단계별 구간·대기/차단 및 재시도, 재사용된 승인과 미해결 한계를 요약한다. 첫 섹션 구간부터 마지막 섹션 구간까지의 범위만으로 전체 run 시간이 확인됐다고 쓰지 않는다. 병렬 구간의 합산은 전체 경과시간이 아니며, 측정 구간에 감시되지 않은 대기가 포함될 수 있다. 대기와 실제 작업을 구분할 근거가 없으면 미확인으로 표시한다. 이전 실행과 비교할 때 대상·측정 범위가 다르면 속도 개선률을 단정하지 않는다. 이 시간 기록은 실제 조사·생성·검수 근거나 승인 게이트를 대체하지 않는다.
+
 ### 변경 영향과 재검수
 
 조정자는 조립 전 공통 shell·디자인·형식 참조를 고정하고, SQLite의 현재 패킷과 queue 요약으로 승인·차단·담당자를 확인한다. 원문·주장·한국어 변경은 해당 자료와 섹션의 내용 및 영향을 받는 UI를, 섹션 마크업·미디어 변경은 해당 섹션의 내용 및 UI를 다시 검수한다. 공통 CSS·스크립트·shell 변경은 실제 영향을 받는 모든 섹션과 공통 기능을 다시 검수한다. 영향 범위를 특정할 근거가 없으면 전체 관련 범위를 확인한다. 다른 섹션의 독립 승인과 증거가 입력·계약·스타일·산출물 hash에 여전히 일치하면 그 승인 이력을 재사용한다. 이전 호의 승인으로 새로운 호의 자료 검수를 대체하지 않는다.
