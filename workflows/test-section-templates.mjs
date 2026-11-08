@@ -81,6 +81,10 @@ test('섹션 요약·그림 템플릿은 읽을 수 있는 텍스트와 이미�
  assert.equal(elements.filter(n=>n.tag==='li').length,3);
  assert.match(catalog.shared.sectionVisualContract.shape.points,/2~3/);
  assert.match(catalog.shared.sectionVisualContract.status,/미승인/);
+ for(const section of catalog.sections)assert.match(section.media.generated,/image_gen/,section.id);
+ assert.match(catalog.shared.sectionVisualContract.generation,/실제 호출/);
+ assert.match(catalog.shared.sectionVisualContract.generation,/독립 검수/);
+ assert.deepEqual(Object.keys(catalog.shared.sectionVisualContract.shape.image.generationEvidence).sort(),['path','sha256']);
  const ref=JSON.parse(fs.readFileSync(new URL('../.agents/skills/weekly-game-report/references/report-format-reference.json',import.meta.url),'utf8'));
  assert.deepEqual(ref.newIssuePresentationAssets.css,['assets/report/reading-experience.css','assets/report/section-infographic.css','assets/report/report-theme.css','assets/report/report-search.css']);
  assert.deepEqual(ref.newIssuePresentationAssets.css,catalog.shared.assetContract.css);

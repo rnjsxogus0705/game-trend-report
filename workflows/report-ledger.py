@@ -116,6 +116,36 @@ def section_media_hash(path, section_id):
     return hashlib.sha256(json.dumps(assets,ensure_ascii=False,sort_keys=True,separators=(',',':')).encode()).hexdigest()
 
 
+def validate_visual_provenance(packet, html_path, section_id):
+    """Bind recorded generation evidence to the actual section image, without asserting authenticity."""
+    image=packet['candidate']['sectionVisual']['image']
+    record=image.get('generationEvidence')
+    if not isinstance(record,dict) or not isinstance(record.get('path'),str) or not re.fullmatch(r'[a-f0-9]{64}',str(record.get('sha256',''))):
+        raise ValueError('Section image requires generationEvidence path and sha256')
+    root=Path.cwd().resolve()
+    def local_file(value):
+        if not isinstance(value,str) or not value.strip(): raise ValueError('Generation evidence path required')
+        file=(root/value).resolve()
+        if not file.is_relative_to(root) or not file.is_file(): raise ValueError('Generation evidence must be a local repository file')
+        return file
+    manifest=local_file(record['path'])
+    if digest(manifest)!=record['sha256']: raise ValueError('Generation evidence hash mismatch')
+    proof=json.loads(manifest.read_text(encoding='utf8'))
+    if not isinstance(proof,dict) or proof.get('generator')!='image_gen': raise ValueError('Generation evidence must identify image_gen')
+    evidence=local_file(proof.get('toolEvidencePath'))
+    if not re.fullmatch(r'[a-f0-9]{64}',str(proof.get('toolEvidenceSha256',''))) or digest(evidence)!=proof['toolEvidenceSha256']:
+        raise ValueError('Generation tool evidence hash mismatch')
+    html=Path(html_path).resolve(); section_parser=Sections(); section_parser.feed(html.read_text(encoding='utf8'))
+    sections=[s for s in section_parser.sections if s['id']==section_id]
+    if len(sections)!=1: raise ValueError('Missing or duplicate HTML section')
+    media=SectionMedia(); media.feed(''.join(sections[0]['markup']))
+    if image['src'] not in media.urls: raise ValueError('Generated section image missing from HTML')
+    target=(html.parent/image['src']).resolve()
+    if not target.is_relative_to(root) or digest(target)!=proof.get('outputSha256'):
+        raise ValueError('Generated section image hash mismatch')
+    return record['sha256']
+
+
 def research_sources(document, issue_date, run_id):
     """Keep post-publication evidence distinct and bind it to the actual correction context."""
     weekly=document.get('sources')
@@ -412,6 +442,9 @@ def main():
     2026-11-14 이후 호의 candidate.sectionVisual은 필수이며 title, points(2~3개),
     image(src, alt, caption, width, height)를 담고
     원본 packet hash와 함께 저장됩니다. visuals 명령은 승인과 별개로 조회합니다.
+    이 호의 image.generationEvidence는 생성 기록 JSON의 path와 sha256을 담습니다.
+    UI 승인과 재사용 시 기록·도구 증거·실제 이미지의 해시를 대조합니다.
+    실행 증거 형식과 독립 확인: references/image-generation-evidence.md.
     lead는 기본 접힘에서도 보이는 판단 요약입니다. practice는 heading/body/constraint를
     사용하며, 복사 가능한 실제 AI 요청문은 prompt에 넣습니다. prompt가 없으면
     복사 버튼을 만들지 않습니다. table은 caption/columns/동일 길이 rows로 구성합니다.
@@ -734,6 +767,8 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
                     validate_ui_evidence(proof)
                     media_hash=json.loads(row['metadata']).get('media_hash')
                     if media_hash is None or media_hash != section_media_hash(row['subject'],section_id): return False
+                    if current['issue_date'] >= '2026-11-14':
+                        if validate_visual_provenance(json.loads(packet_record['document']),row['subject'],section_id) != json.loads(row['metadata']).get('generation_evidence_hash'): return False
                 if row['hash'] == hash_ and row['actor'] != author and digest(row['evidence']) == row['evidence_hash'] and (kind == 'research' or (kind in ('pre-source','pre-korean') and dependency_valid(json.loads(row['metadata']),section_id,hash_) and json.loads(row['metadata']).get('skills_hash') == skills_digest()) or (Path(row['subject']).is_file() and ((kind in ('content','korean') and 'reader_hash' in json.loads(row['metadata']) and reader_hash(row['subject'],section_id) == json.loads(row['metadata'])['reader_hash']) or (not (kind in ('content','korean') and 'reader_hash' in json.loads(row['metadata'])) and section_hash(row['subject'],section_id) == json.loads(row['metadata'])['html_hash'])) and (kind != 'ui' or presentation_hash(row['subject']) == json.loads(row['metadata'])['presentation_hash']) and dependency_valid(json.loads(row['metadata']),section_id,hash_) and skills_digest() == json.loads(row['metadata'])['skills_hash'])):
                     return True
             except (OSError, IndexError, KeyError, ValueError):
@@ -1065,7 +1100,10 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
             if a.kind == 'ui' and any(not valid_review(s['id'],kind,s['packet_hash'],s['author']) for kind in ('content','korean')): raise ValueError('Content and Korean review must precede UI review')
             html=Path(a.html).resolve(); parser=Sections(); parser.feed(html.read_text(encoding='utf8'))
             if a.section not in [item['id'] for item in parser.sections]: raise ValueError('Section not present in HTML')
-            event(a.section,a.kind,a.reviewer,str(html),s['packet_hash'],a.evidence,{'html_hash':section_hash(html,a.section),'subject_file_hash':digest(html),'research_hash':r['research_hash'],'dependency_hash':section_dependency_hash(a.section,s['packet_hash']),'skills_hash':skills_digest(), **({'presentation_hash':presentation_hash(html),'media_hash':section_media_hash(html,a.section)} if a.kind=='ui' else {'reader_hash':reader_hash(html,a.section)})}); result = {'status':'recorded'}
+            generation={}
+            if a.kind == 'ui' and r['issue_date'] >= '2026-11-14':
+                generation['generation_evidence_hash']=validate_visual_provenance(json.loads(Path(s['packet']).read_text(encoding='utf8')),html,s['id'])
+            event(a.section,a.kind,a.reviewer,str(html),s['packet_hash'],a.evidence,{'html_hash':section_hash(html,a.section),'subject_file_hash':digest(html),'research_hash':r['research_hash'],'dependency_hash':section_dependency_hash(a.section,s['packet_hash']),'skills_hash':skills_digest(), **({'presentation_hash':presentation_hash(html),'media_hash':section_media_hash(html,a.section),**generation} if a.kind=='ui' else {'reader_hash':reader_hash(html,a.section)})}); result = {'status':'recorded'}
         elif a.command == 'record-skill':
             run(); nonempty(a.phase); nonempty(a.action)
             skillpath=Path(a.skill_path).resolve(); allowed=[Path.home()/'.codex/skills',Path.home()/'.agents/skills',Path.home()/'.codex/plugins/cache',Path.cwd()/'.agents/skills']

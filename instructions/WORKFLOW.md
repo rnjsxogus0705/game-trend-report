@@ -68,7 +68,7 @@ PC 교체 시 예약은 한 PC만 활성화하고, 같은 발행일의 비공개
 
 ## 선행 자료와 섹션별 품질 검사
 
-[품질 파이프라인](QUALITY-PIPELINE.md)에 따라 SQLite에 조사 자료를 먼저 수집하고 원문·한국어를 독립 검수한다. Impeccable로 이전 호를 비교해 화면을 기획한 뒤 승인된 자료의 독립 섹션을 격리된 작업 경로에서 병렬 제작한다. 각 섹션은 자체 내용·한국어 승인 후 UI를 검수한다. 조정자가 승인된 결과를 단독으로 합치고 모든 섹션의 누락·오래된 승인·미해결 중간 등급 이상 문제를 차단한 뒤 전체 하네스·최종 검수·배포 검사를 수행한다. `validate-issue.mjs`의 품질 검사는 `validate-quality-pipeline.mjs`, `audit-report-quality.mjs`, Python `report-ledger.py`와 해당 실행 원장을 필요로 한다.
+[품질 파이프라인](QUALITY-PIPELINE.md)에 따라 사용자 지정 자료가 없어도 내용 섹션별로 최신 공식 자료를 독립 조사해 범위·출처·한계를 SQLite에 먼저 수집하고 원문·한국어를 독립 검수한다. 각 내용 섹션의 실제 image_gen 인포그래픽과 필요한 추가 이미지는 자산 출처·hash와 함께 준비하고 검수한다. Impeccable로 이전 호를 비교해 화면을 기획한 뒤 승인된 자료의 독립 섹션을 격리된 작업 경로에서 병렬 제작한다. 각 섹션은 자체 내용·한국어 승인 후 UI를 검수한다. 조정자가 승인된 결과를 단독으로 합치고 모든 섹션의 누락·오래된 승인·미해결 중간 등급 이상 문제를 차단한 뒤 전체 하네스·최종 검수·배포 검사를 수행한다. `validate-issue.mjs`의 품질 검사는 `validate-quality-pipeline.mjs`, `audit-report-quality.mjs`, Python `report-ledger.py`와 해당 실행 원장을 필요로 한다.
 
 Windows 운영 root에 복사한 reports를 검사할 때 site 저장소의 비공개 SQLite 원장과 스냅샷을 검사기가 올바르게 찾는지는 아직 확인되지 않았다. 해당 환경에서 경로와 접근을 실측하기 전에는 검사를 통과했다고 간주하지 않는다. 인증 정보를 복사하지 않는다.
 

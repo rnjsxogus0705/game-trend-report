@@ -2,6 +2,7 @@
 import concurrent.futures
 import json
 import hashlib
+import importlib.util
 import sqlite3
 from pathlib import Path
 import subprocess
@@ -12,6 +13,46 @@ import unittest
 SCRIPT = Path(__file__).with_name('report-ledger.py')
 
 class VisualLedgerTest(unittest.TestCase):
+    def test_next_issue_ui_review_binds_generation_evidence_and_image(self):
+        spec=importlib.util.spec_from_file_location('ledger_test_helpers',SCRIPT.with_name('test-report-ledger.py'))
+        helpers=importlib.util.module_from_spec(spec); spec.loader.exec_module(helpers)
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp); db=root/'ledger.db'; helpers.install_test_skills(root)
+            research=root/'research.json'; research.write_text(json.dumps({'sources':[{'uri':'https://example.com'}]}))
+            evidence=root/'general.json'; evidence.write_text(json.dumps({'observation':'synthetic only','sources':['https://example.com']}))
+            asset=root/'assets/report/test.webp'; asset.parent.mkdir(parents=True); asset.write_bytes(b'synthetic image')
+            tool=root/'tool-output.txt'; tool.write_text('synthetic tool evidence, not a real generation')
+            manifest=root/'generation.json'
+            def checksum(p): return hashlib.sha256(p.read_bytes()).hexdigest()
+            manifest.write_text(json.dumps({'generator':'image_gen','outputSha256':checksum(asset),'toolEvidencePath':str(tool),'toolEvidenceSha256':checksum(tool)}))
+            visual={'title':'핵심 요약','points':['하나','둘'],'image':{'src':'../assets/report/test.webp','alt':'요약 그림','caption':'가상 예시','width':1200,'height':800,'generationEvidence':{'path':str(manifest),'sha256':checksum(manifest)}}}
+            packet=root/'packet.json'; packet.write_text(json.dumps({'text':'본문','urls':['https://example.com'],'candidate':{'sectionVisual':visual}},ensure_ascii=False))
+            html=root/'reports/issue.html'; html.parent.mkdir(); html.write_text('<section id="games"><img src="../assets/report/test.webp" alt="요약 그림"></section>')
+            proof=root/'proof.json'; helpers.packet_evidence(proof,packet,html)
+            def call(*args,ok=True):
+                result=subprocess.run([sys.executable,str(SCRIPT),'--db',str(db),*args],cwd=root,text=True,capture_output=True)
+                self.assertEqual(result.returncode==0,ok,result.stderr)
+                return result
+            call('ingest','--run','r','--issue-date','2026-11-14','--research',str(research),'--author','writer')
+            call('approve-research','--run','r','--reviewer','reviewer','--evidence',str(evidence))
+            for name in ('impeccable','humanizer','grammar-checker','style-guide','korean-humanizer','korean-spell-check'):
+                call('record-skill','--run','r','--actor','writer','--phase','test','--skill-path',str(root/'.agents/skills'/name/'SKILL.md'),'--action','read','--evidence',str(evidence))
+            args=['--run','r','--section','games','--packet',str(packet),'--author','writer','--media-note','synthetic']
+            call('prepare',*args)
+            for kind in ('source','korean'): call('approve-packet','--run','r','--section','games','--kind',kind,'--reviewer','reviewer','--evidence',str(proof))
+            call('draft',*args)
+            for kind in ('content','korean','ui'):
+                call('approve-section','--run','r','--section','games','--kind',kind,'--reviewer','ui-reviewer' if kind=='ui' else 'reviewer','--evidence',str(proof),'--html',str(html))
+            def approved(): return json.loads(call('queue','--run','r').stdout)['sections'][0]['review']['ui']
+            self.assertTrue(approved())
+            tool.write_text('tampered tool evidence'); self.assertFalse(approved())
+            tool.write_text('synthetic tool evidence, not a real generation'); self.assertTrue(approved())
+            manifest.write_text(manifest.read_text()+' '); self.assertFalse(approved())
+            manifest.write_text(manifest.read_text().rstrip()); self.assertTrue(approved())
+            asset.write_bytes(b'tampered image'); self.assertFalse(approved())
+            asset.write_bytes(b'synthetic image'); self.assertTrue(approved())
+            html.write_text('<section id="games"><p>no image</p></section>'); self.assertFalse(approved())
+
     def test_parallel_visual_ingestion_and_validation(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp); db=root/'ledger.db'; research=root/'research.json'

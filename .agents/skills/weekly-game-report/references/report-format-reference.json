@@ -32,7 +32,20 @@
         "shareAndReadingControls": true,
         "officialMediaAndConceptImages": true
       },
-      "useFor": "다음 호의 우선 형식 기준: 개선된 카드·미디어·공유·읽기·전체 Markdown 복사 및 독자용 본문. 사실·날짜의 재사용 근거는 아님."
+      "useFor": "이전 형식 참고. 최신 검수본보다 우선하지 않으며 사실·날짜의 재사용 근거가 아님."
+    },
+    {
+      "path": "reports/weekly-2026-11-07.html",
+      "gitRevision": "b1e7067",
+      "sha256": "e60844d02780bbe11cc2c7d653661bc45c2d998101999d4224a753a374ba2a51",
+      "capabilities": {
+        "shellAndNavigation": true,
+        "top10ThreePlusSeven": true,
+        "fullIndividualMarkdownCopy": true,
+        "shareAndReadingControls": true,
+        "officialMediaAndConceptImages": true
+      },
+      "useFor": "다음 호의 우선 형식 기준: 최종 공개본의 검색·공유·테마·아이콘·상세·표·미디어·인쇄와 한글 섹션 요약. 사실·날짜·그림 재사용 근거는 아님."
     }
   ],
   "shell": [
