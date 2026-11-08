@@ -123,6 +123,9 @@ export function validateWeeklyPresentation(html,{reportDate}={}){
  const cover=elements.find(node=>hasClass(node,'issue-cover')),headings=elements.filter(node=>node.tag==='h1');
  assert(cover&&headings.length===1&&within(headings[0],cover)&&text(headings[0]).length>0,'Expected one h1 inside the issue cover');
  const categories={overview:['issue-summary','top10'],tools:['game-ai-tools','agent-skills','github-trending','ai-trends','game-ai','ai-releases','techniques'],making:['games','reverse','ai-only-lab','ai-planning','game-ideas','ai-production','prototype','lab'],resources:['careers','opportunities','reading','sources']};
+ const unity=elements.filter(node=>node.attrs.id==='unity-official-guide');
+ assert(unity.length<=1,'Unity guide must have a unique ID');
+ if(unity.length)assert(unity[0].tag==='section'&&oneId('game-ai-tools')&&within(unity[0],oneId('game-ai-tools'))&&!within(unity[0],oneId('agent-skills')),'Unity guide must be inside game-ai-tools');
  const parts=elements.filter(node=>hasClass(node,'report-part')),toc=oneId('side-nav');
  const groups=elements.filter(node=>hasClass(node,'toc-group')&&toc&&within(node,toc));
  assert(JSON.stringify(parts.map(node=>node.attrs['data-report-part']))===JSON.stringify(Object.keys(categories)),'Report category structure is incomplete or reordered');
@@ -135,7 +138,9 @@ export function validateWeeklyPresentation(html,{reportDate}={}){
   let previous=-1;
   for(const id of ids){const node=oneId(id);assert(node&&within(node,parts[index])&&node.start>previous,'Section is outside its category or out of order: '+id);previous=node.start;}
   assert(groups[index].tag==='details'&&groups[index].attrs.name==='report-toc','Navigation categories require native grouped details');
-  assert(JSON.stringify(descendants(groups[index],node=>node.tag==='a').map(node=>node.attrs.href))===JSON.stringify(ids.map(id=>'#'+id)),'Navigation links differ from the category: '+key);
+  const links=ids.map(id=>'#'+id);
+  if(key==='tools'&&unity.length)links.splice(1,0,'#unity-official-guide');
+  assert(JSON.stringify(descendants(groups[index],node=>node.tag==='a').map(node=>node.attrs.href))===JSON.stringify(links),'Navigation links differ from the category: '+key);
  });
  if(reportDate>='2026-11-07'){
   validateAiCaseAndVideoResources(html);

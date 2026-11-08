@@ -38,6 +38,22 @@ test('CSS 마지막 순서와 필수 스크립트 누락 차단',()=>{assert.thr
 test('과거 호 차트 스크립트 재사용 차단',()=>assert.throws(()=>check(html),/issue-specific/));
 test('요약 세 항목과 주제 이동 누락 차단',()=>{assert.throws(()=>check(future.replace('<dd>AI가','<p>AI가').replace('확인해요.</dd>','확인해요.</p>')),/takeaways/);assert.throws(()=>check(future.replace('<a href="#careers"><strong>','<a href="#sources"><strong>')),/topic links/);});
 test('범주 밖 본문과 잘못된 목차 차단',()=>{assert.throws(()=>check(future.replace('data-report-part="tools"','data-report-part="wrong"')),/category structure/);assert.throws(()=>check(future.replace('<a href="#github-trending">GitHub 트렌딩','<a href="#games">GitHub 트렌딩')),/Navigation links/);});
+test('Unity 하위 섹션이 있을 때만 도구 목차의 지정 위치를 허용한다',()=>{
+ const guide='<section id="unity-official-guide"><h3>Unity 공식 도구</h3></section>';
+ const link='<a href="#unity-official-guide">Unity 공식 도구</a>';
+ const tool='<section class="chapter" id="game-ai-tools">';
+ const nav='<a href="#game-ai-tools">게임 AI 도구 비교</a>';
+ const withGuide=future.replace(tool,tool+guide),valid=withGuide.replace(nav,nav+link);
+ assert.notEqual(withGuide,future);assert.notEqual(valid,withGuide);
+ assert.doesNotThrow(()=>check(valid));
+ assert.throws(()=>check(withGuide),/Navigation links/);
+ assert.throws(()=>check(future.replace(nav,nav+link)),/Navigation links/);
+ assert.throws(()=>check(valid.replace(nav+link,nav+link+link)),/Navigation links/);
+ assert.throws(()=>check(valid.replace(nav+link,link+nav)),/Navigation links/);
+ assert.throws(()=>check(valid.replace(tool+guide,tool).replace('<main class="content" id="report">','<main class="content" id="report">'+guide)),/inside game-ai-tools/);
+ assert.throws(()=>check(valid.replace(tool+guide,tool).replace('<div class="card-flat" id="agent-skills">','<div class="card-flat" id="agent-skills">'+guide)),/inside game-ai-tools/);
+ assert.throws(()=>check(valid.replace(tool+guide,tool+guide+guide)),/unique ID/);
+});
 test('강조·모바일 대안·단일 표지 제목 누락 차단',()=>{assert.throws(()=>check(future.replace(/<\/?mark\b[^>]*>/g,'')),/highlighted/);assert.throws(()=>check(future.replace('<nav id="mobile-links">','<nav id="missing-mobile-links">')),/mobile navigation/);assert.throws(()=>check(future.replace('<h1>','<h2>').replace('</h1>','</h2>')),/one h1/);});
 test('TOP 10 공개 영역 수와 잘못된 HTML 구조 차단',()=>{assert.throws(()=>check(future.replace('class="top-ten-item"','class="missing-item"')),/three items/);assert.throws(()=>check(future.replace('</dl>','</div>')),/nesting/);});
 test('범주 구분선 제목과 요약 역할도 재현',()=>{assert.throws(()=>check(future.replace('id="part-tools" data-editorial-ui>AI 도구와 기술','id="part-tools" data-editorial-ui>다른 이름')),/divider label/);assert.throws(()=>check(future.replace('<dt>핵심 판단</dt>','<dt>다른 이름</dt>')),/takeaway labels/);});
