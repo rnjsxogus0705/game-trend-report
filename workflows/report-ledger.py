@@ -150,6 +150,17 @@ def nonempty(value):
     return value.strip()
 
 
+def require_passing_review(proof):
+    """Explicit verdicts must be affirmative; missing fields preserve legacy evidence."""
+    accepted = {'pass', 'passed', 'approved', 'success', 'succeeded', 'verified',
+                'pass-pending-ledger'}
+    if not isinstance(proof, dict):
+        raise ValueError('Review evidence must be an object')
+    for field in ('status', 'verdict'):
+        if field in proof and (not isinstance(proof[field], str) or proof[field].strip().casefold() not in accepted):
+            raise ValueError('Review evidence has non-passing ' + field)
+
+
 class Sections(HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=True)
@@ -496,6 +507,7 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
         actor=identity(actor); nonempty(subject); nonempty(evidence)
         proof=json.loads(Path(evidence).read_text(encoding='utf8'))
         if not isinstance(proof,dict) or not isinstance(proof.get('observation'),str) or not proof['observation'].strip(): raise ValueError('Evidence requires observation')
+        if kind in ('research','pre-source','pre-korean','content','korean','ui'): require_passing_review(proof)
         if kind.endswith('-blocked') and (not isinstance(proof.get('findingReason'),str) or not proof['findingReason'].strip()): raise ValueError('Failure evidence requires findingReason')
         if kind in ('pre-source','pre-korean','content','korean','ui'):
             block_kind=kind.removeprefix('pre-')+'-blocked'
@@ -600,7 +612,9 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
             if row['kind'] != kind: return False
             if db.execute("SELECT 1 FROM impact_reviews WHERE review_event_id=? AND state='invalidated' LIMIT 1",(row['id'],)).fetchone(): return False
             try:
-                if kind == 'ui': validate_ui_evidence(json.loads(Path(row['evidence']).read_text(encoding='utf8')))
+                proof=json.loads(Path(row['evidence']).read_text(encoding='utf8'))
+                require_passing_review(proof)
+                if kind == 'ui': validate_ui_evidence(proof)
                 if row['hash'] == hash_ and row['actor'] != author and digest(row['evidence']) == row['evidence_hash'] and (kind == 'research' or (kind in ('pre-source','pre-korean') and dependency_valid(json.loads(row['metadata']),section_id,hash_) and json.loads(row['metadata']).get('skills_hash') == skills_digest()) or (Path(row['subject']).is_file() and ((kind in ('content','korean') and 'reader_hash' in json.loads(row['metadata']) and reader_hash(row['subject'],section_id) == json.loads(row['metadata'])['reader_hash']) or (not (kind in ('content','korean') and 'reader_hash' in json.loads(row['metadata'])) and section_hash(row['subject'],section_id) == json.loads(row['metadata'])['html_hash'])) and (kind != 'ui' or presentation_hash(row['subject']) == json.loads(row['metadata'])['presentation_hash']) and dependency_valid(json.loads(row['metadata']),section_id,hash_) and skills_digest() == json.loads(row['metadata'])['skills_hash'])):
                     return True
             except (OSError, IndexError, KeyError, ValueError):
