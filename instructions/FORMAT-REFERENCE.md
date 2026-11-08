@@ -13,3 +13,22 @@
 공통 셸과 상태 목록은 `references/report-format-reference.json`의 `coreUi`와 루트 `DESIGN.md`를 따른다. 가장 최근 실제 검수본의 컴포넌트 형식을 우선하고, 고정된 부실 과거본을 폼·미디어 완성 예시로 복제하지 않는다. 공유 버튼은 정적 셸에도 포함하고 긴 본문 중간에서도 찾을 수 있어야 한다. 새 디자인 기준은 UI 증거의 `designContractSha256`으로 결속하며 존재하는 버튼과 실제 동작을 각각 확인한다.
 
 다음 호의 우선 고정 예시는 `4a4b675891efa60044cdf03dfd81e6cae41bb2f7`의 2026-11-07호다. JSON의 해당 SHA256과 git 객체를 대조하고 개선된 카드·공유·미디어·전체 Markdown 복사·독자용 문장 구조를 참고한다. 이전 a9e84e4는 실패 비교용으로만 둔다. 공통 디자인·셀렉터·동작을 착수 전에 고정해 제작 막바지의 전역 수정과 전체 UI 재검수를 줄인다.
+
+
+## 섹션별 구조화 템플릿과 SQLite 캐시
+
+원본은 `.agents/skills/weekly-game-report/references/section-templates.json`이다. 22개 섹션의 그룹·작업 범위·중첩 소유·필수 원고·미디어·실습·검수 기준과 빈 컴포넌트를 제공한다. 두 호의 실제 참조 해시를 대조하고, 공통 디자인과 스타일은 실행 당시 해시로 고정한다. 템플릿 예시의 플레이스홀더는 작성 설명이며 공개 결과물이 아니다. 이전 본문의 사실·영상·그림·날짜를 새 호에 자동 복사하지 않는다.
+
+```sh
+python3 workflows/report-template-store.py import
+python3 workflows/report-template-store.py check
+python3 workflows/report-template-store.py list
+python3 workflows/report-template-store.py section --id reading
+python3 workflows/report-template-store.py section --id reading --run 실제-run-id
+```
+
+시작 시 import/check를 한 번 수행하고 실제 카탈로그 경로·SHA256을 context에 기록한다. Git의 카탈로그가 단일 원본이고 SQLite `template_versions`/`template_sections`는 hash별 불변 조회 캐시다. 원문·기존 연구·승인 이력을 템플릿마다 복제하지 않는다. 변경되면 새 버전으로 적재하고 기존 버전은 보존한다. 다른 PC에서는 카탈로그로 캐시를 재구축할 수 있다.
+
+조사 담당에는 해당 섹션의 fields·media·practice, 작성 담당에는 해당 템플릿과 원장의 승인 패킷만 전달한다. `section --run`은 기존 packet 게이트를 직접 호출하므로 stale/미승인 자료를 승인으로 우회하지 못한다. 템플릿 전용 조회는 승인과 독립 검수가 아니다. `game-ai-tools`와 하위 `agent-skills`는 같은 작업 범위를 유지한다. 공유 shell·CSS·JS는 감독자 단일 소유, 섹션 fragment만 병렬 작성한다.
+
+읽을거리·게임의 영상은 링크 목록만으로 미디어 배치 완료로 표시하지 않는다. 해당 호의 선정 자료에 맞는 이미지·미리보기·플레이어를 배치하고 임베드 불가·권리·접근 문제는 원장에 남긴다. 두 호의 수량 차이는 검수 후보이며 최소 수량을 억지로 채우는 기준이 아니다. 생성 그림은 의미가 있는 곳에 실제 생성·출처·한국어 검수를 거쳐 추가한다. 공유·읽기·복사·다운로드·필터·인쇄와 4폭 화면 검수는 기존 coreUi 계약대로 유지한다.

@@ -76,3 +76,7 @@ research.creatorContentSearch.selectedVideos는 선정 영상이 없으면 빈 �
 
 ## 병렬 실행 최신 우선 규칙
 사용자의 병렬 요청이 과거의 섹션 간 순차 제한보다 우선한다. 각 섹션 자체의 source/Korean→draft→content/Korean→UI 순서는 유지한다. 다른 섹션 실패는 독립 작업을 막지 않지만 whole check/snapshot/통합·배포는 모든 섹션의 최신 승인과 실제 증거를 요구한다. 자세한 감독·소유 경로·캐시·단일 merge는 QUALITY-PIPELINE과 FORMAT-REFERENCE를 따른다. 첨부는 자료로만 읽고 지정 항목은 이전 호 중복이어도 재조사해 이번 호에 포함하며 이유를 남긴다.
+
+
+## 섹션 템플릿 결속
+context.instructionFiles에는 `.agents/skills/weekly-game-report/references/section-templates.json`의 실제 SHA256도 필수다. 착수 시 SQLite import/check를 실행하고 해당 버전으로 담당 섹션만 조회한다. 이후 카탈로그 변경은 최종 하네스에서 stale로 차단하며, 원장의 관련 계약 캐시도 새 입력으로 재검수한다. 템플릿은 원문·한국어·내용·UI 승인 근거를 대체하지 않는다.

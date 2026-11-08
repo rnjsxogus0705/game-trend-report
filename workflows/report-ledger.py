@@ -424,7 +424,7 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
         inputs=research.get('inputs') if isinstance(research.get('inputs'),dict) else {}
         context_value=inputs.get('context')
         context_identity={'fullContext':context_value if isinstance(context_value,str) and re.fullmatch(r'[a-f0-9]{64}',context_value) else current['research_hash']}
-        files=['instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md','instructions/QUALITY-PIPELINE.md','instructions/FORMAT-REFERENCE.md','.agents/skills/weekly-game-report/references/report-format-reference.json','.codex/agents/report-content-reviewer.toml','.codex/agents/report-ui-reviewer.toml']
+        files=['instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md','instructions/QUALITY-PIPELINE.md','instructions/FORMAT-REFERENCE.md','.agents/skills/weekly-game-report/references/report-format-reference.json','.agents/skills/weekly-game-report/references/section-templates.json','.codex/agents/report-content-reviewer.toml','.codex/agents/report-ui-reviewer.toml']
         context_path=Path.cwd()/'_workspace/harness/weekly-game-report'/a.run/'context.json'
         try:
             if digest(context_path)==inputs.get('context'):

@@ -15,7 +15,7 @@
 ## macOS 토요일 08:00 한국 시간: 제작 시작
 저장소를 Codex 프로젝트로 열고 최신 main·지침을 확인한 뒤 `$weekly-game-report`로 조사·작성·독립 검수와 배포를 진행한다. Pages와 Vercel의 최종 파일을 확인한 후 Node 전송기로 지정한 두 Discord 채널에 보낸다. 08시는 제작 시작 시각이다. 설정과 예약 전문은 [README의 새 Mac 설정](../README.md#새-mac에서-처음-설정하기)과 [macOS 예약 지침](READING-AND-SCHEDULER.md#macos-새-pc의-토요일-08시-단일-예약)을 따른다. Windows PowerShell 전송기는 현재 한 채널만 지원한다.
 
-다음 호부터 최신 개선 형식은 [형식 참조](FORMAT-REFERENCE.md)를 고정해 사용한다. 조사 선적재 후 `overview`로 내용을 훑고 `queue`의 차단·검수 요약으로 독립 섹션을 배치한다. 변경 영향과 승인 재사용·최종 통합은 [품질 파이프라인](QUALITY-PIPELINE.md#변경-영향과-재검수)에 따른다. 국소 수정 뒤 불변 섹션의 전체 검수를 반복하지 않는다. 내부 조사·제작 안내는 원장에 기록하고 독자 본문에서는 제거한다.
+다음 호부터 최신 개선 형식은 [형식 참조](FORMAT-REFERENCE.md)를 고정해 사용한다. 제작 시작 시 `report-template-store.py import`/`check`로 22개 섹션 템플릿을 준비하고 해당 섹션 양식만 할당한다. 조사 선적재 후 `overview`로 내용을 훑고 `queue`의 차단·검수 요약으로 독립 섹션을 배치한다. 변경 영향과 승인 재사용·최종 통합은 [품질 파이프라인](QUALITY-PIPELINE.md#변경-영향과-재검수)에 따른다. 국소 수정 뒤 불변 섹션의 전체 검수를 반복하지 않는다. 내부 조사·제작 안내는 원장에 기록하고 독자 본문에서는 제거한다.
 
 ## 다른 컴퓨터에서 실행하려면
 공개 소스만으로 봇 인증이 복원되지는 않습니다. Windows에서는 로컬 작업 폴더 아래 site/에 이 저장소를 체크아웃하고 workflows/의 파일을 작업 폴더에 배치합니다. GH_TOKEN·Git 작성자 설정·VERCEL_TOKEN과 배포 대상 설정, Windows 사용자별 봇 DPAPI 인증, 한국어 스킬, ego-browser, Node.js·PowerShell·gh CLI·예약 작업을 그 환경에서 별도로 준비해야 합니다. Mac의 준비 순서는 위 macOS 안내를 따릅니다. 비밀 값은 Git에 커밋하거나 채팅에 노출하지 않습니다.

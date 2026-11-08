@@ -1,0 +1,1670 @@
+{
+  "schemaVersion": 1,
+  "references": [
+    {
+      "path": "reports/weekly-2026-10-31.html",
+      "sha256": "e98c29b3f1cacebcd705b02f55457aee18f9ba1778769fa28129a4b8c56dc93c"
+    },
+    {
+      "path": "reports/weekly-2026-11-07.html",
+      "gitRevision": "4a4b675891efa60044cdf03dfd81e6cae41bb2f7",
+      "sha256": "52ea8778056cf7773a9a8b6883547f0d7e4929551acd2778885ef8aecf31a159"
+    }
+  ],
+  "shared": {
+    "contract": "instructions/FORMAT-REFERENCE.md",
+    "design": "DESIGN.md",
+    "presentationHashPolicy": "매 실행 실제 공통 CSS·JS 해시와 UI 증거 대조",
+    "rules": [
+      "과거 사실·날짜·URL·순위 복제 금지",
+      "사전 조사·원문/한국어 승인 후 병렬 작성",
+      "실제 독립 content/Korean/UI 승인 및 4폭 화면 검수",
+      "공통 CSS·셸 변경 시 영향 화면 재검수",
+      "스캐폴드와 형식 참조는 승인이나 발행 근거가 아님"
+    ],
+    "componentTemplates": {
+      "card": "<article class=\"card\"><h3>{{제목}}</h3><p>{{승인_내용}}</p></article>",
+      "figure": "<figure><img src=\"{{검수_이미지_경로}}\" alt=\"{{대체_텍스트}}\"><figcaption>{{출처와_설명}}</figcaption></figure>",
+      "lazyVideo": "<article class=\"tool-media\"><h3>{{제목}}</h3><p><a href=\"{{정규_YouTube_URL}}\">영상 원문</a> · {{확인범위}}</p><div class=\"youtube-preview\"><button type=\"button\" data-youtube-play=\"{{영상_ID}}\" data-play-video=\"{{영상_ID}}\" data-video-title=\"{{제목}}\"><img src=\"https://i.ytimg.com/vi/{{영상_ID}}/hqdefault.jpg\" alt=\"{{미리보기_대체텍스트}}\" loading=\"lazy\"><span>영상 불러오기</span></button><div class=\"video-slot\"></div></div></article>",
+      "practice": "<div class=\"practice-prompt\"><h3>{{실습_제목}}</h3><p>{{승인_설명}}</p><pre id=\"{{고유_ID}}\">[입력] {{승인_프롬프트}}</pre><button type=\"button\" data-copy-workflow=\"{{고유_ID}}\">프롬프트 복사</button><p>받을 결과: {{산출물}} · 직접 확인: {{완료_기준}} · 이어서 물어보기: {{후속_질문}}</p></div>"
+    },
+    "coreUi": ".agents/skills/weekly-game-report/references/report-format-reference.json#coreUi",
+    "packetContract": "workflows/render-report-section.mjs: renderSection; packet.candidate. JSON catalog은 작성 안내이며 승인·게이트 대체가 아님.",
+    "escaping": "모든 placeholder는 실제 렌더 시 HTML 텍스트/속성 이스케이프, URL은 HTTPS 검증, 영상 ID는 11자 검증. 예시는 완성 원고가 아니며 그대로 발행 금지.",
+    "renderPolicy": "실제 최신 카드와 기존 renderer의 기대 DOM이 다르면 이전 DOM으로 퇴행시키지 않는다. 사전 승인된 fullMarkup 격리 원고와 기존 manifest/sectionParts 조립 경로를 사용하고 실제 독립 검수를 받는다. fullMarkup은 renderer 필드가 아니다."
+  },
+  "sections": [
+    {
+      "id": "brief",
+      "group": "overview",
+      "lane": "brief",
+      "parent": null,
+      "title": "독자 안내",
+      "components": [
+        ".chapter-head"
+      ],
+      "fields": [
+        "독자 안내",
+        "출처",
+        "확인일",
+        "선정 이유",
+        "미확인 한계"
+      ],
+      "media": {
+        "official": "공식 화면·영상의 원문, 임베드/권리와 접근 여부 확인 후 적합하면 표시. 불가 시 링크와 원장 사유.",
+        "generated": "장 핵심을 설명할 때 실제 생성·검수하고 개념 그림으로 표시.",
+        "reading": "관련 미디어의 배치 또는 미사용 근거 기록"
+      },
+      "practice": "해당 주제에 맞는 독자 행동을 작성",
+      "reviews": [
+        "독립 원문과 한국어",
+        "독립 내용과 미디어",
+        "독립 320/390/768/1440 화면"
+      ],
+      "referenceIds": [
+        "brief"
+      ],
+      "packetContract": {
+        "reference": "workflows/render-report-section.mjs",
+        "sectionId": "brief",
+        "candidate": {
+          "paragraphs": "string[], 선택: 승인된 문단",
+          "sourceLabels": "object URL→string, 선택: 출처명",
+          "media": "object[], 선택: kind/title/sourceUrl, 영상은 videoId와 정규 YouTube URL, 이미지는 alt/officialReferrer",
+          "sourceUrls": "HTTPS URL[]: 본문 보조 원문 링크. packet.urls와 연구 원장에도 결속",
+          "limitation": "string, 선택: 독자에게 필요한 미실행·미시청·권리 등 한계",
+          "checkedAt": "기존 렌더러의 checkedAt 분기 계약 확인 후 승인 입력",
+          "practice": "object {heading,body,constraint?,prompt?}: prompt는 [입력]과 산출물·완료기준·후속질문 포함"
+        },
+        "note": "필드 존재는 검수 승인이 아니며 관련 원문·한국어 승인 패킷이 먼저 필요. fullMarkup은 렌더 필드가 아닌 별도 수동 조립 원고. 이 섹션의 lead는 렌더러가 사용하지 않으므로 도입은 승인 paragraphs 또는 별도 검수 마크업을 사용한다.",
+        "packetEnvelope": {
+          "text": "string 또는 body: 승인 원고",
+          "urls": "HTTPS URL[]: 실제 조사 원장과 결속",
+          "candidate": "아래 렌더 필드 객체"
+        },
+        "historicalRendererKeys": [
+          "checkedAt",
+          "limitation",
+          "paragraphs",
+          "practice",
+          "sourceUrls"
+        ],
+        "researchFields": [
+          "kind",
+          "renderStatus",
+          "sourceScope",
+          "text"
+        ],
+        "historicalInputScope": "2026-11-07-quality-renewal-01 실제 패킷의 키 목록만 대조; 사실/본문은 복제하지 않음. 과거 키 전부를 새 호에 강제하지 않음."
+      }
+    },
+    {
+      "id": "issue-summary",
+      "group": "overview",
+      "lane": "issue-summary",
+      "parent": null,
+      "title": "핵심 요약",
+      "components": [
+        ".issue-summary-layout"
+      ],
+      "fields": [
+        "핵심",
+        "영향",
+        "행동",
+        "출처",
+        "확인일",
+        "선정 이유",
+        "미확인 한계"
+      ],
+      "media": {
+        "official": "공식 화면·영상의 원문, 임베드/권리와 접근 여부 확인 후 적합하면 표시. 불가 시 링크와 원장 사유.",
+        "generated": "장 핵심을 설명할 때 실제 생성·검수하고 개념 그림으로 표시.",
+        "reading": "관련 미디어의 배치 또는 미사용 근거 기록"
+      },
+      "practice": "해당 주제에 맞는 독자 행동을 작성",
+      "reviews": [
+        "독립 원문과 한국어",
+        "독립 내용과 미디어",
+        "독립 320/390/768/1440 화면"
+      ],
+      "referenceIds": [
+        "issue-summary"
+      ],
+      "packetContract": {
+        "reference": "workflows/render-report-section.mjs",
+        "sectionId": "issue-summary",
+        "candidate": {
+          "paragraphs": "string[], 선택: 승인된 문단",
+          "sourceLabels": "object URL→string, 선택: 출처명",
+          "media": "object[], 선택: kind/title/sourceUrl, 영상은 videoId와 정규 YouTube URL, 이미지는 alt/officialReferrer",
+          "sourceUrls": "HTTPS URL[]: 본문 보조 원문 링크. packet.urls와 연구 원장에도 결속",
+          "limitation": "string, 선택: 독자에게 필요한 미실행·미시청·권리 등 한계",
+          "checkedAt": "기존 렌더러의 checkedAt 분기 계약 확인 후 승인 입력",
+          "practice": "object {heading,body,constraint?,prompt?}: prompt는 [입력]과 산출물·완료기준·후속질문 포함"
+        },
+        "note": "필드 존재는 검수 승인이 아니며 관련 원문·한국어 승인 패킷이 먼저 필요. fullMarkup은 렌더 필드가 아닌 별도 수동 조립 원고. 이 섹션의 lead는 렌더러가 사용하지 않으므로 도입은 승인 paragraphs 또는 별도 검수 마크업을 사용한다.",
+        "packetEnvelope": {
+          "text": "string 또는 body: 승인 원고",
+          "urls": "HTTPS URL[]: 실제 조사 원장과 결속",
+          "candidate": "아래 렌더 필드 객체"
+        },
+        "historicalRendererKeys": [
+          "checkedAt",
+          "limitation",
+          "media",
+          "paragraphs",
+          "practice",
+          "sourceLabels",
+          "sourceUrls"
+        ],
+        "researchFields": [
+          "kind",
+          "mediaCandidateIds",
+          "renderStatus",
+          "sourceScope",
+          "status",
+          "text"
+        ],
+        "historicalInputScope": "2026-11-07-quality-renewal-01 실제 패킷의 키 목록만 대조; 사실/본문은 복제하지 않음. 과거 키 전부를 새 호에 강제하지 않음."
+      }
+    },
+    {
+      "id": "top10",
+      "group": "overview",
+      "lane": "top10",
+      "parent": null,
+      "title": "우선순위",
+      "components": [
+        ".top-ten-grid"
+      ],
+      "fields": [
+        "선정 이유",
+        "영향",
+        "행동",
+        "출처",
+        "확인일",
+        "선정 이유",
+        "미확인 한계"
+      ],
+      "media": {
+        "official": "공식 화면·영상의 원문, 임베드/권리와 접근 여부 확인 후 적합하면 표시. 불가 시 링크와 원장 사유.",
+        "generated": "장 핵심을 설명할 때 실제 생성·검수하고 개념 그림으로 표시.",
+        "reading": "관련 미디어의 배치 또는 미사용 근거 기록"
+      },
+      "practice": "해당 주제에 맞는 독자 행동을 작성",
+      "reviews": [
+        "독립 원문과 한국어",
+        "독립 내용과 미디어",
+        "독립 320/390/768/1440 화면"
+      ],
+      "referenceIds": [
+        "top10"
+      ],
+      "packetContract": {
+        "reference": "workflows/render-report-section.mjs",
+        "sectionId": "top10",
+        "candidate": {
+          "paragraphs": "string[], 선택: 승인된 문단",
+          "sourceLabels": "object URL→string, 선택: 출처명",
+          "media": "object[], 선택: kind/title/sourceUrl, 영상은 videoId와 정규 YouTube URL, 이미지는 alt/officialReferrer",
+          "sourceUrls": "HTTPS URL[]: 본문 보조 원문 링크. packet.urls와 연구 원장에도 결속",
+          "limitation": "string, 선택: 독자에게 필요한 미실행·미시청·권리 등 한계",
+          "checkedAt": "기존 렌더러의 checkedAt 분기 계약 확인 후 승인 입력",
+          "practice": "object {heading,body,constraint?,prompt?}: prompt는 [입력]과 산출물·완료기준·후속질문 포함",
+          "table": "object: 렌더 가능한 섹션별 표 분기만 사용. 그 외 과거 패킷의 표는 조사 이력이며 자동 출력되지 않음"
+        },
+        "note": "필드 존재는 검수 승인이 아니며 관련 원문·한국어 승인 패킷이 먼저 필요. fullMarkup은 렌더 필드가 아닌 별도 수동 조립 원고. 이 섹션의 lead는 렌더러가 사용하지 않으므로 도입은 승인 paragraphs 또는 별도 검수 마크업을 사용한다.",
+        "packetEnvelope": {
+          "text": "string 또는 body: 승인 원고",
+          "urls": "HTTPS URL[]: 실제 조사 원장과 결속",
+          "candidate": "아래 렌더 필드 객체"
+        },
+        "historicalRendererKeys": [
+          "checkedAt",
+          "limitation",
+          "media",
+          "paragraphs",
+          "practice",
+          "sourceLabels",
+          "sourceUrls",
+          "table"
+        ],
+        "researchFields": [
+          "kind",
+          "mediaCandidateIds",
+          "renderStatus",
+          "sourceScope",
+          "status",
+          "text"
+        ],
+        "historicalInputScope": "2026-11-07-quality-renewal-01 실제 패킷의 키 목록만 대조; 사실/본문은 복제하지 않음. 과거 키 전부를 새 호에 강제하지 않음."
+      }
+    },
+    {
+      "id": "game-ai-tools",
+      "group": "tools",
+      "lane": "game-ai-tools",
+      "parent": null,
+      "title": "제작 도구",
+      "components": [
+        ".tool-detail-grid"
+      ],
+      "fields": [
+        "입출력",
+        "라이선스",
+        "엔진",
+        "실습",
+        "출처",
+        "확인일",
+        "선정 이유",
+        "미확인 한계"
+      ],
+      "media": {
+        "official": "공식 화면·영상의 원문, 임베드/권리와 접근 여부 확인 후 적합하면 표시. 불가 시 링크와 원장 사유.",
+        "generated": "장 핵심을 설명할 때 실제 생성·검수하고 개념 그림으로 표시.",
+        "reading": "관련 미디어의 배치 또는 미사용 근거 기록"
+      },
+      "practice": "입력·산출물·완료 기준·후속 질문 및 미실행 구분",
+      "reviews": [
+        "독립 원문과 한국어",
+        "독립 내용과 미디어",
+        "독립 320/390/768/1440 화면"
+      ],
+      "referenceIds": [
+        "game-ai-tools"
+      ],
+      "packetContract": {
+        "reference": "workflows/render-report-section.mjs",
+        "sectionId": "game-ai-tools",
+        "candidate": {
+          "paragraphs": "string[], 선택: 승인된 문단",
+          "sourceLabels": "object URL→string, 선택: 출처명",
+          "media": "object[], 선택: kind/title/sourceUrl, 영상은 videoId와 정규 YouTube URL, 이미지는 alt/officialReferrer",
+          "practice": "object {heading?: string, body: string, constraint?: string, prompt?: string}",
+          "table": "object {columns:string[],rows:string[][]}: 현재 도구 비교 형식과 원문 링크 검증",
+          "sourceUrls": "HTTPS URL[]: 본문 보조 원문 링크. packet.urls와 연구 원장에도 결속",
+          "limitation": "string, 선택: 독자에게 필요한 미실행·미시청·권리 등 한계",
+          "checkedAt": "기존 렌더러의 checkedAt 분기 계약 확인 후 승인 입력"
+        },
+        "note": "필드 존재는 검수 승인이 아니며 관련 원문·한국어 승인 패킷이 먼저 필요. fullMarkup은 렌더 필드가 아닌 별도 수동 조립 원고. 이 섹션의 lead는 렌더러가 사용하지 않으므로 도입은 승인 paragraphs 또는 별도 검수 마크업을 사용한다.",
+        "packetEnvelope": {
+          "text": "string 또는 body: 승인 원고",
+          "urls": "HTTPS URL[]: 실제 조사 원장과 결속",
+          "candidate": "아래 렌더 필드 객체"
+        },
+        "historicalRendererKeys": [
+          "checkedAt",
+          "limitation",
+          "media",
+          "paragraphs",
+          "practice",
+          "sourceLabels",
+          "sourceUrls",
+          "table"
+        ],
+        "researchFields": [
+          "kind",
+          "mediaCandidateIds",
+          "renderStatus",
+          "sourceScope",
+          "status",
+          "text"
+        ],
+        "historicalInputScope": "2026-11-07-quality-renewal-01 실제 패킷의 키 목록만 대조; 사실/본문은 복제하지 않음. 과거 키 전부를 새 호에 강제하지 않음."
+      }
+    },
+    {
+      "id": "agent-skills",
+      "group": "tools",
+      "lane": "game-ai-tools",
+      "parent": "game-ai-tools",
+      "title": "개발 스킬",
+      "components": [
+        ".practice-prompt"
+      ],
+      "fields": [
+        "선정 이유",
+        "강점",
+        "한계",
+        "출처",
+        "확인일",
+        "선정 이유",
+        "미확인 한계"
+      ],
+      "media": {
+        "official": "공식 화면·영상의 원문, 임베드/권리와 접근 여부 확인 후 적합하면 표시. 불가 시 링크와 원장 사유.",
+        "generated": "장 핵심을 설명할 때 실제 생성·검수하고 개념 그림으로 표시.",
+        "reading": "관련 미디어의 배치 또는 미사용 근거 기록"
+      },
+      "practice": "입력·산출물·완료 기준·후속 질문 및 미실행 구분",
+      "reviews": [
+        "독립 원문과 한국어",
+        "독립 내용과 미디어",
+        "독립 320/390/768/1440 화면"
+      ],
+      "referenceIds": [
+        "agent-skills"
+      ],
+      "packetContract": {
+        "reference": "workflows/render-report-section.mjs",
+        "sectionId": "agent-skills",
+        "candidate": {
+          "paragraphs": "string[], 선택: 승인된 문단",
+          "sourceLabels": "object URL→string, 선택: 출처명",
+          "media": "object[], 선택: kind/title/sourceUrl, 영상은 videoId와 정규 YouTube URL, 이미지는 alt/officialReferrer",
+          "practice": "object {heading?: string, body: string, constraint?: string, prompt?: string}",
+          "sourceUrls": "HTTPS URL[]: 본문 보조 원문 링크. packet.urls와 연구 원장에도 결속",
+          "limitation": "string, 선택: 독자에게 필요한 미실행·미시청·권리 등 한계",
+          "checkedAt": "기존 렌더러의 checkedAt 분기 계약 확인 후 승인 입력"
+        },
+        "note": "필드 존재는 검수 승인이 아니며 관련 원문·한국어 승인 패킷이 먼저 필요. fullMarkup은 렌더 필드가 아닌 별도 수동 조립 원고. 이 섹션의 lead는 렌더러가 사용하지 않으므로 도입은 승인 paragraphs 또는 별도 검수 마크업을 사용한다.",
+        "packetEnvelope": {
+          "text": "string 또는 body: 승인 원고",
+          "urls": "HTTPS URL[]: 실제 조사 원장과 결속",
+          "candidate": "아래 렌더 필드 객체"
+        },
+        "historicalRendererKeys": [
+          "checkedAt",
+          "limitation",
+          "paragraphs",
+          "practice",
+          "sourceLabels",
+          "sourceUrls"
+        ],
+        "researchFields": [
+          "kind",
+          "renderStatus",
+          "sourceScope",
+          "text"
+        ],
+        "historicalInputScope": "2026-11-07-quality-renewal-01 실제 패킷의 키 목록만 대조; 사실/본문은 복제하지 않음. 과거 키 전부를 새 호에 강제하지 않음."
+      }
+    },
+    {
+      "id": "github-trending",
+      "group": "tools",
+      "lane": "github-trending",
+      "parent": null,
+      "title": "저장소 동향",
+      "components": [
+        ".table-scroll"
+      ],
+      "fields": [
+        "관측일",
+        "순위",
+        "기간",
+        "누적",
+        "활용",
+        "출처",
+        "확인일",
+        "선정 이유",
+        "미확인 한계"
+      ],
+      "media": {
+        "official": "공식 화면·영상의 원문, 임베드/권리와 접근 여부 확인 후 적합하면 표시. 불가 시 링크와 원장 사유.",
+        "generated": "장 핵심을 설명할 때 실제 생성·검수하고 개념 그림으로 표시.",
+        "reading": "관련 미디어의 배치 또는 미사용 근거 기록"
+      },
+      "practice": "해당 주제에 맞는 독자 행동을 작성",
+      "reviews": [
+        "독립 원문과 한국어",
+        "독립 내용과 미디어",
+        "독립 320/390/768/1440 화면"
+      ],
+      "referenceIds": [
+        "github-trending"
+      ],
+      "packetContract": {
+        "reference": "workflows/render-report-section.mjs",
+        "sectionId": "github-trending",
+        "candidate": {
+          "paragraphs": "string[], 선택: 승인된 문단",
+          "sourceLabels": "object URL→string, 선택: 출처명",
+          "media": "object[], 선택: kind/title/sourceUrl, 영상은 videoId와 정규 YouTube URL, 이미지는 alt/officialReferrer",
+          "table": "object {columns:string[],rows:string[][6]}: 순위/저장소·누적·증가·용도·라이선스·URL",
+          "sourceUrls": "HTTPS URL[]: 본문 보조 원문 링크. packet.urls와 연구 원장에도 결속",
+          "limitation": "string, 선택: 독자에게 필요한 미실행·미시청·권리 등 한계",
+          "checkedAt": "기존 렌더러의 checkedAt 분기 계약 확인 후 승인 입력",
+          "practice": "object {heading,body,constraint?,prompt?}: prompt는 [입력]과 산출물·완료기준·후속질문 포함"
+        },
+        "note": "필드 존재는 검수 승인이 아니며 관련 원문·한국어 승인 패킷이 먼저 필요. fullMarkup은 렌더 필드가 아닌 별도 수동 조립 원고. 이 섹션의 lead는 렌더러가 사용하지 않으므로 도입은 승인 paragraphs 또는 별도 검수 마크업을 사용한다.",
+        "packetEnvelope": {
+          "text": "string 또는 body: 승인 원고",
+          "urls": "HTTPS URL[]: 실제 조사 원장과 결속",
+          "candidate": "아래 렌더 필드 객체"
+        },
+        "historicalRendererKeys": [
+          "checkedAt",
+          "limitation",
+          "media",
+          "paragraphs",
+          "practice",
+          "sourceLabels",
+          "sourceUrls",
+          "table"
+        ],
+        "researchFields": [
+          "kind",
+          "mediaCandidateIds",
+          "renderStatus",
+          "sourceScope",
+          "status",
+          "text"
+        ],
+        "historicalInputScope": "2026-11-07-quality-renewal-01 실제 패킷의 키 목록만 대조; 사실/본문은 복제하지 않음. 과거 키 전부를 새 호에 강제하지 않음."
+      }
+    },
+    {
+      "id": "ai-trends",
+      "group": "tools",
+      "lane": "ai-trends",
+      "parent": null,
+      "title": "AI 동향",
+      "components": [
+        ".chapter-head"
+      ],
+      "fields": [
+        "발표일",
+        "변경점",
+        "영향",
+        "출처",
+        "확인일",
+        "선정 이유",
+        "미확인 한계"
+      ],
+      "media": {
+        "official": "공식 화면·영상의 원문, 임베드/권리와 접근 여부 확인 후 적합하면 표시. 불가 시 링크와 원장 사유.",
+        "generated": "장 핵심을 설명할 때 실제 생성·검수하고 개념 그림으로 표시.",
+        "reading": "관련 미디어의 배치 또는 미사용 근거 기록"
+      },
+      "practice": "해당 주제에 맞는 독자 행동을 작성",
+      "reviews": [
+        "독립 원문과 한국어",
+        "독립 내용과 미디어",
+        "독립 320/390/768/1440 화면"
+      ],
+      "referenceIds": [
+        "ai-trends"
+      ],
+      "packetContract": {
+        "reference": "workflows/render-report-section.mjs",
+        "sectionId": "ai-trends",
+        "candidate": {
+          "lead": "string, 선택: 도입 요약",
+          "paragraphs": "string[], 선택: 승인된 문단",
+          "sourceLabels": "object URL→string, 선택: 출처명",
+          "media": "object[], 선택: kind/title/sourceUrl, 영상은 videoId와 정규 YouTube URL, 이미지는 alt/officialReferrer",
+          "sourceUrls": "HTTPS URL[]: 본문 보조 원문 링크. packet.urls와 연구 원장에도 결속",
+          "limitation": "string, 선택: 독자에게 필요한 미실행·미시청·권리 등 한계",
+          "checkedAt": "기존 렌더러의 checkedAt 분기 계약 확인 후 승인 입력",
+          "practice": "object {heading,body,constraint?,prompt?}: prompt는 [입력]과 산출물·완료기준·후속질문 포함",
+          "table": "object: 렌더 가능한 섹션별 표 분기만 사용. 그 외 과거 패킷의 표는 조사 이력이며 자동 출력되지 않음"
+        },
+        "note": "필드 존재는 검수 승인이 아니며 관련 원문·한국어 승인 패킷이 먼저 필요. fullMarkup은 렌더 필드가 아닌 별도 수동 조립 원고.",
+        "packetEnvelope": {
+          "text": "string 또는 body: 승인 원고",
+          "urls": "HTTPS URL[]: 실제 조사 원장과 결속",
+          "candidate": "아래 렌더 필드 객체"
+        },
+        "historicalRendererKeys": [
+          "checkedAt",
+          "lead",
+          "limitation",
+          "media",
+          "paragraphs",
+          "practice",
+          "sourceLabels",
+          "sourceUrls",
+          "table"
+        ],
+        "researchFields": [
+          "kind",
+          "mediaCandidateIds",
+          "renderStatus",
+          "sourceScope",
+          "status",
+          "text"
+        ],
+        "historicalInputScope": "2026-11-07-quality-renewal-01 실제 패킷의 키 목록만 대조; 사실/본문은 복제하지 않음. 과거 키 전부를 새 호에 강제하지 않음."
+      }
+    },
+    {
+      "id": "game-ai",
+      "group": "tools",
+      "lane": "game-ai",
+      "parent": null,
+      "title": "게임과 AI",
+      "components": [
+        ".chapter-head"
+      ],
+      "fields": [
+        "근거",
+        "적용",
+        "한계",
+        "출처",
+        "확인일",
+        "선정 이유",
+        "미확인 한계"
+      ],
+      "media": {
+        "official": "공식 화면·영상의 원문, 임베드/권리와 접근 여부 확인 후 적합하면 표시. 불가 시 링크와 원장 사유.",
+        "generated": "장 핵심을 설명할 때 실제 생성·검수하고 개념 그림으로 표시.",
+        "reading": "관련 미디어의 배치 또는 미사용 근거 기록"
+      },
+      "practice": "해당 주제에 맞는 독자 행동을 작성",
+      "reviews": [
+        "독립 원문과 한국어",
+        "독립 내용과 미디어",
+        "독립 320/390/768/1440 화면"
+      ],
+      "referenceIds": [
+        "game-ai"
+      ],
+      "packetContract": {
+        "reference": "workflows/render-report-section.mjs",
+        "sectionId": "game-ai",
+        "candidate": {
+          "lead": "string, 선택: 도입 요약",
+          "paragraphs": "string[], 선택: 승인된 문단",
+          "sourceLabels": "object URL→string, 선택: 출처명",
+          "media": "object[], 선택: kind/title/sourceUrl, 영상은 videoId와 정규 YouTube URL, 이미지는 alt/officialReferrer",
+          "sourceUrls": "HTTPS URL[]: 본문 보조 원문 링크. packet.urls와 연구 원장에도 결속",
+          "limitation": "string, 선택: 독자에게 필요한 미실행·미시청·권리 등 한계",
+          "checkedAt": "기존 렌더러의 checkedAt 분기 계약 확인 후 승인 입력",
+          "practice": "object {heading,body,constraint?,prompt?}: prompt는 [입력]과 산출물·완료기준·후속질문 포함"
+        },
+        "note": "필드 존재는 검수 승인이 아니며 관련 원문·한국어 승인 패킷이 먼저 필요. fullMarkup은 렌더 필드가 아닌 별도 수동 조립 원고.",
+        "packetEnvelope": {
+          "text": "string 또는 body: 승인 원고",
+          "urls": "HTTPS URL[]: 실제 조사 원장과 결속",
+          "candidate": "아래 렌더 필드 객체"
+        },
+        "historicalRendererKeys": [
+          "checkedAt",
+          "limitation",
+          "media",
+          "paragraphs",
+          "practice",
+          "sourceLabels",
+          "sourceUrls"
+        ],
+        "researchFields": [
+          "kind",
+          "mediaCandidateIds",
+          "renderStatus",
+          "sourceScope",
+          "status",
+          "text"
+        ],
+        "historicalInputScope": "2026-11-07-quality-renewal-01 실제 패킷의 키 목록만 대조; 사실/본문은 복제하지 않음. 과거 키 전부를 새 호에 강제하지 않음."
+      }
+    },
+    {
+      "id": "ai-releases",
+      "group": "tools",
+      "lane": "ai-releases",
+      "parent": null,
+      "title": "제작 사례",
+      "components": [
+        ".chapter-head"
+      ],
+      "fields": [
+        "제작 주체",
+        "AI 역할",
+        "출시 상태",
+        "출처",
+        "확인일",
+        "선정 이유",
+        "미확인 한계"
+      ],
+      "media": {
+        "official": "공식 화면·영상의 원문, 임베드/권리와 접근 여부 확인 후 적합하면 표시. 불가 시 링크와 원장 사유.",
+        "generated": "장 핵심을 설명할 때 실제 생성·검수하고 개념 그림으로 표시.",
+        "reading": "관련 미디어의 배치 또는 미사용 근거 기록"
+      },
+      "practice": "해당 주제에 맞는 독자 행동을 작성",
+      "reviews": [
+        "독립 원문과 한국어",
+        "독립 내용과 미디어",
+        "독립 320/390/768/1440 화면"
+      ],
+      "referenceIds": [
+        "ai-releases"
+      ],
+      "packetContract": {
+        "reference": "workflows/render-report-section.mjs",
+        "sectionId": "ai-releases",
+        "candidate": {
+          "lead": "string, 선택: 도입 요약",
+          "paragraphs": "string[], 선택: 승인된 문단",
+          "sourceLabels": "object URL→string, 선택: 출처명",
+          "media": "object[], 선택: kind/title/sourceUrl, 영상은 videoId와 정규 YouTube URL, 이미지는 alt/officialReferrer",
+          "sourceUrls": "HTTPS URL[]: 본문 보조 원문 링크. packet.urls와 연구 원장에도 결속",
+          "limitation": "string, 선택: 독자에게 필요한 미실행·미시청·권리 등 한계",
+          "checkedAt": "기존 렌더러의 checkedAt 분기 계약 확인 후 승인 입력",
+          "practice": "object {heading,body,constraint?,prompt?}: prompt는 [입력]과 산출물·완료기준·후속질문 포함",
+          "table": "object: 렌더 가능한 섹션별 표 분기만 사용. 그 외 과거 패킷의 표는 조사 이력이며 자동 출력되지 않음"
+        },
+        "note": "필드 존재는 검수 승인이 아니며 관련 원문·한국어 승인 패킷이 먼저 필요. fullMarkup은 렌더 필드가 아닌 별도 수동 조립 원고.",
+        "packetEnvelope": {
+          "text": "string 또는 body: 승인 원고",
+          "urls": "HTTPS URL[]: 실제 조사 원장과 결속",
+          "candidate": "아래 렌더 필드 객체"
+        },
+        "historicalRendererKeys": [
+          "checkedAt",
+          "limitation",
+          "media",
+          "paragraphs",
+          "practice",
+          "sourceLabels",
+          "sourceUrls",
+          "table"
+        ],
+        "researchFields": [
+          "kind",
+          "mediaCandidateIds",
+          "renderStatus",
+          "sourceScope",
+          "status",
+          "text"
+        ],
+        "historicalInputScope": "2026-11-07-quality-renewal-01 실제 패킷의 키 목록만 대조; 사실/본문은 복제하지 않음. 과거 키 전부를 새 호에 강제하지 않음."
+      }
+    },
+    {
+      "id": "techniques",
+      "group": "tools",
+      "lane": "techniques",
+      "parent": null,
+      "title": "제작 기법",
+      "components": [
+        ".section-method"
+      ],
+      "fields": [
+        "입력",
+        "방법",
+        "출력",
+        "출처",
+        "확인일",
+        "선정 이유",
+        "미확인 한계"
+      ],
+      "media": {
+        "official": "공식 화면·영상의 원문, 임베드/권리와 접근 여부 확인 후 적합하면 표시. 불가 시 링크와 원장 사유.",
+        "generated": "장 핵심을 설명할 때 실제 생성·검수하고 개념 그림으로 표시.",
+        "reading": "관련 미디어의 배치 또는 미사용 근거 기록"
+      },
+      "practice": "입력·산출물·완료 기준·후속 질문 및 미실행 구분",
+      "reviews": [
+        "독립 원문과 한국어",
+        "독립 내용과 미디어",
+        "독립 320/390/768/1440 화면"
+      ],
+      "referenceIds": [
+        "techniques"
+      ],
+      "packetContract": {
+        "reference": "workflows/render-report-section.mjs",
+        "sectionId": "techniques",
+        "candidate": {
+          "lead": "string, 선택: 도입 요약",
+          "paragraphs": "string[], 선택: 승인된 문단",
+          "sourceLabels": "object URL→string, 선택: 출처명",
+          "media": "object[], 선택: kind/title/sourceUrl, 영상은 videoId와 정규 YouTube URL, 이미지는 alt/officialReferrer",
+          "practice": "object {heading?: string, body: string, constraint?: string, prompt?: string}",
+          "sourceUrls": "HTTPS URL[]: 본문 보조 원문 링크. packet.urls와 연구 원장에도 결속",
+          "limitation": "string, 선택: 독자에게 필요한 미실행·미시청·권리 등 한계",
+          "checkedAt": "기존 렌더러의 checkedAt 분기 계약 확인 후 승인 입력"
+        },
+        "note": "필드 존재는 검수 승인이 아니며 관련 원문·한국어 승인 패킷이 먼저 필요. fullMarkup은 렌더 필드가 아닌 별도 수동 조립 원고.",
+        "packetEnvelope": {
+          "text": "string 또는 body: 승인 원고",
+          "urls": "HTTPS URL[]: 실제 조사 원장과 결속",
+          "candidate": "아래 렌더 필드 객체"
+        },
+        "historicalRendererKeys": [
+          "checkedAt",
+          "lead",
+          "limitation",
+          "media",
+          "paragraphs",
+          "practice",
+          "sourceLabels",
+          "sourceUrls"
+        ],
+        "researchFields": [
+          "kind",
+          "mediaCandidateIds",
+          "renderStatus",
+          "sourceScope",
+          "status",
+          "text"
+        ],
+        "historicalInputScope": "2026-11-07-quality-renewal-01 실제 패킷의 키 목록만 대조; 사실/본문은 복제하지 않음. 과거 키 전부를 새 호에 강제하지 않음."
+      }
+    },
+    {
+      "id": "games",
+      "group": "making",
+      "lane": "games",
+      "parent": null,
+      "title": "게임 분석",
+      "components": [
+        ".game-dossier"
+      ],
+      "fields": [
+        "게임",
+        "핵심 경험",
+        "선정 이유",
+        "출처",
+        "확인일",
+        "선정 이유",
+        "미확인 한계"
+      ],
+      "media": {
+        "official": "공식 화면·영상의 원문, 임베드/권리와 접근 여부 확인 후 적합하면 표시. 불가 시 링크와 원장 사유.",
+        "generated": "장 핵심을 설명할 때 실제 생성·검수하고 개념 그림으로 표시.",
+        "reading": "관련 미디어의 배치 또는 미사용 근거 기록"
+      },
+      "practice": "해당 주제에 맞는 독자 행동을 작성",
+      "reviews": [
+        "독립 원문과 한국어",
+        "독립 내용과 미디어",
+        "독립 320/390/768/1440 화면"
+      ],
+      "referenceIds": [
+        "games"
+      ],
+      "packetContract": {
+        "reference": "workflows/render-report-section.mjs",
+        "sectionId": "games",
+        "candidate": {
+          "lead": "string, 선택: 도입 요약",
+          "paragraphs": "string[], 선택: 승인된 문단",
+          "sourceLabels": "object URL→string, 선택: 출처명",
+          "media": "object[], 선택: kind/title/sourceUrl, 영상은 videoId와 정규 YouTube URL, 이미지는 alt/officialReferrer",
+          "sourceUrls": "HTTPS URL[]: 본문 보조 원문 링크. packet.urls와 연구 원장에도 결속",
+          "limitation": "string, 선택: 독자에게 필요한 미실행·미시청·권리 등 한계",
+          "checkedAt": "기존 렌더러의 checkedAt 분기 계약 확인 후 승인 입력",
+          "practice": "object {heading,body,constraint?,prompt?}: prompt는 [입력]과 산출물·완료기준·후속질문 포함",
+          "table": "object: 렌더 가능한 섹션별 표 분기만 사용. 그 외 과거 패킷의 표는 조사 이력이며 자동 출력되지 않음"
+        },
+        "note": "필드 존재는 검수 승인이 아니며 관련 원문·한국어 승인 패킷이 먼저 필요. fullMarkup은 렌더 필드가 아닌 별도 수동 조립 원고.",
+        "packetEnvelope": {
+          "text": "string 또는 body: 승인 원고",
+          "urls": "HTTPS URL[]: 실제 조사 원장과 결속",
+          "candidate": "아래 렌더 필드 객체"
+        },
+        "historicalRendererKeys": [
+          "checkedAt",
+          "lead",
+          "limitation",
+          "media",
+          "paragraphs",
+          "practice",
+          "sourceLabels",
+          "sourceUrls",
+          "table"
+        ],
+        "researchFields": [
+          "kind",
+          "marketIntegrationScope",
+          "marketPractice",
+          "mediaCandidateIds",
+          "renderStatus",
+          "sourceScope",
+          "status",
+          "text"
+        ],
+        "historicalInputScope": "2026-11-07-quality-renewal-01 실제 패킷의 키 목록만 대조; 사실/본문은 복제하지 않음. 과거 키 전부를 새 호에 강제하지 않음."
+      }
+    },
+    {
+      "id": "reverse",
+      "group": "making",
+      "lane": "reverse",
+      "parent": null,
+      "title": "재미 분석",
+      "components": [
+        ".practice-prompt"
+      ],
+      "fields": [
+        "행동",
+        "피드백",
+        "학습",
+        "출처",
+        "확인일",
+        "선정 이유",
+        "미확인 한계"
+      ],
+      "media": {
+        "official": "공식 화면·영상의 원문, 임베드/권리와 접근 여부 확인 후 적합하면 표시. 불가 시 링크와 원장 사유.",
+        "generated": "장 핵심을 설명할 때 실제 생성·검수하고 개념 그림으로 표시.",
+        "reading": "관련 미디어의 배치 또는 미사용 근거 기록"
+      },
+      "practice": "입력·산출물·완료 기준·후속 질문 및 미실행 구분",
+      "reviews": [
+        "독립 원문과 한국어",
+        "독립 내용과 미디어",
+        "독립 320/390/768/1440 화면"
+      ],
+      "referenceIds": [
+        "reverse"
+      ],
+      "packetContract": {
+        "reference": "workflows/render-report-section.mjs",
+        "sectionId": "reverse",
+        "candidate": {
+          "lead": "string, 선택: 도입 요약",
+          "paragraphs": "string[], 선택: 승인된 문단",
+          "sourceLabels": "object URL→string, 선택: 출처명",
+          "media": "object[], 선택: kind/title/sourceUrl, 영상은 videoId와 정규 YouTube URL, 이미지는 alt/officialReferrer",
+          "practice": "object {heading?: string, body: string, constraint?: string, prompt?: string}",
+          "sourceUrls": "HTTPS URL[]: 본문 보조 원문 링크. packet.urls와 연구 원장에도 결속",
+          "limitation": "string, 선택: 독자에게 필요한 미실행·미시청·권리 등 한계",
+          "checkedAt": "기존 렌더러의 checkedAt 분기 계약 확인 후 승인 입력",
+          "table": "object: 렌더 가능한 섹션별 표 분기만 사용. 그 외 과거 패킷의 표는 조사 이력이며 자동 출력되지 않음"
+        },
+        "note": "필드 존재는 검수 승인이 아니며 관련 원문·한국어 승인 패킷이 먼저 필요. fullMarkup은 렌더 필드가 아닌 별도 수동 조립 원고.",
+        "packetEnvelope": {
+          "text": "string 또는 body: 승인 원고",
+          "urls": "HTTPS URL[]: 실제 조사 원장과 결속",
+          "candidate": "아래 렌더 필드 객체"
+        },
+        "historicalRendererKeys": [
+          "checkedAt",
+          "limitation",
+          "media",
+          "paragraphs",
+          "practice",
+          "sourceLabels",
+          "sourceUrls",
+          "table"
+        ],
+        "researchFields": [
+          "kind",
+          "mediaCandidateIds",
+          "renderStatus",
+          "sourceScope",
+          "status",
+          "text"
+        ],
+        "historicalInputScope": "2026-11-07-quality-renewal-01 실제 패킷의 키 목록만 대조; 사실/본문은 복제하지 않음. 과거 키 전부를 새 호에 강제하지 않음."
+      }
+    },
+    {
+      "id": "ai-only-lab",
+      "group": "making",
+      "lane": "ai-only-lab",
+      "parent": null,
+      "title": "AI 제작 사례",
+      "components": [
+        ".chapter-head"
+      ],
+      "fields": [
+        "사람 역할",
+        "AI 범위",
+        "근거",
+        "출처",
+        "확인일",
+        "선정 이유",
+        "미확인 한계"
+      ],
+      "media": {
+        "official": "공식 화면·영상의 원문, 임베드/권리와 접근 여부 확인 후 적합하면 표시. 불가 시 링크와 원장 사유.",
+        "generated": "장 핵심을 설명할 때 실제 생성·검수하고 개념 그림으로 표시.",
+        "reading": "관련 미디어의 배치 또는 미사용 근거 기록"
+      },
+      "practice": "해당 주제에 맞는 독자 행동을 작성",
+      "reviews": [
+        "독립 원문과 한국어",
+        "독립 내용과 미디어",
+        "독립 320/390/768/1440 화면"
+      ],
+      "referenceIds": [
+        "ai-only-lab"
+      ],
+      "packetContract": {
+        "reference": "workflows/render-report-section.mjs",
+        "sectionId": "ai-only-lab",
+        "candidate": {
+          "lead": "string, 선택: 도입 요약",
+          "paragraphs": "string[], 선택: 승인된 문단",
+          "sourceLabels": "object URL→string, 선택: 출처명",
+          "media": "object[], 선택: kind/title/sourceUrl, 영상은 videoId와 정규 YouTube URL, 이미지는 alt/officialReferrer",
+          "sourceUrls": "HTTPS URL[]: 본문 보조 원문 링크. packet.urls와 연구 원장에도 결속",
+          "limitation": "string, 선택: 독자에게 필요한 미실행·미시청·권리 등 한계",
+          "checkedAt": "기존 렌더러의 checkedAt 분기 계약 확인 후 승인 입력",
+          "practice": "object {heading,body,constraint?,prompt?}: prompt는 [입력]과 산출물·완료기준·후속질문 포함",
+          "table": "object: 렌더 가능한 섹션별 표 분기만 사용. 그 외 과거 패킷의 표는 조사 이력이며 자동 출력되지 않음"
+        },
+        "note": "필드 존재는 검수 승인이 아니며 관련 원문·한국어 승인 패킷이 먼저 필요. fullMarkup은 렌더 필드가 아닌 별도 수동 조립 원고.",
+        "packetEnvelope": {
+          "text": "string 또는 body: 승인 원고",
+          "urls": "HTTPS URL[]: 실제 조사 원장과 결속",
+          "candidate": "아래 렌더 필드 객체"
+        },
+        "historicalRendererKeys": [
+          "checkedAt",
+          "limitation",
+          "media",
+          "paragraphs",
+          "practice",
+          "sourceLabels",
+          "sourceUrls",
+          "table"
+        ],
+        "researchFields": [
+          "kind",
+          "mediaCandidateIds",
+          "renderStatus",
+          "searchCoverage",
+          "sourceScope",
+          "status",
+          "text"
+        ],
+        "historicalInputScope": "2026-11-07-quality-renewal-01 실제 패킷의 키 목록만 대조; 사실/본문은 복제하지 않음. 과거 키 전부를 새 호에 강제하지 않음."
+      }
+    },
+    {
+      "id": "ai-planning",
+      "group": "making",
+      "lane": "ai-planning",
+      "parent": null,
+      "title": "AI 기획",
+      "components": [
+        ".practice-prompt"
+      ],
+      "fields": [
+        "입력",
+        "결과",
+        "검증 기준",
+        "출처",
+        "확인일",
+        "선정 이유",
+        "미확인 한계"
+      ],
+      "media": {
+        "official": "공식 화면·영상의 원문, 임베드/권리와 접근 여부 확인 후 적합하면 표시. 불가 시 링크와 원장 사유.",
+        "generated": "장 핵심을 설명할 때 실제 생성·검수하고 개념 그림으로 표시.",
+        "reading": "관련 미디어의 배치 또는 미사용 근거 기록"
+      },
+      "practice": "입력·산출물·완료 기준·후속 질문 및 미실행 구분",
+      "reviews": [
+        "독립 원문과 한국어",
+        "독립 내용과 미디어",
+        "독립 320/390/768/1440 화면"
+      ],
+      "referenceIds": [
+        "ai-planning"
+      ],
+      "packetContract": {
+        "reference": "workflows/render-report-section.mjs",
+        "sectionId": "ai-planning",
+        "candidate": {
+          "lead": "string, 선택: 도입 요약",
+          "paragraphs": "string[], 선택: 승인된 문단",
+          "sourceLabels": "object URL→string, 선택: 출처명",
+          "media": "object[], 선택: kind/title/sourceUrl, 영상은 videoId와 정규 YouTube URL, 이미지는 alt/officialReferrer",
+          "practice": "object {heading?: string, body: string, constraint?: string, prompt?: string}",
+          "sourceUrls": "HTTPS URL[]: 본문 보조 원문 링크. packet.urls와 연구 원장에도 결속",
+          "limitation": "string, 선택: 독자에게 필요한 미실행·미시청·권리 등 한계",
+          "checkedAt": "기존 렌더러의 checkedAt 분기 계약 확인 후 승인 입력",
+          "downloadArtifacts": "object[] {targetPath,sha256,content}: 승인된 같은 호 Markdown",
+          "sourceRole": "string: background이면 참고 자료로 표시"
+        },
+        "note": "필드 존재는 검수 승인이 아니며 관련 원문·한국어 승인 패킷이 먼저 필요. fullMarkup은 렌더 필드가 아닌 별도 수동 조립 원고.",
+        "packetEnvelope": {
+          "text": "string 또는 body: 승인 원고",
+          "urls": "HTTPS URL[]: 실제 조사 원장과 결속",
+          "candidate": "아래 렌더 필드 객체"
+        },
+        "historicalRendererKeys": [
+          "checkedAt",
+          "downloadArtifacts",
+          "limitation",
+          "media",
+          "paragraphs",
+          "practice",
+          "sourceLabels",
+          "sourceRole",
+          "sourceUrls"
+        ],
+        "researchFields": [
+          "kind",
+          "mediaCandidateIds",
+          "renderStatus",
+          "sourceScope",
+          "status",
+          "text"
+        ],
+        "historicalInputScope": "2026-11-07-quality-renewal-01 실제 패킷의 키 목록만 대조; 사실/본문은 복제하지 않음. 과거 키 전부를 새 호에 강제하지 않음."
+      }
+    },
+    {
+      "id": "game-ideas",
+      "group": "making",
+      "lane": "game-ideas",
+      "parent": null,
+      "title": "게임 기획",
+      "components": [
+        ".idea-card"
+      ],
+      "fields": [
+        "기획 전체 Markdown",
+        "복사",
+        "다운로드",
+        "출처",
+        "확인일",
+        "선정 이유",
+        "미확인 한계"
+      ],
+      "media": {
+        "official": "공식 화면·영상의 원문, 임베드/권리와 접근 여부 확인 후 적합하면 표시. 불가 시 링크와 원장 사유.",
+        "generated": "장 핵심을 설명할 때 실제 생성·검수하고 개념 그림으로 표시.",
+        "reading": "관련 미디어의 배치 또는 미사용 근거 기록"
+      },
+      "practice": "입력·산출물·완료 기준·후속 질문 및 미실행 구분",
+      "reviews": [
+        "독립 원문과 한국어",
+        "독립 내용과 미디어",
+        "독립 320/390/768/1440 화면"
+      ],
+      "referenceIds": [
+        "game-ideas"
+      ],
+      "packetContract": {
+        "reference": "workflows/render-report-section.mjs",
+        "sectionId": "game-ideas",
+        "candidate": {
+          "lead": "string, 선택: 도입 요약",
+          "paragraphs": "string[], 선택: 승인된 문단",
+          "sourceLabels": "object URL→string, 선택: 출처명",
+          "media": "object[], 선택: kind/title/sourceUrl, 영상은 videoId와 정규 YouTube URL, 이미지는 alt/officialReferrer",
+          "practice": "object {heading?: string, body: string, constraint?: string, prompt?: string}",
+          "copyPrompts": "object 카드 제목→string, 실제 카드 3개 모두",
+          "downloadArtifacts": "object[] {targetPath, content, sha256}: 다운로드 파일 해시 결속",
+          "downloadLinks": "object[] {href, label}, 선택: 날짜가 일치하는 Markdown",
+          "sourceUrls": "HTTPS URL[]: 본문 보조 원문 링크. packet.urls와 연구 원장에도 결속",
+          "limitation": "string, 선택: 독자에게 필요한 미실행·미시청·권리 등 한계",
+          "assetDerivations": "object[] {sourcePath,draftPath,outputPath,sourceSha256,outputSha256,sourceBytes,outputBytes,width,height,qualityReviewer,qualityEvidencePath,qualityEvidenceSha256}: 실제 자산검수와 결속",
+          "cardTexts": "object 카드제목→string: 서로 다른 세 카드 설명",
+          "checkedAt": "기존 렌더러의 checkedAt 분기 계약 확인 후 승인 입력",
+          "imageReplacements": "object 기존 로컬이미지경로→새검수로컬경로"
+        },
+        "note": "필드 존재는 검수 승인이 아니며 관련 원문·한국어 승인 패킷이 먼저 필요. fullMarkup은 렌더 필드가 아닌 별도 수동 조립 원고.",
+        "packetEnvelope": {
+          "text": "string 또는 body: 승인 원고",
+          "urls": "HTTPS URL[]: 실제 조사 원장과 결속",
+          "candidate": "아래 렌더 필드 객체"
+        },
+        "historicalRendererKeys": [
+          "assetDerivations",
+          "cardTexts",
+          "checkedAt",
+          "copyPrompts",
+          "downloadArtifacts",
+          "downloadLinks",
+          "imageReplacements",
+          "limitation",
+          "media",
+          "paragraphs",
+          "practice",
+          "sourceLabels",
+          "sourceUrls"
+        ],
+        "researchFields": [
+          "kind",
+          "mediaCandidateIds",
+          "renderStatus",
+          "sourceScope",
+          "status",
+          "text"
+        ],
+        "historicalInputScope": "2026-11-07-quality-renewal-01 실제 패킷의 키 목록만 대조; 사실/본문은 복제하지 않음. 과거 키 전부를 새 호에 강제하지 않음."
+      }
+    },
+    {
+      "id": "ai-production",
+      "group": "making",
+      "lane": "ai-production",
+      "parent": null,
+      "title": "AI 제작 계획",
+      "components": [
+        ".idea-card"
+      ],
+      "fields": [
+        "계획 전체 Markdown",
+        "복사",
+        "다운로드",
+        "출처",
+        "확인일",
+        "선정 이유",
+        "미확인 한계"
+      ],
+      "media": {
+        "official": "공식 화면·영상의 원문, 임베드/권리와 접근 여부 확인 후 적합하면 표시. 불가 시 링크와 원장 사유.",
+        "generated": "장 핵심을 설명할 때 실제 생성·검수하고 개념 그림으로 표시.",
+        "reading": "관련 미디어의 배치 또는 미사용 근거 기록"
+      },
+      "practice": "입력·산출물·완료 기준·후속 질문 및 미실행 구분",
+      "reviews": [
+        "독립 원문과 한국어",
+        "독립 내용과 미디어",
+        "독립 320/390/768/1440 화면"
+      ],
+      "referenceIds": [
+        "ai-production"
+      ],
+      "packetContract": {
+        "reference": "workflows/render-report-section.mjs",
+        "sectionId": "ai-production",
+        "candidate": {
+          "lead": "string, 선택: 도입 요약",
+          "paragraphs": "string[], 선택: 승인된 문단",
+          "sourceLabels": "object URL→string, 선택: 출처명",
+          "media": "object[], 선택: kind/title/sourceUrl, 영상은 videoId와 정규 YouTube URL, 이미지는 alt/officialReferrer",
+          "practice": "object {heading?: string, body: string, constraint?: string, prompt?: string}",
+          "copyPrompts": "object 카드 제목→string, 실제 카드 3개 모두",
+          "downloadArtifacts": "object[] {targetPath, content, sha256}: 다운로드 파일 해시 결속",
+          "downloadLinks": "object[] {href, label}, 선택: 날짜가 일치하는 Markdown",
+          "sourceUrls": "HTTPS URL[]: 본문 보조 원문 링크. packet.urls와 연구 원장에도 결속",
+          "limitation": "string, 선택: 독자에게 필요한 미실행·미시청·권리 등 한계",
+          "assetDerivations": "object[] {sourcePath,draftPath,outputPath,sourceSha256,outputSha256,sourceBytes,outputBytes,width,height,qualityReviewer,qualityEvidencePath,qualityEvidenceSha256}: 실제 자산검수와 결속",
+          "cardTexts": "object 카드제목→string: 서로 다른 세 카드 설명",
+          "checkedAt": "기존 렌더러의 checkedAt 분기 계약 확인 후 승인 입력",
+          "imageReplacements": "object 기존 로컬이미지경로→새검수로컬경로"
+        },
+        "note": "필드 존재는 검수 승인이 아니며 관련 원문·한국어 승인 패킷이 먼저 필요. fullMarkup은 렌더 필드가 아닌 별도 수동 조립 원고.",
+        "packetEnvelope": {
+          "text": "string 또는 body: 승인 원고",
+          "urls": "HTTPS URL[]: 실제 조사 원장과 결속",
+          "candidate": "아래 렌더 필드 객체"
+        },
+        "historicalRendererKeys": [
+          "assetDerivations",
+          "cardTexts",
+          "checkedAt",
+          "copyPrompts",
+          "downloadArtifacts",
+          "downloadLinks",
+          "imageReplacements",
+          "limitation",
+          "media",
+          "paragraphs",
+          "practice",
+          "sourceLabels",
+          "sourceUrls"
+        ],
+        "researchFields": [
+          "kind",
+          "mediaCandidateIds",
+          "renderStatus",
+          "sourceScope",
+          "status",
+          "text"
+        ],
+        "historicalInputScope": "2026-11-07-quality-renewal-01 실제 패킷의 키 목록만 대조; 사실/본문은 복제하지 않음. 과거 키 전부를 새 호에 강제하지 않음."
+      }
+    },
+    {
+      "id": "prototype",
+      "group": "making",
+      "lane": "prototype",
+      "parent": null,
+      "title": "프로토타입",
+      "components": [
+        ".section-method"
+      ],
+      "fields": [
+        "규칙",
+        "테스트",
+        "완료 기준",
+        "출처",
+        "확인일",
+        "선정 이유",
+        "미확인 한계"
+      ],
+      "media": {
+        "official": "공식 화면·영상의 원문, 임베드/권리와 접근 여부 확인 후 적합하면 표시. 불가 시 링크와 원장 사유.",
+        "generated": "장 핵심을 설명할 때 실제 생성·검수하고 개념 그림으로 표시.",
+        "reading": "관련 미디어의 배치 또는 미사용 근거 기록"
+      },
+      "practice": "입력·산출물·완료 기준·후속 질문 및 미실행 구분",
+      "reviews": [
+        "독립 원문과 한국어",
+        "독립 내용과 미디어",
+        "독립 320/390/768/1440 화면"
+      ],
+      "referenceIds": [
+        "prototype"
+      ],
+      "packetContract": {
+        "reference": "workflows/render-report-section.mjs",
+        "sectionId": "prototype",
+        "candidate": {
+          "lead": "string, 선택: 도입 요약",
+          "paragraphs": "string[], 선택: 승인된 문단",
+          "sourceLabels": "object URL→string, 선택: 출처명",
+          "media": "object[], 선택: kind/title/sourceUrl, 영상은 videoId와 정규 YouTube URL, 이미지는 alt/officialReferrer",
+          "practice": "object {heading?: string, body: string, constraint?: string, prompt?: string}",
+          "sourceUrls": "HTTPS URL[]: 본문 보조 원문 링크. packet.urls와 연구 원장에도 결속",
+          "limitation": "string, 선택: 독자에게 필요한 미실행·미시청·권리 등 한계",
+          "checkedAt": "기존 렌더러의 checkedAt 분기 계약 확인 후 승인 입력"
+        },
+        "note": "필드 존재는 검수 승인이 아니며 관련 원문·한국어 승인 패킷이 먼저 필요. fullMarkup은 렌더 필드가 아닌 별도 수동 조립 원고.",
+        "packetEnvelope": {
+          "text": "string 또는 body: 승인 원고",
+          "urls": "HTTPS URL[]: 실제 조사 원장과 결속",
+          "candidate": "아래 렌더 필드 객체"
+        },
+        "historicalRendererKeys": [
+          "checkedAt",
+          "limitation",
+          "media",
+          "paragraphs",
+          "practice",
+          "sourceLabels",
+          "sourceUrls"
+        ],
+        "researchFields": [
+          "kind",
+          "mediaCandidateIds",
+          "renderStatus",
+          "sourceScope",
+          "status",
+          "text"
+        ],
+        "historicalInputScope": "2026-11-07-quality-renewal-01 실제 패킷의 키 목록만 대조; 사실/본문은 복제하지 않음. 과거 키 전부를 새 호에 강제하지 않음."
+      }
+    },
+    {
+      "id": "lab",
+      "group": "making",
+      "lane": "lab",
+      "parent": null,
+      "title": "데이터와 확률 실습",
+      "components": [
+        ".table-scroll"
+      ],
+      "fields": [
+        "입력",
+        "가정",
+        "출력",
+        "수치 대안",
+        "출처",
+        "확인일",
+        "선정 이유",
+        "미확인 한계"
+      ],
+      "media": {
+        "official": "공식 화면·영상의 원문, 임베드/권리와 접근 여부 확인 후 적합하면 표시. 불가 시 링크와 원장 사유.",
+        "generated": "장 핵심을 설명할 때 실제 생성·검수하고 개념 그림으로 표시.",
+        "reading": "관련 미디어의 배치 또는 미사용 근거 기록"
+      },
+      "practice": "입력·산출물·완료 기준·후속 질문 및 미실행 구분",
+      "reviews": [
+        "독립 원문과 한국어",
+        "독립 내용과 미디어",
+        "독립 320/390/768/1440 화면"
+      ],
+      "referenceIds": [
+        "lab"
+      ],
+      "packetContract": {
+        "reference": "workflows/render-report-section.mjs",
+        "sectionId": "lab",
+        "candidate": {
+          "lead": "string, 선택: 도입 요약",
+          "paragraphs": "string[], 선택: 승인된 문단",
+          "sourceLabels": "object URL→string, 선택: 출처명",
+          "media": "object[], 선택: kind/title/sourceUrl, 영상은 videoId와 정규 YouTube URL, 이미지는 alt/officialReferrer",
+          "practice": "object {heading?: string, body: string, constraint?: string, prompt?: string}",
+          "sourceUrls": "HTTPS URL[]: 본문 보조 원문 링크. packet.urls와 연구 원장에도 결속",
+          "limitation": "string, 선택: 독자에게 필요한 미실행·미시청·권리 등 한계",
+          "checkedAt": "기존 렌더러의 checkedAt 분기 계약 확인 후 승인 입력",
+          "legacyParagraphReplacements": "object 정확한기존문단→새승인문단, 모호하면 차단",
+          "practiceWidgets": "object 기존복사대상ID→{buttonLabel,output,verify,followup}",
+          "table": "object: 렌더 가능한 섹션별 표 분기만 사용. 그 외 과거 패킷의 표는 조사 이력이며 자동 출력되지 않음"
+        },
+        "note": "필드 존재는 검수 승인이 아니며 관련 원문·한국어 승인 패킷이 먼저 필요. fullMarkup은 렌더 필드가 아닌 별도 수동 조립 원고.",
+        "packetEnvelope": {
+          "text": "string 또는 body: 승인 원고",
+          "urls": "HTTPS URL[]: 실제 조사 원장과 결속",
+          "candidate": "아래 렌더 필드 객체"
+        },
+        "historicalRendererKeys": [
+          "checkedAt",
+          "legacyParagraphReplacements",
+          "limitation",
+          "media",
+          "paragraphs",
+          "practice",
+          "practiceWidgets",
+          "sourceLabels",
+          "sourceUrls",
+          "table"
+        ],
+        "researchFields": [
+          "kind",
+          "mediaCandidateIds",
+          "renderStatus",
+          "sourceScope",
+          "status",
+          "text"
+        ],
+        "historicalInputScope": "2026-11-07-quality-renewal-01 실제 패킷의 키 목록만 대조; 사실/본문은 복제하지 않음. 과거 키 전부를 새 호에 강제하지 않음."
+      }
+    },
+    {
+      "id": "careers",
+      "group": "resources",
+      "lane": "careers",
+      "parent": null,
+      "title": "취업과 진로",
+      "components": [
+        ".chapter-head"
+      ],
+      "fields": [
+        "다섯 진로 범주",
+        "상태",
+        "자격",
+        "비용",
+        "기한",
+        "출처",
+        "확인일",
+        "선정 이유",
+        "미확인 한계"
+      ],
+      "media": {
+        "official": "공식 화면·영상의 원문, 임베드/권리와 접근 여부 확인 후 적합하면 표시. 불가 시 링크와 원장 사유.",
+        "generated": "장 핵심을 설명할 때 실제 생성·검수하고 개념 그림으로 표시.",
+        "reading": "관련 미디어의 배치 또는 미사용 근거 기록"
+      },
+      "practice": "해당 주제에 맞는 독자 행동을 작성",
+      "reviews": [
+        "독립 원문과 한국어",
+        "독립 내용과 미디어",
+        "독립 320/390/768/1440 화면"
+      ],
+      "referenceIds": [
+        "careers"
+      ],
+      "packetContract": {
+        "reference": "workflows/render-report-section.mjs",
+        "sectionId": "careers",
+        "candidate": {
+          "lead": "string, 선택: 도입 요약",
+          "paragraphs": "string[], 선택: 승인된 문단",
+          "sourceLabels": "object URL→string, 선택: 출처명",
+          "media": "object[], 선택: kind/title/sourceUrl, 영상은 videoId와 정규 YouTube URL, 이미지는 alt/officialReferrer",
+          "table": "object {columns:string[8], rows:string[5][8]}: 다섯 범주와 공식 URL",
+          "checkedAt": "YYYY-MM-DD",
+          "careerStatuses": "object category→listed|open|planned|closed|unknown",
+          "requiredCourses": "object[] {title,url,note}, 선택",
+          "sourceUrls": "HTTPS URL[]: 본문 보조 원문 링크. packet.urls와 연구 원장에도 결속",
+          "limitation": "string, 선택: 독자에게 필요한 미실행·미시청·권리 등 한계",
+          "practice": "object {heading,body,constraint?,prompt?}: prompt는 [입력]과 산출물·완료기준·후속질문 포함"
+        },
+        "note": "필드 존재는 검수 승인이 아니며 관련 원문·한국어 승인 패킷이 먼저 필요. fullMarkup은 렌더 필드가 아닌 별도 수동 조립 원고.",
+        "packetEnvelope": {
+          "text": "string 또는 body: 승인 원고",
+          "urls": "HTTPS URL[]: 실제 조사 원장과 결속",
+          "candidate": "아래 렌더 필드 객체"
+        },
+        "historicalRendererKeys": [
+          "careerStatuses",
+          "checkedAt",
+          "lead",
+          "limitation",
+          "media",
+          "paragraphs",
+          "practice",
+          "requiredCourses",
+          "sourceLabels",
+          "sourceUrls",
+          "table"
+        ],
+        "researchFields": [
+          "kind",
+          "mediaCandidateIds",
+          "renderStatus",
+          "sourceScope",
+          "status",
+          "text"
+        ],
+        "historicalInputScope": "2026-11-07-quality-renewal-01 실제 패킷의 키 목록만 대조; 사실/본문은 복제하지 않음. 과거 키 전부를 새 호에 강제하지 않음."
+      }
+    },
+    {
+      "id": "opportunities",
+      "group": "resources",
+      "lane": "opportunities",
+      "parent": null,
+      "title": "일정과 기회",
+      "components": [
+        ".chapter-head"
+      ],
+      "fields": [
+        "행사",
+        "기한",
+        "상태",
+        "원문",
+        "출처",
+        "확인일",
+        "선정 이유",
+        "미확인 한계"
+      ],
+      "media": {
+        "official": "공식 화면·영상의 원문, 임베드/권리와 접근 여부 확인 후 적합하면 표시. 불가 시 링크와 원장 사유.",
+        "generated": "장 핵심을 설명할 때 실제 생성·검수하고 개념 그림으로 표시.",
+        "reading": "관련 미디어의 배치 또는 미사용 근거 기록"
+      },
+      "practice": "해당 주제에 맞는 독자 행동을 작성",
+      "reviews": [
+        "독립 원문과 한국어",
+        "독립 내용과 미디어",
+        "독립 320/390/768/1440 화면"
+      ],
+      "referenceIds": [
+        "opportunities"
+      ],
+      "packetContract": {
+        "reference": "workflows/render-report-section.mjs",
+        "sectionId": "opportunities",
+        "candidate": {
+          "lead": "string, 선택: 도입 요약",
+          "paragraphs": "string[], 선택: 승인된 문단",
+          "sourceLabels": "object URL→string, 선택: 출처명",
+          "media": "object[], 선택: kind/title/sourceUrl, 영상은 videoId와 정규 YouTube URL, 이미지는 alt/officialReferrer",
+          "table": "object {caption:string, rows:string[][5]}: 마지막 열 공식 HTTPS URL",
+          "sourceUrls": "HTTPS URL[]: 본문 보조 원문 링크. packet.urls와 연구 원장에도 결속",
+          "limitation": "string, 선택: 독자에게 필요한 미실행·미시청·권리 등 한계",
+          "checkedAt": "기존 렌더러의 checkedAt 분기 계약 확인 후 승인 입력",
+          "practice": "object {heading,body,constraint?,prompt?}: prompt는 [입력]과 산출물·완료기준·후속질문 포함"
+        },
+        "note": "필드 존재는 검수 승인이 아니며 관련 원문·한국어 승인 패킷이 먼저 필요. fullMarkup은 렌더 필드가 아닌 별도 수동 조립 원고.",
+        "packetEnvelope": {
+          "text": "string 또는 body: 승인 원고",
+          "urls": "HTTPS URL[]: 실제 조사 원장과 결속",
+          "candidate": "아래 렌더 필드 객체"
+        },
+        "historicalRendererKeys": [
+          "checkedAt",
+          "limitation",
+          "media",
+          "paragraphs",
+          "practice",
+          "sourceLabels",
+          "sourceUrls",
+          "table"
+        ],
+        "researchFields": [
+          "kind",
+          "mediaCandidateIds",
+          "renderStatus",
+          "sourceScope",
+          "status",
+          "text"
+        ],
+        "historicalInputScope": "2026-11-07-quality-renewal-01 실제 패킷의 키 목록만 대조; 사실/본문은 복제하지 않음. 과거 키 전부를 새 호에 강제하지 않음."
+      }
+    },
+    {
+      "id": "reading",
+      "group": "resources",
+      "lane": "reading",
+      "parent": null,
+      "title": "읽을거리",
+      "components": [
+        ".chapter-head"
+      ],
+      "fields": [
+        "유형",
+        "발행처",
+        "날짜",
+        "언어",
+        "선정 이유",
+        "시청 범위",
+        "출처",
+        "확인일",
+        "선정 이유",
+        "미확인 한계"
+      ],
+      "media": {
+        "official": "공식 화면·영상의 원문, 임베드/권리와 접근 여부 확인 후 적합하면 표시. 불가 시 링크와 원장 사유.",
+        "generated": "장 핵심을 설명할 때 실제 생성·검수하고 개념 그림으로 표시.",
+        "reading": "선정 영상은 임베드 가능하면 플레이어·원문 링크 제공; 링크만으로 임베드 완료 처리 금지."
+      },
+      "practice": "해당 주제에 맞는 독자 행동을 작성",
+      "reviews": [
+        "독립 원문과 한국어",
+        "독립 내용과 미디어",
+        "독립 320/390/768/1440 화면"
+      ],
+      "referenceIds": [
+        "reading"
+      ],
+      "packetContract": {
+        "reference": "workflows/render-report-section.mjs",
+        "sectionId": "reading",
+        "candidate": {
+          "lead": "string, 선택: 도입 요약",
+          "paragraphs": "string[], 선택: 승인된 문단",
+          "sourceLabels": "object URL→string, 선택: 출처명",
+          "media": "object[] video: kind,title,videoId,sourceUrl(정규),publisher,publishedAt,checkedAt,languageScope,selectionReason,freshness,verification,watchPoints[],relatedJobs[]; 없으면 []",
+          "readingResources": "object[] article/post: kind,title,sourceUrl,publisher,publishedAt,checkedAt,languageScope,selectionReason,freshness,verification,watchPoints[],relatedJobs[]",
+          "sourceUrls": "HTTPS URL[]: 본문 보조 원문 링크. packet.urls와 연구 원장에도 결속",
+          "limitation": "string, 선택: 독자에게 필요한 미실행·미시청·권리 등 한계",
+          "checkedAt": "기존 렌더러의 checkedAt 분기 계약 확인 후 승인 입력",
+          "practice": "object {heading,body,constraint?,prompt?}: prompt는 [입력]과 산출물·완료기준·후속질문 포함"
+        },
+        "note": "필드 존재는 검수 승인이 아니며 관련 원문·한국어 승인 패킷이 먼저 필요. fullMarkup은 렌더 필드가 아닌 별도 수동 조립 원고.",
+        "packetEnvelope": {
+          "text": "string 또는 body: 승인 원고",
+          "urls": "HTTPS URL[]: 실제 조사 원장과 결속",
+          "candidate": "아래 렌더 필드 객체"
+        },
+        "historicalRendererKeys": [
+          "checkedAt",
+          "lead",
+          "limitation",
+          "media",
+          "paragraphs",
+          "practice",
+          "readingResources",
+          "sourceLabels",
+          "sourceUrls"
+        ],
+        "researchFields": [
+          "kind",
+          "mediaCandidateIds",
+          "renderStatus",
+          "sourceScope",
+          "status",
+          "text"
+        ],
+        "historicalInputScope": "2026-11-07-quality-renewal-01 실제 패킷의 키 목록만 대조; 사실/본문은 복제하지 않음. 과거 키 전부를 새 호에 강제하지 않음."
+      }
+    },
+    {
+      "id": "sources",
+      "group": "resources",
+      "lane": "sources",
+      "parent": null,
+      "title": "출처",
+      "components": [
+        ".chapter-head"
+      ],
+      "fields": [
+        "원문",
+        "확인일",
+        "미확인 한계",
+        "출처",
+        "확인일",
+        "선정 이유",
+        "미확인 한계"
+      ],
+      "media": {
+        "official": "공식 화면·영상의 원문, 임베드/권리와 접근 여부 확인 후 적합하면 표시. 불가 시 링크와 원장 사유.",
+        "generated": "장 핵심을 설명할 때 실제 생성·검수하고 개념 그림으로 표시.",
+        "reading": "관련 미디어의 배치 또는 미사용 근거 기록"
+      },
+      "practice": "해당 주제에 맞는 독자 행동을 작성",
+      "reviews": [
+        "독립 원문과 한국어",
+        "독립 내용과 미디어",
+        "독립 320/390/768/1440 화면"
+      ],
+      "referenceIds": [
+        "sources"
+      ],
+      "packetContract": {
+        "reference": "workflows/render-report-section.mjs",
+        "sectionId": "sources",
+        "candidate": {
+          "lead": "string, 선택: 도입 요약",
+          "paragraphs": "string[], 선택: 승인된 문단",
+          "sourceLabels": "object URL→string, 선택: 출처명",
+          "media": "object[], 선택: kind/title/sourceUrl, 영상은 videoId와 정규 YouTube URL, 이미지는 alt/officialReferrer",
+          "requestedItems": "object[] {id,title,group,type,sourceUrl,publisher,publishedAt,checkedAt,summary,gameUse,selectionReason,practice,license 또는 limitation,repeatReason?}; 지정 자료가 있을 때",
+          "sourceUrls": "HTTPS URL[]: 본문 보조 원문 링크. packet.urls와 연구 원장에도 결속",
+          "limitation": "string, 선택: 독자에게 필요한 미실행·미시청·권리 등 한계",
+          "table": "object {caption:string,rows:string[][6]}: 각 row[1]은 공식 HTTPS 원문 URL",
+          "requestedLedgerUrl": "string: ../assets/report/research/user-requested-YYYY-MM-DD.json, requestedItems가 있을 때 관련 공개 원장",
+          "checkedAt": "기존 렌더러의 checkedAt 분기 계약 확인 후 승인 입력",
+          "practice": "object {heading,body,constraint?,prompt?}: prompt는 [입력]과 산출물·완료기준·후속질문 포함"
+        },
+        "note": "필드 존재는 검수 승인이 아니며 관련 원문·한국어 승인 패킷이 먼저 필요. fullMarkup은 렌더 필드가 아닌 별도 수동 조립 원고.",
+        "packetEnvelope": {
+          "text": "string 또는 body: 승인 원고",
+          "urls": "HTTPS URL[]: 실제 조사 원장과 결속",
+          "candidate": "아래 렌더 필드 객체"
+        },
+        "historicalRendererKeys": [
+          "checkedAt",
+          "limitation",
+          "media",
+          "paragraphs",
+          "practice",
+          "requestedItems",
+          "requestedLedgerUrl",
+          "sourceLabels",
+          "sourceUrls",
+          "table"
+        ],
+        "researchFields": [
+          "kind",
+          "mediaCandidateIds",
+          "renderStatus",
+          "sourceRows",
+          "sourceScope",
+          "status",
+          "text"
+        ],
+        "historicalInputScope": "2026-11-07-quality-renewal-01 실제 패킷의 키 목록만 대조; 사실/본문은 복제하지 않음. 과거 키 전부를 새 호에 강제하지 않음."
+      }
+    }
+  ]
+}

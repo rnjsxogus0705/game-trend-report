@@ -15,7 +15,7 @@ async function fixture(t){
  const runId='2026-11-07-test',revision='a'.repeat(40),digests={},records={};
  const write=async(p,bytes)=>{const target=path.join(root,p);await fs.mkdir(path.dirname(target),{recursive:true});await fs.writeFile(target,bytes);};
  await write(specPath,JSON.stringify(spec));const file='reports/weekly-2026-11-07.html';await write(file,syntheticHtml);
- const instructionPaths=['README.md','DESIGN.md','instructions/WORKFLOW.md','instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/READING-AND-SCHEDULER.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md','instructions/QUALITY-PIPELINE.md','instructions/FORMAT-REFERENCE.md','.agents/skills/weekly-game-report/references/report-format-reference.json','.codex/agents/report-content-reviewer.toml','.codex/agents/report-ui-reviewer.toml','.codex/agents/report-orchestrator.toml','.codex/agents/report-section-writer.toml','.agents/skills/weekly-game-report/SKILL.md','.agents/skills/weekly-game-report/references/operating-contract.md'];
+ const instructionPaths=['README.md','DESIGN.md','instructions/WORKFLOW.md','instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/READING-AND-SCHEDULER.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md','instructions/QUALITY-PIPELINE.md','instructions/FORMAT-REFERENCE.md','.agents/skills/weekly-game-report/references/report-format-reference.json','.agents/skills/weekly-game-report/references/section-templates.json','.codex/agents/report-content-reviewer.toml','.codex/agents/report-ui-reviewer.toml','.codex/agents/report-orchestrator.toml','.codex/agents/report-section-writer.toml','.agents/skills/weekly-game-report/SKILL.md','.agents/skills/weekly-game-report/references/operating-contract.md'];
  for(const file of instructionPaths)await write(file,'synthetic instruction');await write(watchlistPath,JSON.stringify(watchlist));
  await write('assets/report/DESIGN.md','synthetic instruction');
  const instructionFiles={};for(const file of [...instructionPaths,specPath,watchlistPath])instructionFiles[file]=hash(await fs.readFile(path.join(root,file)));
@@ -268,7 +268,7 @@ test('사용자 필수 자료·항목·공개 원장·독립 검수를 해시와
  const ledger=await requestedFixture(t),bytes=JSON.stringify({reportDate:'2026-11-07',items:[]});await ledger.write(ledger.ledgerPath,bytes);ledger.records.issue.files.find(file=>file.path===ledger.ledgerPath).sha256=hash(bytes);for(const id of ['editorial-review','final-review'])ledger.records[id].reviewedFiles[ledger.ledgerPath]=hash(bytes);await ledger.rebind();await assert.rejects(ledger.check,/Requested public ledger differs/);
 });
 test('포맷 참조 파일 해시 누락과 변경을 차단한다',async t=>{
- for(const file of ['instructions/FORMAT-REFERENCE.md','.agents/skills/weekly-game-report/references/report-format-reference.json']){
+ for(const file of ['instructions/FORMAT-REFERENCE.md','.agents/skills/weekly-game-report/references/report-format-reference.json','.agents/skills/weekly-game-report/references/section-templates.json']){
   const absent=await fixture(t);delete absent.records.context.instructionFiles[file];await absent.rebind();await assert.rejects(absent.check,/Stale instruction file/);
   const modified=await fixture(t);await modified.write(file,'modified format');await assert.rejects(modified.check,/Stale instruction file/);
  }

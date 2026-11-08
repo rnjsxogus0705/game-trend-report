@@ -279,7 +279,7 @@ class LedgerTest(unittest.TestCase):
     def test_contract_cache_ignores_unrelated_context_only(self):
         with tempfile.TemporaryDirectory() as tmp:
             d=Path(tmp).resolve(); install_test_skills(d); db=d/'ledger.sqlite'; research=d/'research.json'; packet=d/'one.json'; evidence=d/'evidence.json'; proof=d/'one-evidence.json'; html=d/'issue.html'
-            paths=['instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md','instructions/QUALITY-PIPELINE.md','instructions/FORMAT-REFERENCE.md','.agents/skills/weekly-game-report/references/report-format-reference.json','.codex/agents/report-content-reviewer.toml','.codex/agents/report-ui-reviewer.toml']
+            paths=['instructions/REPORT-GUIDE.md','instructions/REPORT-OUTPUT-CONTRACT.md','instructions/KOREAN-EDITORIAL-POLICY.md','instructions/DESIGN.md','instructions/QUALITY-PIPELINE.md','instructions/FORMAT-REFERENCE.md','.agents/skills/weekly-game-report/references/report-format-reference.json','.agents/skills/weekly-game-report/references/section-templates.json','.codex/agents/report-content-reviewer.toml','.codex/agents/report-ui-reviewer.toml']
             for name in paths:
                 file=d/name; file.parent.mkdir(parents=True,exist_ok=True); file.write_text('fixed '+name)
             ctx=d/'_workspace/harness/weekly-game-report/run/context.json'; ctx.parent.mkdir(parents=True)

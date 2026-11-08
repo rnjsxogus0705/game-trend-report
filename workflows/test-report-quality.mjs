@@ -9,6 +9,7 @@ test('독자용 본문의 내부 제작 안내를 찾고 필수 한계와 인용
  const prose='<p>사용자가 지정한 자료를 게임 제작 관점에서 정리했어요.</p><p>추가 유행으로 중복 집계하지 않아요.</p><p>각 도구의 README와 문서를 확인했어요.</p>';
  assert.deepEqual(productionCommentary(prose).map(f=>f.rule),['requested_material','internal_deduplication','review_workflow']);
  assert.throws(()=>validateReaderCopy(prose),/internal production commentary/);
+ for(const copy of ['독립 유행으로 이중 집계하지 않아요.','별개 유행으로 세지 않아요.','추가 영상으로 세지 않아요.'])assert.equal(productionCommentary('<p>'+copy+'</p>')[0].rule,'internal_deduplication');
  assert.doesNotThrow(()=>validateReaderCopy('<p>무료 코드는 MIT이며 폰트 라이선스는 별도예요. 전체 영상은 미시청이며 엔진 실행은 미검증이에요.</p><pre><code>'+prose+'</code></pre><blockquote>'+prose+'</blockquote><p>README의 엔진 연결 방법을 참고하세요.</p>'));
 });
 test('다음 호 발행 진입점에서 내부 과정 문구를 차단하며 과거 호에는 소급하지 않는다',()=>{

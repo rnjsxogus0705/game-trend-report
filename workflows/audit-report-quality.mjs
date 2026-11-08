@@ -10,7 +10,7 @@ export function productionCommentary(html){
  const {elements,source}=reportElements(html);
  const rules=[
   ['requested_material',/사용자(?:가|의)\s*(?:별도(?:로)?\s*)?지정한\s*(?:자료|영상|목록|콘텐츠|링크)/],
-  ['internal_deduplication',/(?:추가\s*유행으로|독립\s*유행\s*근거로)\s*중복\s*집계|이전\s*(?:호\s*)?(?:공개\s*)?원장(?:과|을)\s*대조/],
+  ['internal_deduplication',/(?:추가|독립|별개)\s*유행(?:으로|\s*근거로)[^.!?]{0,25}(?:집계|세지)|(?:추가|독립)\s*영상으로\s*세지|이전\s*(?:호\s*)?(?:공개\s*)?원장(?:과|을)\s*대조/],
   ['review_workflow',/(?:이번\s*리포트|이\s*리포트|본문)(?:는|를|에)?[^.!?]{0,60}(?:스킬|에이전트|하네스)(?:로|를|의|와|과)[^.!?]{0,40}(?:검수|제작)|각\s*도구의\s*README와\s*문서를\s*확인했/]
  ];
  return elements.filter(n=>/^(?:p|li|h[1-6]|figcaption|td|dd)$/.test(n.tag)).flatMap(n=>{
