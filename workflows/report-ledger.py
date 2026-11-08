@@ -14,6 +14,7 @@ import math
 import os
 import struct
 import zlib
+import subprocess
 from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode, unquote
 
 
@@ -185,6 +186,125 @@ class Sections(HTMLParser):
             if data.strip(): self.current['text'].append(data.strip())
 
 
+class ExactSectionRanges(HTMLParser):
+    """Exact character offsets, retaining all text outside top-level report sections."""
+    def __init__(self, text):
+        super().__init__(convert_charrefs=False)
+        self.text=text; self.lines=[0]
+        for match in re.finditer('\n',text): self.lines.append(match.end())
+        self.stack=[]; self.ranges={}; self.nested={}; self.seen_ids=set(); self.unsafe=False
+        self.feed(text); self.close()
+        if self.stack: self.unsafe=True
+
+    def absolute_offset(self):
+        line,col=self.getpos(); return self.lines[line-1]+col
+
+    def handle_starttag(self,tag,attrs):
+        attrs=dict(attrs)
+        if tag=='section':
+            named=attrs.get('id')
+            if named:
+                if named in self.seen_ids: self.unsafe=True
+                self.seen_ids.add(named)
+            if not self.stack:
+                if not named: self.unsafe=True
+                self.stack.append((named,self.absolute_offset()))
+            else:
+                root=self.stack[0][0]
+                if named and root: self.nested.setdefault(root,set()).add(named)
+                self.stack.append((None,None))
+
+    def handle_endtag(self,tag):
+        if tag=='section':
+            if not self.stack: self.unsafe=True; return
+            section,start=self.stack.pop()
+            if section is not None:
+                end=self.text.find('>',self.absolute_offset())
+                if end<0: self.unsafe=True
+                else: self.ranges[section]=(start,end+1)
+
+
+def snapshot_files(root):
+    root=Path(root)
+    if root.is_symlink() or not root.is_dir(): raise ValueError('Snapshot root must be a real directory')
+    result={}
+    for current, dirs, files in os.walk(root,followlinks=False):
+        base=Path(current)
+        for name in dirs+files:
+            path=base/name
+            if path.is_symlink(): raise ValueError('Symlink in snapshot rejected')
+        for name in files:
+            path=base/name
+            if not path.is_file(): raise ValueError('Snapshot contains a non-regular file')
+            result[path.relative_to(root).as_posix()]=path.read_bytes()
+    return result
+
+
+def scoped_files(root,scopes):
+    root=Path(root)
+    if root.is_symlink() or not root.is_dir(): raise ValueError('Source root must be a real directory')
+    result={}
+    for scope in scopes:
+        path=root/scope
+        current=root
+        for part in Path(scope).parts:
+            current=current/part
+            if current.is_symlink(): raise ValueError('Symlink in source scope rejected')
+        if path.is_dir():
+            for name,data in snapshot_files(path).items(): result[(Path(scope)/name).as_posix()]=data
+        elif path.is_file(): result[Path(scope).as_posix()]=path.read_bytes()
+        elif not path.exists(): continue
+        else: raise ValueError('Invalid source scope')
+    return result
+
+
+def html_changed_sections(before,after,section_ids):
+    try:
+        left=before.decode('utf8'); right=after.decode('utf8')
+        a=ExactSectionRanges(left); b=ExactSectionRanges(right)
+        if a.unsafe or b.unsafe or set(a.ranges)!=set(b.ranges): return None
+        changed=set()
+        def outside(text,parsed):
+            ordered=sorted(parsed.ranges,key=lambda s:parsed.ranges[s][0]); last=0; chunks=[]
+            for section in ordered:
+                start,end=parsed.ranges[section]; chunks.append((text[last:start],section)); last=end
+            return chunks,text[last:]
+        if outside(left,a)!=outside(right,b): return None
+        for section,(start,end) in a.ranges.items():
+            other_start,other_end=b.ranges[section]
+            if left[start:end]!=right[other_start:other_end]:
+                if section not in section_ids: return None
+                changed.add(section)
+        roots=set(changed)
+        for parsed in (a,b):
+            for section in roots:
+                changed.update(parsed.nested.get(section,set()) & section_ids)
+        return changed or None
+    except (UnicodeError,ValueError,IndexError): return None
+
+
+def snapshot_presentation_hash(path,root,files):
+    root=Path(root).resolve(); path=Path(path).resolve()
+    if not path.is_relative_to(root): raise ValueError('Snapshot HTML escapes tree')
+    parser=PresentationAssets(); parser.feed(path.read_text(encoding='utf8'))
+    for url in parser.assets:
+        parts=urlsplit(url)
+        if parts.scheme or parts.netloc or url.startswith('//'): continue
+        target=(path.parent/parts.path).resolve()
+        if not target.is_relative_to(root) or target.relative_to(root).as_posix() not in files: raise ValueError('Presentation asset missing from snapshot inventory')
+    return presentation_hash(path)
+
+
+def validate_snapshot_links(path,root,files):
+    root=Path(root).resolve(); path=Path(path).resolve()
+    parser=AssetLinks(); parser.feed(path.read_text(encoding='utf8'))
+    for url in parser.links:
+        parts=urlsplit(url)
+        if parts.scheme or parts.netloc or not parts.path or url.startswith('//'): continue
+        target=(root/parts.path.lstrip('/') if parts.path.startswith('/') else path.parent/parts.path).resolve()
+        if not target.is_relative_to(root) or target.relative_to(root).as_posix() not in files: raise ValueError('Local linked asset missing from scoped snapshot: '+url)
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter, epilog="""
 주간 제작 순서:
@@ -225,7 +345,8 @@ store-receipt는 실제 최종 검수·배포·전송 JSON의 바이트와 hash�
 history는 연구·패킷·검수·영수증 이력과 과거 공개 HTML/텍스트 첨부를 조회합니다.
 history --summary는 본문을 제외하고 경로·해시·이벤트 메타데이터만 조회합니다.
 queue --run은 현재 섹션별 실제 검수 상태만 간결히 조회합니다.
-record-impact는 변경 파일과 검수 재사용·무효화 결정을 원장에 보존합니다.
+capture-impact-baseline은 승인된 원본 트리와 목록·스냅샷을 대조해 기준을 고정합니다.
+analyze-impact 및 record-impact-auto는 기준과 현재 전체 트리의 바이트를 비교합니다.
 impact-history는 해당 이력을 조회하며 재사용 기록은 승인 검증을 대체하지 않습니다.
   manifest: {"changes":[{"path":"...","beforeSha256":"...","afterSha256":"..."}],
     "reviews":[{"section":"...","kind":"ui","state":"invalidated",
@@ -280,6 +401,13 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
     impact_history = sub.add_parser('impact-history')
     impact_history.add_argument('--run', required=True)
     impact_history.add_argument('--section')
+    capture=sub.add_parser('capture-impact-baseline')
+    for key in ('run','source-dir','snapshot-dir','inventory'): capture.add_argument('--'+key,required=True)
+    capture.add_argument('--scope',action='append',required=True)
+    for name in ('analyze-impact','record-impact-auto'):
+        command=sub.add_parser(name)
+        for key in ('run','baseline-id','after-dir'): command.add_argument('--'+key,required=True)
+        if name=='record-impact-auto': command.add_argument('--actor',required=True)
     for cmd in ('advance', 'duplicates', 'packet', 'approved-section'):
         a = sub.add_parser(cmd)
         a.add_argument('--run', required=True)
@@ -315,6 +443,7 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
     CREATE TABLE IF NOT EXISTS events(id INTEGER PRIMARY KEY, run TEXT NOT NULL REFERENCES runs(id), section TEXT, kind TEXT NOT NULL, actor TEXT NOT NULL, metadata TEXT NOT NULL DEFAULT '{}', subject TEXT NOT NULL, hash TEXT NOT NULL, evidence TEXT NOT NULL, evidence_hash TEXT NOT NULL, created TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
     CREATE TABLE IF NOT EXISTS impact_records(id INTEGER PRIMARY KEY, run TEXT NOT NULL REFERENCES runs(id), actor TEXT NOT NULL, manifest_path TEXT NOT NULL, manifest_hash TEXT NOT NULL, document TEXT NOT NULL, created TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
     CREATE TABLE IF NOT EXISTS impact_reviews(impact_id INTEGER NOT NULL REFERENCES impact_records(id), section TEXT NOT NULL, kind TEXT NOT NULL, state TEXT NOT NULL CHECK(state IN ('reused','invalidated')), review_event_id INTEGER NOT NULL REFERENCES events(id), reason TEXT NOT NULL, PRIMARY KEY(impact_id,section,kind));
+    CREATE TABLE IF NOT EXISTS impact_baselines(id INTEGER PRIMARY KEY, run TEXT NOT NULL REFERENCES runs(id), snapshot_dir TEXT NOT NULL, inventory_hash TEXT NOT NULL, document TEXT NOT NULL, created TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
     ''')
 
     if 'stage' not in {row['name'] for row in db.execute('PRAGMA table_info(sections)')}:
@@ -478,6 +607,68 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
                 continue
         return False
 
+    def analyze_snapshots():
+        if not a.baseline_id.isdigit(): raise ValueError('Invalid baseline ID')
+        baseline=db.execute('SELECT * FROM impact_baselines WHERE id=? AND run=?',(int(a.baseline_id),a.run)).fetchone()
+        if not baseline: raise ValueError('Baseline not found for run')
+        basis=json.loads(baseline['document']); before_dir=Path(baseline['snapshot_dir']); after_dir=Path(a.after_dir).absolute()
+        if before_dir.resolve()==after_dir.resolve(): raise ValueError('Snapshots must be distinct directories')
+        before=snapshot_files(before_dir); after=snapshot_files(after_dir)
+        if {p:hashlib.sha256(b).hexdigest() for p,b in before.items()}!=basis['files']: raise ValueError('Captured baseline changed or is incomplete')
+        source_dir=Path(basis['sourceDir'])
+        if scoped_files(source_dir,basis['scopes'])!=after: raise ValueError('After snapshot differs from complete current scoped source tree')
+        ids={row['id'] for row in db.execute('SELECT id FROM sections WHERE run=? AND imported=0',(a.run,))}
+        if not ids: raise ValueError('No current sections')
+        changed=[]; analyses=[]; impacted=set(); all_impacted=False
+        for path in sorted(before.keys() | after.keys()):
+            old=before.get(path); new=after.get(path)
+            if old==new: continue
+            changed.append({'path':path,'beforeSha256':hashlib.sha256(old).hexdigest() if old is not None else None,'afterSha256':hashlib.sha256(new).hexdigest() if new is not None else None})
+            sections=html_changed_sections(old,new,ids) if path.endswith('.html') and old is not None and new is not None else None
+            if sections is not None:
+                impacted.update(sections)
+                analyses.append({'path':path,'scope':'sections','sections':sorted(sections),'reason':'exact byte ranges confined to report sections'})
+            else:
+                all_impacted=True; analyses.append({'path':path,'scope':'all','sections':sorted(ids),'reason':'shared, new, removed, or unclassified change'})
+        if not changed: raise ValueError('No changed snapshot files')
+        # Existing approvals must bind the baseline to the complete reviewed HTML bytes.
+        # UI approvals also bind all linked presentation assets. Old receipts without
+        # complete hashes cannot establish this proof and are conservatively invalidated.
+        baseline_ok=True
+        for item in db.execute('SELECT * FROM sections WHERE run=? AND imported=0',(a.run,)):
+            for kind in ('pre-source','pre-korean','content','korean','ui'):
+                row=db.execute('SELECT id FROM events WHERE run=? AND section=? AND kind IN (?,?) ORDER BY id DESC LIMIT 1',(a.run,item['id'],kind,kind.removeprefix('pre-')+'-blocked')).fetchone()
+                if not row or basis['reviewIds'].get(item['id'],{}).get(kind)!=row['id']: baseline_ok=False
+        for section in sorted(ids):
+            row=db.execute("SELECT * FROM events WHERE run=? AND section=? AND kind='ui' ORDER BY id DESC LIMIT 1",(a.run,section)).fetchone()
+            try:
+                if not row: raise ValueError('UI baseline missing')
+                metadata=json.loads(row['metadata']); subject=Path(row['subject']).resolve()
+                relative=subject.relative_to(source_dir.resolve()).as_posix()
+                if relative not in before or relative not in after: raise ValueError('Reviewed HTML missing from snapshot')
+                if metadata.get('subject_file_hash') and hashlib.sha256(before[relative]).hexdigest()!=metadata.get('subject_file_hash'): raise ValueError('Baseline HTML hash mismatch')
+                if hashlib.sha256(after[relative]).hexdigest()!=digest(subject): raise ValueError('After snapshot differs from current reviewed file')
+                if snapshot_presentation_hash(before_dir/relative,before_dir,before)!=metadata.get('presentation_hash') or snapshot_presentation_hash(after_dir/relative,after_dir,after)!=presentation_hash(subject): raise ValueError('Presentation assets mismatch')
+                validate_snapshot_links(before_dir/relative,before_dir,before); validate_snapshot_links(after_dir/relative,after_dir,after)
+            except (OSError,ValueError,KeyError,TypeError): baseline_ok=False; break
+        if not baseline_ok: raise ValueError('Baseline is not bound to the current reviewed state')
+        if all_impacted: impacted=set(ids)
+        reviews=[]
+        for item in db.execute('SELECT * FROM sections WHERE run=? AND imported=0 ORDER BY position',(a.run,)):
+            for kind in ('pre-source','pre-korean','content','korean','ui'):
+                failure=kind.removeprefix('pre-')+'-blocked'
+                row=db.execute('SELECT * FROM events WHERE run=? AND section=? AND kind IN (?,?) ORDER BY id DESC LIMIT 1',(a.run,item['id'],kind,failure)).fetchone()
+                if not row or row['kind']!=kind: continue
+                if item['id'] in impacted:
+                    if db.execute("SELECT 1 FROM impact_reviews WHERE review_event_id=? AND state='invalidated'",(row['id'],)).fetchone(): raise ValueError('Review already invalidated; obtain a new review before another impact record')
+                    state='invalidated'; reason='Snapshot change affects section or baseline is not provable'
+                elif valid_review(item['id'],kind,item['packet_hash'],item['author']): state='reused'; reason='Snapshot section unchanged and current approval valid'
+                else: continue
+                reviews.append({'section':item['id'],'kind':kind,'state':state,'reviewEventId':row['id'],'reason':reason})
+        if not reviews: raise ValueError('No matching review events')
+        if snapshot_files(before_dir)!=before or snapshot_files(after_dir)!=after or scoped_files(source_dir,basis['scopes'])!=after: raise ValueError('Snapshots or source changed during analysis')
+        return {'run':a.run,'changes':changed,'analysis':analyses,'reviews':reviews,'verification':{'baselineId':int(a.baseline_id),'inventorySha256':baseline['inventory_hash'],'beforeDir':str(before_dir),'afterDir':str(after_dir),'baselineBound':baseline_ok,'allSectionsImpacted':all_impacted,'scopes':basis['scopes'],'scope':'complete explicitly scoped source trees; changes outside scopes are not analyzed'}}
+
     def issues(row):
         errors = []
         if not row['research'] or digest(row['research']) != row['research_hash'] or not valid_review(None, 'research', row['research_hash'], row['author']):
@@ -604,7 +795,7 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
         return {'sectionId':item['id'],'packetSha':item['packet_hash'],'sectionSha':section_hash(ui['subject'],item['id']),'readerSha':reader,'presentationSha':presentation_hash(ui['subject']),'subjectFileSha':digest(ui['subject']),'currentPath':ui['subject'],'reviewIds':{k:v['id'] for k,v in reviews.items()},'evidenceHashes':{k:v['evidence_hash'] for k,v in reviews.items()}}
 
     with db:
-        if a.command in ('prepare','draft','record-impact','record-failure','approve-packet','approve-section'): db.execute('BEGIN IMMEDIATE')
+        if a.command in ('prepare','draft','record-impact','capture-impact-baseline','record-impact-auto','record-failure','approve-packet','approve-section'): db.execute('BEGIN IMMEDIATE')
         if a.command == 'init':
             result = {'status': 'initialized'}
         elif a.command in ('ingest', 'import-html'):
@@ -703,7 +894,7 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
             if a.kind == 'ui' and any(not valid_review(s['id'],kind,s['packet_hash'],s['author']) for kind in ('content','korean')): raise ValueError('Content and Korean review must precede UI review')
             html=Path(a.html).resolve(); parser=Sections(); parser.feed(html.read_text(encoding='utf8'))
             if a.section not in [item['id'] for item in parser.sections]: raise ValueError('Section not present in HTML')
-            event(a.section,a.kind,a.reviewer,str(html),s['packet_hash'],a.evidence,{'html_hash':section_hash(html,a.section),'research_hash':r['research_hash'],'dependency_hash':section_dependency_hash(a.section,s['packet_hash']),'skills_hash':skills_digest(), **({'presentation_hash':presentation_hash(html)} if a.kind=='ui' else {'reader_hash':reader_hash(html,a.section)})}); result = {'status':'recorded'}
+            event(a.section,a.kind,a.reviewer,str(html),s['packet_hash'],a.evidence,{'html_hash':section_hash(html,a.section),'subject_file_hash':digest(html),'research_hash':r['research_hash'],'dependency_hash':section_dependency_hash(a.section,s['packet_hash']),'skills_hash':skills_digest(), **({'presentation_hash':presentation_hash(html)} if a.kind=='ui' else {'reader_hash':reader_hash(html,a.section)})}); result = {'status':'recorded'}
         elif a.command == 'record-skill':
             run(); nonempty(a.phase); nonempty(a.action)
             skillpath=Path(a.skill_path).resolve(); allowed=[Path.home()/'.codex/skills',Path.home()/'.agents/skills',Path.home()/'.codex/plugins/cache',Path.cwd()/'.agents/skills']
@@ -711,38 +902,68 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
             header=skillpath.read_text(encoding='utf8').split('---',2)
             if len(header)<3 or not re.search(r'^name:\s*[\"\']?'+re.escape(skillpath.parent.name)+r'[\"\']?\s*$',header[1],re.M): raise ValueError('Skill identity mismatch')
             event(None,'skill',a.actor,str(Path(a.skill_path).resolve()),digest(a.skill_path),a.evidence,{'phase':a.phase,'action':a.action}); result = {'status':'recorded','action':a.action}
-        elif a.command == 'record-impact':
+        elif a.command == 'capture-impact-baseline':
             run()
-            manifest=Path(a.manifest).resolve(); raw=manifest.read_bytes()
-            if len(raw)>4*1024*1024: raise ValueError('Impact manifest exceeds size limit')
-            doc=json.loads(raw.decode('utf8'))
-            if not isinstance(doc,dict) or not isinstance(doc.get('changes'),list) or not doc['changes'] or not isinstance(doc.get('reviews'),list) or not doc['reviews']:
-                raise ValueError('Impact manifest requires nonempty changes and reviews arrays')
-            for change in doc['changes']:
-                if not isinstance(change,dict): raise ValueError('Invalid changed file')
-                nonempty(change.get('path'))
-                if 'beforeSha256' not in change or 'afterSha256' not in change: raise ValueError('Changed file requires before and after hashes')
-                for key in ('beforeSha256','afterSha256'):
-                    if change[key] is not None and (not isinstance(change[key],str) or not re.fullmatch(r'[0-9a-f]{64}',change[key])): raise ValueError('Invalid change hash')
-                if change['beforeSha256']==change['afterSha256']: raise ValueError('Changed file hashes must differ')
-            seen=set(); review_rows=[]
-            for review in doc['reviews']:
-                if not isinstance(review,dict): raise ValueError('Invalid impact review')
-                section_id=nonempty(review.get('section')); kind=review.get('kind'); state=review.get('state'); review_id=review.get('reviewEventId'); reason=nonempty(review.get('reason'))
-                if kind not in ('pre-source','pre-korean','content','korean','ui') or state not in ('reused','invalidated') or type(review_id) is not int or review_id<=0: raise ValueError('Invalid impact review fields')
-                if (section_id,kind) in seen: raise ValueError('Duplicate section review in impact')
-                seen.add((section_id,kind))
-                item=db.execute('SELECT * FROM sections WHERE run=? AND id=?',(a.run,section_id)).fetchone()
-                prior=db.execute('SELECT * FROM events WHERE id=? AND run=? AND section=? AND kind=?',(review_id,a.run,section_id,kind)).fetchone()
-                latest=db.execute('SELECT id FROM events WHERE run=? AND section=? AND kind IN (?,?) ORDER BY id DESC LIMIT 1',(a.run,section_id,kind,kind.removeprefix('pre-')+'-blocked')).fetchone()
-                if not item or item['imported'] or not prior or not latest or latest['id']!=review_id: raise ValueError('Impact must reference latest matching review in this run')
-                if state=='reused' and (not item['packet'] or not Path(item['packet']).is_file() or digest(item['packet'])!=item['packet_hash'] or not valid_review(section_id,kind,item['packet_hash'],item['author'])):
-                    raise ValueError('Cannot reuse stale, invalidated, or missing review')
-                review_rows.append((section_id,kind,state,review_id,reason))
-            checksum=hashlib.sha256(raw).hexdigest()
-            cursor=db.execute('INSERT INTO impact_records(run,actor,manifest_path,manifest_hash,document) VALUES(?,?,?,?,?)',(a.run,identity(a.actor),str(manifest),checksum,raw.decode('utf8')))
-            db.executemany('INSERT INTO impact_reviews(impact_id,section,kind,state,review_event_id,reason) VALUES(?,?,?,?,?,?)',[(cursor.lastrowid,*row) for row in review_rows])
-            result={'run':a.run,'impactId':cursor.lastrowid,'manifestSha256':checksum,'status':'recorded'}
+            if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]*',a.run): raise ValueError('Unsafe run ID')
+            source=Path(a.source_dir).absolute(); snapshot=Path(a.snapshot_dir).absolute()
+            inventory_raw=Path(a.inventory).read_bytes(); inventory=json.loads(inventory_raw.decode('utf8'))
+            if not isinstance(inventory,dict) or inventory.get('runId')!=a.run or not isinstance(inventory.get('files'),list) or not inventory['files']: raise ValueError('Run-matched issue inventory required')
+            inv_hash=hashlib.sha256(inventory_raw).hexdigest()
+            receipt=db.execute("SELECT document,sha256 FROM receipt_records WHERE run=? AND kind='final-review' ORDER BY rowid DESC LIMIT 1",(a.run,)).fetchone()
+            receipt_doc=json.loads(receipt['document']) if receipt else {}
+            if not receipt or hashlib.sha256(receipt['document'].encode('utf8')).hexdigest()!=receipt['sha256'] or receipt_doc.get('runId')!=a.run or receipt_doc.get('verdict') not in ('approved','pass','passed') or receipt_doc.get('inputs',{}).get('issue')!=inv_hash: raise ValueError('Inventory not bound to recorded final review')
+            harness_dir=Path.cwd()/'_workspace/harness/weekly-game-report'/a.run
+            if digest(harness_dir/'issue-index.json')!=inv_hash or digest(harness_dir/'final-review.json')!=receipt['sha256']: raise ValueError('Stored review and actual harness files differ')
+            checker=Path(__file__).resolve().with_name('check-report-harness.mjs')
+            checked=subprocess.run(['node',str(checker),'--run',a.run],cwd=Path.cwd(),capture_output=True,text=True)
+            if checked.returncode!=0: raise ValueError('Report harness verification failed: '+checked.stderr.strip()[:500])
+            scopes=[]
+            for scope in a.scope:
+                value=nonempty(scope); parts=Path(value).parts
+                if Path(value).is_absolute() or '..' in parts or '\\' in value or value in ('.',''): raise ValueError('Invalid scope')
+                if not (source/value).exists(): raise ValueError('Baseline scope does not exist: '+value)
+                scopes.append(value)
+            for scope in scopes:
+                region=(source/scope).resolve(); captured=snapshot.resolve()
+                if captured==region or captured.is_relative_to(region) or region.is_relative_to(captured): raise ValueError('Source scope and snapshot must be separate')
+            listed={}
+            for item in inventory['files']:
+                if not isinstance(item,dict): raise ValueError('Invalid inventory item')
+                path=nonempty(item.get('path')); sha=item.get('sha256'); parts=Path(path).parts
+                if Path(path).is_absolute() or '..' in parts or '\\' in path or path in listed or not isinstance(sha,str) or not re.fullmatch(r'[a-f0-9]{64}',sha): raise ValueError('Invalid inventory path or hash')
+                listed[path]=sha
+            original=scoped_files(source,scopes); copied=snapshot_files(snapshot)
+            if original!=copied or any(p not in original or hashlib.sha256(original[p]).hexdigest()!=sha for p,sha in listed.items()): raise ValueError('Inventory, scoped source trees and snapshot differ')
+            review_ids={}
+            for item in db.execute('SELECT * FROM sections WHERE run=? AND imported=0 ORDER BY position',(a.run,)):
+                if item['stage']!='drafted': raise ValueError('Current drafted sections required')
+                review_ids[item['id']]={}
+                for kind in ('pre-source','pre-korean','content','korean','ui'):
+                    row=db.execute('SELECT * FROM events WHERE run=? AND section=? AND kind IN (?,?) ORDER BY id DESC LIMIT 1',(a.run,item['id'],kind,kind.removeprefix('pre-')+'-blocked')).fetchone()
+                    if not row or row['kind']!=kind or not valid_review(item['id'],kind,item['packet_hash'],item['author']): raise ValueError('All current approvals must be valid before capture')
+                    review_ids[item['id']][kind]=row['id']
+                    if kind=='ui':
+                        subject=Path(row['subject']).resolve()
+                        try: rel=subject.relative_to(source.resolve()).as_posix()
+                        except ValueError: raise ValueError('Reviewed HTML must be within the source tree')
+                        if rel not in listed or snapshot_presentation_hash(snapshot/rel,snapshot,original)!=json.loads(row['metadata'])['presentation_hash']: raise ValueError('Reviewed HTML or presentation assets missing from baseline')
+                        validate_snapshot_links(snapshot/rel,snapshot,original)
+            if not review_ids: raise ValueError('No current sections')
+            if scoped_files(source,scopes)!=original or snapshot_files(snapshot)!=copied or digest(harness_dir/'issue-index.json')!=inv_hash or digest(harness_dir/'final-review.json')!=receipt['sha256']: raise ValueError('Source, snapshot or harness inputs changed during capture')
+            document=json.dumps({'sourceDir':str(source),'scopes':scopes,'files':{p:hashlib.sha256(b).hexdigest() for p,b in original.items()},'reviewIds':review_ids},ensure_ascii=False,sort_keys=True,separators=(',',':'))
+            cursor=db.execute('INSERT INTO impact_baselines(run,snapshot_dir,inventory_hash,document) VALUES(?,?,?,?)',(a.run,str(snapshot),inv_hash,document))
+            result={'run':a.run,'baselineId':cursor.lastrowid,'inventorySha256':inv_hash,'status':'captured'}
+        elif a.command in ('analyze-impact','record-impact-auto'):
+            run(); document=analyze_snapshots()
+            if a.command=='analyze-impact': result=document
+            else:
+                encoded=json.dumps(document,ensure_ascii=False,sort_keys=True,separators=(',',':'))
+                checksum=hashlib.sha256(encoded.encode('utf8')).hexdigest()
+                cursor=db.execute('INSERT INTO impact_records(run,actor,manifest_path,manifest_hash,document) VALUES(?,?,?,?,?)',(a.run,identity(a.actor),'verified-snapshots',checksum,encoded))
+                db.executemany('INSERT INTO impact_reviews(impact_id,section,kind,state,review_event_id,reason) VALUES(?,?,?,?,?,?)',[(cursor.lastrowid,r['section'],r['kind'],r['state'],r['reviewEventId'],r['reason']) for r in document['reviews']])
+                result={'run':a.run,'impactId':cursor.lastrowid,'manifestSha256':checksum,'status':'recorded','analysis':document['analysis'],'verification':document['verification'],'reviews':document['reviews']}
+        elif a.command == 'record-impact':
+            raise ValueError('Manual impact recording is disabled; use record-impact-auto with complete snapshots')
         elif a.command == 'impact-history':
             run()
             records=db.execute('''SELECT i.* FROM impact_records i WHERE i.run=? AND (? IS NULL OR EXISTS
@@ -751,8 +972,8 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
             for record in records:
                 document=json.loads(record['document'])
                 reviews=[{'section':r['section'],'kind':r['kind'],'state':r['state'],'reviewEventId':r['review_event_id'],'reason':r['reason']} for r in db.execute('SELECT * FROM impact_reviews WHERE impact_id=? ORDER BY rowid',(record['id'],))]
-                impacts.append({'id':record['id'],'actor':record['actor'],'manifestPath':record['manifest_path'],'manifestSha256':record['manifest_hash'],'recordedAt':record['created'],'changes':document['changes'],'reviews':reviews})
-            result={'run':a.run,'impacts':impacts,'note':'Impact decisions are recorded history; reuse does not replace current approval checks. Hashes in changes are reported, not independently verified file snapshots.'}
+                impacts.append({'id':record['id'],'actor':record['actor'],'manifestPath':record['manifest_path'],'manifestSha256':record['manifest_hash'],'recordedAt':record['created'],'changes':document['changes'],'reviews':reviews,'verification':document.get('verification',{'mode':'legacy-manual-unverified'})})
+            result={'run':a.run,'impacts':impacts,'note':'Impact history is not an approval; current gates remain authoritative. Legacy manual records are unverified.'}
         elif a.command == 'packet':
             r=run(); s=section(); errors=issues(r)
             if s['imported'] or s['stage'] != 'drafted': errors.append('Section must be drafted')

@@ -35,6 +35,20 @@ class ImpactTest(unittest.TestCase):
                 self.assertEqual(result.returncode == 0, ok, result.stderr + result.stdout)
                 return result
 
+            def import_legacy_fixture(manifest):
+                # Seed a historical record as it existed before manual entry was disabled.
+                # Production CLI must not accept this path for new records.
+                call('record-impact', '--run', 'run', '--actor', 'coordinator', '--manifest', str(manifest), ok=False)
+                raw = manifest.read_bytes()
+                doc = json.loads(raw)
+                with sqlite3.connect(db) as connection:
+                    cursor = connection.execute('INSERT INTO impact_records(run,actor,manifest_path,manifest_hash,document) VALUES(?,?,?,?,?)',
+                        ('run','legacy-fixture',str(manifest),hashlib.sha256(raw).hexdigest(),raw.decode()))
+                    for review in doc['reviews']:
+                        connection.execute('INSERT INTO impact_reviews(impact_id,section,kind,state,review_event_id,reason) VALUES(?,?,?,?,?,?)',
+                            (cursor.lastrowid,review['section'],review['kind'],review['state'],review['reviewEventId'],review['reason']))
+                    return cursor.lastrowid
+
             call('ingest', '--run', 'run', '--issue-date', '2026-11-07', '--research', str(research), '--author', 'author')
             call('approve-research', '--run', 'run', '--reviewer', 'source-reviewer', '--evidence', str(evidence))
             for name in ('impeccable', 'humanizer', 'grammar-checker', 'style-guide', 'korean-humanizer', 'korean-spell-check'):
@@ -79,7 +93,7 @@ class ImpactTest(unittest.TestCase):
                 {'section': 'beta', 'kind': 'ui', 'state': 'reused', 'reviewEventId': review_ids['beta', 'ui'], 'reason': '이 섹션과 공통 셸 불변'},
             ]}
             manifest.write_text(json.dumps(data, ensure_ascii=False))
-            impact_id = json.loads(call('record-impact', '--run', 'run', '--actor', 'coordinator', '--manifest', str(manifest)).stdout)['impactId']
+            impact_id = import_legacy_fixture(manifest)
             call('advance', '--run', 'run', '--section', 'alpha', ok=False)
             call('advance', '--run', 'run', '--section', 'beta')
             ui_args = ['--run', 'run', '--section', 'alpha', '--kind', 'ui', '--reviewer', 'visual', '--html', str(html)]
@@ -100,6 +114,7 @@ class ImpactTest(unittest.TestCase):
             history = json.loads(call('impact-history', '--run', 'run', '--section', 'alpha').stdout)
             self.assertEqual(len(history['impacts']), 1)
             record = history['impacts'][0]
+            self.assertEqual(record['verification']['mode'], 'legacy-manual-unverified')
             self.assertEqual(record['manifestSha256'], hashlib.sha256(manifest.read_bytes()).hexdigest())
             self.assertEqual(record['changes'], data['changes'])
             self.assertEqual(record['reviews'], data['reviews'])
@@ -128,7 +143,7 @@ class ImpactTest(unittest.TestCase):
             call('advance', '--run', 'run', '--section', 'alpha')
             data['reviews'] = [{'section': 'alpha', 'kind': 'pre-source', 'state': 'invalidated', 'reviewEventId': review_ids['alpha', 'pre-source'], 'reason': 'source must be rechecked'}]
             manifest.write_text(json.dumps(data))
-            impact_id = json.loads(call('record-impact', '--run', 'run', '--actor', 'coordinator', '--manifest', str(manifest)).stdout)['impactId']
+            impact_id = import_legacy_fixture(manifest)
             call('advance', '--run', 'run', '--section', 'alpha', ok=False)
             queue = json.loads(call('queue', '--run', 'run').stdout)
             alpha = next(item for item in queue['sections'] if item['sectionId'] == 'alpha')
@@ -147,7 +162,7 @@ class ImpactTest(unittest.TestCase):
             for kind in ('pre-korean', 'content', 'korean'):
                 data['reviews'] = [{'section': 'alpha', 'kind': kind, 'state': 'invalidated', 'reviewEventId': review_ids['alpha', kind], 'reason': 'independent recheck required'}]
                 manifest.write_text(json.dumps(data))
-                impact_id = json.loads(call('record-impact', '--run', 'run', '--actor', 'coordinator', '--manifest', str(manifest)).stdout)['impactId']
+                impact_id = import_legacy_fixture(manifest)
                 call('advance', '--run', 'run', '--section', 'alpha', ok=False)
                 call('advance', '--run', 'run', '--section', 'beta')
                 if kind == 'pre-korean':
