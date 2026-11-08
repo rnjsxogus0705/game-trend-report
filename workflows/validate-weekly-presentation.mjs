@@ -106,6 +106,58 @@ export function validateAiCaseAndVideoResources(html){
  if(readingVideos.some(node=>!titled(node)||!videoLink(node)))throw Error('Invalid video resource: title and primary video source required');
  if(!legacyVideos.length&&!readingVideos.length)throw Error('Missing video resource with title and direct source');
 }
+export function validateNavigationEnhancements(html,{reportDate}={}){
+ const {elements}=reportElements(html);
+ const assert=(condition,message)=>{if(!condition)throw Error(message);};
+ const has=(node,key)=>Object.hasOwn(node.attrs,key);
+ const descendants=(node,predicate)=>elements.filter(child=>within(child,node)&&predicate(child));
+ const uniqueId=id=>elements.filter(node=>node.attrs.id===id);
+ const styles=elements.filter(node=>node.tag==='link'&&node.attrs.rel==='stylesheet');
+ const scripts=elements.filter(node=>node.tag==='script');
+ const asset=node=>(node.attrs.href||node.attrs.src||'').split('?')[0];
+ const searchCss='../assets/report/report-search.css',searchJs='../assets/report/report-search.js',scoped='../assets/report/reading-experience-scoped.js',legacy='../assets/report/reading-experience.js';
+ const active=reportDate>='2026-11-14'||elements.some(node=>has(node,'data-report-search-panel')||has(node,'data-disclosure-scope'))||[...styles,...scripts].some(node=>[searchCss,searchJs,scoped].includes(asset(node)));
+ if(!active)return false;
+ const exactly=(items,path)=>items.filter(node=>asset(node)===path);
+ assert(exactly(styles,searchCss).length===1&&asset(styles.at(-1))===searchCss,'Search stylesheet must occur once after the editorial stylesheet');
+ assert(styles.length>1&&asset(styles.at(-2))==='../assets/report/weekly-editorial.css','Search stylesheet must occur once after the editorial stylesheet');
+ const paths=['../assets/report/share.js',scoped,searchJs,`weekly-${reportDate}.js`];
+ assert(paths.every(path=>exactly(scripts,path).length===1)&&!exactly(scripts,legacy).length,'Search requires one scoped script and no legacy reading script');
+ const selected=paths.map(path=>exactly(scripts,path)[0]);
+ assert(selected.every(node=>has(node,'defer'))&&selected.every((node,i)=>!i||node.start>selected[i-1].start),'Search scripts must be deferred and in the required order');
+ const panels=elements.filter(node=>has(node,'data-report-search-panel'));
+ assert(panels.length===2&&panels.every(node=>node.tag==='form'&&node.attrs.role==='search'&&(node.attrs['aria-label']||'').trim()),'Search requires two accessible forms');
+ const side=uniqueId('side-nav')[0],sidebar=elements.find(node=>hasClass(node,'sidebar')&&side&&within(side,node)),header=elements.find(node=>node.tag==='header'),mobile=uniqueId('mobile-links')[0];
+ assert(panels.filter(node=>(side&&within(node,side))||(sidebar&&within(node,sidebar))).length===1&&panels.filter(node=>(header&&within(node,header))||(mobile&&within(node,mobile))).length===1,'Search forms must be placed in desktop and mobile navigation');
+ for(const panel of panels){
+  const inputs=descendants(panel,node=>node.tag==='input'&&node.attrs.type==='search'&&has(node,'data-report-search-input'));
+  assert(inputs.length===1&&inputs[0].attrs.id&&uniqueId(inputs[0].attrs.id).length===1&&descendants(panel,node=>node.tag==='label'&&node.attrs.for===inputs[0].attrs.id).length===1,'Search input needs a unique ID and matching label');
+  for(const key of ['data-report-search-status','data-report-search-prev','data-report-search-next'])assert(descendants(panel,node=>has(node,key)).length===1,'Search panel control missing or duplicated: '+key);
+  assert(descendants(panel,node=>node.tag==='button'&&node.attrs.type==='submit').length===1,'Search panel needs a submit button');
+  const status=descendants(panel,node=>has(node,'data-report-search-status'))[0];assert(status.attrs.role==='status'&&status.attrs['aria-live']==='polite','Search status must be announced');
+  for(const key of ['data-report-search-prev','data-report-search-next']){const button=descendants(panel,node=>has(node,key))[0];assert(button.tag==='button'&&button.attrs.type==='button'&&(button.attrs['aria-label']||'').trim(),'Search navigation must use labelled buttons');}
+ }
+ const mobilePanel=panels.find(node=>(header&&within(node,header))||(mobile&&within(node,mobile)));
+ assert(mobilePanel.attrs.id&&uniqueId(mobilePanel.attrs.id).length===1&&has(mobilePanel,'hidden'),'Mobile search needs a unique initially hidden panel');
+ const toggles=elements.filter(node=>has(node,'data-report-search-toggle'));
+ assert(toggles.length===1&&toggles[0].tag==='button'&&toggles[0].attrs.type==='button'&&toggles[0].attrs['aria-controls']===mobilePanel.attrs.id&&toggles[0].attrs['aria-expanded']==='false','Mobile search toggle must target its panel');
+ assert(descendants(mobilePanel,node=>node.tag==='button'&&has(node,'data-report-search-close')).length===1,'Mobile search close button missing');
+ const groups=elements.filter(node=>has(node,'data-disclosure-scope'));
+ // The scoped script can create controls at runtime. Browser QA must verify those
+ // generated controls; when controls are authored statically, validate them here.
+ const seen=new Set();
+ for(const group of groups){
+  const scopeId=group.attrs['data-disclosure-scope'],scope=uniqueId(scopeId);
+  assert(scopeId&&!seen.has(scopeId)&&scope.length===1,'Disclosure scope must have a unique target');seen.add(scopeId);
+  assert(within(group,scope[0])&&group.attrs.role==='group'&&(group.attrs['aria-label']||'').trim(),'Disclosure controls must be in their named scope');
+  const actions=['expand','collapse'].map(action=>descendants(group,node=>node.tag==='button'&&node.attrs.type==='button'&&node.attrs['data-disclosure-action']===action));
+  assert(actions.every(nodes=>nodes.length===1),'Disclosure scope requires expand and collapse buttons');
+  const targets=actions.map(nodes=>(nodes[0].attrs['aria-controls']||'').trim().split(/\s+/).filter(Boolean));
+  assert(targets[0].length&&new Set(targets[0]).size===targets[0].length&&JSON.stringify(targets[0])===JSON.stringify(targets[1]),'Disclosure buttons must list matching unique targets');
+  for(const id of targets[0]){const target=uniqueId(id);assert(target.length===1&&target[0].tag==='details'&&within(target[0],scope[0]),'Disclosure target must be a unique detail in its scope');}
+ }
+ return true;
+}
 export function validateWeeklyPresentation(html,{reportDate}={}){
  const {elements,source}=reportElements(html);
  const oneId=id=>elements.find(node=>node.attrs.id===id);
@@ -114,10 +166,11 @@ export function validateWeeklyPresentation(html,{reportDate}={}){
  const descendants=(node,predicate)=>elements.filter(child=>within(child,node)&&predicate(child));
  assert(elements.some(node=>node.tag==='body'&&hasClass(node,'weekly-editorial')),'Missing weekly-editorial body class');
  const styles=elements.filter(node=>node.tag==='link'&&node.attrs.rel==='stylesheet').map(node=>(node.attrs.href||'').split('?')[0]);
- assert(styles.at(-1)==='../assets/report/weekly-editorial.css','Weekly editorial stylesheet must be last');
+ const enhanced=validateNavigationEnhancements(html,{reportDate});
+ assert(styles.at(-1)===(enhanced?'../assets/report/report-search.css':'../assets/report/weekly-editorial.css'),'Weekly editorial stylesheet must be last before optional search stylesheet');
  for(const asset of ['report.css','share.css','reading-experience.css'])assert(styles.includes('../assets/report/'+asset),'Missing required report stylesheet: '+asset);
  const scripts=elements.filter(node=>node.tag==='script').map(node=>(node.attrs.src||'').split('?')[0]);
- for(const asset of ['share.js','reading-experience.js'])assert(scripts.includes('../assets/report/'+asset),'Missing required report script: '+asset);
+ for(const asset of ['share.js',enhanced?'reading-experience-scoped.js':'reading-experience.js'])assert(scripts.includes('../assets/report/'+asset),'Missing required report script: '+asset);
  if(reportDate>='2026-11-07')assert(scripts.includes(`weekly-${reportDate}.js`)&&!scripts.includes('../assets/report/report.js'),'New reports require an issue-specific UI/chart script');
  assert(elements.some(node=>node.tag==='html'&&node.attrs.lang==='ko'),'Report language must be Korean');
  const cover=elements.find(node=>hasClass(node,'issue-cover')),headings=elements.filter(node=>node.tag==='h1');

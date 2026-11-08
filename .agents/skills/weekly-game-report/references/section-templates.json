@@ -20,18 +20,37 @@
       "사전 조사·원문/한국어 승인 후 병렬 작성",
       "실제 독립 content/Korean/UI 승인 및 4폭 화면 검수",
       "공통 CSS·셸 변경 시 영향 화면 재검수",
+      "데스크톱 좌측 목차·모바일 상단 목차/헤더에 동기화된 본문 검색과 실제 조작 검수",
+      "상세 일괄 펼치기·접기는 실제 대상 도구 목록 가까이에 배치하고 제어 범위를 레이블로 표시",
       "스캐폴드와 형식 참조는 승인이나 발행 근거가 아님"
     ],
     "componentTemplates": {
       "card": "<article class=\"card\"><h3>{{제목}}</h3><p>{{승인_내용}}</p></article>",
       "figure": "<figure><img src=\"{{검수_이미지_경로}}\" alt=\"{{대체_텍스트}}\"><figcaption>{{출처와_설명}}</figcaption></figure>",
       "lazyVideo": "<article class=\"tool-media\"><h3>{{제목}}</h3><p><a href=\"{{정규_YouTube_URL}}\">영상 원문</a> · {{확인범위}}</p><div class=\"youtube-preview\"><button type=\"button\" data-youtube-play=\"{{영상_ID}}\" data-play-video=\"{{영상_ID}}\" data-video-title=\"{{제목}}\"><img src=\"https://i.ytimg.com/vi/{{영상_ID}}/hqdefault.jpg\" alt=\"{{미리보기_대체텍스트}}\" loading=\"lazy\"><span>영상 불러오기</span></button><div class=\"video-slot\"></div></div></article>",
-      "practice": "<div class=\"practice-prompt\"><h3>{{실습_제목}}</h3><p>{{승인_설명}}</p><pre id=\"{{고유_ID}}\">[입력] {{승인_프롬프트}}</pre><button type=\"button\" data-copy-workflow=\"{{고유_ID}}\">프롬프트 복사</button><p>받을 결과: {{산출물}} · 직접 확인: {{완료_기준}} · 이어서 물어보기: {{후속_질문}}</p></div>"
+      "practice": "<div class=\"practice-prompt\"><h3>{{실습_제목}}</h3><p>{{승인_설명}}</p><pre id=\"{{고유_ID}}\">[입력] {{승인_프롬프트}}</pre><button type=\"button\" data-copy-workflow=\"{{고유_ID}}\">프롬프트 복사</button><p>받을 결과: {{산출물}} · 직접 확인: {{완료_기준}} · 이어서 물어보기: {{후속_질문}}</p></div>",
+      "headerSearch": "<div class=\"report-search-mobile\"><button type=\"button\" data-report-search-toggle aria-controls=\"{{모바일_패널_ID}}\" aria-expanded=\"false\">검색</button><form id=\"{{모바일_패널_ID}}\" data-report-search-panel hidden role=\"search\" aria-label=\"리포트 본문 검색\"><label for=\"{{모바일_입력_ID}}\">리포트 검색</label><div class=\"report-search__input-row\"><input id=\"{{모바일_입력_ID}}\" type=\"search\" data-report-search-input><button type=\"submit\">찾기</button></div><div class=\"report-search__controls\"><p data-report-search-status role=\"status\" aria-live=\"polite\">검색어를 입력하세요.</p><button type=\"button\" data-report-search-prev aria-label=\"이전 검색 결과\" disabled>이전</button><button type=\"button\" data-report-search-next aria-label=\"다음 검색 결과\" disabled>다음</button><button type=\"button\" data-report-search-close>닫기</button></div></form></div>",
+      "desktopSearch": "<form class=\"report-search report-search--desktop\" data-report-search-panel role=\"search\" aria-label=\"리포트 본문 검색\"><label for=\"{{데스크톱_입력_ID}}\">리포트 검색</label><div class=\"report-search__input-row\"><input id=\"{{데스크톱_입력_ID}}\" type=\"search\" data-report-search-input><button type=\"submit\">찾기</button></div><div class=\"report-search__controls\"><p data-report-search-status role=\"status\" aria-live=\"polite\">검색어를 입력하세요.</p><button type=\"button\" data-report-search-prev aria-label=\"이전 검색 결과\" disabled>이전</button><button type=\"button\" data-report-search-next aria-label=\"다음 검색 결과\" disabled>다음</button></div></form>",
+      "scopedDisclosure": "<div class=\"reading-controls\" data-disclosure-scope=\"game-ai-tools\" role=\"group\" aria-label=\"보이는 도구의 연결·라이선스·실습\"><span>보이는 도구의 연결·라이선스·실습</span><button type=\"button\" data-disclosure-action=\"expand\" aria-controls=\"{{실제_상세_ID_목록}}\">도구 상세 모두 펼치기</button><button type=\"button\" data-disclosure-action=\"collapse\" aria-controls=\"{{실제_상세_ID_목록}}\">도구 상세 모두 접기</button></div>"
     },
     "coreUi": ".agents/skills/weekly-game-report/references/report-format-reference.json#coreUi",
     "packetContract": "workflows/render-report-section.mjs: renderSection; packet.candidate. JSON catalog은 작성 안내이며 승인·게이트 대체가 아님.",
     "escaping": "모든 placeholder는 실제 렌더 시 HTML 텍스트/속성 이스케이프, URL은 HTTPS 검증, 영상 ID는 11자 검증. 예시는 완성 원고가 아니며 그대로 발행 금지.",
-    "renderPolicy": "실제 최신 카드와 기존 renderer의 기대 DOM이 다르면 이전 DOM으로 퇴행시키지 않는다. 사전 승인된 fullMarkup 격리 원고와 기존 manifest/sectionParts 조립 경로를 사용하고 실제 독립 검수를 받는다. fullMarkup은 renderer 필드가 아니다."
+    "renderPolicy": "실제 최신 카드와 기존 renderer의 기대 DOM이 다르면 이전 DOM으로 퇴행시키지 않는다. 사전 승인된 fullMarkup 격리 원고와 기존 manifest/sectionParts 조립 경로를 사용하고 실제 독립 검수를 받는다. fullMarkup은 renderer 필드가 아니다.",
+    "assetContract": {
+      "css": [
+        "assets/report/reading-experience.css",
+        "assets/report/report-search.css"
+      ],
+      "deferScripts": [
+        "assets/report/share.js",
+        "assets/report/reading-experience-scoped.js",
+        "assets/report/report-search.js",
+        "reports/weekly-YYYY-MM-DD.js"
+      ],
+      "loadOrder": "기존 공통 스타일 다음 검색 CSS, 실제 리포트 DOM 생성 후 defer 스크립트는 위 순서로 로드. 구버전 reading-experience.js를 같은 페이지에 동시에 로드하지 않는다.",
+      "compatibility": "기존 호가 참조하는 reading-experience.js는 변경하지 않는다. 새 범위 제어 스크립트를 별도 자산으로 발행하고 해시/동작을 검수한다."
+    }
   },
   "sections": [
     {

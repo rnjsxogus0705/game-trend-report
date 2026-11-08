@@ -54,6 +54,31 @@ test('Unity 하위 섹션이 있을 때만 도구 목차의 지정 위치를 허
  assert.throws(()=>check(valid.replace(tool+guide,tool).replace('<div class="card-flat" id="agent-skills">','<div class="card-flat" id="agent-skills">'+guide)),/inside game-ai-tools/);
  assert.throws(()=>check(valid.replace(tool+guide,tool+guide+guide)),/unique ID/);
 });
+test('새 탐색 셸은 자산·검색 양식·범위별 펼침을 함께 검증한다',async()=>{
+ const {validateNavigationEnhancements:validate}=await import('./validate-weekly-presentation.mjs');
+ const panel=(id,mobile=false)=>`<form id="${id}" data-report-search-panel role="search" aria-label="본문 검색" ${mobile?'hidden':''}><label for="${id}-input">검색</label><input id="${id}-input" type="search" data-report-search-input><button type="submit">찾기</button><p data-report-search-status role="status" aria-live="polite"></p><button type="button" data-report-search-prev aria-label="이전"></button><button type="button" data-report-search-next aria-label="다음"></button>${mobile?'<button type="button" data-report-search-close>닫기</button>':''}</form>`;
+ const html=`<html><head><link rel="stylesheet" href="../assets/report/weekly-editorial.css"><link rel="stylesheet" href="../assets/report/report-search.css"><script defer src="../assets/report/share.js"></script><script defer src="../assets/report/reading-experience-scoped.js"></script><script defer src="../assets/report/report-search.js"></script><script defer src="weekly-2026-11-14.js"></script></head><body><header><button type="button" data-report-search-toggle aria-controls="mobile-search" aria-expanded="false">검색</button>${panel('mobile-search',true)}</header><nav id="side-nav">${panel('desktop-search')}</nav><section id="game-ai-tools"><div data-disclosure-scope="game-ai-tools" role="group" aria-label="도구 상세"><button type="button" data-disclosure-action="expand" aria-controls="detail-a detail-b">펼치기</button><button type="button" data-disclosure-action="collapse" aria-controls="detail-a detail-b">접기</button></div><details id="detail-a"></details><details id="detail-b"></details></section></body></html>`;
+ const checkNew=value=>validate(value,{reportDate:'2026-11-14'});
+ assert.equal(validate('<html></html>',{reportDate:'2026-11-07'}),false);
+ assert.throws(()=>checkNew('<html></html>'),/stylesheet/);
+ assert.equal(checkNew(html),true);
+ // Scoped controls may be inserted by the scoped script after HTML parsing.
+ assert.equal(checkNew(html.replace(/<div data-disclosure-scope="game-ai-tools"[\s\S]*?<\/div>/,'')),true);
+ const bad=[
+  html.replace('report-search.css','missing.css'),
+  html.replace('reading-experience-scoped.js','reading-experience.js'),
+  html.replace('<script defer src="../assets/report/report-search.js"></script>','<script defer src="../assets/report/report-search.js"></script><script defer src="../assets/report/reading-experience.js"></script>'),
+  html.replace('<script defer src="../assets/report/report-search.js"></script>','<script src="../assets/report/report-search.js"></script>'),
+  html.replace('data-report-search-status','data-missing-status'),
+  html.replace('for="desktop-search-input"','for="wrong"'),
+  html.replace('aria-controls="mobile-search"','aria-controls="wrong"'),
+  html.replace('data-report-search-close','data-missing-close'),
+  html.replace('aria-controls="detail-a detail-b">접기','aria-controls="detail-a">접기'),
+  html.replace('id="detail-b"','id="detail-a"')
+ ];
+ for(const value of bad)assert.throws(()=>checkNew(value));
+ assert.throws(()=>validate(html.replace('report-search.js','missing.js'),{reportDate:'2026-11-07'}));
+});
 test('강조·모바일 대안·단일 표지 제목 누락 차단',()=>{assert.throws(()=>check(future.replace(/<\/?mark\b[^>]*>/g,'')),/highlighted/);assert.throws(()=>check(future.replace('<nav id="mobile-links">','<nav id="missing-mobile-links">')),/mobile navigation/);assert.throws(()=>check(future.replace('<h1>','<h2>').replace('</h1>','</h2>')),/one h1/);});
 test('TOP 10 공개 영역 수와 잘못된 HTML 구조 차단',()=>{assert.throws(()=>check(future.replace('class="top-ten-item"','class="missing-item"')),/three items/);assert.throws(()=>check(future.replace('</dl>','</div>')),/nesting/);});
 test('범주 구분선 제목과 요약 역할도 재현',()=>{assert.throws(()=>check(future.replace('id="part-tools" data-editorial-ui>AI 도구와 기술','id="part-tools" data-editorial-ui>다른 이름')),/divider label/);assert.throws(()=>check(future.replace('<dt>핵심 판단</dt>','<dt>다른 이름</dt>')),/takeaway labels/);});

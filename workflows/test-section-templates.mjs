@@ -34,3 +34,38 @@ test('영상 빈 예시는 실제 핸들러·제목·이미지·원문 구조를
  assert.ok(practice.some(n=>n.tag==='button'&&n.attrs['data-copy-workflow']));
  assert.doesNotThrow(()=>validateSectionPractices('<section id="prototype">'+catalog.shared.componentTemplates.practice+'</section>',{sectionIds:['prototype']}));
 });
+test('공통 검색 템플릿과 형식 계약은 두 화면의 접근 가능한 검색을 명시한다',()=>{
+ const html=catalog.shared.componentTemplates.headerSearch;
+ const {elements}=reportElements(html);
+ for(const name of ['toggle','panel','input','status','prev','next','close']){
+  assert.equal(elements.filter(n=>Object.hasOwn(n.attrs,'data-report-search-'+name)).length,1,name);
+ }
+ const toggle=elements.find(n=>Object.hasOwn(n.attrs,'data-report-search-toggle'));
+ const panel=elements.find(n=>Object.hasOwn(n.attrs,'data-report-search-panel'));
+ assert.equal(toggle.attrs['aria-controls'],panel.attrs.id);
+ assert.equal(toggle.attrs['aria-expanded'],'false');
+ const input=elements.find(n=>n.tag==='input'&&n.attrs['data-report-search-input']!==undefined);
+ assert.ok(input&&elements.some(n=>n.tag==='label'&&n.attrs.for===input.attrs.id));
+ assert.ok(elements.some(n=>n.attrs['data-report-search-status']!==undefined&&n.attrs['aria-live']==='polite'));
+ const ref=JSON.parse(fs.readFileSync(new URL('../.agents/skills/weekly-game-report/references/report-format-reference.json',import.meta.url),'utf8'));
+ assert.equal(ref.componentContracts.reportSearch.controls.length,7);
+ assert.match(ref.componentContracts.reportSearch.placement,/데스크톱.*모바일/);
+ assert.match(ref.componentContracts.reportSearch.behavior,/details/);
+ assert.match(ref.componentContracts.reportSearch.review,/320.*390.*768.*1440/);
+ const desktop=reportElements(catalog.shared.componentTemplates.desktopSearch).elements;
+ const desktopInput=desktop.find(n=>n.tag==='input'&&n.attrs['data-report-search-input']!==undefined);
+ assert.ok(desktopInput&&desktop.some(n=>n.tag==='label'&&n.attrs.for===desktopInput.attrs.id));
+ assert.notEqual(desktopInput.attrs.id,input.attrs.id);
+ assert.match(ref.componentContracts.scopedToolDisclosure.placement,/목록 바로 앞/);
+ assert.match(ref.componentContracts.scopedToolDisclosure.review,/다른 섹션/);
+ assert.ok(catalog.shared.rules.some(rule=>rule.includes('상세 일괄 펼치기')));
+ assert.deepEqual(catalog.shared.assetContract.deferScripts,[
+  'assets/report/share.js','assets/report/reading-experience-scoped.js',
+  'assets/report/report-search.js','reports/weekly-YYYY-MM-DD.js'
+ ]);
+ assert.deepEqual(ref.newIssuePresentationAssets.deferScripts,catalog.shared.assetContract.deferScripts);
+ assert.ok(catalog.shared.assetContract.css.includes('assets/report/report-search.css'));
+ const disclosure=reportElements(catalog.shared.componentTemplates.scopedDisclosure).elements;
+ assert.ok(disclosure.some(n=>n.attrs['data-disclosure-scope']==='game-ai-tools'&&n.attrs.role==='group'&&n.attrs['aria-label']));
+ for(const action of ['expand','collapse'])assert.ok(disclosure.some(n=>n.tag==='button'&&n.attrs['data-disclosure-action']===action&&n.attrs['aria-controls']));
+});
