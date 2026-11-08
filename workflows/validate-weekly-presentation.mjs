@@ -2,7 +2,8 @@
 const voidTags=new Set(['area','base','br','col','embed','hr','img','input','link','meta','param','source','track','wbr']);
 export function reportElements(html){
  const root={tag:'root',attrs:{},parent:null,start:0,end:html.length},elements=[],stack=[root];
- const source=html.replace(/(<(?:script|style)\b[^>]*>)[\s\S]*?(<\/(?:script|style)>)/gi,'$1$2');
+ // Mask raw-text contents without moving element offsets relative to the original HTML.
+ const source=html.replace(/(<(?:script|style)\b[^>]*>)([\s\S]*?)(<\/(?:script|style)>)/gi,(_,open,body,close)=>open+body.replace(/[^\r\n]/g,' ')+close);
  for(const match of source.matchAll(/<!--[\s\S]*?-->|<\/?([a-z][\w-]*)\b([^>]*)>/gi)){
   if(!match[1])continue;
   const tag=match[1].toLowerCase();
@@ -17,6 +18,12 @@ export function reportElements(html){
  }
  if(stack.length!==1)throw Error('Unclosed report HTML element');
  return {elements,source};
+}
+// Only actual parsed attributes count: data-*-id, comments and scripts are not IDs.
+export function validateReportIds(html){
+ const ids=reportElements(html).elements.map(element=>element.attrs.id).filter(Boolean);
+ if(new Set(ids).size!==ids.length)throw Error('Duplicate DOM IDs');
+ return ids;
 }
 const hasClass=(node,name)=>(node.attrs.class||'').split(/\s+/).includes(name);
 const within=(node,parent)=>{for(let current=node.parent;current;current=current.parent)if(current===parent)return true;return false;};
@@ -115,15 +122,23 @@ export function validateNavigationEnhancements(html,{reportDate}={}){
  const styles=elements.filter(node=>node.tag==='link'&&node.attrs.rel==='stylesheet');
  const scripts=elements.filter(node=>node.tag==='script');
  const asset=node=>(node.attrs.href||node.attrs.src||'').split('?')[0];
- const searchCss='../assets/report/report-search.css',searchJs='../assets/report/report-search.js',scoped='../assets/report/reading-experience-scoped.js',legacy='../assets/report/reading-experience.js';
- const active=reportDate>='2026-11-14'||elements.some(node=>has(node,'data-report-search-panel')||has(node,'data-disclosure-scope'))||[...styles,...scripts].some(node=>[searchCss,searchJs,scoped].includes(asset(node)));
+ const searchCss='../assets/report/report-search.css',searchJs='../assets/report/report-search.js',scoped=['../assets/report/reading-experience-scoped.js','../assets/report/reading-experience-scoped-v2.js'],share=['../assets/report/share.js','../assets/report/share-v2.js'],legacy='../assets/report/reading-experience.js',themeJs='../assets/report/report-theme.js';
+ const currentContract=reportDate>='2026-11-14';
+ const active=reportDate>='2026-11-14'||elements.some(node=>has(node,'data-report-search-panel')||has(node,'data-disclosure-scope'))||[...styles,...scripts].some(node=>[searchCss,searchJs,...scoped].includes(asset(node)));
  if(!active)return false;
  const exactly=(items,path)=>items.filter(node=>asset(node)===path);
- assert(exactly(styles,searchCss).length===1&&asset(styles.at(-1))===searchCss,'Search stylesheet must occur once after the editorial stylesheet');
- assert(styles.length>1&&asset(styles.at(-2))==='../assets/report/weekly-editorial.css','Search stylesheet must occur once after the editorial stylesheet');
- const paths=['../assets/report/share.js',scoped,searchJs,`weekly-${reportDate}.js`];
- assert(paths.every(path=>exactly(scripts,path).length===1)&&!exactly(scripts,legacy).length,'Search requires one scoped script and no legacy reading script');
- const selected=paths.map(path=>exactly(scripts,path)[0]);
+ const editorial='../assets/report/weekly-editorial.css',infographic='../assets/report/section-infographic.css',theme='../assets/report/report-theme.css';
+ assert(exactly(styles,editorial).length===1&&exactly(styles,searchCss).length===1&&exactly(styles,infographic).length<=1&&(currentContract?exactly(styles,theme).length===1:exactly(styles,theme).length<=1),'Search stylesheet must occur once after the editorial stylesheet and required theme');
+ const expected=[editorial,...(exactly(styles,infographic).length?[infographic]:[]),...(exactly(styles,theme).length?[theme]:[]),searchCss];
+ assert(JSON.stringify(styles.slice(-expected.length).map(asset))===JSON.stringify(expected),'Search stylesheet must occur once after the editorial stylesheet');
+ const shares=scripts.filter(node=>share.includes(asset(node))),readers=scripts.filter(node=>scoped.includes(asset(node)));
+ assert(shares.length===1&&readers.length===1&&exactly(scripts,searchJs).length===1&&exactly(scripts,`weekly-${reportDate}.js`).length===1&&!exactly(scripts,legacy).length,'Search requires one scoped script and no legacy reading script');
+ if(currentContract){
+  assert(asset(shares[0])===share[1]&&asset(readers[0])===scoped[1],'Current reports require versioned share and reading scripts');
+  const startup=exactly(scripts,themeJs),head=elements.find(node=>node.tag==='head');
+  assert(startup.length===1&&head&&within(startup[0],head)&&!has(startup[0],'defer')&&!has(startup[0],'async'),'Current reports require one synchronous theme startup script in head');
+ }
+ const selected=[shares[0],readers[0],exactly(scripts,searchJs)[0],exactly(scripts,`weekly-${reportDate}.js`)[0]];
  assert(selected.every(node=>has(node,'defer'))&&selected.every((node,i)=>!i||node.start>selected[i-1].start),'Search scripts must be deferred and in the required order');
  const panels=elements.filter(node=>has(node,'data-report-search-panel'));
  assert(panels.length===2&&panels.every(node=>node.tag==='form'&&node.attrs.role==='search'&&(node.attrs['aria-label']||'').trim()),'Search requires two accessible forms');
@@ -158,6 +173,36 @@ export function validateNavigationEnhancements(html,{reportDate}={}){
  }
  return true;
 }
+export const sectionVisualIds=['brief','issue-summary','top10','game-ai-tools','agent-skills','github-trending','ai-trends','game-ai','ai-releases','techniques','games','reverse','ai-only-lab','ai-planning','game-ideas','ai-production','prototype','lab','careers','opportunities','reading','sources'];
+export function validateSectionVisuals(html,{reportDate}={}){
+ if(!reportDate||reportDate<'2026-11-14')return;
+ const {elements,source}=reportElements(html);
+ const text=node=>source.slice(node.start,node.end).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+ const assert=(condition,message)=>{if(!condition)throw Error(message);};
+ const style=elements.filter(node=>node.tag==='link'&&(node.attrs.rel||'').toLowerCase().split(/\s+/).includes('stylesheet')&&(node.attrs.href||'').split('?')[0]==='../assets/report/section-infographic.css');
+ assert(style.length===1,'Section infographic stylesheet missing or duplicated');
+ const ids=[...sectionVisualIds,...(elements.some(node=>node.attrs.id==='unity-official-guide')?['unity-official-guide']:[])];
+ const allVisuals=elements.filter(node=>Object.hasOwn(node.attrs,'data-infographic-id'));
+ assert(allVisuals.length===ids.length,'Section infographic count mismatch');
+ for(const id of ids){
+  const sections=elements.filter(node=>node.attrs.id===id);assert(sections.length===1,'Section infographic owner missing or duplicated: '+id);
+  const owner=sections[0],visuals=allVisuals.filter(node=>node.parent===owner&&node.attrs['data-infographic-id']===id);
+  assert(visuals.length===1&&hasClass(visuals[0],'report-infographic'),'Section infographic missing or duplicated: '+id);
+  const block=visuals[0],headings=elements.filter(node=>node.parent===owner&&(node.tag==='h2'||hasClass(node,'chapter-head')));
+  assert(headings.length===1&&headings[0].end<=block.start,'Section infographic must follow its heading: '+id);
+  const figures=elements.filter(node=>node.parent===block&&node.tag==='figure'&&hasClass(node,'chapter-concept'));
+  const groups=elements.filter(node=>node.parent===block&&hasClass(node,'infographic-summary')&&node.attrs.role==='group');
+  assert(figures.length===1&&groups.length===1,'Section infographic figure or summary missing: '+id);
+  const figure=figures[0],images=elements.filter(node=>node.parent===figure&&node.tag==='img'),captions=elements.filter(node=>node.parent===figure&&node.tag==='figcaption');
+  const img=images[0],asset=img?.attrs.src?.startsWith('../assets/report/')?img.attrs.src.slice('../assets/report/'.length):'';
+  const positive=value=>/^[1-9]\d*$/.test(value||'')&&Number.isSafeInteger(Number(value));
+  assert(images.length===1&&captions.length===1&&text(captions[0])&&(img.attrs.alt||'').trim()&&asset&&asset.split('/').every(part=>/^[A-Za-z0-9_-][A-Za-z0-9_.-]*$/.test(part))&&/\.(?:png|webp)$/i.test(asset)&&positive(img.attrs.width)&&positive(img.attrs.height),'Section infographic image, caption or dimensions invalid: '+id);
+  const group=groups[0],titles=elements.filter(node=>node.parent===group&&node.tag==='h3'),lists=elements.filter(node=>node.parent===group&&node.tag==='ul');
+  assert(titles.length===1&&text(titles[0])&&titles[0].attrs.id&&group.attrs['aria-labelledby']===titles[0].attrs.id&&elements.filter(node=>node.attrs.id===titles[0].attrs.id).length===1&&lists.length===1,'Section infographic title or accessible name invalid: '+id);
+  const points=elements.filter(node=>node.parent===lists[0]&&node.tag==='li');
+  assert(points.length>=2&&points.length<=3&&points.every(node=>text(node)),'Section infographic needs two or three summary points: '+id);
+ }
+}
 export function validateWeeklyPresentation(html,{reportDate}={}){
  const {elements,source}=reportElements(html);
  const oneId=id=>elements.find(node=>node.attrs.id===id);
@@ -167,10 +212,14 @@ export function validateWeeklyPresentation(html,{reportDate}={}){
  assert(elements.some(node=>node.tag==='body'&&hasClass(node,'weekly-editorial')),'Missing weekly-editorial body class');
  const styles=elements.filter(node=>node.tag==='link'&&node.attrs.rel==='stylesheet').map(node=>(node.attrs.href||'').split('?')[0]);
  const enhanced=validateNavigationEnhancements(html,{reportDate});
+ validateSectionVisuals(html,{reportDate});
  assert(styles.at(-1)===(enhanced?'../assets/report/report-search.css':'../assets/report/weekly-editorial.css'),'Weekly editorial stylesheet must be last before optional search stylesheet');
  for(const asset of ['report.css','share.css','reading-experience.css'])assert(styles.includes('../assets/report/'+asset),'Missing required report stylesheet: '+asset);
  const scripts=elements.filter(node=>node.tag==='script').map(node=>(node.attrs.src||'').split('?')[0]);
- for(const asset of ['share.js',enhanced?'reading-experience-scoped.js':'reading-experience.js'])assert(scripts.includes('../assets/report/'+asset),'Missing required report script: '+asset);
+ const shareScripts=['../assets/report/share.js','../assets/report/share-v2.js'];
+ const readingScripts=enhanced?['../assets/report/reading-experience-scoped.js','../assets/report/reading-experience-scoped-v2.js']:['../assets/report/reading-experience.js'];
+ assert(scripts.some(asset=>shareScripts.includes(asset)),'Missing required report script: share');
+ assert(scripts.some(asset=>readingScripts.includes(asset)),'Missing required report script: reading-experience');
  if(reportDate>='2026-11-07')assert(scripts.includes(`weekly-${reportDate}.js`)&&!scripts.includes('../assets/report/report.js'),'New reports require an issue-specific UI/chart script');
  assert(elements.some(node=>node.tag==='html'&&node.attrs.lang==='ko'),'Report language must be Korean');
  const cover=elements.find(node=>hasClass(node,'issue-cover')),headings=elements.filter(node=>node.tag==='h1');

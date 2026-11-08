@@ -5,6 +5,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
+import {DatabaseSync} from 'node:sqlite';
 const hash=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
 const insist=(ok,message)=>{if(!ok)throw Error(message);};
 function sourceDay(value){
@@ -13,6 +14,10 @@ function sourceDay(value){
  if(!Number.isFinite(calendar)||!Number.isFinite(instant)||new Date(calendar).toISOString().slice(0,10)!==value.slice(0,10))return NaN;
  const koreanDate=value.length===10?value:new Date(instant+9*3600000).toISOString();
  return Date.parse(koreanDate.slice(0,10)+'T00:00:00Z');
+}
+function canonicalUrl(value){
+ const url=new URL(value),path=url.pathname.replace(/\/+$/,''),pairs=[...url.searchParams].filter(([key])=>!key.startsWith('utm_')).sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:a[1]<b[1]?-1:a[1]>b[1]?1:0),query=new URLSearchParams(pairs).toString();
+ return url.protocol.toLowerCase()+'//'+url.host.toLowerCase()+path+(query?'?'+query:'');
 }
 
 export async function checkReportHarness({root,runId,revision}){
@@ -70,6 +75,54 @@ export async function checkReportHarness({root,runId,revision}){
    if(source.kind==='overseas'&&age>30)insist(source.extendedWindow===true,'Overseas 90-day extension must be disclosed');
   }
   if(source.kind==='unverified')insist(typeof source.limitation==='string'&&source.limitation.trim(),'Unverified source limitation missing');
+ }
+ const correction=context.correction;
+ let correctionSources=[];
+ if(correction!==undefined){
+  insist(correction&&typeof correction==='object'&&!Array.isArray(correction),'Correction context must be an object');
+  const checkedDay=sourceDay(correction.checkedAt);
+  const checkedInstant=typeof correction.checkedAt==='string'&&correction.checkedAt.length>10?Date.parse(correction.checkedAt):NaN;
+  const today=Date.parse(new Date(Date.now()+9*3600000).toISOString().slice(0,10)+'T00:00:00Z');
+  insist(Number.isFinite(checkedDay)&&Number.isFinite(checkedInstant)&&checkedDay>issueDay&&checkedDay<=today&&checkedInstant<=Date.now(),'Correction checkedAt must be after the issue date and not in the future');
+  insist(/^[a-f0-9]{64}$/i.test(correction.previousIssueSha256||'')&&typeof correction.reason==='string'&&correction.reason.trim(),'Correction prior issue hash or reason missing');
+  insist(/^[a-z0-9][a-z0-9-]{0,63}$/.test(correction.priorRunId||'')&&correction.priorRunId!==runId,'Correction prior run ID missing or invalid');
+  insist(Array.isArray(correction.priorPublicationEvidence)&&correction.priorPublicationEvidence.length===2,'Correction requires two prior publication receipts');
+  const providers=new Set();
+  const priorPaths=new Set(['reports/weekly-'+context.issueDate+'.html.published.json','reports/weekly-'+context.issueDate+'.html.vercel-published.json']);
+  const ledgerPath=path.join(root,'_workspace/weekly-game-report.sqlite3'),ledgerReal=await fs.realpath(ledgerPath),ledgerStat=await fs.lstat(ledgerPath);
+  insist(ledgerReal.startsWith(root+path.sep)&&ledgerStat.isFile()&&!ledgerStat.isSymbolicLink(),'Correction receipt ledger is unsafe');
+  const ledger=new DatabaseSync(ledgerReal,{readOnly:true});
+  for(const evidence of correction.priorPublicationEvidence){
+   insist(evidence?.path?.startsWith('_workspace/harness/weekly-game-report/'+runId+'/evidence/')&&priorPaths.has(evidence.sourcePath)&&/^[a-f0-9]{64}$/i.test(evidence.sha256||''),'Correction prior publication evidence is invalid');
+   const bytes=await read(evidence.path);insist(hash(bytes)===evidence.sha256&&isDeepStrictEqual(bytes,await read(evidence.sourcePath)),'Correction prior publication evidence hash mismatch');
+   const receipt=JSON.parse(bytes);
+   const expectedUrl=receipt.provider==='pages'?'https://rnjsxogus0705.github.io/game-trend-report/reports/weekly-'+context.issueDate+'.html':receipt.provider==='vercel'?'https://game-trend-report.vercel.app/reports/weekly-'+context.issueDate+'.html':null;
+   const verifiedAt=Date.parse(receipt.verifiedAt),checkedAt=Date.parse(correction.checkedAt);
+   insist(receipt.schemaVersion===1&&receipt.runId===correction.priorRunId&&receipt.issueDate===context.issueDate&&receipt.sha256===correction.previousIssueSha256&&receipt.status==='published_verified'&&receipt.url===expectedUrl&&Number.isFinite(verifiedAt)&&verifiedAt>=issueDay&&verifiedAt<=checkedAt&&/^[a-f0-9]{40}$/i.test(receipt.gitCommit||'')&&typeof receipt.verificationScope==='string'&&receipt.verificationScope.trim(),'Correction prior publication receipt does not match the issue');
+   insist(Array.isArray(receipt.files)&&receipt.files.length>0&&new Set(receipt.files.map(file=>file?.path)).size===receipt.files.length&&receipt.files.every(file=>file&&file.status===200&&file.matched===true&&file.expectedSha256===file.sha256&&/^[a-f0-9]{64}$/i.test(file.sha256||'')&&Number.isInteger(file.bytes)&&file.bytes>0),'Correction prior publication file verification missing');
+   insist(receipt.files.some(file=>file.path==='reports/weekly-'+context.issueDate+'.html'&&file.sha256===correction.previousIssueSha256),'Correction prior publication HTML verification missing');
+   insist(Array.isArray(receipt.browserEvidence)&&receipt.browserEvidence.length>0&&new Set(receipt.browserEvidence.map(item=>item?.path)).size===receipt.browserEvidence.length,'Correction prior browser evidence missing');
+   for(const item of receipt.browserEvidence)insist(item?.path?.startsWith('_workspace/')&&/^[a-f0-9]{64}$/i.test(item.sha256||'')&&hash(await read(item.path))===item.sha256,'Correction prior browser evidence hash mismatch');
+   const row=ledger.prepare("SELECT sha256,document FROM receipt_records WHERE run=? AND kind='publication' AND path=? AND sha256=?").get(correction.priorRunId,evidence.sourcePath,evidence.sha256);
+   insist(row&&row.sha256===evidence.sha256&&Buffer.from(row.document).equals(bytes),'Correction prior publication receipt is not in the ledger');
+   let previousHtml;try{previousHtml=execFileSync('git',['show',receipt.gitCommit+':reports/weekly-'+context.issueDate+'.html'],{cwd:root});}catch{throw Error('Correction prior publication commit is unavailable');}
+   insist(hash(previousHtml)===correction.previousIssueSha256,'Correction prior publication commit HTML differs');
+   providers.add(receipt.provider);
+  }
+  ledger.close();
+  insist(providers.size===2&&providers.has('pages')&&providers.has('vercel'),'Correction prior publication providers must be Pages and Vercel');
+  correctionSources=records.research.correctionSources;
+  insist(Array.isArray(correctionSources)&&correctionSources.length>0,'Correction sources missing');
+  const correctionUris=new Set();
+  for(const source of correctionSources){
+   insist(/^https:\/\//.test(source?.uri||'')&&source.publisher&&source.retrievedAt&&source.scope&&source.kind==='correction'&&typeof source.limitation==='string'&&source.limitation.trim(),'Correction source metadata missing');
+   const retrieved=sourceDay(source.retrievedAt);
+   const retrievedInstant=typeof source.retrievedAt==='string'&&source.retrievedAt.length>10?Date.parse(source.retrievedAt):retrieved;
+   insist(Number.isFinite(retrieved)&&Number.isFinite(retrievedInstant)&&retrieved>issueDay&&retrieved<=checkedDay&&retrievedInstant<=checkedInstant,'Correction source date is outside the correction window');
+   const canonical=canonicalUrl(source.uri);
+   insist(!correctionUris.has(canonical),'Correction source must be separate and unique');
+   correctionUris.add(canonical);
+  }
  }
 
  validateCareerCoverage(records.research.careerCoverage,{issueDate:context.issueDate});
@@ -157,11 +210,25 @@ export async function checkReportHarness({root,runId,revision}){
  const pipeline=JSON.parse((await read(htmlPath+'.pipeline.json')).toString('utf8').replace(/^\uFEFF/,''));
  insist(pipeline.summarySha256===reviewed[htmlPath+'.summary.txt'],'Pipeline summary hash differs from reviewed summary');
  const html=(await read(htmlPath)).toString('utf8');
+ const {elements}=reportElements(html);
+ if(correction!==undefined){
+  const currentIssueSha256=reviewed[htmlPath],record=issue.correction;
+  insist(record&&record.previousIssueSha256===correction.previousIssueSha256&&record.currentIssueSha256===currentIssueSha256&&record.checkedAt===correction.checkedAt&&record.reason===correction.reason,'Correction issue hashes or metadata differ');
+  insist(currentIssueSha256!==correction.previousIssueSha256,'Correction must change the issue bytes');
+  const notices=elements.filter(node=>node.attrs.id==='correction-notice'),notice=notices[0],report=elements.find(node=>node.attrs.id==='report');
+  let withinReport=false,hidden=false;
+  for(let current=notice;current;current=current.parent){
+   if(current===report)withinReport=true;
+   if(['head','template','script','style'].includes(current.tag)||((current.tag==='details'||current.tag==='dialog')&&!Object.hasOwn(current.attrs||{},'open'))||Object.hasOwn(current.attrs||{},'hidden')||current.attrs?.['aria-hidden']==='true'||/(?:display\s*:\s*none|visibility\s*:\s*hidden)/i.test(current.attrs?.style||''))hidden=true;
+  }
+  const raw=notice?html.slice(notice.start,notice.end):'',visibleText=raw.replace(/<(script|style|template)\b[^>]*>[\s\S]*?<\/\1>/gi,' ').replace(/<!--[^]*?-->/g,' ').replace(/<[^>]+>/g,' ').replace(/&(?:nbsp|#160);/gi,' ').replace(/\s+/g,' ').trim();
+  const [year,month,dayOfMonth]=correction.checkedAt.slice(0,10).split('-').map(Number),dateVisible=visibleText.includes(correction.checkedAt.slice(0,10))||visibleText.includes(year+'년 '+month+'월 '+dayOfMonth+'일')||visibleText.includes(month+'월 '+dayOfMonth+'일');
+  insist(notices.length===1&&notice.attrs['data-correction-date']===correction.checkedAt.slice(0,10)&&withinReport&&!hidden&&visibleText.length>=10&&visibleText.includes('정정')&&dateVisible,'Visible correction notice missing or stale');
+ }
  const contentPath=htmlPath+'.content-review.json';
  insist(Object.hasOwn(reviewed,contentPath),'Career content review missing from issue index');
  const contentReview=JSON.parse(await read(contentPath));
  insist(isDeepStrictEqual(contentReview.careerCoverage,records.research.careerCoverage),'Career coverage differs between research and content review');
- const {elements}=reportElements(html);
  if(context.issueDate>='2026-11-07'){
   const report=elements.find(node=>node.attrs.id==='report');
   const linked=report&&elements.some(node=>{
@@ -211,6 +278,11 @@ export async function checkReportHarness({root,runId,revision}){
   insist(review.method==='native-subagent'&&typeof review.sessionId==='string'&&review.sessionId&&typeof issue.editorSessionId==='string'&&issue.editorSessionId&&review.sessionId!==issue.editorSessionId,'Independent review execution record missing');
   insist(typeof review.reviewer==='string'&&review.reviewer.trim()&&typeof issue.editor==='string'&&issue.editor.trim()&&review.reviewer.trim()!==issue.editor.trim(),'Independent reviewer required');
   insist(Object.keys(reviewed).length===Object.keys(review.reviewedFiles||{}).length&&Object.entries(reviewed).every(([p,d])=>review.reviewedFiles[p]===d),'Review does not cover final files: '+id);
+  if(correction!==undefined){
+   const uris=correctionSources.map(source=>source.uri),reviewedUris=review.correctionSourcesReviewed;
+   insist(review.correctionReviewed===true&&review.previousIssueSha256===correction.previousIssueSha256&&review.currentIssueSha256===reviewed[htmlPath]&&review.correctionCheckedAt===correction.checkedAt,'Independent correction review metadata missing: '+id);
+   insist(Array.isArray(reviewedUris)&&reviewedUris.length===uris.length&&new Set(reviewedUris).size===uris.length&&uris.every(uri=>reviewedUris.includes(uri)),'Independent correction source review missing: '+id);
+  }
  }
  insist(records.verification.passed===true&&Array.isArray(records.verification.commands)&&records.verification.commands.length>0&&records.verification.commands.every(c=>Array.isArray(c.argv)&&c.argv.length&&c.exitCode===0),'Verification evidence missing or failed');
  const commands=records.verification.commands;

@@ -3,6 +3,7 @@ import {test} from 'node:test';import assert from 'node:assert/strict';import fs
 import {checkReportHarness} from './check-report-harness.mjs';
 import {verifyDeliveryHarness} from './discord-delivery.mjs';
 import {careerCategories} from './validate-weekly-presentation.mjs';
+import {DatabaseSync} from 'node:sqlite';import {execFileSync} from 'node:child_process';
 const specPath='.agents/skills/weekly-game-report/references/harness-spec.json';
 const spec=JSON.parse(await fs.readFile(new URL('../'+specPath,import.meta.url),'utf8'));
 const watchlistPath='instructions/AI-SOLO-CREATOR-WATCHLIST.json';
@@ -39,7 +40,72 @@ async function fixture(t){
  const rebind=async()=>{const hashes={};for(const task of spec.tasks)for(const id of task.outputs){for(const input of task.inputs)if(hashes[input])records[id].inputs[input]=hashes[input];const bytes=JSON.stringify(records[id]);await write(paths[id],bytes);hashes[id]=hash(bytes);}};
  return {root,runId,revision,paths,records,write,rebind,check:()=>checkReportHarness({root,runId,revision})};
 }
+async function correctionFixture(t){
+ const f=await fixture(t),previousIssueSha256=hash(syntheticHtml),checkedAt='2026-11-08T12:00:00+09:00',priorRunId='2026-11-07-prior';
+ execFileSync('git',['init','-q'],{cwd:f.root});execFileSync('git',['config','user.email','fixture@example.test'],{cwd:f.root});execFileSync('git',['config','user.name','Fixture'],{cwd:f.root});execFileSync('git',['add','reports/weekly-2026-11-07.html'],{cwd:f.root});execFileSync('git',['commit','-qm','prior issue'],{cwd:f.root});
+ const gitCommit=execFileSync('git',['rev-parse','HEAD'],{cwd:f.root,encoding:'utf8'}).trim(),ledgerPath=path.join(f.root,'_workspace/weekly-game-report.sqlite3');await fs.mkdir(path.dirname(ledgerPath),{recursive:true});
+ const ledgerDb=new DatabaseSync(ledgerPath);ledgerDb.exec('CREATE TABLE receipt_records(run TEXT,kind TEXT,path TEXT,sha256 TEXT,document TEXT)');
+ const priorPublicationEvidence=[];
+ for(const provider of ['pages','vercel']){
+  const path='_workspace/harness/weekly-game-report/'+f.runId+'/evidence/prior-'+provider+'.json';
+  const sourcePath='reports/weekly-2026-11-07.html.'+(provider==='pages'?'published':'vercel-published')+'.json';
+  const url=provider==='pages'?'https://rnjsxogus0705.github.io/game-trend-report/reports/weekly-2026-11-07.html':'https://game-trend-report.vercel.app/reports/weekly-2026-11-07.html';
+  const browserPath='_workspace/harness/weekly-game-report/'+f.runId+'/evidence/prior-'+provider+'.png',browserBytes='synthetic '+provider+' browser evidence';await f.write(browserPath,browserBytes);
+  const bytes=JSON.stringify({schemaVersion:1,runId:priorRunId,issueDate:'2026-11-07',provider,url,verifiedAt:'2026-11-08T01:00:00Z',gitCommit,sha256:previousIssueSha256,status:'published_verified',verificationScope:'Synthetic prior publication verification',files:[{path:'reports/weekly-2026-11-07.html',url,status:200,expectedSha256:previousIssueSha256,sha256:previousIssueSha256,bytes:Buffer.byteLength(syntheticHtml),matched:true}],browserEvidence:[{path:browserPath,sha256:hash(browserBytes)}]});
+  await f.write(path,bytes);await f.write(sourcePath,bytes);priorPublicationEvidence.push({path,sourcePath,sha256:hash(bytes)});
+  ledgerDb.prepare('INSERT INTO receipt_records VALUES(?,?,?,?,?)').run(priorRunId,'publication',sourcePath,hash(bytes),bytes);
+ }
+ ledgerDb.close();
+ f.records.context.correction={checkedAt,previousIssueSha256,priorRunId,reason:'발행 후 원문 재확인과 화면 수정',priorPublicationEvidence};
+ f.records.research.correctionSources=[{uri:'https://example.test/correction',publisher:'fixture correction',retrievedAt:'2026-11-08',kind:'correction',scope:'발행 후 정정 근거만 확인',limitation:'2026-11-07 발행 당시 확인으로 소급하지 않음'}];
+ const htmlPath='reports/weekly-2026-11-07.html',html=syntheticHtml.replace('</main>','<aside id="correction-notice" data-correction-date="2026-11-08">2026년 11월 8일 사후 정정 안내</aside></main>'),currentIssueSha256=hash(html);
+ await f.write(htmlPath,html);f.records.issue.files.find(file=>file.path===htmlPath).sha256=currentIssueSha256;
+ f.records.issue.correction={checkedAt,previousIssueSha256,currentIssueSha256,reason:f.records.context.correction.reason};
+ for(const id of ['editorial-review','final-review'])Object.assign(f.records[id],{correctionReviewed:true,correctionCheckedAt:checkedAt,previousIssueSha256,currentIssueSha256,correctionSourcesReviewed:['https://example.test/correction'],reviewedFiles:{...f.records[id].reviewedFiles,[htmlPath]:currentIssueSha256}});
+ await f.rebind();return {...f,htmlPath,previousIssueSha256,checkedAt};
+}
 test('검수·파일·upstream 해시가 맞는 로컬 준비 묶음',async t=>{const f=await fixture(t);assert.equal((await f.check()).status,'ready');});
+test('발행 후 정정은 실제 확인일·전후 해시·두 배포 영수증·독립 검수에 결속된다',async t=>{
+ const f=await correctionFixture(t);assert.equal((await f.check()).status,'ready');
+});
+test('긴 script·style 뒤 정정 고지를 실제 위치에서 확인한다',async t=>{
+ const f=await correctionFixture(t),file=f.htmlPath;
+ const old=await fs.readFile(path.join(f.root,file),'utf8');
+ const html=old.replace('<main id="report">','<style>.example::before{content:"<p>🕹"}</style><script>const value="<span>가짜 고지</span>";</script><main id="report">');
+ const current=hash(html);await f.write(file,html);f.records.issue.files.find(item=>item.path===file).sha256=current;f.records.issue.correction.currentIssueSha256=current;
+ for(const id of ['editorial-review','final-review']){f.records[id].currentIssueSha256=current;f.records[id].reviewedFiles[file]=current;}
+ await f.rebind();assert.equal((await f.check()).status,'ready');
+});
+test('사후 재확인은 별도 관측을 보존하고 정정 출처 내 중복을 차단한다',async t=>{
+ const futureWeekly=await correctionFixture(t);futureWeekly.records.research.sources[0].retrievedAt='2026-11-08';await futureWeekly.rebind();await assert.rejects(futureWeekly.check,/Stale source retrieval/);
+ const duplicate=await correctionFixture(t);duplicate.records.research.correctionSources[0].uri=duplicate.records.research.sources[0].uri;for(const id of ['editorial-review','final-review'])duplicate.records[id].correctionSourcesReviewed=[duplicate.records.research.sources[0].uri];await duplicate.rebind();assert.equal((await duplicate.check()).status,'ready');
+ const weeklyAlias=await correctionFixture(t);weeklyAlias.records.research.correctionSources[0].uri='https://EXAMPLE.TEST/fixture/?utm_source=weekly#top';for(const id of ['editorial-review','final-review'])weeklyAlias.records[id].correctionSourcesReviewed=['https://EXAMPLE.TEST/fixture/?utm_source=weekly#top'];await weeklyAlias.rebind();assert.equal((await weeklyAlias.check()).status,'ready');
+ const correctionAlias=await correctionFixture(t),alias={...correctionAlias.records.research.correctionSources[0],uri:'https://EXAMPLE.TEST/correction/?utm_medium=test#fragment'};correctionAlias.records.research.correctionSources.push(alias);for(const id of ['editorial-review','final-review'])correctionAlias.records[id].correctionSourcesReviewed.push(alias.uri);await correctionAlias.rebind();await assert.rejects(correctionAlias.check,/separate and unique/);
+ const distinctQueries=await correctionFixture(t);distinctQueries.records.research.correctionSources[0].uri='https://example.test/correction?version=1';distinctQueries.records.research.correctionSources.push({...distinctQueries.records.research.correctionSources[0],uri:'https://EXAMPLE.TEST/correction/?version=2&utm_source=test#fragment'});for(const id of ['editorial-review','final-review'])distinctQueries.records[id].correctionSourcesReviewed=distinctQueries.records.research.correctionSources.map(source=>source.uri);await distinctQueries.rebind();assert.equal((await distinctQueries.check()).status,'ready');
+ const early=await correctionFixture(t);early.records.research.correctionSources[0].retrievedAt='2026-11-07';await early.rebind();await assert.rejects(early.check,/outside the correction window/);
+ const afterCheck=await correctionFixture(t);afterCheck.records.research.correctionSources[0].retrievedAt='2026-11-08T04:00:00Z';await afterCheck.rebind();await assert.rejects(afterCheck.check,/outside the correction window/);
+});
+test('주간·사후 확인 날짜는 Asia\/Seoul 달력과 UTC 15시 경계를 따른다',async t=>{
+ const issueEnd=await fixture(t);issueEnd.records.research.sources[0].retrievedAt='2026-11-07T14:59:59Z';await issueEnd.rebind();assert.equal((await issueEnd.check()).status,'ready');
+ const nextKoreanDay=await fixture(t);nextKoreanDay.records.research.sources[0].retrievedAt='2026-11-07T15:00:00Z';await nextKoreanDay.rebind();await assert.rejects(nextKoreanDay.check,/Stale source retrieval/);
+ const windowStart=await fixture(t);windowStart.records.research.sources[0].retrievedAt='2026-10-30T15:00:00Z';await windowStart.rebind();assert.equal((await windowStart.check()).status,'ready');
+ const beforeWindow=await fixture(t);beforeWindow.records.research.sources[0].retrievedAt='2026-10-30T14:59:59Z';await beforeWindow.rebind();await assert.rejects(beforeWindow.check,/Stale source retrieval/);
+ const correctionStart=await correctionFixture(t),checkedAt='2026-11-08T02:00:00Z';correctionStart.records.context.correction.checkedAt=checkedAt;correctionStart.records.issue.correction.checkedAt=checkedAt;for(const id of ['editorial-review','final-review'])correctionStart.records[id].correctionCheckedAt=checkedAt;await correctionStart.rebind();assert.equal((await correctionStart.check()).status,'ready');
+ const stillIssueDay=await correctionFixture(t),tooEarly='2026-11-07T14:59:59Z';stillIssueDay.records.context.correction.checkedAt=tooEarly;stillIssueDay.records.issue.correction.checkedAt=tooEarly;for(const id of ['editorial-review','final-review'])stillIssueDay.records[id].correctionCheckedAt=tooEarly;await stillIssueDay.rebind();await assert.rejects(stillIssueDay.check,/after the issue date/);
+});
+test('정정 표시·전후 해시·독립 검수·이전 배포 증거의 누락과 변조를 차단한다',async t=>{
+ const notice=await correctionFixture(t),html=syntheticHtml.replace('</main>','<p>정정 표시 없는 변경</p></main>'),current=hash(html);await notice.write(notice.htmlPath,html);notice.records.issue.files.find(file=>file.path===notice.htmlPath).sha256=current;notice.records.issue.correction.currentIssueSha256=current;for(const id of ['editorial-review','final-review']){notice.records[id].currentIssueSha256=current;notice.records[id].reviewedFiles[notice.htmlPath]=current;}await notice.rebind();await assert.rejects(notice.check,/Visible correction notice/);
+ for(const markup of ['<template><aside id="correction-notice" data-correction-date="2026-11-08">2026년 11월 8일 사후 정정 안내</aside></template>','<details><aside id="correction-notice" data-correction-date="2026-11-08">2026년 11월 8일 사후 정정 안내</aside></details>','<dialog><aside id="correction-notice" data-correction-date="2026-11-08">2026년 11월 8일 사후 정정 안내</aside></dialog>','<aside id="correction-notice" data-correction-date="2026-11-08" hidden>2026년 11월 8일 사후 정정 안내</aside>','<aside id="correction-notice" data-correction-date="2026-11-08" aria-hidden="true">2026년 11월 8일 사후 정정 안내</aside>','<aside id="correction-notice" data-correction-date="2026-11-08"><script>2026년 11월 8일 사후 정정 안내</script></aside>']){
+  const hidden=await correctionFixture(t),hiddenHtml=syntheticHtml.replace('</main>',markup+'</main>'),hiddenSha=hash(hiddenHtml);await hidden.write(hidden.htmlPath,hiddenHtml);hidden.records.issue.files.find(file=>file.path===hidden.htmlPath).sha256=hiddenSha;hidden.records.issue.correction.currentIssueSha256=hiddenSha;for(const id of ['editorial-review','final-review']){hidden.records[id].currentIssueSha256=hiddenSha;hidden.records[id].reviewedFiles[hidden.htmlPath]=hiddenSha;}await hidden.rebind();await assert.rejects(hidden.check,/Visible correction notice/);
+ }
+ const review=await correctionFixture(t);delete review.records['final-review'].correctionReviewed;await review.rebind();await assert.rejects(review.check,/Independent correction review/);
+ const prior=await correctionFixture(t),evidence=prior.records.context.correction.priorPublicationEvidence[0];await prior.write(evidence.path,'{}');await assert.rejects(prior.check,/evidence hash mismatch/);
+ const browser=await correctionFixture(t),browserEvidence=browser.records.context.correction.priorPublicationEvidence[0],browserReceipt=JSON.parse(await fs.readFile(path.join(browser.root,browserEvidence.path),'utf8'));await browser.write(browserReceipt.browserEvidence[0].path,'tampered browser evidence');await assert.rejects(browser.check,/browser evidence hash mismatch/);
+ const forged=await correctionFixture(t),forgedEvidence=forged.records.context.correction.priorPublicationEvidence[0],forgedReceipt=JSON.parse(await fs.readFile(path.join(forged.root,forgedEvidence.path),'utf8'));forgedReceipt.gitCommit='a'.repeat(40);const forgedBytes=JSON.stringify(forgedReceipt);await forged.write(forgedEvidence.path,forgedBytes);await forged.write(forgedEvidence.sourcePath,forgedBytes);forgedEvidence.sha256=hash(forgedBytes);await forged.rebind();await assert.rejects(forged.check,/not in the ledger|commit/);
+ const future=await correctionFixture(t);future.records.context.correction.checkedAt='2999-11-08';future.records.issue.correction.checkedAt='2999-11-08';for(const id of ['editorial-review','final-review'])future.records[id].correctionCheckedAt='2999-11-08';await future.rebind();await assert.rejects(future.check,/not in the future/);
+ const futureTime=await correctionFixture(t),later=new Date(Date.now()+10*60*1000).toISOString();futureTime.records.context.correction.checkedAt=later;futureTime.records.issue.correction.checkedAt=later;for(const id of ['editorial-review','final-review'])futureTime.records[id].correctionCheckedAt=later;await futureTime.rebind();await assert.rejects(futureTime.check,/not in the future/);
+ const same=await correctionFixture(t);same.records.context.correction.previousIssueSha256=same.records.issue.correction.currentIssueSha256;for(const id of ['editorial-review','final-review'])same.records[id].previousIssueSha256=same.records.context.correction.previousIssueSha256;same.records.issue.correction.previousIssueSha256=same.records.context.correction.previousIssueSha256;await same.rebind();await assert.rejects(same.check,/prior publication receipt|must change/);
+});
 test('본문의 실제 영상 공개 원장 링크가 누락되거나 위조되면 차단한다',async t=>{
  for(const replacement of ['',ledgerLink.replaceAll('<','&lt;').replaceAll('>','&gt;'),ledgerLink.replace('2026-11-07','2026-10-31'),`<pre><code>${ledgerLink}</code></pre>`]){
   const f=await fixture(t),html=syntheticHtml.replace(ledgerLink,replacement),file='reports/weekly-2026-11-07.html';await f.write(file,html);f.records.issue.files.find(x=>x.path===file).sha256=hash(html);for(const id of ['editorial-review','final-review'])f.records[id].reviewedFiles[file]=hash(html);await f.rebind();await assert.rejects(f.check,/Creator public ledger link missing/);

@@ -40,6 +40,15 @@ colors:
   emphasis-surface: "#E2EBFF"
   error-track: "#E4EBF6"
   selected-surface: "#E5EDFC"
+  dark-background: "#101722"
+  dark-paper: "#192434"
+  dark-surface: "#253247"
+  dark-disclosure: "#202D3F"
+  dark-nested-note: "#2B3B51"
+  dark-text: "#EBF0F8"
+  dark-secondary: "#C4CFDF"
+  dark-link: "#A9C5FF"
+  dark-border: "#586B84"
   navigation-hover: "#E8ECF2"
   concept-surface: "#F8FAFF"
   warning-surface: "#FFF0CA"
@@ -238,14 +247,16 @@ Google [design.md 명세](https://github.com/google-labs-code/design.md/blob/1ed
 | 요소 | 실제 구조·역할 | 상태와 검수 |
 |---|---|---|
 | 커버·메타 | `.issue-cover`, 유일한 h1, 발행일 | 이번 호 날짜·범위 일치, 그림으로 제목을 대신하지 않음 |
-| 공유·인쇄 | 정적 `#report-share`, `#print-button`, 공용 share.js | 공유는 최소 44px 터치 영역이며 중간 스크롤에도 보임. 모달 열기·닫기·Escape·포커스 복귀, 링크 복사·기기 미지원·취소 대안. 인쇄에는 숨김 |
+| 공유·인쇄 | 정적 `#report-share`, `#print-button`, 신규 호용 `share-v2.js` | 공유는 최소 44px 터치 영역이며 중간 스크롤에도 보임. 모달 열기·닫기·Escape·포커스 복귀, 링크 복사·기기 미지원·취소 대안. 인쇄에는 숨김 |
 | 목차·진행률 | `#side-nav`, `#mobile-links`, `#read-bar`, `#read-percent` | 네 범주·모든 본문 링크, 모바일 접기, 현재 위치와 펼침 후 진행률 |
-| 상단 요약·TOP10 | `#issue-summary`, `#top10`, `.top-ten-item` | 핵심 세 판단·다섯 바로가기, 처음 3개와 펼칠 7개·용어 풀이 |
-| 읽기 조작 | `.reading-controls`, `.reading-detail` | 모두 펼치기/접기, 앵커 대상의 닫힌 부모 자동 펼침, 인쇄 후 원래 상태 복원 |
+| 상단 요약·TOP10 | `#issue-summary`, `#top10`, `.top-ten-item` | 핵심 세 판단·다섯 바로가기, 처음 3개와 펼칠 7개·용어 풀이. 확인된 관련 미리보기는 해당 제목 가까이 기본 표시하고 없으면 원문 링크 제공 |
+| 읽기 조작 | `.reading-controls`, `.reading-detail`, `.detail-body` | 전체·도구 범위를 구분해 조작하고 선택적 배경만 접음. 모호하거나 비어 있는 상세는 금지. 검색·앵커의 닫힌 부모 자동 펼침, 인쇄 후 원래 상태 복원 |
 | 도구 선택·상세 | `.tool-filter`, `.tool-feature`, `.tool-facts` | 선택값·후보 수·카드·표 행 일치/초기화, 기본·hover·focus. 입력·출력·조건 옆의 실제 공식 미디어 |
 | 표·프롬프트 | `.table-scroll`, `.practice-prompt pre` | 넓은 표 자체 스크롤·읽을 수 있는 셀, 한글 단어를 낱글자씩 쪼개지 않음 |
 | 복사·다운로드 | `.idea-card > button[data-copy-workflow]`, 개별/합본 Markdown 링크 | 기본 회색 버튼으로 남기지 않음. 전체 원문과 파일 바이트 일치·복사 성공/실패 안내·복사 버튼 최소 48px 터치 영역 |
 | 공식·생성 미디어 | `.official-media`, `.youtube-preview`, `.chapter-concept` | 이미지 자리 예약·로딩 실패 원문 대안·클릭 후 단일 플레이어. 공식 화면/생성 개념/실행 결과 구분·출처·권리·한계 |
+| 섹션 요약 그림 | `.report-infographic`, `.infographic-summary` | 제목과 2~3개 한국어 핵심을 이미지와 HTML로 함께 표시. 개념·가상 수치는 캡션으로 짧게 구분하며 미승인 시안의 내용은 복사하지 않음 |
+| 테마·아이콘 | `report-theme.js`, `report-theme.css`, 인라인 SVG | 시스템·라이트·다크를 한 버튼으로 전환하고 저장. 현재 모드 이름·키보드·대비·시스템 변경을 확인하며 파일 미리보기에서도 아이콘이 보임 |
 | 출처·하단 안내 | `section#sources`, `main.content > footer.footer` | 지정 자료·공개 원장·원문, 검증 범위, 제작·한국어 기준·적용 DESIGN·폰트와 공유 자산 라이선스·아카이브 링크. 공유 버튼이 하단 링크를 가리지 않음 |
 
 ## Do's and Don'ts
@@ -255,14 +266,14 @@ Google [design.md 명세](https://github.com/google-labs-code/design.md/blob/1ed
 - 모델 이름·숫자·효과를 장식용 지표로 만들지 않는다.
 - 48시간 프로토타입은 범위를 정한 학습 실험이며 직무별 다른 증거도 허용한다.
 - 주간 호는 `body.weekly-editorial`을 사용하고 다른 호에 스타일이 누출되지 않는지 확인한다.
-- `weekly-editorial.css`를 다른 스타일시트 뒤에 불러오고 기존 목차·접기·미디어·공유·도구 기능을 보존한다.
+- 공통 CSS 다음 `weekly-editorial.css`, `section-infographic.css`, `report-theme.css`, `report-search.css` 순으로 불러오고 기존 목차·접기·미디어·공유·도구 기능을 보존한다. 기존 공개 호가 참조하는 공통 스크립트는 덮어쓰지 않는다.
 
 ## Issue summary and emphasis
 커버 다음, TOP 10 앞의 `.issue-summary#issue-summary`에 ‘이번 호 한눈에 보기’ h2와 해당 호의 핵심 판단·도구 선택·이번 주 할 일, 주제별 바로가기를 넣는다. 핵심 `mark`는 #E2EBFF 배경과 #193E96 글자, 주의 `mark.caution`은 #FFF0CA 배경과 #704708 글자 및 점선 밑줄을 사용한다. 색 외에도 문구로 뜻을 표현하고 부정·불확실성을 보존하며 강조를 남발하지 않는다.
 
 공유·복사·다운로드·인쇄·닫기 등의 조작은 로컬 Lucide 아이콘과 접근 가능한 버튼 이름을 사용한다. 공유 장식은 image_gen으로 생성한 자산을 쓰며 출처·프롬프트를 기록한다. 실제 제품 화면은 공식 원본을 우선하고 차트·수치는 확인된 데이터와 코드/SVG로 만든다.
 
-필터의 select·button과 펼친 상세 카드도 기존 주간 화면의 글꼴·간격·색상·포커스 체계와 어울리도록 설계한다. 브라우저 기본 스타일과 구분되는지 실제 계산 스타일과 화면에서 확인한다. 공식 제품 이미지·시연은 해당 설명 가까이에, 섹션을 설명하는 생성 개념 그림은 공식 화면과 명확히 구분해 배치한다. 미디어 출처·권리·대안과 생성 및 검수 이력은 [품질 절차](instructions/QUALITY-PIPELINE.md#미디어-계획과-실제-화면-검수)를 따른다.
+필터의 select·button과 펼친 상세 카드도 기존 주간 화면의 글꼴·간격·색상·포커스 체계와 어울리도록 설계한다. 브라우저 기본 스타일과 구분되는지 실제 계산 스타일과 화면에서 확인한다. 관련성과 표시 조건을 확인한 공식 제품 이미지·시연은 TOP 10 또는 도구별 제목과 핵심 설명 가까이, 접힘 밖에 배치한다. 표시할 수 없는 경우 공식 원문 링크를 제공하고 부적절한 이미지로 채우지 않는다. 섹션을 설명하는 생성 개념 그림은 공식 화면과 명확히 구분한다. 미디어 출처·권리·대안과 생성 및 검수 이력은 [품질 절차](instructions/QUALITY-PIPELINE.md#미디어-계획과-실제-화면-검수)를 따른다.
 
 ## Report categories
 주간 화면은 핵심 요약, AI 도구와 기술, 게임 분석과 제작, 취업과 참고 자료 순서로 본문과 목차를 같은 네 범주로 나눈다. 본문 `.part-heading`은 범주를 명확히 구분하고 왼쪽 목차는 현재 범주를 열어 표시한다. 모바일도 같은 범주와 링크를 제공한다. 구체적인 ID와 배치 계약은 `instructions/READING-AND-SCHEDULER.md`를 따른다.
@@ -272,6 +283,11 @@ Google [design.md 명세](https://github.com/google-labs-code/design.md/blob/1ed
 
 2~3열의 짧은 요약 표는 화면·카드 폭에 맞추고 공통 최소 너비 때문에 불필요한 가로 스크롤이 생기지 않게 한다. 4열 이상 비교표는 정보량에 맞는 자체 스크롤을 유지한다. 글자를 줄여 해결하지 않고 셀 줄바꿈과 열 너비를 조정한다.
 
+
+## 화면 테마
+상단의 단일 버튼은 시스템 → 라이트 → 다크 순서로 전환하며 선택을 저장한다. 시스템 선택은 운영체제 설정 변경을 따르고 저장소를 사용할 수 없어도 조작 가능해야 한다. `report-theme.js`는 head에서 동기 실행해 초기 렌더 전에 테마를 적용하고 인쇄에서는 밝은 용지로 복원한다. 다크 모드는 짙은 배경과 밝은 본문·링크를 쓰며, 접힘 영역과 내부 정보 블록은 `dark-disclosure`와 `dark-nested-note`로 구분한다. 장식용 인라인 SVG는 보조 기술에서 숨기고 버튼 자체에 이름을 둔다. 독자 사진·공식 이미지 색은 바꾸지 않는다. 키보드 포커스, 테마별 대비와 320·390·768·1440px의 조작을 확인한다.
+
+인쇄할 때 접힌 필수 내용과 출처를 표시하고 공유·테마·복사 조작과 본문 바로가기 버튼은 숨긴다. 브라우저 화면으로 돌아오면 원래 접힘 상태를 복원한다. 실제 PDF는 출력 파일의 페이지 분할과 누락을 확인하며, 표본 확인과 전체 페이지 검수는 구별한다.
 
 ## Verification and record
 320·390·768·1440px에서 기본·펼침·선택·포커스·로딩 실패를 실제 확인하고 이전 호와 비교한다. 정적 파일이 있거나 토큰이 맞는 것만으로 UI를 승인하지 않는다. 공유·인쇄·목차·진행률·복사·다운로드·미디어·푸터는 최종 통합 화면에서 다시 조작한다.

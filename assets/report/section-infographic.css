@@ -1,0 +1,14 @@
+/* 그림과 별도의 읽을 수 있는 텍스트를 한 단위로 묶는다. */
+.report-infographic { margin: 1.5rem 0 1.75rem; }
+.report-infographic .chapter-concept { margin: 0 0 0.75rem; }
+.report-infographic .chapter-concept img { display: block; width: 100%; height: auto; }
+.infographic-summary {
+  box-sizing: border-box;
+  background: #f4f7fc;
+  border: 1px solid #dce2e9;
+  border-radius: 12px;
+  padding: clamp(16px, 3vw, 24px);
+  overflow-wrap: anywhere;
+}
+.infographic-summary h3 { margin: 0 0 0.5rem; font-size: 1.125rem; line-height: 1.5; }
+.infographic-summary ul { margin: 0; padding-left: 1.25rem; font-size: 1.0625rem; line-height: 1.75; }

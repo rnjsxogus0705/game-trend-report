@@ -1,0 +1,16 @@
+{
+  "status": "provenance-and-content-reviewed-ui-separate",
+  "type": "ai-generated-concept",
+  "tool": "built-in image_gen.imagegen",
+  "generatedAtObserved": "2026-11-08T07:20:12.525162+00:00",
+  "path": "assets/report/prototype-rain-delivery-20261108.png",
+  "sha256": "ff503fd60d9027ecf589133a93ed32dc923f225dfd8276a307b45f90e96a56a2",
+  "prompt": "Use case: infographic-diagram. Create a polished wide editorial concept illustration for a Korean weekly game-development report: a small tabletop cardboard prototype of a rain-soaked delivery game, a single screen with a fork between two clearly different routes, puddle risk on the shorter path, a destination and a simple observation checklist. Soft blue-gray and warm paper colors, clear visual hierarchy, professional calm 3D paper-craft look. This is a conceptual example, not an actual game screenshot. No text, logos, UI chrome or watermark. Korean explanatory text will be supplied separately in accessible HTML.",
+  "limitation": "Concept illustration, not a screenshot or result of a playable prototype. Time is recorded immediately after generation, not a service-provided timestamp.",
+  "reviewScope": "생성된 그림, 대체 텍스트·요약, 실제 프롬프트와 파일 해시를 대조했어요.",
+  "reviewLimitation": "생성 시각은 서비스가 제공한 시각이 아니라 생성 직후 관측한 시각이에요.",
+  "reviewEvidence": {
+    "sha256": "56bde61323dd75026526163cb36fe46abb998912da4f050c0f1eabb499352b7e",
+    "scope": "출처·실제 파일과 표시 범위의 독립 검수 기록; 원장 수정 후 상태 문구는 별도 대조"
+  }
+}

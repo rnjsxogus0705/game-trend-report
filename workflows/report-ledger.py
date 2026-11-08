@@ -85,6 +85,83 @@ def section_hash(path, section_id):
     return hashlib.sha256(''.join(matches[0]['markup']).encode()).hexdigest()
 
 
+class SectionMedia(HTMLParser):
+    def __init__(self):
+        super().__init__(convert_charrefs=True); self.urls=[]
+    def handle_starttag(self,tag,attrs):
+        values=dict(attrs)
+        for name in ({'img':('src','srcset'),'source':('src','srcset'),'video':('poster',)}.get(tag,())):
+            value=values.get(name)
+            if not value: continue
+            if name=='srcset':
+                self.urls.extend(item.strip().split()[0] for item in value.split(',') if item.strip())
+            else: self.urls.append(value)
+
+
+def section_media_hash(path, section_id):
+    """Bind UI review to the bytes of local images in that section."""
+    file=Path(path).resolve(); sections=Sections(); sections.feed(file.read_text(encoding='utf8'))
+    matches=[s for s in sections.sections if s['id']==section_id]
+    if len(matches)!=1: raise ValueError('Missing or duplicate HTML section')
+    parser=SectionMedia(); parser.feed(''.join(matches[0]['markup'])); assets=[]
+    for url in parser.urls:
+        parts=urlsplit(url)
+        if parts.scheme or parts.netloc or url.startswith('//'):
+            assets.append({'url':url})
+        else:
+            if not parts.path: raise ValueError('Empty local media path')
+            decoded=unquote(parts.path)
+            target=((Path.cwd()/decoded.lstrip('/')) if decoded.startswith('/') else (file.parent/decoded)).resolve()
+            assets.append({'url':url,'sha256':digest(target)})
+    return hashlib.sha256(json.dumps(assets,ensure_ascii=False,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+
+
+def research_sources(document, issue_date, run_id):
+    """Keep post-publication evidence distinct and bind it to the actual correction context."""
+    weekly=document.get('sources')
+    if not isinstance(weekly,list) or not weekly: raise ValueError('Research sources missing')
+    corrections=document.get('correctionSources',[])
+    if not isinstance(corrections,list): raise ValueError('Invalid correction sources')
+    if not corrections: return weekly
+    if not isinstance(run_id,str) or not re.fullmatch(r'[a-z0-9][a-z0-9-]{0,63}',run_id): raise ValueError('Unsafe correction run ID')
+    context_path=Path.cwd()/'_workspace/harness/weekly-game-report'/run_id/'context.json'
+    inputs=document.get('inputs')
+    if context_path.resolve()!=context_path.absolute() or context_path.is_symlink(): raise ValueError('Unsafe correction context path')
+    if not isinstance(inputs,dict) or not context_path.is_file() or inputs.get('context') != digest(context_path): raise ValueError('Correction context missing or hash mismatch')
+    context=json.loads(context_path.read_text(encoding='utf8')); correction=context.get('correction')
+    auth=context.get('authorization')
+    if context.get('runId') != run_id or context.get('issueDate') != issue_date or not isinstance(correction,dict): raise ValueError('Correction context run or issue date mismatched')
+    if not isinstance(auth,dict) or auth.get('generate') is not True or auth.get('publish') is not False or auth.get('send') is not False: raise ValueError('Correction generation authorization missing')
+    if not re.fullmatch(r'[a-fA-F0-9]{64}',str(correction.get('previousIssueSha256',''))) or not isinstance(correction.get('reason'),str) or not correction['reason'].strip() or not re.fullmatch(r'[a-z0-9][a-z0-9-]{0,63}',str(correction.get('priorRunId',''))) or correction['priorRunId']==run_id: raise ValueError('Correction identity missing')
+    evidence=correction.get('priorPublicationEvidence')
+    if not isinstance(evidence,list) or len(evidence)!=2 or any(not isinstance(item,dict) or not isinstance(item.get('path'),str) or not isinstance(item.get('sourcePath'),str) or not re.fullmatch(r'[a-fA-F0-9]{64}',str(item.get('sha256',''))) for item in evidence) or len({item['sourcePath'] for item in evidence})!=2: raise ValueError('Correction publication evidence identity missing')
+    seoul=datetime.timezone(datetime.timedelta(hours=9))
+    def instant(value, allow_date=False):
+        if not isinstance(value,str): raise ValueError('Correction timestamp missing')
+        try:
+            if allow_date and re.fullmatch(r'\d{4}-\d{2}-\d{2}',value): return datetime.datetime.combine(datetime.date.fromisoformat(value),datetime.time(),seoul).astimezone(datetime.timezone.utc)
+            parsed=datetime.datetime.fromisoformat(value.replace('Z','+00:00'))
+            if parsed.tzinfo is None: raise ValueError()
+            return parsed.astimezone(datetime.timezone.utc)
+        except ValueError: raise ValueError('Invalid correction timestamp')
+    issue=datetime.date.fromisoformat(issue_date)
+    checked_raw=correction.get('checkedAt'); checked=instant(checked_raw)
+    checked_day=checked.astimezone(seoul).date()
+    today=(datetime.datetime.now(datetime.timezone.utc)+datetime.timedelta(hours=9)).date()
+    if checked_day <= issue or checked_day > today or checked > datetime.datetime.now(datetime.timezone.utc): raise ValueError('Correction checkedAt outside allowed window')
+    seen=set()
+    for source in corrections:
+        if not isinstance(source,dict): raise ValueError('Invalid correction source')
+        uri=source.get('uri'); parts=urlsplit(uri) if isinstance(uri,str) else None
+        if not parts or parts.scheme!='https' or not parts.netloc or source.get('kind')!='correction' or any(not isinstance(source.get(k),str) or not source[k].strip() for k in ('publisher','scope','limitation')): raise ValueError('Correction source metadata missing')
+        canonical=canonical_url(uri)
+        if canonical in seen: raise ValueError('Correction source must be separate and unique')
+        seen.add(canonical); retrieved_raw=source.get('retrievedAt'); retrieved=instant(retrieved_raw,True)
+        retrieved_day=retrieved.astimezone(seoul).date()
+        if not issue < retrieved_day <= checked_day or retrieved > checked: raise ValueError('Correction source date outside allowed window')
+    return weekly+corrections
+
+
 def canonical_url(url):
     parts=urlsplit(url)
     query=urlencode(sorted((k,v) for k,v in parse_qsl(parts.query,keep_blank_values=True) if not k.startswith('utm_')))
@@ -332,6 +409,9 @@ def main():
     candidate의 lead, paragraphs, sourceLabels, table, practice, media, cardTexts,
     copyPrompts, imageReplacements, downloadArtifacts 등은 렌더러 계약을 따릅니다. 출처는 원장에
     결속하며 미완성 검수 상태를 공개 문장에 넣지 않습니다.
+    2026-11-14 이후 호의 candidate.sectionVisual은 필수이며 title, points(2~3개),
+    image(src, alt, caption, width, height)를 담고
+    원본 packet hash와 함께 저장됩니다. visuals 명령은 승인과 별개로 조회합니다.
     lead는 기본 접힘에서도 보이는 판단 요약입니다. practice는 heading/body/constraint를
     사용하며, 복사 가능한 실제 AI 요청문은 prompt에 넣습니다. prompt가 없으면
     복사 버튼을 만들지 않습니다. table은 caption/columns/동일 길이 rows로 구성합니다.
@@ -373,6 +453,11 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
     p.add_argument('--db', default='_workspace/weekly-game-report.sqlite3')
     sub = p.add_subparsers(dest='command', required=True)
     sub.add_parser('init')
+    visuals = sub.add_parser('visuals')
+    visuals.add_argument('--run', required=True)
+    visuals.add_argument('--section')
+    migrate=sub.add_parser('migrate-correction-materials')
+    migrate.add_argument('--run',required=True)
     ingest = sub.add_parser('ingest')
     for key in ('run', 'issue-date', 'research', 'author'):
         ingest.add_argument('--'+key, required=True)
@@ -445,6 +530,7 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
     CREATE TABLE IF NOT EXISTS runs(id TEXT PRIMARY KEY, issue_date TEXT NOT NULL, author TEXT, research TEXT, research_hash TEXT);
     CREATE TABLE IF NOT EXISTS research_versions(run TEXT NOT NULL REFERENCES runs(id), hash TEXT NOT NULL, document TEXT NOT NULL, PRIMARY KEY(run,hash));
     CREATE TABLE IF NOT EXISTS materials(run TEXT NOT NULL REFERENCES runs(id), research_hash TEXT NOT NULL, ordinal INTEGER NOT NULL, data TEXT NOT NULL, PRIMARY KEY(run,research_hash,ordinal));
+    CREATE TABLE IF NOT EXISTS correction_materials(run TEXT NOT NULL REFERENCES runs(id), research_hash TEXT NOT NULL, ordinal INTEGER NOT NULL, data TEXT NOT NULL, PRIMARY KEY(run,research_hash,ordinal));
     CREATE TABLE IF NOT EXISTS sections(run TEXT NOT NULL REFERENCES runs(id), id TEXT NOT NULL, position INTEGER NOT NULL, packet TEXT, packet_hash TEXT, author TEXT, media_note TEXT, imported INTEGER NOT NULL DEFAULT 0, stage TEXT NOT NULL DEFAULT 'prepared', PRIMARY KEY(run,id));
     CREATE TABLE IF NOT EXISTS imports(run TEXT PRIMARY KEY REFERENCES runs(id), path TEXT NOT NULL, hash TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS archive_issues(run TEXT NOT NULL REFERENCES runs(id), hash TEXT NOT NULL, document TEXT NOT NULL, capturedAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY(run,hash));
@@ -533,7 +619,10 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
         if kind in ('research','pre-source','pre-korean','content','korean','ui'):
             record=db.execute('SELECT document FROM research_versions WHERE run=? AND hash=(SELECT research_hash FROM runs WHERE id=?)',(a.run,a.run)).fetchone()
             if not record: raise ValueError('Research document missing')
-            research=json.loads(record['document']); allowed={item.get('uri') for item in research.get('sources',[]) if isinstance(item,dict)}
+            research=json.loads(record['document']); current=run()
+            if not current['research'] or digest(current['research'])!=current['research_hash'] or json.loads(Path(current['research']).read_text(encoding='utf8'))!=research: raise ValueError('Stored research differs from current research')
+            allowed={item.get('uri') for item in research_sources(research,current['issue_date'],a.run) if isinstance(item,dict)}
+            correction_rows(research,run()['research_hash'])
             if not set(proof['sources']).issubset(allowed): raise ValueError('Review source not in research ledger')
         if kind in ('pre-source','pre-korean','content','korean','ui') and proof.get('section') != section: raise ValueError('Evidence section mismatch')
         if kind in ('pre-source','pre-korean','content','korean','ui') and proof.get('reviewedPacketHash') != hash_: raise ValueError('Evidence must identify reviewed packet hash')
@@ -553,6 +642,17 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
         row = db.execute('SELECT * FROM runs WHERE id=?', (a.run,)).fetchone()
         if not row: raise ValueError('Unknown run')
         return row
+
+    def correction_rows(document, research_hash, migrate=False):
+        if db.execute('SELECT 1 FROM correction_materials m LEFT JOIN research_versions r ON r.run=m.run AND r.hash=m.research_hash WHERE m.run=? AND r.hash IS NULL LIMIT 1',(a.run,)).fetchone(): raise ValueError('Orphan correction materials')
+        expected=[json.dumps(source,ensure_ascii=False,sort_keys=True) for source in document.get('correctionSources',[])]
+        rows=db.execute('SELECT ordinal,data FROM correction_materials WHERE run=? AND research_hash=? ORDER BY ordinal',(a.run,research_hash)).fetchall()
+        if not rows and expected and migrate:
+            db.executemany('INSERT INTO correction_materials(run,research_hash,ordinal,data) VALUES(?,?,?,?)',[(a.run,research_hash,i,value) for i,value in enumerate(expected)])
+            rows=db.execute('SELECT ordinal,data FROM correction_materials WHERE run=? AND research_hash=? ORDER BY ordinal',(a.run,research_hash)).fetchall()
+        if [(row['ordinal'],row['data']) for row in rows] != list(enumerate(expected)):
+            raise ValueError('Correction materials missing or changed; verify and migrate legacy data')
+        return [json.loads(row['data']) for row in rows]
 
     def section():
         row = db.execute('SELECT * FROM sections WHERE run=? AND id=?', (a.run, a.section)).fetchone()
@@ -585,8 +685,8 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
             elif isinstance(value,str):
                 for match in re.findall(r'https://[^\s<>\"\']+',value): yield match.rstrip('.,;:!?)')
         referenced=set(packet.get('urls',[])) | set(urls(candidate))
-        sources=research.get('sources',[])
-        relevant={url:[source for source in sources if isinstance(source,dict) and source.get('uri')==url] for url in sorted(referenced)}
+        sources=research_sources(research,current['issue_date'],a.run)
+        relevant={url:[source for source in sources if isinstance(source,dict) and isinstance(source.get('uri'),str) and canonical_url(source['uri'])==canonical_url(url)] for url in sorted(referenced)}
         inputs=research.get('inputs') if isinstance(research.get('inputs'),dict) else {}
         context_value=inputs.get('context')
         context_identity={'fullContext':context_value if isinstance(context_value,str) and re.fullmatch(r'[a-f0-9]{64}',context_value) else current['research_hash']}
@@ -598,6 +698,8 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
                 if isinstance(mapping,dict) and all(isinstance(mapping.get(file),str) and re.fullmatch(r'[a-f0-9]{64}',mapping[file]) and digest(Path.cwd()/file)==mapping[file] for file in files):
                     context_identity={'contentContract':{file:mapping[file] for file in files}}
         except (OSError,ValueError,TypeError): pass
+        if {canonical_url(url) for url in referenced} & {canonical_url(s['uri']) for s in research.get('correctionSources',[]) if isinstance(s,dict) and isinstance(s.get('uri'),str)}:
+            context_identity['correctionContext']=context_value
         value={'run':a.run,'issueDate':current['issue_date'],'instructionRevision':research.get('instructionRevision'),'context':context_identity,'sources':relevant,'candidate':candidate}
         return hashlib.sha256(json.dumps(value,ensure_ascii=False,sort_keys=True,separators=(',',':')).encode()).hexdigest()
 
@@ -614,7 +716,24 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
             try:
                 proof=json.loads(Path(row['evidence']).read_text(encoding='utf8'))
                 require_passing_review(proof)
-                if kind == 'ui': validate_ui_evidence(proof)
+                if kind == 'research':
+                    current=run(); record=db.execute('SELECT document FROM research_versions WHERE run=? AND hash=?',(a.run,current['research_hash'])).fetchone()
+                    if not record or not current['research'] or digest(current['research']) != current['research_hash']: return False
+                    document=json.loads(record['document'])
+                    if json.loads(Path(current['research']).read_text(encoding='utf8')) != document: return False
+                    research_sources(document,current['issue_date'],a.run); correction_rows(document,current['research_hash'])
+                if kind != 'research':
+                    packet_record=db.execute('SELECT document FROM packet_versions WHERE run=? AND section=? AND hash=?',(a.run,section_id,hash_)).fetchone()
+                    if not packet_record: return False
+                    current=run()
+                    if current['issue_date'] >= '2026-11-14':
+                        source=db.execute('SELECT document FROM research_versions WHERE run=? AND hash=?',(a.run,current['research_hash'])).fetchone()
+                        if not source: return False
+                        validate_candidate(json.loads(packet_record['document']),json.loads(source['document']),section_id,current['issue_date'])
+                if kind == 'ui':
+                    validate_ui_evidence(proof)
+                    media_hash=json.loads(row['metadata']).get('media_hash')
+                    if media_hash is None or media_hash != section_media_hash(row['subject'],section_id): return False
                 if row['hash'] == hash_ and row['actor'] != author and digest(row['evidence']) == row['evidence_hash'] and (kind == 'research' or (kind in ('pre-source','pre-korean') and dependency_valid(json.loads(row['metadata']),section_id,hash_) and json.loads(row['metadata']).get('skills_hash') == skills_digest()) or (Path(row['subject']).is_file() and ((kind in ('content','korean') and 'reader_hash' in json.loads(row['metadata']) and reader_hash(row['subject'],section_id) == json.loads(row['metadata'])['reader_hash']) or (not (kind in ('content','korean') and 'reader_hash' in json.loads(row['metadata'])) and section_hash(row['subject'],section_id) == json.loads(row['metadata'])['html_hash'])) and (kind != 'ui' or presentation_hash(row['subject']) == json.loads(row['metadata'])['presentation_hash']) and dependency_valid(json.loads(row['metadata']),section_id,hash_) and skills_digest() == json.loads(row['metadata'])['skills_hash'])):
                     return True
             except (OSError, IndexError, KeyError, ValueError):
@@ -694,10 +813,28 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
             if not any(Path(s['subject']).parent.name == name and Path(s['subject']).name == 'SKILL.md' for s in valid_skills): errors.append('Required skill evidence missing: '+name)
         return errors
 
-    def validate_candidate(doc, research, section_id):
+    def require_section_visual(doc, issue_date):
+        candidate=doc.get('candidate')
+        if issue_date >= '2026-11-14' and (not isinstance(candidate,dict) or candidate.get('sectionVisual') is None):
+            raise ValueError('sectionVisual required for issues dated 2026-11-14 or later')
+
+    def validate_candidate(doc, research, section_id, issue_date):
+        require_section_visual(doc, issue_date)
         candidate=doc.get('candidate')
         if candidate is None: return
         if not isinstance(candidate,dict): raise ValueError('Packet candidate must be an object')
+        visual=candidate.get('sectionVisual')
+        if visual is not None:
+            if not isinstance(visual,dict): raise ValueError('sectionVisual must be an object')
+            nonempty(visual.get('title'))
+            points=visual.get('points')
+            if not isinstance(points,list) or not 2<=len(points)<=3: raise ValueError('sectionVisual requires two or three points')
+            for point in points: nonempty(point)
+            image=visual.get('image')
+            if not isinstance(image,dict): raise ValueError('sectionVisual image must be an object')
+            for key in ('src','alt','caption'): nonempty(image.get(key))
+            if not re.fullmatch(r'\.\./assets/report/[A-Za-z0-9_./-]+', image['src']) or '..' in Path(image['src']).parts[1:]: raise ValueError('sectionVisual image must use a report asset path')
+            if any(type(image.get(key)) is not int or image[key] <= 0 for key in ('width','height')): raise ValueError('sectionVisual image dimensions must be positive integers')
         def nested_urls(value):
             if isinstance(value,dict):
                 for item in value.values(): yield from nested_urls(item)
@@ -809,9 +946,19 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
         return {'sectionId':item['id'],'packetSha':item['packet_hash'],'sectionSha':section_hash(ui['subject'],item['id']),'readerSha':reader,'presentationSha':presentation_hash(ui['subject']),'subjectFileSha':digest(ui['subject']),'currentPath':ui['subject'],'reviewIds':{k:v['id'] for k,v in reviews.items()},'evidenceHashes':{k:v['evidence_hash'] for k,v in reviews.items()}}
 
     with db:
-        if a.command in ('prepare','draft','record-impact','capture-impact-baseline','record-impact-auto','record-failure','approve-packet','approve-section'): db.execute('BEGIN IMMEDIATE')
+        if a.command in ('migrate-correction-materials','prepare','draft','record-impact','capture-impact-baseline','record-impact-auto','record-failure','approve-packet','approve-section'): db.execute('BEGIN IMMEDIATE')
         if a.command == 'init':
             result = {'status': 'initialized'}
+        elif a.command == 'migrate-correction-materials':
+            r=run()
+            if not r['research'] or digest(r['research']) != r['research_hash']: raise ValueError('Current research missing or changed')
+            row=db.execute('SELECT document FROM research_versions WHERE run=? AND hash=?',(a.run,r['research_hash'])).fetchone()
+            if not row: raise ValueError('Stored research missing')
+            data=json.loads(row['document'])
+            if json.loads(Path(r['research']).read_text(encoding='utf8')) != data: raise ValueError('Stored research differs from source')
+            research_sources(data,r['issue_date'],a.run)
+            records=correction_rows(data,r['research_hash'],migrate=True)
+            result={'run':a.run,'researchHash':r['research_hash'],'correctionSources':len(records),'status':'indexed-not-approved'}
         elif a.command in ('ingest', 'import-html'):
             datetime.date.fromisoformat(a.issue_date)
             nonempty(a.run)
@@ -820,11 +967,14 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
             db.execute('INSERT OR IGNORE INTO runs(id,issue_date) VALUES(?,?)', (a.run,a.issue_date))
             if a.command == 'ingest':
                 data = json.loads(Path(a.research).read_text(encoding='utf8'))
-                if not isinstance(data.get('sources'), list) or not data['sources']: raise ValueError('Research sources missing')
+                research_sources(data,a.issue_date,a.run)
                 db.execute('UPDATE runs SET author=?,research=?,research_hash=? WHERE id=?', (identity(a.author),str(Path(a.research).resolve()),digest(a.research),a.run))
                 db.execute('INSERT OR IGNORE INTO research_versions(run,hash,document) VALUES(?,?,?)',(a.run,digest(a.research),json.dumps(data,ensure_ascii=False,sort_keys=True)))
+                stored=db.execute('SELECT document FROM research_versions WHERE run=? AND hash=?',(a.run,digest(a.research))).fetchone()
+                if not stored or json.loads(stored['document'])!=data: raise ValueError('Stored research differs from source')
                 db.executemany('INSERT OR IGNORE INTO materials(run,research_hash,ordinal,data) VALUES(?,?,?,?)', [(a.run,digest(a.research),i,json.dumps(source,ensure_ascii=False,sort_keys=True)) for i,source in enumerate(data['sources'])])
-                result = {'sources': len(data['sources']), 'sha256': digest(a.research)}
+                correction_rows(data,digest(a.research),migrate=True)
+                result = {'sources': len(data['sources']), 'correctionSources':len(data.get('correctionSources',[])), 'sha256': digest(a.research)}
             else:
                 html_file=Path(a.html).resolve(); reports_root=(Path.cwd()/'reports').resolve()
                 if not reports_root.is_relative_to(Path.cwd().resolve()) or not html_file.is_relative_to(reports_root) or html_file.name!='weekly-'+a.issue_date+'.html' or not html_file.is_file(): raise ValueError('Historical HTML must be a public report under reports with matching issue date')
@@ -844,9 +994,12 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
             if a.command == 'draft' and issues(r): raise ValueError('; '.join(issues(r)))
             packet = Path(a.packet).resolve(); payload=json.loads(packet.read_text(encoding='utf8'))
             if not isinstance(payload,dict) or not normalized_text(payload) or not isinstance(payload.get('urls'),list) or any(not isinstance(url,str) or not url.startswith('https://') for url in payload['urls']): raise ValueError('Packet requires text/body and HTTPS urls array')
-            source_doc=json.loads(db.execute('SELECT document FROM research_versions WHERE run=? AND hash=?',(a.run,r['research_hash'])).fetchone()[0]); allowed={item.get('uri') for item in source_doc['sources'] if isinstance(item,dict)}
+            source_doc=json.loads(db.execute('SELECT document FROM research_versions WHERE run=? AND hash=?',(a.run,r['research_hash'])).fetchone()[0])
+            if json.loads(Path(r['research']).read_text(encoding='utf8'))!=source_doc: raise ValueError('Stored research differs from source')
+            allowed={item.get('uri') for item in research_sources(source_doc,r['issue_date'],a.run) if isinstance(item,dict)}
+            correction_rows(source_doc,r['research_hash'])
             if not set(payload['urls']).issubset(allowed): raise ValueError('Packet URL not in research ledger')
-            validate_candidate(payload,source_doc,a.section)
+            validate_candidate(payload,source_doc,a.section,r['issue_date'])
             old = db.execute('SELECT position FROM sections WHERE run=? AND id=?',(a.run,a.section)).fetchone()
 
             if a.command == 'draft':
@@ -891,6 +1044,10 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
             r=run(); s=section()
             if not valid_review(None,'research',r['research_hash'],r['author']): raise ValueError('Independent research approval required')
             if s['imported'] or identity(a.reviewer) == s['author'] or digest(s['packet']) != s['packet_hash']: raise ValueError('Packet stale or self reviewed')
+            if r['issue_date'] >= '2026-11-14':
+                source=db.execute('SELECT document FROM research_versions WHERE run=? AND hash=?',(a.run,r['research_hash'])).fetchone()
+                if not source: raise ValueError('Current research version missing')
+                validate_candidate(json.loads(Path(s['packet']).read_text(encoding='utf8')),json.loads(source['document']),a.section,r['issue_date'])
             event(a.section,'pre-'+a.kind,a.reviewer,s['packet'],s['packet_hash'],a.evidence,{'research_hash':run()['research_hash'],'dependency_hash':section_dependency_hash(a.section,s['packet_hash']),'skills_hash':skills_digest()}); result={'status':'recorded'}
         elif a.command == 'approve-research':
             r = run()
@@ -908,7 +1065,7 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
             if a.kind == 'ui' and any(not valid_review(s['id'],kind,s['packet_hash'],s['author']) for kind in ('content','korean')): raise ValueError('Content and Korean review must precede UI review')
             html=Path(a.html).resolve(); parser=Sections(); parser.feed(html.read_text(encoding='utf8'))
             if a.section not in [item['id'] for item in parser.sections]: raise ValueError('Section not present in HTML')
-            event(a.section,a.kind,a.reviewer,str(html),s['packet_hash'],a.evidence,{'html_hash':section_hash(html,a.section),'subject_file_hash':digest(html),'research_hash':r['research_hash'],'dependency_hash':section_dependency_hash(a.section,s['packet_hash']),'skills_hash':skills_digest(), **({'presentation_hash':presentation_hash(html)} if a.kind=='ui' else {'reader_hash':reader_hash(html,a.section)})}); result = {'status':'recorded'}
+            event(a.section,a.kind,a.reviewer,str(html),s['packet_hash'],a.evidence,{'html_hash':section_hash(html,a.section),'subject_file_hash':digest(html),'research_hash':r['research_hash'],'dependency_hash':section_dependency_hash(a.section,s['packet_hash']),'skills_hash':skills_digest(), **({'presentation_hash':presentation_hash(html),'media_hash':section_media_hash(html,a.section)} if a.kind=='ui' else {'reader_hash':reader_hash(html,a.section)})}); result = {'status':'recorded'}
         elif a.command == 'record-skill':
             run(); nonempty(a.phase); nonempty(a.action)
             skillpath=Path(a.skill_path).resolve(); allowed=[Path.home()/'.codex/skills',Path.home()/'.agents/skills',Path.home()/'.codex/plugins/cache',Path.cwd()/'.agents/skills']
@@ -997,12 +1154,22 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
             stored=db.execute('SELECT document FROM packet_versions WHERE run=? AND section=? AND hash=?',(a.run,s['id'],s['packet_hash'])).fetchone()
             if not stored: errors.append('Stored packet is missing')
             if errors: raise ValueError('; '.join(errors))
-            doc=json.loads(stored['document']); source_doc=json.loads(db.execute('SELECT document FROM research_versions WHERE run=? AND hash=?',(a.run,r['research_hash'])).fetchone()[0]); validate_candidate(doc,source_doc,s['id']); candidate=doc.get('candidate')
+            doc=json.loads(stored['document']); source_doc=json.loads(db.execute('SELECT document FROM research_versions WHERE run=? AND hash=?',(a.run,r['research_hash'])).fetchone()[0]); validate_candidate(doc,source_doc,s['id'],r['issue_date']); candidate=doc.get('candidate')
             if not isinstance(candidate,dict): raise ValueError('Packet candidate object is required for rendering')
             approvals={kind:db.execute("SELECT id FROM events WHERE run=? AND section=? AND kind=? ORDER BY id DESC LIMIT 1",(a.run,s['id'],'pre-'+kind)).fetchone()['id'] for kind in ('source','korean')}
             result={'sectionId':s['id'],'issueDate':r['issue_date'],'candidate':candidate,'reviewApproval':{'source':'passed','korean':'passed','packetSha256':s['packet_hash'],'eventIds':approvals}}
         elif a.command == 'approved-section':
             result=approved_section(section())
+        elif a.command == 'visuals':
+            run()
+            rows=db.execute('''SELECT s.id, s.stage, s.packet_hash, p.document FROM sections s
+                JOIN packet_versions p ON p.run=s.run AND p.section=s.id AND p.hash=s.packet_hash
+                WHERE s.run=? AND s.imported=0 AND (? IS NULL OR s.id=?) ORDER BY s.position''',
+                (a.run,a.section,a.section)).fetchall()
+            result={'run':a.run,'sections':[{'sectionId':row['id'],'stage':row['stage'],
+                'packetSha256':row['packet_hash'],
+                'sectionVisual':(json.loads(row['document']).get('candidate') or {}).get('sectionVisual')}
+                for row in rows], 'note':'Stored candidate data is not review or approval; use queue.'}
         elif a.command == 'overview':
             r=run()
             if not 1 <= a.limit <= 500: raise ValueError('limit must be between 1 and 500')
@@ -1022,7 +1189,13 @@ import-html은 과거 호를 미검수 상태로 보관하고 duplicates는 URL�
             counts=db.execute('SELECT kind,COUNT(*) AS count,MIN(created) AS firstRecorded,MAX(created) AS lastRecorded FROM events WHERE run=? AND (? IS NULL OR section=?) GROUP BY kind ORDER BY kind',(a.run,a.section,a.section)).fetchall()
             section_total=db.execute('SELECT COUNT(*) FROM sections WHERE run=? AND imported=0 AND (? IS NULL OR id=?)',(a.run,a.section,a.section)).fetchone()[0]
             source_total=db.execute('SELECT COUNT(*) FROM materials WHERE run=? AND research_hash=?',(a.run,r['research_hash'])).fetchone()[0]
-            result={'run':a.run,'researchHash':r['research_hash'],'sections':[dict(x) for x in sections],'sources':[dict(x) for x in sources],'totalCounts':{'sections':section_total,'sources':source_total},'eventCounts':[dict(x) for x in counts],'limit':a.limit,'note':'Stored stages and counts are not approval; use queue and independent evidence. Sources are run-wide, including when filtering sections. Event timestamps are recording bounds, not elapsed work time.'}
+            research_row=db.execute('SELECT document FROM research_versions WHERE run=? AND hash=?',(a.run,r['research_hash'])).fetchone()
+            if not research_row: raise ValueError('Research document missing')
+            research_doc=json.loads(research_row['document'])
+            if not r['research'] or digest(r['research'])!=r['research_hash'] or json.loads(Path(r['research']).read_text(encoding='utf8'))!=research_doc: raise ValueError('Stored research differs from current research')
+            research_sources(research_doc,r['issue_date'],a.run)
+            correction_sources=correction_rows(research_doc,r['research_hash'])[:a.limit]
+            result={'run':a.run,'researchHash':r['research_hash'],'sections':[dict(x) for x in sections],'sources':[dict(x) for x in sources],'correctionSources':correction_sources,'totalCounts':{'sections':section_total,'sources':source_total},'eventCounts':[dict(x) for x in counts],'limit':a.limit,'note':'Stored stages and counts are not approval; use queue and independent evidence. Sources are run-wide, including when filtering sections. Correction sources are separate from weekly sources. Event timestamps are recording bounds, not elapsed work time.'}
         elif a.command == 'queue':
             r=run()
             try: global_errors=issues(r)

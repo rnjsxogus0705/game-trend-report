@@ -216,3 +216,30 @@ test('긴 출처 이름은 축소 가능한 목록 열에서 줄바꿈한다',()
  const source='<section id="sources"><div class="chapter-head"><h2>출처</h2></div></section>';const c={table:{caption:'출처',columns:['출처','URL','확인일','유형','범위','상태'],rows:[['raw.githubusercontent.com/long-long-filename','https://example.com/a','2026-11-07','원문','범위','확인']]}};const p={sectionId:'sources',candidate:c,reviewApproval:{source:'passed',korean:'passed',candidateSha256:crypto.createHash('sha256').update(JSON.stringify(c)).digest('hex')}};
  const out=renderSection(source,'sources',p);assert.match(out,/<li style="grid-template-columns:34px minmax\(0,1fr\)"><span>1<\/span><div style="min-width:0;overflow-wrap:anywhere">/);assert.match(out,/raw\.githubusercontent\.com\/long-long-filename/);assert.match(out,/href="https:\/\/example\.com\/a"/);
 });
+test('승인된 한글 요약과 그림을 섹션 제목 바로 뒤에 연결하고 안전하게 갱신한다',async()=>{
+ const {reportElements}=await import('./validate-weekly-presentation.mjs');
+ const source='<main><section id="visual"><div class="chapter-head"><h2>기법</h2></div><details><summary>상세</summary><p>본문</p></details></section><section id="other">유지</section></main>';
+ const visual={title:'한눈에 <보기>',points:['첫 번째 & 내용','두 번째 내용'],image:{src:'../assets/report/visuals/test.webp',alt:'그림 <설명>',caption:'AI 생성 개념 그림',width:1200,height:800}};
+ const wrap=c=>({sectionId:'visual',candidate:c,reviewApproval:{source:'passed',korean:'passed',candidateSha256:crypto.createHash('sha256').update(JSON.stringify(c)).digest('hex')}});
+ const c={sectionVisual:visual},first=renderSection(source,'visual',wrap(c));
+ const nodes=reportElements(first).elements,block=nodes.find(n=>n.attrs['data-rendered-section-visual']);
+ assert.equal(block.parent.attrs.id,'visual');assert.ok(first.indexOf('data-rendered-section-visual')<first.indexOf('<details>'));assert.ok(first.includes('한눈에 &lt;보기&gt;'));assert.ok(first.includes('첫 번째 &amp; 내용'));assert.ok(first.includes('alt="그림 &lt;설명&gt;"'));assert.ok(first.includes('width="1200" height="800"'));assert.ok(first.endsWith('<section id="other">유지</section></main>'));
+ const heading=nodes.find(n=>n.attrs.id==='infographic-summary-visual');assert.equal(nodes.find(n=>n.attrs['aria-labelledby']==='infographic-summary-visual').attrs.role,'group');assert.equal(heading.tag,'h3');
+ const next={sectionVisual:{...visual,title:'변경된 제목'}},again=renderSection(first,'visual',wrap(next));assert.doesNotMatch(again,/한눈에 &lt;보기&gt;/);assert.equal((again.match(/data-rendered-section-visual/g)||[]).length,1);assert.ok(again.includes('변경된 제목'));
+ const removed=renderSection(again,'visual',wrap({paragraphs:['교체']}));assert.doesNotMatch(removed,/data-rendered-section-visual/);
+ assert.throws(()=>renderSection(source,'visual',{...wrap(c),candidate:{sectionVisual:{...visual,title:'미승인 수정'}}}),/stale/);
+ for(const bad of [ {...visual,points:['하나']}, {...visual,image:{...visual.image,src:'../assets/report/../private.png'}}, {...visual,image:{...visual.image,src:'https://example.com/a.png'}}, {...visual,image:{...visual.image,alt:''}}, {...visual,image:{...visual.image,width:0}} ])assert.throws(()=>renderSection(source,'visual',wrap({sectionVisual:bad})),/Invalid section visual/);
+ assert.throws(()=>renderSection(source.replace('<details>','<p id="infographic-summary-visual">충돌</p><details>'),'visual',wrap(c)),/already exists/);
+});
+test('공통 스타일과 실제 로컬 이미지의 안전한 경로 및 크기를 검증한다',async t=>{
+ const {default:fs}=await import('node:fs/promises');const {default:os}=await import('node:os');const {default:path}=await import('node:path');const {verifySectionVisualAssets}=await import('./render-report-section.mjs');
+ const root=await fs.realpath(await fs.mkdtemp(path.join(os.tmpdir(),'section-visual-')));t.after(()=>fs.rm(root,{recursive:true,force:true}));await fs.mkdir(path.join(root,'assets/report/visuals'),{recursive:true});await fs.writeFile(path.join(root,'assets/report/section-infographic.css'),'body{}');
+ const image=Buffer.alloc(24);Buffer.from('89504e470d0a1a0a','hex').copy(image);image.write('IHDR',12);image.writeUInt32BE(1200,16);image.writeUInt32BE(800,20);await fs.writeFile(path.join(root,'assets/report/visuals/test.png'),image);
+ const candidate={sectionVisual:{image:{src:'../assets/report/visuals/test.png',width:1200,height:800}}},html='<html><head><link rel="stylesheet" href="../assets/report/section-infographic.css"></head><body></body></html>';
+ await verifySectionVisualAssets(root,html,candidate);
+ await assert.rejects(verifySectionVisualAssets(root,'<html></html>',candidate),/stylesheet missing/);
+ await assert.rejects(verifySectionVisualAssets(root,html.replace('</head>','<link rel="stylesheet" href="../assets/report/section-infographic.css"></head>'),candidate),/ambiguous/);
+ await assert.rejects(verifySectionVisualAssets(root,html,{sectionVisual:{image:{...candidate.sectionVisual.image,width:1}}}),/dimensions mismatch/);
+ await fs.rename(path.join(root,'assets/report/visuals/test.png'),path.join(root,'assets/report/visuals/real.png'));await assert.rejects(verifySectionVisualAssets(root,html,candidate),{code:'ENOENT'});
+ await fs.symlink('real.png',path.join(root,'assets/report/visuals/test.png'));await assert.rejects(verifySectionVisualAssets(root,html,candidate),/Symlink/);
+});

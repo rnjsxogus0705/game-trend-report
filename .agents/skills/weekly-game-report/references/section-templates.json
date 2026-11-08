@@ -22,16 +22,24 @@
       "공통 CSS·셸 변경 시 영향 화면 재검수",
       "데스크톱 좌측 목차·모바일 상단 목차/헤더에 동기화된 본문 검색과 실제 조작 검수",
       "상세 일괄 펼치기·접기는 실제 대상 도구 목록 가까이에 배치하고 제어 범위를 레이블로 표시",
-      "스캐폴드와 형식 참조는 승인이나 발행 근거가 아님"
+      "스캐폴드와 형식 참조는 승인이나 발행 근거가 아님",
+      "섹션 핵심을 한국어 제목과 2~3개 텍스트 항목으로 요약하고 해당 이미지를 함께 배치한다. 그림·요약·근거·권리와 실제 표시를 독립 검수하며 미확인 항목을 승인으로 간주하지 않는다.",
+      "시스템·라이트·다크 테마 선택, 인라인 아이콘의 접근성, 중첩 콜아웃 계층을 4폭과 인쇄에서 확인한다.",
+      "독자가 먼저 판단할 핵심은 펼침 밖에 두고 선택적 근거·자산·도구 설명만 reading-detail에 넣는다. 확인일·출처·미확인 한계는 detail-meta로 검색·복사·보조 기술에서 읽을 수 있게 보존한다."
     ],
     "componentTemplates": {
       "card": "<article class=\"card\"><h3>{{제목}}</h3><p>{{승인_내용}}</p></article>",
       "figure": "<figure><img src=\"{{검수_이미지_경로}}\" alt=\"{{대체_텍스트}}\"><figcaption>{{출처와_설명}}</figcaption></figure>",
+      "primaryCardMedia": "<figure class=\"official-media card-primary-media\"><a href=\"{{공식_원문_URL}}\"><img src=\"{{검수한_로컬_이미지_경로}}\" alt=\"{{항목을_식별하는_대체텍스트}}\" width=\"{{실제_너비}}\" height=\"{{실제_높이}}\" loading=\"lazy\"></a><figcaption>{{공식_출처·확인일·짧은_한계}}</figcaption></figure>",
+      "primaryCardMediaFallback": "<p class=\"media-fallback\">{{미디어_미사용_사유}} <a href=\"{{공식_원문_URL}}\">공식 원문에서 확인</a></p>",
       "lazyVideo": "<article class=\"tool-media\"><h3>{{제목}}</h3><p><a href=\"{{정규_YouTube_URL}}\">영상 원문</a> · {{확인범위}}</p><div class=\"youtube-preview\"><button type=\"button\" data-youtube-play=\"{{영상_ID}}\" data-play-video=\"{{영상_ID}}\" data-video-title=\"{{제목}}\"><img src=\"https://i.ytimg.com/vi/{{영상_ID}}/hqdefault.jpg\" alt=\"{{미리보기_대체텍스트}}\" loading=\"lazy\"><span>영상 불러오기</span></button><div class=\"video-slot\"></div></div></article>",
       "practice": "<div class=\"practice-prompt\"><h3>{{실습_제목}}</h3><p>{{승인_설명}}</p><pre id=\"{{고유_ID}}\">[입력] {{승인_프롬프트}}</pre><button type=\"button\" data-copy-workflow=\"{{고유_ID}}\">프롬프트 복사</button><p>받을 결과: {{산출물}} · 직접 확인: {{완료_기준}} · 이어서 물어보기: {{후속_질문}}</p></div>",
       "headerSearch": "<div class=\"report-search-mobile\"><button type=\"button\" data-report-search-toggle aria-controls=\"{{모바일_패널_ID}}\" aria-expanded=\"false\">검색</button><form id=\"{{모바일_패널_ID}}\" data-report-search-panel hidden role=\"search\" aria-label=\"리포트 본문 검색\"><label for=\"{{모바일_입력_ID}}\">리포트 검색</label><div class=\"report-search__input-row\"><input id=\"{{모바일_입력_ID}}\" type=\"search\" data-report-search-input><button type=\"submit\">찾기</button></div><div class=\"report-search__controls\"><p data-report-search-status role=\"status\" aria-live=\"polite\">검색어를 입력하세요.</p><button type=\"button\" data-report-search-prev aria-label=\"이전 검색 결과\" disabled>이전</button><button type=\"button\" data-report-search-next aria-label=\"다음 검색 결과\" disabled>다음</button><button type=\"button\" data-report-search-close>닫기</button></div></form></div>",
       "desktopSearch": "<form class=\"report-search report-search--desktop\" data-report-search-panel role=\"search\" aria-label=\"리포트 본문 검색\"><label for=\"{{데스크톱_입력_ID}}\">리포트 검색</label><div class=\"report-search__input-row\"><input id=\"{{데스크톱_입력_ID}}\" type=\"search\" data-report-search-input><button type=\"submit\">찾기</button></div><div class=\"report-search__controls\"><p data-report-search-status role=\"status\" aria-live=\"polite\">검색어를 입력하세요.</p><button type=\"button\" data-report-search-prev aria-label=\"이전 검색 결과\" disabled>이전</button><button type=\"button\" data-report-search-next aria-label=\"다음 검색 결과\" disabled>다음</button></div></form>",
-      "scopedDisclosure": "<div class=\"reading-controls\" data-disclosure-scope=\"game-ai-tools\" role=\"group\" aria-label=\"보이는 도구의 연결·라이선스·실습\"><span>보이는 도구의 연결·라이선스·실습</span><button type=\"button\" data-disclosure-action=\"expand\" aria-controls=\"{{실제_상세_ID_목록}}\">도구 상세 모두 펼치기</button><button type=\"button\" data-disclosure-action=\"collapse\" aria-controls=\"{{실제_상세_ID_목록}}\">도구 상세 모두 접기</button></div>"
+      "scopedDisclosure": "<div class=\"reading-controls\" data-disclosure-scope=\"game-ai-tools\" role=\"group\" aria-label=\"보이는 도구의 연결·라이선스·실습\"><span>보이는 도구의 연결·라이선스·실습</span><button type=\"button\" data-disclosure-action=\"expand\" aria-controls=\"{{실제_상세_ID_목록}}\">도구 상세 모두 펼치기</button><button type=\"button\" data-disclosure-action=\"collapse\" aria-controls=\"{{실제_상세_ID_목록}}\">도구 상세 모두 접기</button></div>",
+      "sectionInfographic": "<div class=\"report-infographic\" data-infographic-id=\"{{고유_섹션_ID}}\"><figure class=\"chapter-concept\"><img src=\"{{검수_이미지_경로}}\" alt=\"{{대체_텍스트}}\" width=\"{{실제_너비}}\" height=\"{{실제_높이}}\" loading=\"lazy\"><figcaption>{{이미지_출처와_설명}}</figcaption></figure><div class=\"infographic-summary\" role=\"group\" aria-labelledby=\"infographic-summary-{{고유_섹션_ID}}\"><h3 id=\"infographic-summary-{{고유_섹션_ID}}\">{{검수된_한글_요약_제목}}</h3><ul><li>{{검수된_핵심_항목_1}}</li><li>{{검수된_핵심_항목_2}}</li><li>{{검수된_핵심_항목_3_선택}}</li></ul></div></div>",
+      "inlineActionIcon": "<svg class=\"action-icon\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" focusable=\"false\"><path d=\"{{검수된_SVG_경로}}\"></path></svg>",
+      "supplementalDetail": "<details class=\"reading-detail\" data-detail-kind=\"{{evidence|asset|tool}}\"><summary>{{독자가_알아야_할_짧은_제목}}</summary><div class=\"detail-body\">{{승인된_부가정보}}</div><p class=\"detail-meta\">{{중요한_확인일·출처·미확인_한계}}</p></details>"
     },
     "coreUi": ".agents/skills/weekly-game-report/references/report-format-reference.json#coreUi",
     "packetContract": "workflows/render-report-section.mjs: renderSection; packet.candidate. JSON catalog은 작성 안내이며 승인·게이트 대체가 아님.",
@@ -40,16 +48,83 @@
     "assetContract": {
       "css": [
         "assets/report/reading-experience.css",
+        "assets/report/section-infographic.css",
+        "assets/report/report-theme.css",
         "assets/report/report-search.css"
       ],
       "deferScripts": [
-        "assets/report/share.js",
-        "assets/report/reading-experience-scoped.js",
+        "assets/report/share-v2.js",
+        "assets/report/reading-experience-scoped-v2.js",
         "assets/report/report-search.js",
         "reports/weekly-YYYY-MM-DD.js"
       ],
-      "loadOrder": "기존 공통 스타일 다음 검색 CSS, 실제 리포트 DOM 생성 후 defer 스크립트는 위 순서로 로드. 구버전 reading-experience.js를 같은 페이지에 동시에 로드하지 않는다.",
-      "compatibility": "기존 호가 참조하는 reading-experience.js는 변경하지 않는다. 새 범위 제어 스크립트를 별도 자산으로 발행하고 해시/동작을 검수한다."
+      "loadOrder": "head에서 report-theme.js를 동기 실행해 첫 화면 전에 테마를 정하고, 공통 CSS 다음 section-infographic.css → report-theme.css → report-search.css 순서로 연결한다. defer 스크립트는 공유 → 범위별 읽기 → 검색 → 해당 호 JS 순서로 로드한다.",
+      "compatibility": "기존 호가 참조하는 reading-experience.js는 변경하지 않는다. 새 범위 제어 스크립트를 별도 자산으로 발행하고 해시/동작을 검수한다.",
+      "headScripts": [
+        "assets/report/report-theme.js"
+      ]
+    },
+    "sectionVisualContract": {
+      "candidateField": "sectionVisual",
+      "shape": {
+        "title": "string: 섹션 핵심을 담은 한국어 제목",
+        "points": "string[]: 원문과 본문에 맞는 한국어 핵심 2~3개",
+        "image": {
+          "src": "string: ../assets/report/ 아래 검수한 해당 호 이미지 경로",
+          "alt": "string: 이미지 대체 텍스트",
+          "caption": "string: 출처 또는 AI 생성 개념 그림과 관련 한계",
+          "width": "integer: 확인된 이미지 픽셀 너비",
+          "height": "integer: 확인된 이미지 픽셀 높이"
+        }
+      },
+      "placement": "섹션 제목과 주요 본문 사이. 이미지와 요약은 같은 영역에 두고 접힌 details 밖에 둔다. 해당 호에 독립 하위 섹션이 있으면 별도 고유 ID 사용.",
+      "provenance": "실제 파일·크기·해시·권리·생성 근거 및 검수 상태는 해당 호 미디어 원장에 결속. 수치·실제 화면·실습 결과로 오인할 수 있는 생성 그림은 표시와 설명을 명확히 한다.",
+      "review": "원문·한국어·표현 및 이미지 적합성을 개별 검수하고 320/390/768/1440px에서 글자·그림·대체 텍스트·종횡비를 확인. 부족한 자료는 지어내지 않으며 사유를 기록.",
+      "status": "이번 호 미승인 초안에서 검토된 구조를 재사용하는 빈 예시이며 발행 또는 승인 근거가 아니다. 입력 필드는 별도 renderer의 구현과 검증을 확인한 뒤 사용한다."
+    },
+    "informationHierarchyContract": {
+      "priorityAreas": [
+        {
+          "selector": "#issue-summary",
+          "role": "이번 호의 핵심 판단과 바로 할 일"
+        },
+        {
+          "selector": "#top10",
+          "role": "먼저 볼 자료와 선정 이유"
+        },
+        {
+          "selector": "#game-ai-tools",
+          "role": "도구 선택에 필요한 적용·입출력·라이선스 판단"
+        },
+        {
+          "selector": "#game-ai-tools .media-resource",
+          "requiredHeading": "코드로 만드는 픽셀 효과와 공개 3D 자산",
+          "role": "픽셀 효과와 공개 자산을 구분해 고르는 판단"
+        }
+      ],
+      "visible": "제목, 한두 문장의 결론·선정 이유·독자 행동과 현재 상태를 먼저 표시한다. 지원 가능 여부나 사용 가능 여부를 뒤집는 마감·자격·비용·라이선스 예외는 보이는 요약에도 짧게 알린다.",
+      "collapsed": "조사 경위, 긴 배경, 전체 조건표, 확인 과정과 부가 원문은 바로 인접한 기본 닫힌 details.reading-detail에 둔다. 네 번째 대상은 game-ai-tools 내부 항목으로 유지하며 별도 최상위 섹션으로 분리하지 않는다.",
+      "preserve": "날짜·마감·학년도/기수·자격·비용/장학·라이선스·확인일·출처·미확인 한계는 생략하거나 요약으로 의미를 바꾸지 않는다. details summary와 detail-meta로 쉽게 찾고 본문 검색·복사·보조 기술·인쇄에서 정확히 읽히게 한다.",
+      "caption": "개념 그림 캡션은 출처 또는 AI 생성임과 사실·실행 결과가 아니라는 한계를 짧게 밝힌다. 조사 과정의 장황한 설명을 반복하지 않는다.",
+      "review": "320·390·768·1440px에서 네 대상의 펼침 전 핵심 위계, details의 인접 위치·기본 닫힘·키보드 이름, 검색 시 자동 열림, 공유·인쇄 및 라이트/다크 대비를 독립 확인한다."
+    },
+    "primaryMediaContract": {
+      "targets": [
+        "#top10 .top-ten-item",
+        "#game-ai-tools의 개별 도구 카드",
+        "#game-ai-tools .media-resource"
+      ],
+      "placement": "공식 영상·제품 화면·저장소 이미지 등 해당 항목을 설명하는 미디어가 있고 표시 권리와 출처를 확인했다면 카드 제목·핵심 설명 바로 옆, details.reading-detail 밖에 썸네일 또는 클릭형 미리보기로 표시한다.",
+      "fallback": "적합한 미디어가 없거나 직접 표시·재사용 조건이 미확인이면 임의 이미지나 무관한 생성 그림으로 채우지 않는다. 기본 화면에 미사용 사유와 공식 원문 링크 또는 영상 원문 대체를 제공한다.",
+      "detailBoundary": "미디어의 존재·제목·공식 원문·짧은 출처와 사실 오인 방지 문구는 기본 화면에 남기고 조사 경위·긴 라이선스 조건·전체 확인 범위만 인접 상세로 이동한다. 날짜·비용·라이선스 예외가 사용 판단을 바꾸면 핵심 요약에도 짧게 표시한다.",
+      "review": "카드별 공식성·관련성·표시 조건·로컬 파일 해시·대체 텍스트·실제 로딩과 영상 대체 링크를 확인한다. 320·390·768·1440px 기본 닫힘 화면에서 미디어가 항목과 인접하고 잘리지 않으며 검색·공유·인쇄·테마와 충돌하지 않는지 독립 검수한다."
+    },
+    "themeContract": {
+      "startup": "assets/report/report-theme.js를 head에서 defer/async 없이 동기 실행해 저장된 설정 또는 시스템 선호를 첫 화면 전에 적용한다.",
+      "control": "헤더 버튼은 시스템 → 라이트 → 다크 순환, 현재 모드의 한글 이름과 접근성 레이블을 표시한다. 저장소 접근 불가 시 시스템 설정을 사용하고 시스템 모드에서는 OS 설정 변경에 반응한다.",
+      "presentation": "report-theme.css를 report-search.css 이전에 연결한다. 라이트/다크에서 모든 글자·컨트롤·인포그래픽·중첩 콜아웃의 구분과 대비를 확인하고 인쇄 시 라이트로 표시한다.",
+      "icons": "인라인 SVG의 장식용 아이콘은 aria-hidden과 focusable=false를 사용하고 버튼 자체에 이름을 제공한다. 외부 아이콘 라이선스와 실제 자산을 확인한다.",
+      "review": "네 화면 폭에서 세 모드 전환·새로고침 유지·시스템 변경·키보드·인쇄와 중첩 콜아웃 대비 및 기존 검색·공유를 독립 확인한다."
     }
   },
   "sections": [

@@ -1,6 +1,6 @@
 {
   "reportDate": "2026-11-07",
-  "description": "공식 미디어의 원본·귀속·확인 범위. 게임 화면은 공식 CDN 원격 임베드이며 별도 이미지 재배포 허락은 확인하지 않았어요.",
+  "description": "공식 미디어의 원본·귀속·확인 범위. 사용 여부는 v37 후보 HTML 기준이며 미사용 자산의 권리 검증 완료를 뜻하지 않음.",
   "assets": [
     {
       "id": "terrain3d-terrain3d-official",
@@ -22,7 +22,7 @@
       "section": "game-ai-tools",
       "width": 830,
       "height": 467,
-      "usedInReport": true
+      "usedInReport": false
     },
     {
       "id": "material-maker-material-maker-official",
@@ -44,7 +44,7 @@
       "section": "game-ai-tools",
       "width": 1920,
       "height": 1105,
-      "usedInReport": true
+      "usedInReport": false
     },
     {
       "id": "godot-voxel-voxel-blocky-official",
@@ -66,7 +66,7 @@
       "section": "game-ai-tools",
       "width": 800,
       "height": 480,
-      "usedInReport": true
+      "usedInReport": false
     },
     {
       "id": "godot-voxel-voxel-smooth-official",
@@ -110,7 +110,7 @@
       "section": "game-ai-tools",
       "width": 1460,
       "height": 824,
-      "usedInReport": true
+      "usedInReport": false
     },
     {
       "id": "scenario-scenario-preview-official",
@@ -162,7 +162,7 @@
       "changes": "공식 웹 샘플의 canvas 영역 캡처; 캡처 과정 초기에 잘못된 clip 결과를 최종 이미지로 채택하지 않고 실제 이미지를 보고 올바른 문서 좌표로 재캡처.",
       "width": 948,
       "height": 758,
-      "usedInReport": true
+      "usedInReport": false
     },
     {
       "id": "pixelfx-pixelfx-official-poster",
@@ -188,7 +188,7 @@
       "limitation": "244는 README의 전체 효과 수이며 이미지에 보이는 칸 수가 아님. Sprite Fusion과 같은 코드 계보를 독립 유행 근거로 중복 집계하지 않음.",
       "width": 792,
       "height": 416,
-      "usedInReport": true
+      "usedInReport": false
     },
     {
       "id": "balatro-game-balatro-official",
@@ -210,7 +210,7 @@
       "width": 1920,
       "height": 1080,
       "remoteEmbedOnly": true,
-      "usedInReport": true
+      "usedInReport": false
     },
     {
       "id": "chicken-fall-again-game-chicken-official",
@@ -232,7 +232,7 @@
       "width": 1920,
       "height": 1080,
       "remoteEmbedOnly": true,
-      "usedInReport": true
+      "usedInReport": false
     },
     {
       "id": "potato-please-game-potato-official",
@@ -254,7 +254,7 @@
       "width": 1920,
       "height": 1080,
       "remoteEmbedOnly": true,
-      "usedInReport": true
+      "usedInReport": false
     }
   ],
   "videos": [
@@ -275,7 +275,7 @@
       "selectionReason": "공식 README가 연결한 기능 시연으로 라이브러리가 다루는 결과물을 눈으로 살펴볼 수 있음.",
       "caption": "제작자의 과거 기능 시연이에요. 이번 주 신규 출시 영상이나 직접 재현 결과가 아니며 전체를 시청하지 않았어요.",
       "viewingScope": "제목·채널·게시일·설명·임베드허용 메타데이터 확인. 전체 영상 시청·실습·성능 재현 미실시.",
-      "rightsScope": "YouTube 표준 임베드만 사용. 영상 다운로드·재배포 없음. 코드 MIT를 영상·게임 장면의 재사용 권리로 해석하지 않음.",
+      "rightsScope": "YouTube 제공 썸네일을 i.ytimg.com에서 직접 연결하고 클릭 시 YouTube 임베드 플레이어를 사용. 원본 미디어를 로컬에 복제하지 않음. 각 썸네일의 별도 재사용 조건은 미확인; 코드 라이선스를 영상·이미지 권리로 확대하지 않음.",
       "status": "available"
     },
     {
@@ -295,7 +295,7 @@
       "selectionReason": "공식 README가 연결한 기능 시연으로 라이브러리가 다루는 결과물을 눈으로 살펴볼 수 있음.",
       "caption": "제작자의 과거 기능 시연이에요. 이번 주 신규 출시 영상이나 직접 재현 결과가 아니며 전체를 시청하지 않았어요.",
       "viewingScope": "제목·채널·게시일·설명·임베드허용 메타데이터 확인. 전체 영상 시청·실습·성능 재현 미실시.",
-      "rightsScope": "YouTube 표준 임베드만 사용. 영상 다운로드·재배포 없음. 코드 MIT를 영상·게임 장면의 재사용 권리로 해석하지 않음.",
+      "rightsScope": "YouTube 제공 썸네일을 i.ytimg.com에서 직접 연결하고 클릭 시 YouTube 임베드 플레이어를 사용. 원본 미디어를 로컬에 복제하지 않음. 각 썸네일의 별도 재사용 조건은 미확인; 코드 라이선스를 영상·이미지 권리로 확대하지 않음.",
       "status": "available"
     },
     {
@@ -319,7 +319,7 @@
       "limitation": "설명란의 명령 예시는 제작자가 제안한 절차이며 이 조사에서 실행하지 않았다. 저희라는 표현이 있으므로 1인 제작 증거로 쓰지 않는다. 영상 전체 시청과 음성 청취를 하지 않았다. 한국어 자막 트랙 존재만 확인했으며 자막 전문은 읽지 않았다. 제작자 설명은 자체 주장이고 연구자의 실행 증거가 아니다. 연결된 코드·공식 문서·라이선스는 별도 조사 결과와 교차 검토해야 한다. 제작자 제목·설명란에 기반한 요약 및 학습 관점 해석. 제작 과정 전체를 독립 검증하지 않음.",
       "viewingScope": "제목·채널·게시일·설명·자막트랙 메타데이터 확인. 자막 전문·음성·전체 영상 시청 및 도구 실행 미실시.",
       "repeatReason": "사용자가 이전 호·동일 호와 중복돼도 포함해 달라고 요청했어요. 사용자 지정 자료를 다시 조사했어요. 이번 설명 역할: 검사 통과와 재미·미술의 사람 승인을 구분하는 개발 절차 자료. 확인한 이전 공개 자료에는 일치하는 videoId가 없었어요.",
-      "rightsScope": "YouTube 표준 임베드만 사용. 영상·썸네일 원저작권 유지. 영상 전체 시청 및 소개 도구의 실제 실행으로 표현하지 않음.",
+      "rightsScope": "YouTube 제공 썸네일을 i.ytimg.com에서 직접 연결하고 클릭 시 YouTube 임베드 플레이어를 사용. 원본 미디어를 로컬에 복제하지 않음. 각 썸네일의 별도 재사용 조건은 미확인; 코드 라이선스를 영상·이미지 권리로 확대하지 않음.",
       "status": "available"
     },
     {
@@ -343,7 +343,7 @@
       "limitation": "약 3시간 제작은 제작자의 보고이며 독립 측정이 아니다. 기본 스테이지와 에셋을 사람이 미리 준비했으므로 100% AI 제작 사례로 부르면 안 된다. 설치·명령은 영상 시점 기준이며 최신 공식 안내 확인이 필요하다. 영상 전체 시청과 음성 청취를 하지 않았다. 한국어 자막 트랙 존재만 확인했으며 자막 전문은 읽지 않았다. 제작자 설명은 자체 주장이고 연구자의 실행 증거가 아니다. 연결된 코드·공식 문서·라이선스는 별도 조사 결과와 교차 검토해야 한다. 제작자 제목·설명란에 기반한 요약 및 학습 관점 해석. 제작 과정 전체를 독립 검증하지 않음.",
       "viewingScope": "제목·채널·게시일·설명·자막트랙 메타데이터 확인. 자막 전문·음성·전체 영상 시청 및 도구 실행 미실시.",
       "repeatReason": "사용자가 이전 호·동일 호와 중복돼도 포함해 달라고 요청했어요. 사용자 지정 자료를 다시 조사했어요. 이번 설명 역할: AI 코드 작성과 Unity 편집기 조작·검증이 연결되는 과정을 보는 자료. 확인한 이전 공개 자료에는 일치하는 videoId가 없었어요. custom-27~32 공식 자료와 달리 제작자가 설명한 게임 구현 사례다.",
-      "rightsScope": "YouTube 표준 임베드만 사용. 영상·썸네일 원저작권 유지. 영상 전체 시청 및 소개 도구의 실제 실행으로 표현하지 않음.",
+      "rightsScope": "YouTube 제공 썸네일을 i.ytimg.com에서 직접 연결하고 클릭 시 YouTube 임베드 플레이어를 사용. 원본 미디어를 로컬에 복제하지 않음. 각 썸네일의 별도 재사용 조건은 미확인; 코드 라이선스를 영상·이미지 권리로 확대하지 않음.",
       "status": "available"
     },
     {
@@ -367,7 +367,7 @@
       "limitation": "제작자도 공개 예시와 README 기반 소개라고 명시한다. 전 도구 실사용 후기 또는 자체 성능 검증으로 쓰지 않는다. pixelfx 244종이라는 수치는 저장소 원문과 별도로 대조해야 한다. 영상 전체 시청과 음성 청취를 하지 않았다. 한국어 자막 트랙 존재만 확인했으며 자막 전문은 읽지 않았다. 제작자 설명은 자체 주장이고 연구자의 실행 증거가 아니다. 연결된 코드·공식 문서·라이선스는 별도 조사 결과와 교차 검토해야 한다. 제작자 제목·설명란에 기반한 요약 및 학습 관점 해석. 제작 과정 전체를 독립 검증하지 않음.",
       "viewingScope": "제목·채널·게시일·설명·자막트랙 메타데이터 확인. 자막 전문·음성·전체 영상 시청 및 도구 실행 미실시.",
       "repeatReason": "사용자가 이전 호·동일 호와 중복돼도 포함해 달라고 요청했어요. 사용자 지정 자료를 다시 조사했어요. 이번 설명 역할: 이미지 생성 이후 게임에 넣기까지 필요한 서로 다른 작업을 구분하는 자료. 확인한 이전 공개 자료에는 일치하는 videoId가 없었어요. custom-37~40을 묶어 소개한 영상이며 개별 저장소 검증과 구분한다.",
-      "rightsScope": "YouTube 표준 임베드만 사용. 영상·썸네일 원저작권 유지. 영상 전체 시청 및 소개 도구의 실제 실행으로 표현하지 않음.",
+      "rightsScope": "YouTube 제공 썸네일을 i.ytimg.com에서 직접 연결하고 클릭 시 YouTube 임베드 플레이어를 사용. 원본 미디어를 로컬에 복제하지 않음. 각 썸네일의 별도 재사용 조건은 미확인; 코드 라이선스를 영상·이미지 권리로 확대하지 않음.",
       "status": "available"
     },
     {
@@ -391,7 +391,7 @@
       "limitation": "공개 예시·README 기반 소개이며 Sprite Sheet Diffusion 예시는 공개 논문의 그림이라고 명시한다. 학생 PC에서의 실행 속도·장비 적합성은 확인하지 않았다. 영상 전체 시청과 음성 청취를 하지 않았다. 한국어 자막 트랙 존재만 확인했으며 자막 전문은 읽지 않았다. 제작자 설명은 자체 주장이고 연구자의 실행 증거가 아니다. 연결된 코드·공식 문서·라이선스는 별도 조사 결과와 교차 검토해야 한다. 제작자 제목·설명란에 기반한 요약 및 학습 관점 해석. 제작 과정 전체를 독립 검증하지 않음.",
       "viewingScope": "제목·채널·게시일·설명·자막트랙 메타데이터 확인. 자막 전문·음성·전체 영상 시청 및 도구 실행 미실시.",
       "repeatReason": "사용자가 이전 호·동일 호와 중복돼도 포함해 달라고 요청했어요. 사용자 지정 자료를 다시 조사했어요. 이번 설명 역할: 이미지 기반·코드 기반·설계도 기반·로컬 생성 모델의 차이를 고르는 자료. 확인한 이전 공개 자료에는 일치하는 videoId가 없었어요. custom-42~45의 입력·출력 차이를 소개한 영상이며 개별 저장소 검증과 구분한다.",
-      "rightsScope": "YouTube 표준 임베드만 사용. 영상·썸네일 원저작권 유지. 영상 전체 시청 및 소개 도구의 실제 실행으로 표현하지 않음.",
+      "rightsScope": "YouTube 제공 썸네일을 i.ytimg.com에서 직접 연결하고 클릭 시 YouTube 임베드 플레이어를 사용. 원본 미디어를 로컬에 복제하지 않음. 각 썸네일의 별도 재사용 조건은 미확인; 코드 라이선스를 영상·이미지 권리로 확대하지 않음.",
       "status": "available"
     }
   ],
@@ -445,5 +445,13 @@
     "게임 플레이·도구 로컬 빌드·엔진 통합·성능 비교 미실시",
     "ozz 공식 웹 샘플 초기 화면 관측은 로컬 검증과 구분",
     "게임 홍보 스크린샷·공식 시연 화면에 등장하는 수치는 보고서 실측값이 아님"
-  ]
+  ],
+  "candidateReportSha256": "e60844d02780bbe11cc2c7d653661bc45c2d998101999d4224a753a374ba2a51",
+  "inventoryStatus": "inventory-reviewed-with-limitations",
+  "reviewScope": "본문의 정적 이미지 사용 여부와 영상 6건의 직접 썸네일 연결·임베드 표시를 대조했어요.",
+  "reviewLimitation": "각 썸네일의 별도 재사용 조건은 미확인이며 영상 전체 시청과 도구 실행은 하지 않았어요.",
+  "reviewEvidence": {
+    "sha256": "0a84fe888d7c4d4cc1678ca2cf37ddc25b01e2a7ff08fd9a6ad3b053189e4251",
+    "scope": "출처·실제 파일과 표시 범위의 독립 검수 기록; 원장 수정 후 상태 문구는 별도 대조"
+  }
 }

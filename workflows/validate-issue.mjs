@@ -1,3 +1,4 @@
+import {validateReportIds} from './validate-weekly-presentation.mjs';
 import {validateQualityPipeline} from './validate-quality-pipeline.mjs';
 import {validateReaderCopy} from './audit-report-quality.mjs';
 import {validateWeeklyPresentation,validateCareerCoverage,validateReadingResources,validateAiCaseAndVideoResources} from './validate-weekly-presentation.mjs';
@@ -39,7 +40,7 @@ if(review.reportDate>='2026-10-31'){
 }
 if(!file.endsWith('weekly-'+review.reportDate+'.html'))throw Error('Report date mismatch');
 if(review.reportDate>='2026-11-07'){const languageReview=JSON.parse((await fs.readFile(file+'.language-review.json','utf8')).replace(/^\uFEFF/,''));await validateLanguageReview({htmlPath:file,html,reportDate:review.reportDate,review:languageReview});}
-const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);if(new Set(ids).size!==ids.length)throw Error('Duplicate DOM IDs');
+const ids=validateReportIds(html);
 for(const id of sections)if(!ids.includes(id)||!review.sections.includes(id))throw Error('Missing required section: '+id);
 for(const key of ['sourcesVerified','releaseStatesChecked','aiScopeSeparated','hotnessEvidenceChecked','jobsSampleDisclosed','techniqueReproducibilityReviewed','mobileChecked','shareChecked'])if(review.checks[key]!==true)throw Error('Editorial or UI check missing: '+key);
 // A first issue can document that comparison is unavailable; never certify a comparison that was not performed.

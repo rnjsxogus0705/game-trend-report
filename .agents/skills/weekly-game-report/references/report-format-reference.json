@@ -166,6 +166,49 @@
       "actions": "button[data-disclosure-action=expand|collapse]의 aria-controls는 실제 제어되는 details ID 목록과 일치",
       "global": "전역 그룹은 data-disclosure-scope=report, aria-label=리포트 전체 상세로 구분하여 목차 부근에 배치한다.",
       "visibility": "섹션 제어는 필터로 숨겨진 상세를 제외하고 첫 현재 표시 도구 카드의 details 바로 앞에 배치하며 필터 변경 시 함께 이동한다. 내비게이터 details는 전역·섹션 제어에서 제외한다."
+    },
+    "supplementalDisclosure": {
+      "structure": "details.reading-detail[data-detail-kind=evidence|asset|tool] > summary + .detail-body + .detail-meta(별도 메타 문단이 있을 때)",
+      "placement": "issue-summary·top10·game-ai-tools 및 부가 제작 자료에서 핵심 판단은 펼침 밖에 두고 선택적으로 읽을 근거·자산·도구 설명만 접는다.",
+      "content": "summary는 펼쳤을 때 무엇을 읽는지 한 문장으로 밝힌다. detail-body는 중복 도입을 제거한 본문이다. 별도 확인일·출처·라이선스 또는 미확인 한계 문단이 있으면 detail-meta로 구분하며, 메타데이터가 본문 문맥과 결합돼 있으면 임의로 분해하거나 빈 요소를 만들지 않는다.",
+      "behavior": "검색 결과가 있으면 기존 공통 스크립트가 닫힌 상세를 열며, 키보드·인쇄·전체 상세 제어와 충돌하지 않는다.",
+      "review": "320·390·768·1440px의 라이트·다크에서 제목·내용·메타데이터 위계, 열린/닫힌 높이, 긴 링크와 미디어, 포커스와 인쇄를 실제 확인한다. 접는 것으로 필수 조건이나 한계를 숨기지 않는다.",
+      "style": "assets/report/report-theme.css"
+    },
+    "sectionInfographic": {
+      "structure": ".report-infographic > figure.chapter-concept + .infographic-summary[role=group]",
+      "content": "각 섹션의 한국어 제목과 핵심 2~3개를 실제 HTML 텍스트로 쓰고 그림에 alt, 크기와 출처/생성 설명을 제공한다.",
+      "placement": "섹션 제목과 주요 본문 사이, 접힌 상세 밖. 중첩 섹션은 고유 ID.",
+      "source": "해당 호 본문과 근거를 대조하고 그림의 파일·해시·권리·생성 근거를 미디어 원장에 기록. 생성 그림을 실제 화면·측정 결과로 오인하지 않게 한다.",
+      "review": "320·390·768·1440px에서 텍스트·이미지·종횡비·대체 텍스트 및 기존 공유·검색과의 간섭을 독립 확인한다. 템플릿은 승인 증거가 아니다.",
+      "style": "assets/report/section-infographic.css"
+    },
+    "progressiveDisclosure": {
+      "priorityAreas": [
+        "#issue-summary",
+        "#top10",
+        "#game-ai-tools",
+        "#game-ai-tools .media-resource[제목=코드로 만드는 픽셀 효과와 공개 3D 자산]"
+      ],
+      "visible": "핵심 판단·선정 이유·다음 행동과 결정에 영향을 주는 상태를 간결하게 먼저 표시",
+      "details": "조사 경위·부가 배경·긴 조건은 인접한 기본 닫힌 details.reading-detail과 설명적인 summary로 제공. 내부 media-resource는 최상위 섹션으로 분리하지 않음",
+      "decisionMetadata": "날짜·마감·학년도/기수·자격·비용/장학·라이선스·확인일·출처·한계는 정확히 보존하고 검색·복사·보조 기술·인쇄에서 발견 가능",
+      "caption": "개념 이미지 캡션은 출처/생성 여부와 실제 화면·측정·실행 결과가 아니라는 점만 짧고 명확하게 표시",
+      "review": "320·390·768·1440px에서 기본 닫힘, 인접 배치, 키보드·검색 자동 열림·공유·인쇄·테마 대비와 핵심 위계를 확인"
+    },
+    "primaryCardMedia": {
+      "targets": "#top10 .top-ten-item과 #game-ai-tools의 도구 카드·내부 media-resource",
+      "visible": "검수된 공식 영상 썸네일·제품 화면·저장소 이미지를 카드 제목과 핵심 설명 가까이, reading-detail 밖에 표시",
+      "fallback": "표시 가능한 관련 미디어가 없거나 사용 조건이 미확인이면 이유와 공식 원문/영상 링크를 기본 화면에 제공하고 임의 이미지로 대체하지 않음",
+      "details": "장황한 조사 과정·긴 조건만 접고 공식 원문, 미디어 제목, 짧은 출처·한계와 판단을 바꾸는 조건은 기본 화면에 보존",
+      "review": "공식성·관련성·권리·파일 해시·대체 텍스트·로딩·대체 링크 및 320·390·768·1440px 기본 화면의 인접 배치·검색·공유·인쇄·테마를 확인"
+    },
+    "reportTheme": {
+      "startup": "assets/report/report-theme.js를 head에서 defer/async 없이 동기 실행해 저장된 설정 또는 시스템 선호를 첫 화면 전에 적용한다.",
+      "control": "헤더 버튼은 시스템 → 라이트 → 다크 순환, 현재 모드의 한글 이름과 접근성 레이블을 표시한다. 저장소 접근 불가 시 시스템 설정을 사용하고 시스템 모드에서는 OS 설정 변경에 반응한다.",
+      "presentation": "report-theme.css를 report-search.css 이전에 연결한다. 라이트/다크에서 모든 글자·컨트롤·인포그래픽·중첩 콜아웃의 구분과 대비를 확인하고 인쇄 시 라이트로 표시한다.",
+      "icons": "인라인 SVG의 장식용 아이콘은 aria-hidden과 focusable=false를 사용하고 버튼 자체에 이름을 제공한다. 외부 아이콘 라이선스와 실제 자산을 확인한다.",
+      "review": "네 화면 폭에서 세 모드 전환·새로고침 유지·시스템 변경·키보드·인쇄와 중첩 콜아웃 대비 및 기존 검색·공유를 독립 확인한다."
     }
   },
   "canonicalDesign": {
@@ -240,6 +283,11 @@
     "assets/report/share.js",
     "assets/report/reading-experience.js",
     "assets/report/reading-experience-scoped.js",
+    "assets/report/share-v2.js",
+    "assets/report/reading-experience-scoped-v2.js",
+    "assets/report/report-theme.css",
+    "assets/report/report-theme.js",
+    "assets/report/section-infographic.css",
     "assets/report/report-search.css",
     "assets/report/report-search.js"
   ],
@@ -247,15 +295,20 @@
   "newIssuePresentationAssets": {
     "css": [
       "assets/report/reading-experience.css",
+      "assets/report/section-infographic.css",
+      "assets/report/report-theme.css",
       "assets/report/report-search.css"
     ],
     "deferScripts": [
-      "assets/report/share.js",
-      "assets/report/reading-experience-scoped.js",
+      "assets/report/share-v2.js",
+      "assets/report/reading-experience-scoped-v2.js",
       "assets/report/report-search.js",
       "reports/weekly-YYYY-MM-DD.js"
     ],
-    "loadOrder": "기존 공통 스타일 다음 검색 CSS를 로드한다. defer 스크립트는 공유 → 범위별 읽기 동작 → 검색 → 해당 호 JS 순서로 로드한다.",
-    "compatibility": "기존 호가 사용하는 reading-experience.js를 변경하거나 같은 페이지에 두 읽기 스크립트를 함께 로드하지 않는다. 새 파일과 검색 자산은 issue-index와 presentation hash에 포함한다."
+    "loadOrder": "report-theme.js를 head에서 동기 실행하고, 공통 CSS 다음 섹션 인포그래픽 → 테마 → 검색 CSS 순으로 연결한다. defer 스크립트는 공유 → 범위별 읽기 동작 → 검색 → 해당 호 JS 순서로 로드한다.",
+    "compatibility": "기존 호가 사용하는 reading-experience.js를 변경하거나 같은 페이지에 두 읽기 스크립트를 함께 로드하지 않는다. 새 파일과 검색 자산은 issue-index와 presentation hash에 포함한다.",
+    "headScripts": [
+      "assets/report/report-theme.js"
+    ]
   }
 }

@@ -57,16 +57,30 @@ test('Unity 하위 섹션이 있을 때만 도구 목차의 지정 위치를 허
 test('새 탐색 셸은 자산·검색 양식·범위별 펼침을 함께 검증한다',async()=>{
  const {validateNavigationEnhancements:validate}=await import('./validate-weekly-presentation.mjs');
  const panel=(id,mobile=false)=>`<form id="${id}" data-report-search-panel role="search" aria-label="본문 검색" ${mobile?'hidden':''}><label for="${id}-input">검색</label><input id="${id}-input" type="search" data-report-search-input><button type="submit">찾기</button><p data-report-search-status role="status" aria-live="polite"></p><button type="button" data-report-search-prev aria-label="이전"></button><button type="button" data-report-search-next aria-label="다음"></button>${mobile?'<button type="button" data-report-search-close>닫기</button>':''}</form>`;
- const html=`<html><head><link rel="stylesheet" href="../assets/report/weekly-editorial.css"><link rel="stylesheet" href="../assets/report/report-search.css"><script defer src="../assets/report/share.js"></script><script defer src="../assets/report/reading-experience-scoped.js"></script><script defer src="../assets/report/report-search.js"></script><script defer src="weekly-2026-11-14.js"></script></head><body><header><button type="button" data-report-search-toggle aria-controls="mobile-search" aria-expanded="false">검색</button>${panel('mobile-search',true)}</header><nav id="side-nav">${panel('desktop-search')}</nav><section id="game-ai-tools"><div data-disclosure-scope="game-ai-tools" role="group" aria-label="도구 상세"><button type="button" data-disclosure-action="expand" aria-controls="detail-a detail-b">펼치기</button><button type="button" data-disclosure-action="collapse" aria-controls="detail-a detail-b">접기</button></div><details id="detail-a"></details><details id="detail-b"></details></section></body></html>`;
+ const html=`<html><head><script src="../assets/report/report-theme.js"></script><link rel="stylesheet" href="../assets/report/weekly-editorial.css"><link rel="stylesheet" href="../assets/report/report-theme.css"><link rel="stylesheet" href="../assets/report/report-search.css"><script defer src="../assets/report/share-v2.js"></script><script defer src="../assets/report/reading-experience-scoped-v2.js"></script><script defer src="../assets/report/report-search.js"></script><script defer src="weekly-2026-11-14.js"></script></head><body><header><button type="button" data-report-search-toggle aria-controls="mobile-search" aria-expanded="false">검색</button>${panel('mobile-search',true)}</header><nav id="side-nav">${panel('desktop-search')}</nav><section id="game-ai-tools"><div data-disclosure-scope="game-ai-tools" role="group" aria-label="도구 상세"><button type="button" data-disclosure-action="expand" aria-controls="detail-a detail-b">펼치기</button><button type="button" data-disclosure-action="collapse" aria-controls="detail-a detail-b">접기</button></div><details id="detail-a"></details><details id="detail-b"></details></section></body></html>`;
  const checkNew=value=>validate(value,{reportDate:'2026-11-14'});
  assert.equal(validate('<html></html>',{reportDate:'2026-11-07'}),false);
  assert.throws(()=>checkNew('<html></html>'),/stylesheet/);
  assert.equal(checkNew(html),true);
+ const withStyles=(...names)=>html.replace('<link rel="stylesheet" href="../assets/report/report-theme.css">',names.map(name=>`<link rel="stylesheet" href="../assets/report/${name}.css">`).join('')+'<link rel="stylesheet" href="../assets/report/report-theme.css">');
+ assert.equal(checkNew(withStyles('section-infographic')),true);
+ for(const names of [['report-theme'],['report-theme','section-infographic'],['section-infographic','section-infographic'],['report-theme','report-theme'],['report-theme','other']])assert.throws(()=>checkNew(withStyles(...names)));
+ assert.throws(()=>checkNew(html.replace('weekly-editorial.css','weekly-editorial.css"><link rel="stylesheet" href="../assets/report/weekly-editorial.css')));
+ const versioned=html;
+ assert.equal(checkNew(versioned),true);
+ assert.throws(()=>checkNew(versioned.replace('<script defer src="../assets/report/share-v2.js"></script>','<script defer src="../assets/report/share-v2.js"></script><script defer src="../assets/report/share.js"></script>')));
+ assert.throws(()=>checkNew(versioned.replace('<script defer src="../assets/report/reading-experience-scoped-v2.js"></script>','<script defer src="../assets/report/reading-experience-scoped-v2.js"></script><script defer src="../assets/report/reading-experience-scoped.js"></script>')));
+ assert.throws(()=>checkNew(versioned.replace('<script defer src="../assets/report/share-v2.js"></script>','<script src="../assets/report/share-v2.js"></script>')));
+ assert.throws(()=>checkNew(versioned.replace('reading-experience-scoped-v2.js','unknown-reader.js')));
+ assert.throws(()=>checkNew(versioned.replace('share-v2.js','share.js')),/versioned/);
+ assert.throws(()=>checkNew(versioned.replace('reading-experience-scoped-v2.js','reading-experience-scoped.js')),/versioned/);
+ assert.throws(()=>checkNew(versioned.replace('<script src="../assets/report/report-theme.js"></script>','')),/theme startup/);
+ assert.throws(()=>checkNew(versioned.replace('<script src="../assets/report/report-theme.js"></script>','<script defer src="../assets/report/report-theme.js"></script>')),/theme startup/);
  // Scoped controls may be inserted by the scoped script after HTML parsing.
  assert.equal(checkNew(html.replace(/<div data-disclosure-scope="game-ai-tools"[\s\S]*?<\/div>/,'')),true);
  const bad=[
   html.replace('report-search.css','missing.css'),
-  html.replace('reading-experience-scoped.js','reading-experience.js'),
+  html.replace('reading-experience-scoped-v2.js','reading-experience.js'),
   html.replace('<script defer src="../assets/report/report-search.js"></script>','<script defer src="../assets/report/report-search.js"></script><script defer src="../assets/report/reading-experience.js"></script>'),
   html.replace('<script defer src="../assets/report/report-search.js"></script>','<script src="../assets/report/report-search.js"></script>'),
   html.replace('data-report-search-status','data-missing-status'),

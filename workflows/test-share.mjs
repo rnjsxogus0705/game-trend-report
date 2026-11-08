@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
 
-const source=await fs.readFile(new URL('../assets/report/share.js',import.meta.url),'utf8');
+const sources=await Promise.all(['share.js','share-v2.js'].map(async name=>[name,await fs.readFile(new URL('../assets/report/'+name,import.meta.url),'utf8')]));
 function environment(staticButton){
  class Element{
   constructor(tag){this.tagName=tag.toUpperCase();this.children=[];this.childNodes=this.children;this.attrs={};this.listeners={};this.classList={add:()=>{}};this.nodeType=1;this.namespaceURI='http://www.w3.org/2000/svg';}
@@ -18,7 +18,7 @@ function environment(staticButton){
  const copied=[],context={document:doc,URL,Node:{TEXT_NODE:3},navigator:{clipboard:{writeText:async text=>copied.push(text)}},location:{origin:'https://example.test',pathname:'/report.html'}};context.globalThis=context;
  return {context,doc,main,body,copied,get dialog(){return dialog;},get button(){return button||main.children.find(x=>x.id==='report-share')||body.children.find(x=>x.id==='report-share');}};
 }
-for(const existing of [true,false])test(`공유 ${existing?'기존 버튼 채택':'버튼 생성'}과 중복 초기화 방지`,async()=>{
+for(const [name,source] of sources)for(const existing of [true,false])test(`${name}: 공유 ${existing?'기존 버튼 채택':'버튼 생성'}과 중복 초기화 방지`,async()=>{
  const e=environment(existing);vm.runInNewContext(source,e.context);const dialog=e.dialog,button=e.button;assert.ok(dialog&&button);assert.equal(button.listeners.click.length,1);await button.click();assert.equal(dialog.open,true);
  await dialog.map['[data-copy]'].click();assert.deepEqual(e.copied,['https://example.test/report.html']);
  await dialog.map['[data-discord]'].click();assert.equal(dialog.map['[data-discord-open]'].hidden,false);assert.match(dialog.map['.share-status'].textContent,/디스코드/);

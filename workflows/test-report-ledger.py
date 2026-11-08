@@ -36,6 +36,9 @@ class LedgerTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             d=Path(tmp); install_test_skills(d); db=d/'test.sqlite'; research=d/'research.json'; packet=d/'packet.json'; skill=d/'SKILL.md'; evidence=d/'evidence.txt'; html=d/'issue.html'
             research_data={'inputs':{'context':'b'*64},'sources':[{'uri':'https://example.com','scope':'원문'}],'renewalCorpus':{'sections':[{'sectionId':'games','candidate':{'title':'실제 원고'}},{'sectionId':'next','candidate':{'title':'다음'}}]}}; research.write_text(json.dumps(research_data)); packet.write_text(json.dumps({'text':'실제 원고','urls':['https://example.com'],'candidate':{'title':'실제 원고'}})); skill.write_text('skill'); evidence.write_text(json.dumps({'observation':'checked source and screen','sources':['https://example.com'],'mediaFinding':'no suitable media found'})); css=d/'screen.css'; css.write_text('body { color: black; }'); script=d/'screen.js'; script.write_text('void 0;'); html_source='<link rel="stylesheet" href="screen.css"><script src="screen.js"></script><style>p{margin:0}</style><body><div class="layout"><aside>목차</aside><main class="content"><section id="games"><p>내용</p><a href="https://example.com" aria-label="공식 자료">출처</a><pre><code>if True:\n    print(1)</code></pre></section><section id="untouched">다른 문단</section></main></div></body>'; html.write_text(html_source)
+            image=d/'figure.webp'; image.write_bytes(b'first image')
+            html.write_text(html_source.replace('<p>내용</p>', '<p>내용</p><img src="figure.webp" alt="요약 그림">'))
+            html_source=html.read_text()
             def call(*args, ok=True):
                 result=subprocess.run([sys.executable,str(SCRIPT),'--db',str(db),*args],capture_output=True,text=True,cwd=d)
                 self.assertEqual(result.returncode==0,ok,result.stderr+result.stdout)
@@ -95,6 +98,12 @@ class LedgerTest(unittest.TestCase):
             design_data['designContractSha256']=hashlib.sha256(design.read_bytes()).hexdigest(); design_proof.write_text(json.dumps(design_data))
             mirror=d/'assets/report/DESIGN.md'; mirror.parent.mkdir(parents=True); mirror.write_bytes(design.read_bytes())
             call(*ui_args,'--evidence',str(design_proof))
+            call('advance','--run','r','--section','games')
+            image.write_bytes(b'changed image')
+            visual_status=json.loads(call('queue','--run','r').stdout)
+            self.assertFalse(next(item for item in visual_status['sections'] if item['sectionId']=='games')['review']['ui'])
+            call('advance','--run','r','--section','games',ok=False)
+            image.write_bytes(b'first image')
             call('advance','--run','r','--section','games')
             mirror.write_text('tampered mirror')
             call(*ui_args,'--evidence',str(design_proof),ok=False)

@@ -1,0 +1,14 @@
+@media (max-width: 480px) {
+  #prototype-plan-steps .table-scroll { overflow: visible; }
+  #prototype-plan-steps table, #prototype-plan-steps tbody, #prototype-plan-steps tr, #prototype-plan-steps th, #prototype-plan-steps td { display: block; width: 100%; }
+  #prototype-plan-steps table { min-width: 0; }
+  #prototype-plan-steps caption { display: block; width: 100%; box-sizing: border-box; text-align: left; }
+  #prototype-plan-steps thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  #prototype-plan-steps tbody tr { margin-block: .75rem; border: 1px solid #d6dfea; border-radius: .65rem; overflow: hidden; }
+  #prototype-plan-steps tbody th, #prototype-plan-steps tbody td { box-sizing: border-box; min-width: 0; text-align: left; overflow-wrap: anywhere; }
+  #prototype-plan-steps tbody td::before { display: block; margin-bottom: .2rem; color: #52637c; font-size: 1rem; font-weight: 700; }
+  #prototype-plan-steps tbody td:nth-child(2)::before { content: '할 일'; }
+  #prototype-plan-steps tbody td:nth-child(3)::before { content: '남길 결과물'; }
+}
+.weekly-editorial #game-ideas .idea-concept img,
+.weekly-editorial #ai-production .idea-concept img { aspect-ratio: auto; height: auto; }

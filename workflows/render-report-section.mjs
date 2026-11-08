@@ -56,6 +56,29 @@ export async function materializeAssets(root,candidate){
  }
  return planned.length;
 }
+export async function verifySectionVisualAssets(root,html,candidate){
+ if(candidate.sectionVisual===undefined)return;
+ root=await fs.realpath(root);
+ const links=reportElements(html).elements.filter(n=>n.tag==='link'&&(n.attrs.rel||'').toLowerCase().split(/\s+/).includes('stylesheet')&&n.attrs.href==='../assets/report/section-infographic.css');
+ if(links.length!==1)throw Error('Section infographic stylesheet missing or ambiguous');
+ async function readAsset(relative){
+  const target=path.resolve(root,relative);
+  if(!target.startsWith(path.join(root,'assets','report')+path.sep))throw Error('Unsafe section visual asset');
+  let current=root;
+  for(const part of path.relative(root,target).split(path.sep)){
+   current=path.join(current,part);const stat=await fs.lstat(current);
+   if(stat.isSymbolicLink())throw Error('Symlink section visual asset rejected');
+  }
+  if(await fs.realpath(target)!==target)throw Error('Unsafe section visual asset');
+  const stat=await fs.stat(target);if(!stat.isFile())throw Error('Section visual asset is not a file');
+  return fs.readFile(target);
+ }
+ await readAsset('assets/report/section-infographic.css');
+ const image=candidate.sectionVisual.image,relative=image.src.slice(3),kind=path.extname(relative).toLowerCase().slice(1);
+ if(!['png','webp'].includes(kind))throw Error('Section visual must be PNG or WebP');
+ const dimensions=imageDimensions(await readAsset(relative),kind);
+ if(dimensions[0]!==image.width||dimensions[1]!==image.height)throw Error('Section visual dimensions mismatch');
+}
 export async function preparePreview(root,output,issueDate){
  root=await fs.realpath(root);const workspace=await fs.realpath(path.join(root,'_workspace')),target=path.resolve(output),reports=path.dirname(target);
  if(path.basename(target)!==`weekly-${issueDate}.html`||path.basename(reports)!=='reports')throw Error('Parallel preview requires reports/weekly-DATE.html');
@@ -103,6 +126,9 @@ export function renderSection(html,section,packet,{refreshLayout=false}={}){
  if(oldBlocks.length>1)throw Error('Ambiguous reviewed packet blocks');
  if(oldBlocks[0]?.attrs['data-reviewed-packet']===hash&&!refreshLayout)throw Error('Section already has rendered packet');
  let removable=oldBlocks.slice();
+ const oldVisuals=elements.filter(n=>n.parent===node&&Object.hasOwn(n.attrs,'data-rendered-section-visual'));
+ if(oldVisuals.length>1)throw Error('Ambiguous section visuals');
+ removable.push(...oldVisuals);
  if(section==='reading'){
   removable.push(...elements.filter(n=>['article','post'].includes(n.attrs['data-kind'])&&(n.parent===node||(n.parent?.parent===node&&(n.parent.attrs.class||'').split(/\s+/).includes('chapter-head')))));
  }
@@ -256,6 +282,28 @@ export function renderSection(html,section,packet,{refreshLayout=false}={}){
    for(const patch of patches.sort((a,b)=>b.start-a.start))body=body.slice(0,patch.start)+patch.text+body.slice(patch.end);
   }
  }
+ if(candidate.sectionVisual!==undefined){
+  const visual=candidate.sectionVisual,image=visual?.image,nonempty=value=>typeof value==='string'&&value.trim().length>0;
+  const assetPath=typeof image?.src==='string'&&image.src.startsWith('../assets/report/')?image.src.slice('../assets/report/'.length):'';
+  if(!/^[a-z][a-z0-9-]*$/.test(section)||!visual||!nonempty(visual.title)||!Array.isArray(visual.points)||visual.points.length<2||visual.points.length>3||visual.points.some(point=>!nonempty(point))||!image||!nonempty(image.alt)||!nonempty(image.caption)||!assetPath||!assetPath.split('/').every(part=>/^[A-Za-z0-9_-][A-Za-z0-9_.-]*$/.test(part))||!Number.isSafeInteger(image.width)||image.width<1||!Number.isSafeInteger(image.height)||image.height<1)throw Error('Invalid section visual');
+  const {elements:parsed}=reportElements(body),root=parsed.find(n=>n.attrs.id===section);
+  if(!root)throw Error('Section visual root missing');
+  const summaryId='infographic-summary-'+section;
+  const outsideCollision=elements.some(n=>n.attrs.id===summaryId&&(()=>{for(let p=n;p;p=p.parent)if(p===node)return false;return true;})());
+  if(outsideCollision||parsed.some(n=>n.attrs.id===summaryId)||parsed.some(n=>n.parent===root&&Object.hasOwn(n.attrs,'data-infographic-id')))throw Error('Section visual or summary ID already exists');
+  const children=parsed.filter(n=>n.parent===root),heads=children.filter(n=>(n.attrs.class||'').split(/\s+/).includes('chapter-head'));
+  const headings=children.filter(n=>n.tag==='h2');
+  const anchor=heads.length===1?heads[0]:heads.length===0&&headings.length===1?headings[0]:null;
+  if(!anchor)throw Error('Section visual requires one section heading');
+  // Section content can contain scripts/styles; parser offsets omit their bodies.
+  let removedLength=0;const skipped=[];
+  for(const m of body.matchAll(/(<(?:script|style)\b[^>]*>)[\s\S]*?(<\/(?:script|style)>)/gi)){
+   const length=m[0].length-m[1].length-m[2].length;skipped.push({at:m.index+m[1].length-removedLength,length});removedLength+=length;
+  }
+  const at=anchor.end+skipped.filter(item=>item.at<=anchor.end).reduce((sum,item)=>sum+item.length,0);
+  const block=`<div class="report-infographic" data-infographic-id="${esc(section)}" data-rendered-section-visual="${hash}"><figure class="chapter-concept"><img src="${esc(image.src)}" alt="${esc(image.alt)}" width="${image.width}" height="${image.height}" loading="lazy"><figcaption>${esc(image.caption)}</figcaption></figure><div class="infographic-summary" role="group" aria-labelledby="${summaryId}"><h3 id="${summaryId}">${esc(visual.title)}</h3><ul>${visual.points.map(point=>`<li>${esc(point)}</li>`).join('')}</ul></div></div>`;
+  body=body.slice(0,at)+block+body.slice(at);
+ }
  const plain=body.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ');
  let extra=`<div data-reviewed-packet="${hash}">${section==='ai-only-lab'?'<h3>해외 조사 범위와 한계</h3>':''}`;
  for(const p of candidate.paragraphs||[])if(typeof p==='string'&&p.trim()&&p.trim()!==lead&&!plain.includes(p.trim()))extra+=`<p>${esc(p)}</p>`;
@@ -385,6 +433,8 @@ if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.ur
    if(!artifact)throw Error('Download artifact missing');
    if(crypto.createHash('sha256').update(await fs.readFile(target)).digest('hex')!==artifact.sha256)throw Error('Download artifact file hash mismatch');
   }
+  if(!parallel)await materializeAssets(process.cwd(),packet.candidate);
+  await verifySectionVisualAssets(process.cwd(),rendered,packet.candidate);
   if(parallel){
    const root=await fs.realpath(process.cwd()),output=path.resolve(opts['--output']);
    await preparePreview(root,output,packet.issueDate);
@@ -393,7 +443,6 @@ if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.ur
    const manifest={runId:opts['--run'],sectionId:opts['--section'],packetSha:packet.reviewApproval.packetSha256,candidateSha:packet.reviewApproval.candidateSha256,sectionSha:digest(after.section),presentationSha:digest(before.presentation),baseFileSha:digest(html),candidateFileSha:digest(rendered),presentationFiles:await presentationFiles(root,html)};
    await fs.writeFile(output,rendered,{flag:'wx'});await fs.writeFile(output+'.manifest.json',JSON.stringify(manifest,null,2)+'\n',{flag:'wx'});
   }else{
-   await materializeAssets(process.cwd(),packet.candidate);
    await fs.writeFile(opts['--output'],rendered,{flag:'wx'});
   }
  }catch(e){console.error(e.message);process.exitCode=1;}

@@ -1,3 +1,4 @@
+import {validateReportIds} from './validate-weekly-presentation.mjs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -7,7 +8,7 @@ const files=['index.html','standards/index.html',...(await fs.readdir(path.join(
 let links=0;
 for(const file of files){
  const html=await fs.readFile(path.join(root,file),'utf8');
- const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
+ const ids=validateReportIds(html);
  assert.equal(new Set(ids).size,ids.length,'중복 ID: '+file);
  for(const [,url] of html.matchAll(/(?:href|src)="([^"]+)"/g)){
   if(/^(https?:|data:|mailto:|javascript:)/.test(url))continue;

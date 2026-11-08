@@ -1,3 +1,4 @@
+import {validateReportIds} from './validate-weekly-presentation.mjs';
 // Synthetic review fixtures prove wiring only. They are never publication receipts or research evidence.
 import {test} from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs/promises';import path from 'node:path';import os from 'node:os';import crypto from 'node:crypto';import {execFileSync} from 'node:child_process';import {fileURLToPath} from 'node:url';
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
@@ -38,7 +39,7 @@ async function fixture(t){
  }
  await fs.copyFile(path.join(root,'site/DESIGN.md'),path.join(root,'site/assets/report/DESIGN.md'));
  await fs.cp(path.join(root,'site/assets'),path.join(root,'assets'),{recursive:true});
- const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
+ const ids=validateReportIds(html);
  const categories=['ai-only-lab','games','ai-trends','ai-planning','game-ai','ai-releases','techniques','github-trending','game-ai-tools','careers','opportunities','agent-skills'];
  const checks=Object.fromEntries(['sourcesVerified','releaseStatesChecked','aiScopeSeparated','hotnessEvidenceChecked','jobsSampleDisclosed','previousIssueCompared','techniqueReproducibilityReviewed','mobileChecked','shareChecked'].map(key=>[key,true]));
  const content={schemaVersion:2,reportDate:'2026-11-07',sha256:digest(html),sections:ids,checks,careerCoverage,coverage:categories.map(category=>({category,status:'unverified',sourceUrls:['https://example.test/fixture'],limitation:'Synthetic fixture, not research'}))};
